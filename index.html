@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ishikawa 5M - Edition Gold Final Fix</title>
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --accent: #cfa346;
+            --accent-light: #f4e8cb;
+            --bg-color: #f8f9fa;
+            --panel-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --text-color: #2d3436;
+            --danger: #e74c3c;
+            
+            --color-m1: #c0392b;
+            --color-m2: #2980b9;
+            --color-m3: #27ae60;
+            --color-m4: #8e44ad;
+            --color-m5: #d35400;
+        }
+
+        * { box-sizing: border-box; }
+        html { font-size: 16px; }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+            margin: 0; padding: 0;
+            background-color: var(--bg-color); color: var(--text-color);
+            height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background-color: var(--primary); color: var(--accent);
+            padding: 0 1.5rem; height: 60px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex-shrink: 0; z-index: 20;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        h1 { margin: 0; font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        h1 span { color: white; font-weight: 300; font-size: 0.9rem; opacity: 0.8; }
+
+        .toolbar { display: flex; gap: 10px; }
+
+        button {
+            border: none; padding: 8px 14px; border-radius: 6px;
+            cursor: pointer; font-size: 0.9rem; font-weight: 600;
+            transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex; align-items: center; gap: 6px;
+        }
+        button:active { transform: translateY(1px); box-shadow: none; }
+        
+        .btn-primary { background: var(--accent); color: var(--primary); }
+        .btn-primary:hover { background: #d4af37; filter: brightness(1.1); }
+        .btn-secondary { background: #34495e; color: white; }
+        .btn-secondary:hover { background: #2c3e50; }
+        .btn-danger { background: var(--danger); color: white; }
+
+        .btn-icon { width: 18px; height: 18px; fill: currentColor; }
+
+        /* --- LAYOUT --- */
+        .app-container { display: flex; flex: 1; overflow: hidden; position: relative; }
+
+        aside {
+            width: 340px; background: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex; flex-direction: column; padding: 1rem;
+            flex-shrink: 0; z-index: 10; box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+
+        aside h2 {
+            font-size: 1rem; margin: 0 0 0.8rem 0; color: var(--primary);
+            border-bottom: 3px solid var(--accent); padding-bottom: 5px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .sidebar-input-group { margin-bottom: 10px; }
+        .sidebar-input-group label {
+            display: block; font-size: 0.85rem; font-weight: bold; color: #555; margin-bottom: 4px;
+        }
+        .sidebar-input-group input, 
+        .sidebar-input-group textarea {
+            width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;
+            font-family: inherit; font-size: 0.9rem; background: #fafafa;
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .sidebar-input-group input:focus, 
+        .sidebar-input-group textarea:focus {
+            border-color: var(--accent); background: white; outline: none;
+        }
+        .sidebar-input-group textarea { resize: vertical; min-height: 60px; }
+
+        .input-group { display: flex; gap: 5px; margin-bottom: 1rem; }
+        .input-group input {
+            flex: 1; padding: 8px; border: 2px solid var(--border-color);
+            border-radius: 6px; outline: none; transition: border-color 0.2s;
+        }
+        .input-group input:focus { border-color: var(--accent); }
+
+        #backlog-list {
+            flex: 1; overflow-y: auto; border: 2px dashed #e0e0e0;
+            background: #fdfdfd; padding: 8px; border-radius: 8px;
+            min-height: 150px;
+        }
+        #backlog-list.drag-over { background: var(--accent-light); border-color: var(--accent); }
+
+        .cause-card {
+            background: white; border-left: 4px solid var(--accent);
+            padding: 8px 12px; margin-bottom: 8px; border-radius: 4px;
+            cursor: grab; display: flex; justify-content: space-between;
+            align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 0.9rem;
+        }
+        .cause-card:active { cursor: grabbing; }
+        .cause-text { flex: 1; outline: none; margin-right: 5px; }
+        .card-actions span { cursor: pointer; color: #bdc3c7; font-weight: bold; }
+        .card-actions span:hover { color: var(--danger); }
+
+        #workspace {
+            flex: 1; position: relative; background-color: #ffffff;
+            background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+            overflow: auto; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+
+        /* SVG Styles */
+        #diagram-svg {
+            background: white; box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border-radius: 8px; max-width: 100%; height: auto;
+        }
+
+        text { font-family: 'Segoe UI', sans-serif; user-select: none; }
+        
+        .svg-spine { stroke: var(--primary); stroke-width: 6; stroke-linecap: round; }
+        .svg-rib { stroke-width: 4; stroke-linecap: round; }
+        .svg-category-label { font-weight: 700; font-size: 16px; text-anchor: middle; text-transform: uppercase; }
+        
+        .drop-zone { fill: transparent; stroke: transparent; }
+        .drop-zone.drag-over { fill: rgba(207, 163, 70, 0.1); stroke: var(--accent); stroke-width: 2; stroke-dasharray: 5; }
+
+        .cause-group { cursor: pointer; }
+        .cause-text-svg { font-size: 12px; fill: #2d3436; font-weight: 500; pointer-events: none; }
+        .connector-line { stroke-width: 2; }
+
+        /* Icones SVG */
+        .svg-icon { fill: white; pointer-events: none; }
+        .effect-icon { fill: var(--primary); pointer-events: none; }
+
+        /* --- CONTEXT MENU --- */
+        .context-menu {
+            display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 6px;
+            z-index: 3000;
+            min-width: 180px;
+            overflow: hidden;
+            animation: fadeIn 0.1s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .context-menu ul { list-style: none; margin: 0; padding: 0; }
+        .context-menu li {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            border-bottom: 1px solid #f0f0f0;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .context-menu li:last-child { border-bottom: none; }
+        .context-menu li:hover { background-color: #f8f9fa; color: var(--primary); }
+        .context-menu li.danger { color: var(--danger); }
+        .context-menu li.danger:hover { background-color: #fff5f5; }
+
+        /* --- MODAL MOVE --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 4000;
+            display: none; justify-content: center; align-items: center;
+        }
+        .modal-overlay.open { display: flex; }
+        
+        .modal {
+            background: white; padding: 25px; border-radius: 8px; width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-top: 5px solid var(--accent);
+        }
+        .modal h3 { margin-top: 0; color: var(--primary); margin-bottom: 15px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
+        .form-group select {
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;
+            font-family: inherit; font-size: 1rem; background: white;
+        }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: var(--primary);
+            color: var(--accent); text-align: center; border-radius: 50px;
+            padding: 12px 24px; position: fixed; z-index: 5000; bottom: 30px;
+            left: 50%; transform: translateX(-50%); font-weight: 600; opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+
+        @media (max-width: 768px) {
+            html { font-size: 14px; }
+            .app-container { flex-direction: column; overflow-y: auto; }
+            aside { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); order: 2; }
+            #workspace { min-height: 400px; order: 1; }
+            h1 span { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Générateur diagramme Ishikawa <span>avec classification 5M</span></h1>
+    <div class="toolbar">
+        <button class="btn-secondary" onclick="app.reset()" title="Tout effacer">
+            <svg class="btn-icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            Tout effacer
+        </button>
+        <button class="btn-primary" onclick="app.exportImage()" title="Export JPEG">
+            <svg class="btn-icon" viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/><circle cx="12" cy="9" r="3.2"/></svg>
+            JPEG
+        </button>
+        <button class="btn-primary" onclick="app.exportExcel()" title="Export Excel">
+            <svg class="btn-icon" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+            Excel
+        </button>
+    </div>
+</header>
+
+<div class="app-container">
+    <aside>
+        <!-- Section Édition Effet -->
+        <div class="sidebar-section">
+            <h2>1. Définir le Problème (Effet)</h2>
+            <div class="sidebar-input-group">
+                <label for="sb-effect-title">Titre du Problème</label>
+                <input type="text" id="sb-effect-title" placeholder="Ex: Retard livraison..." oninput="app.updateEffectFromSidebar()">
+            </div>
+            <div class="sidebar-input-group">
+                <label for="sb-effect-desc">Détails (QQOQCP)</label>
+                <textarea id="sb-effect-desc" placeholder="Qui, Quoi, Où, Quand, Comment, Pourquoi..." oninput="app.updateEffectFromSidebar()"></textarea>
+            </div>
+        </div>
+
+        <!-- Section Réserve -->
+        <div class="sidebar-section" style="border-bottom: none; flex: 1; display: flex; flex-direction: column;">
+            <h2>2. Réserve de Causes</h2>
+            <div class="input-group">
+                <input type="text" id="new-cause-input" placeholder="Ajouter une idée..." onkeypress="if(event.key === 'Enter') app.addToBacklog()">
+                <button class="btn-primary" onclick="app.addToBacklog()">+</button>
+            </div>
+            <div id="backlog-list" ondragover="event.preventDefault()" ondrop="app.handleDropBacklog(event)"></div>
+            <div style="margin-top: 10px; font-size: 0.8rem; color: #95a5a6; text-align: center;">
+                Astuce : Clic Droit sur une cause pour la déplacer ou modifier.
+            </div>
+        </div>
+    </aside>
+
+    <div id="workspace">
+        <svg id="diagram-svg" viewBox="0 0 1350 700" preserveAspectRatio="xMidYMid meet">
+            <!-- Diagramme JS -->
+        </svg>
+    </div>
+</div>
+
+<!-- MENU CONTEXTUEL -->
+<div id="context-menu" class="context-menu">
+    <ul>
+        <li onclick="app.ctxEdit()">✏️ Modifier</li>
+        <li onclick="app.ctxMove()">➡️ Déplacer...</li>
+        <li onclick="app.ctxToBacklog()">↩️ Renvoyer en réserve</li>
+        <li onclick="app.ctxDelete()" class="danger">🗑️ Supprimer</li>
+    </ul>
+</div>
+
+<!-- MODAL DÉPLACEMENT -->
+<div id="modal-move" class="modal-overlay">
+    <div class="modal">
+        <h3>Déplacer la cause</h3>
+        <p id="move-cause-label" style="font-style:italic; color:#777; margin-bottom: 15px;"></p>
+        <div class="form-group">
+            <label>Nouvelle catégorie :</label>
+            <select id="move-category-select">
+                <!-- Options JS -->
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="app.closeMoveModal()">Annuler</button>
+            <button class="btn-primary" onclick="app.confirmMove()">Valider</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast">Action effectuée</div>
+
+<script>
+/**
+ * APPLICATION ISHIKAWA 5M - Gold Final Fix (JPEG & DnD & Layout)
+ */
+const CONSTANTS = {
+    CATEGORIES: ["Main-d'œuvre", "Méthode", "Matière", "Milieu", "Moyens"],
+    CAT_COLORS: ["#c0392b", "#2980b9", "#27ae60", "#8e44ad", "#d35400"],
+    SVG_W: 1350, SVG_H: 700, // Largeur augmentée pour accueillir l'allongement de la flèche
+    SPINE_Y: 350, SPINE_START: 50, SPINE_END: 1050, // Flèche allongée vers la droite (1000 -> 1050)
+    
+    ICONS: {
+        "Main-d'œuvre": "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z", 
+        "Méthode": "M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z",
+        "Matière": "M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.32-.18.78-.18 1.14 0l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15 6.04 7.5 12 10.85l5.96-3.35L12 4.15zM5 15.91l6 3.38v-6.71L5 9.21v6.7z", 
+        "Milieu": "M19.36 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96z", 
+        "Moyens": "M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z", 
+        "Effect": "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" 
+    }
+};
+
+class IshikawaApp {
+    constructor() {
+        this.data = {
+            effect: "Problème à analyser...",
+            effectDetails: "",
+            causes: {}, backlog: [], nextId: 1
+        };
+        CONSTANTS.CATEGORIES.forEach(c => this.data.causes[c] = []);
+        this.dragSource = null;
+        
+        // Context Menu State
+        this.ctxItem = null;
+        this.ctxCategory = null;
+
+        // Global click to hide context menu
+        document.addEventListener('click', () => {
+            document.getElementById('context-menu').style.display = 'none';
+        });
+
+        this.syncSidebarInputs();
+        this.renderBacklog();
+        this.renderDiagram();
+    }
+
+    generateId() { return this.data.nextId++; }
+
+    // --- EFFECT & SIDEBAR ---
+    syncSidebarInputs() {
+        const titleInput = document.getElementById('sb-effect-title');
+        const descInput = document.getElementById('sb-effect-desc');
+        if(titleInput) titleInput.value = this.data.effect;
+        if(descInput) descInput.value = this.data.effectDetails;
+    }
+
+    updateEffectFromSidebar() {
+        const title = document.getElementById('sb-effect-title').value;
+        const desc = document.getElementById('sb-effect-desc').value;
+        this.data.effect = title || "Problème...";
+        this.data.effectDetails = desc;
+        this.renderDiagram();
+    }
+
+    focusEffectEdit() {
+        const titleInput = document.getElementById('sb-effect-title');
+        if(titleInput) {
+            titleInput.focus(); titleInput.select();
+            this.showToast("Édition du problème activée");
+        }
+    }
+
+    // --- CONTEXT MENU LOGIC ---
+    showContextMenu(e, item, category) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.ctxItem = item;
+        this.ctxCategory = category;
+
+        const menu = document.getElementById('context-menu');
+        
+        // Positionnement intelligent
+        let x = e.pageX;
+        let y = e.pageY;
+        
+        menu.style.left = `${x}px`;
+        menu.style.top = `${y}px`;
+        menu.style.display = 'block';
+    }
+
+    ctxEdit() {
+        document.getElementById('context-menu').style.display = 'none';
+        if(!this.ctxItem) return;
+        const newTxt = prompt("Modifier le texte :", this.ctxItem.text);
+        if(newTxt !== null && newTxt.trim() !== "") {
+            this.ctxItem.text = newTxt.trim();
+            this.renderDiagram();
+            this.renderBacklog(); // Au cas où
+        }
+    }
+
+    ctxDelete() {
+        document.getElementById('context-menu').style.display = 'none';
+        if(!this.ctxItem) return;
+        if(confirm(`Supprimer "${this.ctxItem.text}" ?`)) {
+            this.removeItemFromDiagram(this.ctxItem.id);
+            this.renderDiagram();
+        }
+    }
+
+    ctxToBacklog() {
+        document.getElementById('context-menu').style.display = 'none';
+        if(!this.ctxItem) return;
+        
+        const removed = this.removeItemFromDiagram(this.ctxItem.id);
+        if(removed) {
+            this.data.backlog.push(removed);
+            this.renderBacklog();
+            this.renderDiagram();
+            this.showToast("Renvoyé en réserve");
+        }
+    }
+
+    ctxMove() {
+        document.getElementById('context-menu').style.display = 'none';
+        if(!this.ctxItem) return;
+
+        const modal = document.getElementById('modal-move');
+        const select = document.getElementById('move-category-select');
+        const label = document.getElementById('move-cause-label');
+        
+        label.textContent = `Cause : "${this.ctxItem.text}"`;
+        select.innerHTML = '';
+        
+        CONSTANTS.CATEGORIES.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.textContent = cat;
+            if(cat === this.ctxCategory) opt.disabled = true; // Désactiver catégorie actuelle
+            select.appendChild(opt);
+        });
+
+        modal.classList.add('open');
+    }
+
+    closeMoveModal() {
+        document.getElementById('modal-move').classList.remove('open');
+    }
+
+    confirmMove() {
+        const select = document.getElementById('move-category-select');
+        const targetCat = select.value;
+        
+        if(!this.ctxItem || !targetCat) return;
+
+        // Retirer de l'ancien emplacement
+        const itemToMove = this.removeItemFromDiagram(this.ctxItem.id);
+        
+        if(itemToMove) {
+            // Ajouter au nouvel emplacement
+            this.data.causes[targetCat].push(itemToMove);
+            this.renderDiagram();
+            this.showToast(`Déplacé vers ${targetCat}`);
+        }
+        
+        this.closeMoveModal();
+    }
+
+    // --- CAUSES MANAGEMENT ---
+    addToBacklog() {
+        const input = document.getElementById('new-cause-input');
+        const text = input.value.trim();
+        if (!text) return;
+        this.data.backlog.push({ id: this.generateId(), text: text, children: [] });
+        input.value = "";
+        this.renderBacklog();
+    }
+
+    removeFromBacklog(id) {
+        this.data.backlog = this.data.backlog.filter(i => i.id !== id);
+        this.renderBacklog();
+    }
+
+    updateBacklogItem(id, newText) {
+        const item = this.data.backlog.find(i => i.id === id);
+        if (item) item.text = newText;
+    }
+
+    reset() {
+        if (!confirm("Voulez-vous vraiment tout effacer ?")) return;
+        this.data.effect = "";
+        this.data.effectDetails = "";
+        this.data.backlog = [];
+        CONSTANTS.CATEGORIES.forEach(c => this.data.causes[c] = []);
+        this.syncSidebarInputs();
+        this.renderBacklog();
+        this.renderDiagram();
+        this.showToast("Données effacées");
+    }
+
+    // --- DATA TREE UTILS ---
+    findAndRemove(list, id) {
+        const idx = list.findIndex(i => i.id === id);
+        if (idx !== -1) return list.splice(idx, 1)[0];
+        for (let item of list) {
+            if (item.children) {
+                const found = this.findAndRemove(item.children, id);
+                if (found) return found;
+            }
+        }
+        return null;
+    }
+
+    removeItemFromDiagram(id) {
+        for (let cat of CONSTANTS.CATEGORIES) {
+            const removed = this.findAndRemove(this.data.causes[cat], id);
+            if (removed) return removed;
+        }
+        return null;
+    }
+
+    findItem(list, id) {
+        for(let item of list) {
+            if(item.id === id) return item;
+            if(item.children) {
+                const found = this.findItem(item.children, id);
+                if(found) return found;
+            }
+        }
+        return null;
+    }
+
+    // --- DRAG & DROP ---
+    handleDragStart(e, source, item) {
+        this.dragSource = { source, item };
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', JSON.stringify(item));
+        document.querySelectorAll('.drop-zone').forEach(z => z.style.stroke = "var(--accent)");
+    }
+    
+    handleDragEnd(e) {
+        document.querySelectorAll('.drop-zone').forEach(z => z.style.stroke = "transparent");
+        this.clearHighlights();
+    }
+
+    handleDropCategory(e, category) {
+        e.preventDefault(); e.stopPropagation();
+        this.clearHighlights();
+        
+        if (!this.dragSource) return;
+
+        const { source, item } = this.dragSource;
+        let itemToMove = null;
+
+        if (source === 'backlog') {
+            this.removeFromBacklog(item.id);
+            itemToMove = item;
+        } else {
+            const removed = this.removeItemFromDiagram(item.id);
+            if(removed) itemToMove = removed;
+        }
+
+        if(itemToMove) {
+            this.data.causes[category].push(itemToMove);
+            this.renderDiagram();
+            this.renderBacklog();
+        }
+        this.dragSource = null;
+    }
+
+    handleDropOnCause(e, targetId, currentDepth, category) {
+        e.preventDefault(); e.stopPropagation(); this.clearHighlights();
+        if (!this.dragSource) return;
+
+        const { source, item } = this.dragSource;
+        if (source === 'diagram' && item.id === targetId) return;
+
+        // Si profondeur limite atteinte, on drop dans la catégorie parente
+        if (currentDepth >= 1) {
+            this.handleDropCategory(e, category);
+            return;
+        }
+
+        let targetItem = null;
+        for(let cat of CONSTANTS.CATEGORIES) {
+            targetItem = this.findItem(this.data.causes[cat], targetId);
+            if(targetItem) break;
+        }
+        if(!targetItem) return;
+
+        let itemToMove = null;
+        if (source === 'backlog') {
+            this.removeFromBacklog(item.id);
+            itemToMove = item;
+        } else {
+            itemToMove = this.removeItemFromDiagram(item.id);
+        }
+
+        if(itemToMove) {
+            if(!targetItem.children) targetItem.children = [];
+            targetItem.children.push(itemToMove);
+            this.renderDiagram();
+            this.renderBacklog();
+        }
+        this.dragSource = null;
+    }
+
+    handleDropBacklog(e) {
+        e.preventDefault();
+        document.getElementById('backlog-list').classList.remove('drag-over');
+        if (!this.dragSource || this.dragSource.source === 'backlog') return;
+        
+        const removed = this.removeItemFromDiagram(this.dragSource.item.id);
+        if(removed) {
+            this.data.backlog.push(removed);
+            this.renderBacklog();
+            this.renderDiagram();
+        }
+        this.dragSource = null;
+    }
+
+    handleDragOverZone(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+    handleDragLeaveZone(e) { e.currentTarget.classList.remove('drag-over'); }
+    clearHighlights() { document.querySelectorAll('.drop-zone').forEach(el => el.classList.remove('drag-over')); }
+
+    renderBacklog() {
+        const list = document.getElementById('backlog-list');
+        list.innerHTML = '';
+        this.data.backlog.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'cause-card'; div.draggable = true;
+            div.ondragstart = (e) => this.handleDragStart(e, 'backlog', item);
+            div.ondragend = (e) => this.handleDragEnd(e);
+            div.innerHTML = `
+                <div class="cause-text" contenteditable="true" onblur="app.updateBacklogItem(${item.id}, this.innerText)">${item.text}</div>
+                <div class="card-actions"><span onclick="app.removeFromBacklog(${item.id})">×</span></div>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    // --- RENDER DIAGRAM ---
+    renderDiagram() {
+        const svg = document.getElementById('diagram-svg');
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+        // Marker (couleur en dur pour export)
+        const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+        const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+        marker.setAttribute("id", "arrowhead"); marker.setAttribute("markerWidth", "10");
+        marker.setAttribute("markerHeight", "7"); marker.setAttribute("refX", "9"); marker.setAttribute("refY", "3.5");
+        marker.setAttribute("orient", "auto");
+        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        polygon.setAttribute("points", "0 0, 10 3.5, 0 7"); 
+        polygon.setAttribute("fill", "#1a1a1a"); // Inline color
+        marker.appendChild(polygon); defs.appendChild(marker); svg.appendChild(defs);
+
+        // Spine
+        this.drawSvgLine(svg, CONSTANTS.SPINE_START, CONSTANTS.SPINE_Y, CONSTANTS.SPINE_END, CONSTANTS.SPINE_Y, 'svg-spine', "#1a1a1a", 'url(#arrowhead)');
+
+        // Effect Head
+        const headGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        headGroup.setAttribute("class", "effect-group");
+        headGroup.setAttribute("transform", `translate(${CONSTANTS.SPINE_END + 10}, ${CONSTANTS.SPINE_Y - 50})`);
+        headGroup.onclick = (e) => { e.stopPropagation(); this.focusEffectEdit(); };
+
+        const headRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        headRect.setAttribute("width", 260); headRect.setAttribute("height", 100);
+        // INLINE STYLES FOR EXPORT
+        headRect.setAttribute("fill", "white");
+        headRect.setAttribute("stroke", "#1a1a1a");
+        headRect.setAttribute("stroke-width", "3");
+        headRect.setAttribute("rx", "8");
+        
+        const iconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        iconPath.setAttribute("d", CONSTANTS.ICONS["Effect"]);
+        iconPath.setAttribute("transform", "translate(15, 38) scale(1)");
+        iconPath.setAttribute("fill", "#1a1a1a");
+
+        const effectTitle = this.data.effect && this.data.effect.trim() !== "" ? (this.data.effect.length > 25 ? this.data.effect.substring(0,23)+"..." : this.data.effect) : "Saisir un effet...";
+        const headTitle = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        headTitle.textContent = effectTitle;
+        headTitle.setAttribute("x", 130); headTitle.setAttribute("y", 40); // Centré
+        headTitle.setAttribute("text-anchor", "middle"); 
+        headTitle.setAttribute("fill", "#1a1a1a");
+        headTitle.setAttribute("font-weight", "bold");
+        headTitle.setAttribute("font-size", "15px");
+
+        const headDesc = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        const details = this.data.effectDetails || "Détails (QQOQCP)...";
+        headDesc.textContent = details.length > 30 ? details.substring(0,28)+"..." : details;
+        headDesc.setAttribute("x", 130); headDesc.setAttribute("y", 70); // Centré
+        headDesc.setAttribute("text-anchor", "middle"); 
+        headDesc.setAttribute("fill", "#555");
+        headDesc.setAttribute("font-size", "14px");
+
+        headGroup.appendChild(headRect); 
+        headGroup.appendChild(iconPath);
+        headGroup.appendChild(headTitle);
+        headGroup.appendChild(headDesc);
+        svg.appendChild(headGroup);
+
+        // 5M Branches
+        const spacing = 190; 
+        const startX = 200;
+        
+        CONSTANTS.CATEGORIES.forEach((cat, index) => {
+            const isTop = (index % 2 === 0);
+            const color = CONSTANTS.CAT_COLORS[index];
+            const xBase = startX + (index * spacing);
+            const yBase = CONSTANTS.SPINE_Y;
+            const xEnd = xBase - 50;
+            const yEnd = isTop ? 60 : 640;
+
+            this.drawSvgLine(svg, xEnd, yEnd, xBase, yBase, 'svg-rib', color);
+
+            const zone = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            zone.setAttribute("x", xEnd - 100); zone.setAttribute("y", isTop ? 0 : 350);
+            zone.setAttribute("width", 220); zone.setAttribute("height", 350);
+            zone.setAttribute("class", "drop-zone");
+            zone.ondragover = (e) => this.handleDragOverZone(e);
+            zone.ondragleave = (e) => this.handleDragLeaveZone(e);
+            zone.ondrop = (e) => this.handleDropCategory(e, cat);
+            svg.insertBefore(zone, svg.firstChild);
+
+            const labelGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            const rectW = 160; const rectH = 34;
+            const labelRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            labelRect.setAttribute("x", xEnd - rectW/2); labelRect.setAttribute("y", isTop ? yEnd - 40 : yEnd + 10);
+            labelRect.setAttribute("width", rectW); labelRect.setAttribute("height", rectH);
+            labelRect.setAttribute("fill", color); 
+            labelRect.setAttribute("rx", "4"); 
+            labelRect.setAttribute("class", "svg-category-rect");
+            
+            const catIcon = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            catIcon.setAttribute("d", CONSTANTS.ICONS[cat] || "");
+            catIcon.setAttribute("transform", `translate(${xEnd - rectW/2 + 10}, ${isTop ? yEnd - 35 : yEnd + 15}) scale(1)`);
+            catIcon.setAttribute("fill", "white");
+
+            const labelText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            labelText.setAttribute("x", xEnd + 10);
+            labelText.setAttribute("y", isTop ? yEnd - 18 : yEnd + 33);
+            labelText.textContent = cat;
+            labelText.setAttribute("fill", "white");
+            labelText.setAttribute("font-weight", "bold");
+            labelText.setAttribute("font-size", "16px");
+            labelText.setAttribute("text-anchor", "middle");
+
+            labelGroup.appendChild(labelRect); 
+            labelGroup.appendChild(catIcon);
+            labelGroup.appendChild(labelText);
+            svg.appendChild(labelGroup);
+
+            this.renderCausesRecursive(svg, this.data.causes[cat], xEnd, yEnd, xBase, yBase, isTop, 0, color, cat);
+        });
+    }
+
+    renderCausesRecursive(svg, items, x1, y1, x2, y2, isTop, depth, color, category) {
+        if (!items || items.length === 0) return;
+        const count = items.length;
+        const xStep = (x2 - x1) / (count + 1);
+
+        items.forEach((item, i) => {
+            const cx = x1 + xStep * (i + 1);
+            const cy = y1 + (y2 - y1)/(count+1)*(i+1);
+            const lineLen = 145; 
+            const lx = cx + lineLen; 
+            
+            this.drawSvgLine(svg, cx, cy, lx, cy, 'connector-line', color);
+            this.drawCauseBox(svg, item, lx, cy, depth, color, category);
+
+            if (item.children && item.children.length > 0) {
+                item.children.forEach((child, j) => {
+                    const sx = cx + 20 + (j * 30);
+                    const sy = cy;
+                    const syEnd = isTop ? cy + 45 : cy - 45;
+                    this.drawSvgLine(svg, sx, sy, sx, syEnd, 'connector-line', color);
+                    this.drawCauseBox(svg, child, sx, syEnd, depth + 1, color, category);
+                });
+            }
+        });
+    }
+
+    drawCauseBox(svg, item, x, y, depth, color, category) {
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("transform", `translate(${x}, ${y})`);
+        g.setAttribute("class", "cause-group");
+        g.draggable = true;
+        g.ondragstart = (e) => { e.stopPropagation(); this.handleDragStart(e, 'diagram', item); };
+        g.ondragend = (e) => this.handleDragEnd(e);
+        
+        // CONTEXT MENU TRIGGER
+        g.oncontextmenu = (e) => { 
+            e.preventDefault(); 
+            e.stopPropagation(); 
+            app.showContextMenu(e, item, category); 
+        };
+        
+        if (depth < 1) {
+            g.ondragover = (e) => { e.preventDefault(); e.stopPropagation(); };
+            g.ondrop = (e) => this.handleDropOnCause(e, item.id, depth, category);
+        }
+
+        g.ondblclick = (e) => {
+            e.stopPropagation();
+            const newTxt = prompt("Modifier:", item.text);
+            if (newTxt === null) return;
+            if (newTxt.trim() === "") this.removeItemFromDiagram(item.id);
+            else item.text = newTxt;
+            this.renderDiagram();
+        };
+
+        const padding = 6; const charWidth = 7;
+        const width = Math.max(80, item.text.length * charWidth + padding * 2); const height = 24;
+        
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("x", -5); rect.setAttribute("y", -height/2);
+        rect.setAttribute("width", width); rect.setAttribute("height", height);
+        // INLINE STYLES FOR EXPORT
+        rect.setAttribute("fill", "white");
+        rect.setAttribute("stroke", color);
+        rect.setAttribute("stroke-width", "1");
+        rect.setAttribute("rx", "4");
+        
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.textContent = item.text.length > 22 ? item.text.substring(0,20)+"..." : item.text;
+        text.setAttribute("dy", 4); text.setAttribute("dx", 5);
+        // INLINE STYLES
+        text.setAttribute("fill", "#2d3436");
+        text.setAttribute("font-size", "12px");
+        text.setAttribute("pointer-events", "none"); // Important pour click
+
+        g.appendChild(rect); g.appendChild(text);
+        g.appendChild(document.createElementNS("http://www.w3.org/2000/svg", "title")).textContent = item.text;
+        svg.appendChild(g);
+    }
+
+    drawSvgLine(svg, x1, y1, x2, y2, className, color=null, markerEnd=null) {
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", x1); line.setAttribute("y1", y1);
+        line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+        
+        // Inline styles par défaut selon classe
+        if(className === 'svg-spine') {
+            line.setAttribute("stroke", "#1a1a1a");
+            line.setAttribute("stroke-width", "6");
+        } else if(className === 'svg-rib') {
+             line.setAttribute("stroke-width", "4");
+        } else {
+             line.setAttribute("stroke-width", "2");
+        }
+        
+        if(color) line.setAttribute("stroke", color);
+        if(markerEnd) line.setAttribute("marker-end", markerEnd);
+        svg.appendChild(line);
+    }
+
+    showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg; t.className = "show";
+        setTimeout(() => t.className = "", 3000);
+    }
+
+    exportImage() {
+        const svg = document.getElementById('diagram-svg');
+        const clone = svg.cloneNode(true); // Clone to manipulate
+
+        // Force explicit dimensions on the root SVG for rendering logic
+        clone.setAttribute("width", CONSTANTS.SVG_W);
+        clone.setAttribute("height", CONSTANTS.SVG_H);
+
+        // Remove UI elements that might cause rendering issues or clutter
+        const dropZones = clone.querySelectorAll('.drop-zone');
+        dropZones.forEach(el => el.remove());
+
+        const serializer = new XMLSerializer();
+        const svgString = serializer.serializeToString(clone);
+        const img = new Image();
+        const svgBlob = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
+        const url = URL.createObjectURL(svgBlob);
+        
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            // Taille x1.5 pour bonne qualité
+            canvas.width = CONSTANTS.SVG_W * 1.5; 
+            canvas.height = CONSTANTS.SVG_H * 1.5;
+            const ctx = canvas.getContext('2d');
+            
+            // Fond blanc explicite
+            ctx.fillStyle = "white"; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw strictly to canvas bounds to prevent cropping
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            const a = document.createElement('a');
+            a.download = "ishikawa.jpg"; 
+            a.href = canvas.toDataURL("image/jpeg", 0.9);
+            a.click(); 
+            URL.revokeObjectURL(url);
+            this.showToast("Image JPEG générée");
+        };
+        img.src = url;
+    }
+
+    exportExcel() {
+        let rows = "";
+        const scan = (cat, item, d) => {
+            let row = `<Row><Cell><Data ss:Type="String">${cat}</Data></Cell>`;
+            row += `<Cell><Data ss:Type="String">${d===0?item.text:''}</Data></Cell>`;
+            row += `<Cell><Data ss:Type="String">${d===1?item.text:''}</Data></Cell></Row>`;
+            rows += row;
+            if(item.children) item.children.forEach(c => scan(cat, c, d+1));
+        };
+        CONSTANTS.CATEGORIES.forEach(cat => this.data.causes[cat].forEach(i => scan(cat, i, 0)));
+        const tmpl = `<?xml version="1.0"?><?mso-application progid="Excel.Sheet"?><Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="Ishikawa"><Table><Row><Cell><Data ss:Type="String">Effet: ${this.data.effect}</Data></Cell></Row><Row><Cell><Data ss:Type="String">QQOQCP: ${this.data.effectDetails}</Data></Cell></Row><Row><Cell><Data ss:Type="String">Famille</Data></Cell><Cell><Data ss:Type="String">Cause</Data></Cell><Cell><Data ss:Type="String">Sous-cause</Data></Cell></Row>${rows}</Table></Worksheet></Workbook>`;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([tmpl], {type: "application/vnd.ms-excel"}));
+        a.download = "ishikawa.xls"; a.click();
+    }
+}
+const app = new IshikawaApp();
+</script>
+</body>
+</html>
