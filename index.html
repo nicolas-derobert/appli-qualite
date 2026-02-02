@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur Ishikawa 5M - Edition Gold</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Générateur Ishikawa 5M - Edition Gold Mobile</title>
     <style>
         :root {
             --primary: #1a1a1a;
@@ -14,6 +14,7 @@
             --border-color: #e0e0e0;
             --text-color: #2d3436;
             --danger: #e74c3c;
+            --highlight: #e74c3c; /* Couleur pour la cause racine */
             
             --color-m1: #c0392b;
             --color-m2: #2980b9;
@@ -35,45 +36,49 @@
         /* --- HEADER --- */
         header {
             background-color: var(--primary); color: var(--accent);
-            padding: 0 1.5rem; height: 60px;
+            padding: 0.5rem 1rem; 
+            min-height: 60px;
             display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex-shrink: 0; z-index: 20;
             border-bottom: 3px solid var(--accent);
+            flex-wrap: wrap; gap: 10px;
         }
 
-        h1 { margin: 0; font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        h1 span { color: white; font-weight: 300; font-size: 0.9rem; opacity: 0.8; }
+        h1 { margin: 0; font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        h1 span { color: white; font-weight: 300; font-size: 0.8rem; opacity: 0.8; }
 
-        .toolbar { display: flex; gap: 10px; align-items: center; }
+        .toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
         .toolbar select {
-            padding: 8px 12px;
+            padding: 8px;
             border-radius: 6px;
             border: 1px solid var(--accent);
             background-color: #333;
             color: white;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             outline: none;
-            transition: background 0.2s;
+            max-width: 150px;
         }
-        .toolbar select:hover { background-color: #444; }
 
         button {
-            border: none; padding: 8px 14px; border-radius: 6px;
-            cursor: pointer; font-size: 0.9rem; font-weight: 600;
+            border: none; padding: 8px 12px; border-radius: 6px;
+            cursor: pointer; font-size: 0.85rem; font-weight: 600;
             transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: flex; align-items: center; gap: 6px;
+            display: flex; align-items: center; gap: 5px;
+            white-space: nowrap;
         }
         button:active { transform: translateY(1px); box-shadow: none; }
         
         .btn-primary { background: var(--accent); color: var(--primary); }
-        .btn-primary:hover { background: #d4af37; filter: brightness(1.1); }
         .btn-secondary { background: #34495e; color: white; }
-        .btn-secondary:hover { background: #2c3e50; }
         .btn-danger { background: var(--danger); color: white; }
+        .btn-icon { width: 16px; height: 16px; fill: currentColor; }
 
-        .btn-icon { width: 18px; height: 18px; fill: currentColor; }
+        /* Petit bouton action dans les cartes */
+        .btn-sm {
+            padding: 4px 8px; font-size: 0.8rem; margin-right: 5px; background: #eee; color: #333;
+        }
 
         /* --- LAYOUT --- */
         .app-container { display: flex; flex: 1; overflow: hidden; position: relative; }
@@ -106,55 +111,62 @@
         .sidebar-input-group textarea {
             width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;
             font-family: inherit; font-size: 0.9rem; background: #fafafa;
-            transition: border-color 0.2s, background 0.2s;
-        }
-        .sidebar-input-group input:focus, 
-        .sidebar-input-group textarea:focus {
-            border-color: var(--accent); background: white; outline: none;
         }
         .sidebar-input-group textarea { resize: vertical; min-height: 60px; }
 
         .input-group { display: flex; gap: 5px; margin-bottom: 1rem; }
         .input-group input {
             flex: 1; padding: 8px; border: 2px solid var(--border-color);
-            border-radius: 6px; outline: none; transition: border-color 0.2s;
+            border-radius: 6px; outline: none;
         }
-        .input-group input:focus { border-color: var(--accent); }
 
         #backlog-list {
             flex: 1; overflow-y: auto; border: 2px dashed #e0e0e0;
             background: #fdfdfd; padding: 8px; border-radius: 8px;
-            min-height: 150px;
+            min-height: 100px;
         }
         #backlog-list.drag-over { background: var(--accent-light); border-color: var(--accent); }
 
+        /* Liste des causes racines (Step 3) */
+        #root-causes-list {
+            font-size: 0.9rem; color: var(--danger); font-weight: bold;
+            list-style-type: none; padding: 0; margin: 0;
+        }
+        #root-causes-list li {
+            padding: 5px 0; border-bottom: 1px dashed #eee; display: flex; align-items: center; gap: 5px;
+        }
+
         .cause-card {
             background: white; border-left: 4px solid var(--accent);
-            padding: 8px 12px; margin-bottom: 8px; border-radius: 4px;
+            padding: 10px; margin-bottom: 8px; border-radius: 4px;
             cursor: grab; display: flex; justify-content: space-between;
-            align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 0.9rem;
+            align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 0.95rem;
         }
         .cause-card:active { cursor: grabbing; }
         .cause-text { flex: 1; outline: none; margin-right: 5px; }
-        .card-actions span { cursor: pointer; color: #bdc3c7; font-weight: bold; }
+        
+        .card-actions { display: flex; align-items: center; }
+        .card-actions span { cursor: pointer; color: #bdc3c7; font-weight: bold; font-size: 1.2rem; margin-left: 5px;}
         .card-actions span:hover { color: var(--danger); }
 
         #workspace {
             flex: 1; position: relative; background-color: #ffffff;
             background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
             background-size: 20px 20px;
-            overflow: auto; display: flex; flex-direction: column;
+            overflow: auto; 
+            display: flex; flex-direction: column;
             align-items: center; justify-content: center;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* SVG Styles */
         #diagram-svg {
             background: white; box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            border-radius: 8px; max-width: 100%; height: auto;
+            border-radius: 8px; 
+            min-width: 1000px; 
         }
 
         text { font-family: 'Segoe UI', sans-serif; user-select: none; }
-        
         .svg-spine { stroke: var(--primary); stroke-width: 6; stroke-linecap: round; }
         .svg-rib { stroke-width: 4; stroke-linecap: round; }
         .svg-category-label { font-weight: 700; font-size: 16px; text-anchor: middle; text-transform: uppercase; }
@@ -163,62 +175,53 @@
         .drop-zone.drag-over { fill: rgba(207, 163, 70, 0.1); stroke: var(--accent); stroke-width: 2; stroke-dasharray: 5; }
 
         .cause-group { cursor: pointer; }
-        .cause-text-svg { font-size: 12px; fill: #2d3436; font-weight: 500; pointer-events: none; }
+        .cause-text-svg { font-size: 14px; fill: #2d3436; font-weight: 600; pointer-events: none; }
         .connector-line { stroke-width: 2; }
 
-        /* Icones SVG */
         .svg-icon { fill: white; pointer-events: none; }
         .effect-icon { fill: var(--primary); pointer-events: none; }
 
         /* --- CONTEXT MENU --- */
         .context-menu {
-            display: none;
-            position: absolute;
-            background: white;
-            border: 1px solid #ddd;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            border-radius: 6px;
-            z-index: 3000;
-            min-width: 180px;
-            overflow: hidden;
-            animation: fadeIn 0.1s ease;
+            display: none; position: absolute; background: white;
+            border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 6px; z-index: 3000; min-width: 180px;
+            overflow: hidden; animation: fadeIn 0.1s ease;
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
         .context-menu ul { list-style: none; margin: 0; padding: 0; }
         .context-menu li {
-            padding: 10px 15px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: var(--text-color);
-            border-bottom: 1px solid #f0f0f0;
+            padding: 12px 15px; cursor: pointer; font-size: 1rem;
+            color: var(--text-color); border-bottom: 1px solid #f0f0f0;
             display: flex; align-items: center; gap: 8px;
         }
         .context-menu li:last-child { border-bottom: none; }
         .context-menu li:hover { background-color: #f8f9fa; color: var(--primary); }
         .context-menu li.danger { color: var(--danger); }
-        .context-menu li.danger:hover { background-color: #fff5f5; }
 
-        /* --- MODAL --- */
+        /* --- MODALS --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 4000;
             display: none; justify-content: center; align-items: center;
+            padding: 20px;
         }
         .modal-overlay.open { display: flex; }
         
         .modal {
-            background: white; padding: 25px; border-radius: 8px; width: 400px;
+            background: white; padding: 20px; border-radius: 8px; 
+            width: 100%; max-width: 400px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-top: 5px solid var(--accent);
         }
-        .modal h3 { margin-top: 0; color: var(--primary); margin-bottom: 15px; }
+        .modal h3 { margin-top: 0; color: var(--primary); margin-bottom: 15px; font-size: 1.2rem; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
         .form-group select {
-            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;
+            width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px;
             font-family: inherit; font-size: 1rem; background: white;
         }
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+        .modal-actions button { padding: 10px 20px; font-size: 1rem; }
 
         #toast {
             visibility: hidden; min-width: 250px; background-color: var(--primary);
@@ -229,36 +232,62 @@
         }
         #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
 
+        /* --- RESPONSIVE MOBILE --- */
         @media (max-width: 768px) {
             html { font-size: 14px; }
+            h1 span { display: none; } 
+            
             .app-container { flex-direction: column; overflow-y: auto; }
-            aside { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); order: 2; }
-            #workspace { min-height: 400px; order: 1; }
-            h1 span { display: none; }
+            
+            /* INVERSION : Sidebar (Menu) au-dessus, Diagramme en dessous */
+            
+            aside { 
+                width: 100%; 
+                min-height: 40vh; /* Moins de hauteur pour laisser place au diagramme */
+                order: 1; /* Priorité 1 : Au dessus */
+                border-right: none;
+                border-bottom: 2px solid var(--border-color);
+                box-shadow: none;
+            }
+
+            #workspace { 
+                height: 60vh; 
+                min-height: 350px; 
+                order: 2; /* Priorité 2 : En dessous */
+                align-items: flex-start; 
+                overflow-x: auto;
+            }
+
+            .toolbar { width: 100%; justify-content: space-between; padding-top: 5px;}
+            .toolbar select { max-width: 100%; flex-grow: 1; margin-bottom: 5px; }
+            .toolbar button { flex-grow: 1; justify-content: center; }
+            
+            .card-actions span { padding: 10px; font-size: 1.5rem; }
+            button { padding: 12px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Générateur diagramme Ishikawa <span>avec classification 5M</span></h1>
+    <h1>Ishikawa<span>5M</span></h1>
     <div class="toolbar">
         <select id="example-selector" onchange="app.loadExample(this.value)">
-            <option value="">📂 Charger un exemple...</option>
+            <option value="">📂 Exemples...</option>
             <option value="pizza">🍕 Pizza Brûlée</option>
             <option value="livraison">🚚 Retard Livraison</option>
         </select>
         
-        <button class="btn-secondary" onclick="app.requestReset()" title="Créer un nouveau diagramme vide">
+        <button class="btn-secondary" onclick="app.requestReset()">
             <svg class="btn-icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
             Nouveau
         </button>
         
-        <button class="btn-primary" onclick="app.exportImage()" title="Export JPEG">
+        <button class="btn-primary" onclick="app.exportImage()">
             <svg class="btn-icon" viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/><circle cx="12" cy="9" r="3.2"/></svg>
             JPEG
         </button>
-        <button class="btn-primary" onclick="app.exportExcel()" title="Export Excel">
+        <button class="btn-primary" onclick="app.exportExcel()">
             <svg class="btn-icon" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
             Excel
         </button>
@@ -269,28 +298,36 @@
     <aside>
         <!-- Section Édition Effet -->
         <div class="sidebar-section">
-            <h2>1. Définir le Problème (Effet)</h2>
+            <h2>1. Définir le Problème</h2>
             <div class="sidebar-input-group">
-                <label for="sb-effect-title">Titre du Problème</label>
-                <input type="text" id="sb-effect-title" placeholder="Ex: Retard livraison..." oninput="app.updateEffectFromSidebar()">
+                <input type="text" id="sb-effect-title" placeholder="Titre du problème..." oninput="app.updateEffectFromSidebar()">
             </div>
             <div class="sidebar-input-group">
-                <label for="sb-effect-desc">Détails (QQOQCP)</label>
-                <textarea id="sb-effect-desc" placeholder="Qui, Quoi, Où, Quand, Comment, Pourquoi..." oninput="app.updateEffectFromSidebar()"></textarea>
+                <textarea id="sb-effect-desc" placeholder="Détails (QQOQCP)..." oninput="app.updateEffectFromSidebar()"></textarea>
             </div>
         </div>
 
         <!-- Section Réserve -->
-        <div class="sidebar-section" style="border-bottom: none; flex: 1; display: flex; flex-direction: column;">
+        <div class="sidebar-section">
             <h2>2. Réserve de Causes</h2>
             <div class="input-group">
-                <input type="text" id="new-cause-input" placeholder="Ajouter une idée..." onkeypress="if(event.key === 'Enter') app.addToBacklog()">
+                <input type="text" id="new-cause-input" placeholder="Nouvelle cause..." onkeypress="if(event.key === 'Enter') app.addToBacklog()">
                 <button class="btn-primary" onclick="app.addToBacklog()">+</button>
             </div>
             <div id="backlog-list" ondragover="event.preventDefault()" ondrop="app.handleDropBacklog(event)"></div>
             <div style="margin-top: 10px; font-size: 0.8rem; color: #95a5a6; text-align: center;">
-                Astuce : Clic Droit sur une cause pour la déplacer ou modifier.
+                Utilisez ➡️ pour classer sur mobile.
             </div>
+        </div>
+
+        <!-- Section Cause Racine (NOUVEAU) -->
+        <div class="sidebar-section" style="border-bottom: none; border-left: 4px solid var(--danger); padding-left: 10px; background: #fff5f5;">
+            <h2>3. Mise en évidence Cause Racine</h2>
+            <p style="font-size:0.85rem; color:#666; margin-bottom:10px;">Clic droit sur une cause dans le diagramme pour la définir.</p>
+            <ul id="root-causes-list">
+                <!-- Rempli par JS -->
+                <li style="color:#aaa; font-weight:normal;">Aucune cause racine identifiée</li>
+            </ul>
         </div>
     </aside>
 
@@ -301,9 +338,10 @@
     </div>
 </div>
 
-<!-- MENU CONTEXTUEL -->
+<!-- MENU CONTEXTUEL / ACTIONS -->
 <div id="context-menu" class="context-menu">
     <ul>
+        <li onclick="app.ctxToggleRoot()">👑 Définir comme Cause Racine</li>
         <li onclick="app.ctxEdit()">✏️ Modifier</li>
         <li onclick="app.ctxMove()">➡️ Déplacer...</li>
         <li onclick="app.ctxToBacklog()">↩️ Renvoyer en réserve</li>
@@ -311,13 +349,13 @@
     </ul>
 </div>
 
-<!-- MODAL DÉPLACEMENT -->
+<!-- MODAL DÉPLACEMENT/AJOUT -->
 <div id="modal-move" class="modal-overlay">
     <div class="modal">
-        <h3>Déplacer la cause</h3>
-        <p id="move-cause-label" style="font-style:italic; color:#777; margin-bottom: 15px;"></p>
+        <h3 id="move-modal-title">Déplacer la cause</h3>
+        <p id="move-cause-label" style="font-style:italic; color:#777; margin-bottom: 15px; font-size: 1rem;"></p>
         <div class="form-group">
-            <label>Nouvelle catégorie :</label>
+            <label>Vers la catégorie :</label>
             <select id="move-category-select">
                 <!-- Options JS -->
             </select>
@@ -329,7 +367,7 @@
     </div>
 </div>
 
-<!-- MODAL CONFIRMATION (REMPLACE ALERT/CONFIRM) -->
+<!-- MODAL CONFIRMATION -->
 <div id="modal-confirm" class="modal-overlay">
     <div class="modal">
         <h3 id="confirm-title">Confirmation</h3>
@@ -345,7 +383,7 @@
 
 <script>
 /**
- * APPLICATION ISHIKAWA 5M - Gold Final Fix (Modal Confirm & Load Example)
+ * APPLICATION ISHIKAWA 5M - Gold Final Mobile Optimized
  */
 const CONSTANTS = {
     CATEGORIES: ["Main-d'œuvre", "Méthode", "Matière", "Milieu", "Moyens"],
@@ -400,6 +438,7 @@ class IshikawaApp {
         this.ctxItem = null;
         this.ctxCategory = null;
         this.confirmCallback = null;
+        this.moveFromBacklog = false; 
 
         document.addEventListener('click', () => {
             document.getElementById('context-menu').style.display = 'none';
@@ -422,7 +461,6 @@ class IshikawaApp {
     closeConfirmModal() {
         document.getElementById('modal-confirm').classList.remove('open');
         this.confirmCallback = null;
-        // Si c'était un chargement d'exemple annulé, reset le select
         const sel = document.getElementById('example-selector');
         if(sel && sel.value !== "") sel.value = "";
     }
@@ -438,9 +476,7 @@ class IshikawaApp {
         const example = EXAMPLES[key];
         if(!example) return;
         
-        // Use custom modal instead of window.confirm
         this.openConfirmModal("Charger cet exemple écrasera vos données actuelles. Continuer ?", () => {
-            // Reset complet
             this.data = {
                 effect: example.effect,
                 effectDetails: example.details,
@@ -450,17 +486,16 @@ class IshikawaApp {
             };
             CONSTANTS.CATEGORIES.forEach(c => this.data.causes[c] = []);
 
-            // Remplissage
             const exCauses = example.causes;
             for (const [catName, list] of Object.entries(exCauses)) {
-                // Recherche tolérante pour les catégories
                 const targetCat = CONSTANTS.CATEGORIES.find(c => c === catName);
                 if(targetCat && Array.isArray(list)) {
                     list.forEach(txt => {
                         this.data.causes[targetCat].push({
                             id: this.generateId(),
                             text: txt,
-                            children: []
+                            children: [],
+                            isRoot: false // New prop
                         });
                     });
                 }
@@ -469,7 +504,8 @@ class IshikawaApp {
             this.syncSidebarInputs();
             this.renderBacklog();
             this.renderDiagram();
-            document.getElementById('example-selector').value = ""; // Reset select visual
+            this.updateRootCauseList();
+            document.getElementById('example-selector').value = ""; 
             this.showToast("Exemple chargé !");
         });
     }
@@ -488,6 +524,7 @@ class IshikawaApp {
             this.syncSidebarInputs();
             this.renderBacklog();
             this.renderDiagram();
+            this.updateRootCauseList();
             this.showToast("Nouveau diagramme prêt");
         });
     }
@@ -524,10 +561,18 @@ class IshikawaApp {
         this.ctxCategory = category;
 
         const menu = document.getElementById('context-menu');
-        let x = e.pageX;
-        let y = e.pageY;
-        menu.style.left = `${x}px`;
-        menu.style.top = `${y}px`;
+        
+        if (window.innerWidth < 768) {
+            menu.style.left = '50%';
+            menu.style.top = '50%';
+            menu.style.transform = 'translate(-50%, -50%)';
+            menu.style.position = 'fixed';
+        } else {
+            menu.style.left = `${e.pageX}px`;
+            menu.style.top = `${e.pageY}px`;
+            menu.style.transform = 'none';
+            menu.style.position = 'absolute';
+        }
         menu.style.display = 'block';
     }
 
@@ -539,18 +584,28 @@ class IshikawaApp {
             this.ctxItem.text = newTxt.trim();
             this.renderDiagram();
             this.renderBacklog();
+            this.updateRootCauseList();
         }
+    }
+
+    ctxToggleRoot() {
+        document.getElementById('context-menu').style.display = 'none';
+        if(!this.ctxItem) return;
+        
+        this.ctxItem.isRoot = !this.ctxItem.isRoot;
+        this.renderDiagram();
+        this.updateRootCauseList();
+        this.showToast(this.ctxItem.isRoot ? "Cause racine identifiée !" : "Cause racine retirée");
     }
 
     ctxDelete() {
         document.getElementById('context-menu').style.display = 'none';
         if(!this.ctxItem) return;
         
-        // Utilisation modal confirmation pour suppression aussi ?
-        // Pour l'instant prompt standard OK car moins critique, ou direct suppression
         if(confirm(`Supprimer "${this.ctxItem.text}" ?`)) {
             this.removeItemFromDiagram(this.ctxItem.id);
             this.renderDiagram();
+            this.updateRootCauseList();
         }
     }
 
@@ -560,29 +615,46 @@ class IshikawaApp {
         
         const removed = this.removeItemFromDiagram(this.ctxItem.id);
         if(removed) {
+            removed.isRoot = false; // Reset root if moved to backlog
             this.data.backlog.push(removed);
             this.renderBacklog();
             this.renderDiagram();
+            this.updateRootCauseList();
             this.showToast("Renvoyé en réserve");
         }
     }
 
+    // --- MOVE MODAL ---
     ctxMove() {
         document.getElementById('context-menu').style.display = 'none';
         if(!this.ctxItem) return;
+        this.moveFromBacklog = false;
+        this.openMoveModalCommon(this.ctxItem, this.ctxCategory);
+    }
 
+    openMoveModalForBacklog(id) {
+        const item = this.data.backlog.find(i => i.id === id);
+        if(!item) return;
+        this.ctxItem = item;
+        this.moveFromBacklog = true;
+        this.openMoveModalCommon(item, null);
+    }
+
+    openMoveModalCommon(item, currentCategory) {
         const modal = document.getElementById('modal-move');
         const select = document.getElementById('move-category-select');
         const label = document.getElementById('move-cause-label');
+        const title = document.getElementById('move-modal-title');
         
-        label.textContent = `Cause : "${this.ctxItem.text}"`;
+        title.textContent = this.moveFromBacklog ? "Classer la cause" : "Déplacer la cause";
+        label.textContent = `"${item.text}"`;
         select.innerHTML = '';
         
         CONSTANTS.CATEGORIES.forEach(cat => {
             const opt = document.createElement('option');
             opt.value = cat;
             opt.textContent = cat;
-            if(cat === this.ctxCategory) opt.disabled = true;
+            if(currentCategory && cat === currentCategory) opt.disabled = true;
             select.appendChild(opt);
         });
 
@@ -599,12 +671,23 @@ class IshikawaApp {
         
         if(!this.ctxItem || !targetCat) return;
 
-        const itemToMove = this.removeItemFromDiagram(this.ctxItem.id);
+        let itemToMove = null;
+
+        if (this.moveFromBacklog) {
+            this.removeFromBacklog(this.ctxItem.id);
+            itemToMove = this.ctxItem;
+        } else {
+            itemToMove = this.removeItemFromDiagram(this.ctxItem.id);
+        }
+        
         if(itemToMove) {
             this.data.causes[targetCat].push(itemToMove);
             this.renderDiagram();
-            this.showToast(`Déplacé vers ${targetCat}`);
+            this.renderBacklog();
+            this.updateRootCauseList();
+            this.showToast(`Classé dans ${targetCat}`);
         }
+        
         this.closeMoveModal();
     }
 
@@ -613,7 +696,7 @@ class IshikawaApp {
         const input = document.getElementById('new-cause-input');
         const text = input.value.trim();
         if (!text) return;
-        this.data.backlog.push({ id: this.generateId(), text: text, children: [] });
+        this.data.backlog.push({ id: this.generateId(), text: text, children: [], isRoot: false });
         input.value = "";
         this.renderBacklog();
     }
@@ -626,30 +709,6 @@ class IshikawaApp {
     updateBacklogItem(id, newText) {
         const item = this.data.backlog.find(i => i.id === id);
         if (item) item.text = newText;
-    }
-
-    reset() {
-        if (!confirm("Voulez-vous vraiment tout effacer et créer un nouveau diagramme ?")) return;
-        
-        // REINITIALISATION COMPLETE
-        this.data = {
-            effect: "Problème à analyser...",
-            effectDetails: "",
-            causes: {}, 
-            backlog: [], 
-            nextId: 1
-        };
-        CONSTANTS.CATEGORIES.forEach(c => this.data.causes[c] = []);
-        
-        // Reset Inputs explicitly
-        const titleInput = document.getElementById('sb-effect-title');
-        const descInput = document.getElementById('sb-effect-desc');
-        if(titleInput) titleInput.value = "";
-        if(descInput) descInput.value = "";
-        
-        this.renderBacklog();
-        this.renderDiagram();
-        this.showToast("Nouveau diagramme prêt");
     }
 
     // --- DATA TREE UTILS ---
@@ -682,6 +741,30 @@ class IshikawaApp {
             }
         }
         return null;
+    }
+
+    updateRootCauseList() {
+        const listEl = document.getElementById('root-causes-list');
+        listEl.innerHTML = '';
+        let found = false;
+
+        const scan = (list) => {
+            list.forEach(item => {
+                if(item.isRoot) {
+                    found = true;
+                    const li = document.createElement('li');
+                    li.innerHTML = `👑 ${item.text}`;
+                    listEl.appendChild(li);
+                }
+                if(item.children) scan(item.children);
+            });
+        };
+
+        CONSTANTS.CATEGORIES.forEach(c => scan(this.data.causes[c]));
+
+        if(!found) {
+            listEl.innerHTML = '<li style="color:#aaa; font-weight:normal;">Aucune cause racine identifiée</li>';
+        }
     }
 
     // --- DRAG & DROP ---
@@ -718,6 +801,7 @@ class IshikawaApp {
             this.data.causes[category].push(itemToMove);
             this.renderDiagram();
             this.renderBacklog();
+            this.updateRootCauseList();
         }
         this.dragSource = null;
     }
@@ -729,7 +813,6 @@ class IshikawaApp {
         const { source, item } = this.dragSource;
         if (source === 'diagram' && item.id === targetId) return;
 
-        // Si profondeur limite atteinte, on drop dans la catégorie parente
         if (currentDepth >= 1) {
             this.handleDropCategory(e, category);
             return;
@@ -755,6 +838,7 @@ class IshikawaApp {
             targetItem.children.push(itemToMove);
             this.renderDiagram();
             this.renderBacklog();
+            this.updateRootCauseList();
         }
         this.dragSource = null;
     }
@@ -766,9 +850,11 @@ class IshikawaApp {
         
         const removed = this.removeItemFromDiagram(this.dragSource.item.id);
         if(removed) {
+            removed.isRoot = false;
             this.data.backlog.push(removed);
             this.renderBacklog();
             this.renderDiagram();
+            this.updateRootCauseList();
         }
         this.dragSource = null;
     }
@@ -786,7 +872,10 @@ class IshikawaApp {
             div.ondragstart = (e) => this.handleDragStart(e, 'backlog', item);
             div.ondragend = (e) => this.handleDragEnd(e);
             div.innerHTML = `
-                <div class="cause-text" contenteditable="true" onblur="app.updateBacklogItem(${item.id}, this.innerText)">${item.text}</div>
+                <div style="display:flex; align-items:center; flex:1; overflow:hidden;">
+                    <button class="btn-sm" onclick="app.openMoveModalForBacklog(${item.id})">➡️</button>
+                    <div class="cause-text" contenteditable="true" onblur="app.updateBacklogItem(${item.id}, this.innerText)">${item.text}</div>
+                </div>
                 <div class="card-actions"><span onclick="app.removeFromBacklog(${item.id})">×</span></div>
             `;
             list.appendChild(div);
@@ -798,7 +887,6 @@ class IshikawaApp {
         const svg = document.getElementById('diagram-svg');
         while (svg.firstChild) svg.removeChild(svg.firstChild);
 
-        // Marker (couleur en dur pour export)
         const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
         const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
         marker.setAttribute("id", "arrowhead"); marker.setAttribute("markerWidth", "10");
@@ -806,13 +894,11 @@ class IshikawaApp {
         marker.setAttribute("orient", "auto");
         const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
         polygon.setAttribute("points", "0 0, 10 3.5, 0 7"); 
-        polygon.setAttribute("fill", "#1a1a1a"); // Inline color
+        polygon.setAttribute("fill", "#1a1a1a");
         marker.appendChild(polygon); defs.appendChild(marker); svg.appendChild(defs);
 
-        // Spine
         this.drawSvgLine(svg, CONSTANTS.SPINE_START, CONSTANTS.SPINE_Y, CONSTANTS.SPINE_END, CONSTANTS.SPINE_Y, 'svg-spine', "#1a1a1a", 'url(#arrowhead)');
 
-        // Effect Head
         const headGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
         headGroup.setAttribute("class", "effect-group");
         headGroup.setAttribute("transform", `translate(${CONSTANTS.SPINE_END + 10}, ${CONSTANTS.SPINE_Y - 50})`);
@@ -820,7 +906,6 @@ class IshikawaApp {
 
         const headRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         headRect.setAttribute("width", 260); headRect.setAttribute("height", 100);
-        // INLINE STYLES FOR EXPORT
         headRect.setAttribute("fill", "white");
         headRect.setAttribute("stroke", "#1a1a1a");
         headRect.setAttribute("stroke-width", "3");
@@ -834,7 +919,7 @@ class IshikawaApp {
         const effectTitle = this.data.effect && this.data.effect.trim() !== "" ? (this.data.effect.length > 25 ? this.data.effect.substring(0,23)+"..." : this.data.effect) : "Saisir un effet...";
         const headTitle = document.createElementNS("http://www.w3.org/2000/svg", "text");
         headTitle.textContent = effectTitle;
-        headTitle.setAttribute("x", 130); headTitle.setAttribute("y", 45); // Centré
+        headTitle.setAttribute("x", 130); headTitle.setAttribute("y", 45); 
         headTitle.setAttribute("text-anchor", "middle"); 
         headTitle.setAttribute("fill", "#1a1a1a");
         headTitle.setAttribute("font-weight", "bold");
@@ -843,7 +928,7 @@ class IshikawaApp {
         const headDesc = document.createElementNS("http://www.w3.org/2000/svg", "text");
         const details = this.data.effectDetails || "Détails (QQOQCP)...";
         headDesc.textContent = details.length > 30 ? details.substring(0,28)+"..." : details;
-        headDesc.setAttribute("x", 130); headDesc.setAttribute("y", 75); // Centré
+        headDesc.setAttribute("x", 130); headDesc.setAttribute("y", 75); 
         headDesc.setAttribute("text-anchor", "middle"); 
         headDesc.setAttribute("fill", "#555");
         headDesc.setAttribute("font-size", "14px");
@@ -854,7 +939,6 @@ class IshikawaApp {
         headGroup.appendChild(headDesc);
         svg.appendChild(headGroup);
 
-        // 5M Branches
         const spacing = 190; 
         const startX = 200;
         
@@ -943,7 +1027,11 @@ class IshikawaApp {
         g.ondragstart = (e) => { e.stopPropagation(); this.handleDragStart(e, 'diagram', item); };
         g.ondragend = (e) => this.handleDragEnd(e);
         
-        // CONTEXT MENU TRIGGER
+        g.onclick = (e) => {
+            e.stopPropagation();
+            app.showContextMenu(e, item, category);
+        };
+        
         g.oncontextmenu = (e) => { 
             e.preventDefault(); 
             e.stopPropagation(); 
@@ -955,34 +1043,34 @@ class IshikawaApp {
             g.ondrop = (e) => this.handleDropOnCause(e, item.id, depth, category);
         }
 
-        g.ondblclick = (e) => {
-            e.stopPropagation();
-            const newTxt = prompt("Modifier:", item.text);
-            if (newTxt === null) return;
-            if (newTxt.trim() === "") this.removeItemFromDiagram(item.id);
-            else item.text = newTxt;
-            this.renderDiagram();
-        };
-
-        const padding = 6; const charWidth = 7;
-        const width = Math.max(80, item.text.length * charWidth + padding * 2); const height = 24;
+        const padding = 8; 
+        const charWidth = 8.5; 
+        const width = Math.max(90, item.text.length * charWidth + padding * 2); 
+        const height = 30; 
         
         const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         rect.setAttribute("x", -5); rect.setAttribute("y", -height/2);
         rect.setAttribute("width", width); rect.setAttribute("height", height);
-        // INLINE STYLES FOR EXPORT
-        rect.setAttribute("fill", "white");
-        rect.setAttribute("stroke", color);
-        rect.setAttribute("stroke-width", "1");
+        
+        // --- STYLE CAUSE RACINE VS NORMALE (Inline for export) ---
+        if(item.isRoot) {
+            rect.setAttribute("fill", "#fff5f5");
+            rect.setAttribute("stroke", "#e74c3c"); // Highlight color
+            rect.setAttribute("stroke-width", "3");
+        } else {
+            rect.setAttribute("fill", "white");
+            rect.setAttribute("stroke", color);
+            rect.setAttribute("stroke-width", "1");
+        }
         rect.setAttribute("rx", "4");
         
         const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.textContent = item.text.length > 22 ? item.text.substring(0,20)+"..." : item.text;
-        text.setAttribute("dy", 4); text.setAttribute("dx", 5);
-        // INLINE STYLES
+        text.textContent = item.text.length > 25 ? item.text.substring(0,23)+"..." : item.text;
+        text.setAttribute("dy", 5); text.setAttribute("dx", 5);
         text.setAttribute("fill", "#2d3436");
-        text.setAttribute("font-size", "12px");
-        text.setAttribute("pointer-events", "none"); // Important pour click
+        text.setAttribute("font-size", "14px"); 
+        text.setAttribute("font-weight", item.isRoot ? "800" : "600");
+        text.setAttribute("pointer-events", "none");
 
         g.appendChild(rect); g.appendChild(text);
         g.appendChild(document.createElementNS("http://www.w3.org/2000/svg", "title")).textContent = item.text;
@@ -994,7 +1082,6 @@ class IshikawaApp {
         line.setAttribute("x1", x1); line.setAttribute("y1", y1);
         line.setAttribute("x2", x2); line.setAttribute("y2", y2);
         
-        // Inline styles par défaut selon classe
         if(className === 'svg-spine') {
             line.setAttribute("stroke", "#1a1a1a");
             line.setAttribute("stroke-width", "6");
@@ -1017,13 +1104,11 @@ class IshikawaApp {
 
     exportImage() {
         const svg = document.getElementById('diagram-svg');
-        const clone = svg.cloneNode(true); // Clone to manipulate
+        const clone = svg.cloneNode(true); 
 
-        // Force explicit dimensions on the root SVG for rendering logic
         clone.setAttribute("width", CONSTANTS.SVG_W);
         clone.setAttribute("height", CONSTANTS.SVG_H);
 
-        // Remove UI elements that might cause rendering issues or clutter
         const dropZones = clone.querySelectorAll('.drop-zone');
         dropZones.forEach(el => el.remove());
 
@@ -1035,16 +1120,13 @@ class IshikawaApp {
         
         img.onload = () => {
             const canvas = document.createElement('canvas');
-            // Taille x1.5 pour bonne qualité
             canvas.width = CONSTANTS.SVG_W * 1.5; 
             canvas.height = CONSTANTS.SVG_H * 1.5;
             const ctx = canvas.getContext('2d');
             
-            // Fond blanc explicite
             ctx.fillStyle = "white"; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Draw strictly to canvas bounds to prevent cropping
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             
             const a = document.createElement('a');
