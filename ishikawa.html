@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Générateur Ishikawa 5M - Edition Gold</title>
+    <title>Ishikawa 5M - Edition Gold Final Fix</title>
     <style>
         :root {
             --primary: #1a1a1a;
@@ -44,20 +44,7 @@
         h1 { margin: 0; font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
         h1 span { color: white; font-weight: 300; font-size: 0.9rem; opacity: 0.8; }
 
-        .toolbar { display: flex; gap: 10px; align-items: center; }
-
-        .toolbar select {
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--accent);
-            background-color: #333;
-            color: white;
-            font-size: 0.9rem;
-            cursor: pointer;
-            outline: none;
-            transition: background 0.2s;
-        }
-        .toolbar select:hover { background-color: #444; }
+        .toolbar { display: flex; gap: 10px; }
 
         button {
             border: none; padding: 8px 14px; border-radius: 6px;
@@ -199,7 +186,7 @@
         .context-menu li.danger { color: var(--danger); }
         .context-menu li.danger:hover { background-color: #fff5f5; }
 
-        /* --- MODAL --- */
+        /* --- MODAL MOVE --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); z-index: 4000;
@@ -243,17 +230,10 @@
 <header>
     <h1>Générateur diagramme Ishikawa <span>avec classification 5M</span></h1>
     <div class="toolbar">
-        <select id="example-selector" onchange="app.loadExample(this.value)">
-            <option value="">📂 Charger un exemple...</option>
-            <option value="pizza">🍕 Pizza Brûlée</option>
-            <option value="livraison">🚚 Retard Livraison</option>
-        </select>
-        
-        <button class="btn-secondary" onclick="app.requestReset()" title="Créer un nouveau diagramme vide">
-            <svg class="btn-icon" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-            Nouveau
+        <button class="btn-secondary" onclick="app.reset()" title="Tout effacer">
+            <svg class="btn-icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            Tout effacer
         </button>
-        
         <button class="btn-primary" onclick="app.exportImage()" title="Export JPEG">
             <svg class="btn-icon" viewBox="0 0 24 24"><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/><circle cx="12" cy="9" r="3.2"/></svg>
             JPEG
@@ -329,62 +309,25 @@
     </div>
 </div>
 
-<!-- MODAL CONFIRMATION (REMPLACE ALERT/CONFIRM) -->
-<div id="modal-confirm" class="modal-overlay">
-    <div class="modal">
-        <h3 id="confirm-title">Confirmation</h3>
-        <p id="confirm-message">Êtes-vous sûr ?</p>
-        <div class="modal-actions">
-            <button class="btn-secondary" onclick="app.closeConfirmModal()">Annuler</button>
-            <button class="btn-primary" onclick="app.onConfirmYes()">Oui, continuer</button>
-        </div>
-    </div>
-</div>
-
 <div id="toast">Action effectuée</div>
 
 <script>
 /**
- * APPLICATION ISHIKAWA 5M - Gold Final Fix (Modal Confirm & Load Example)
+ * APPLICATION ISHIKAWA 5M - Gold Final Fix (JPEG & DnD & Layout)
  */
 const CONSTANTS = {
     CATEGORIES: ["Main-d'œuvre", "Méthode", "Matière", "Milieu", "Moyens"],
     CAT_COLORS: ["#c0392b", "#2980b9", "#27ae60", "#8e44ad", "#d35400"],
-    SVG_W: 1350, SVG_H: 700, 
-    SPINE_Y: 350, SPINE_START: 50, SPINE_END: 1050, 
+    SVG_W: 1350, SVG_H: 700, // Largeur augmentée pour accueillir l'allongement de la flèche
+    SPINE_Y: 350, SPINE_START: 50, SPINE_END: 1050, // Flèche allongée vers la droite (1000 -> 1050)
     
     ICONS: {
         "Main-d'œuvre": "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z", 
         "Méthode": "M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z",
         "Matière": "M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.32-.18.78-.18 1.14 0l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15 6.04 7.5 12 10.85l5.96-3.35L12 4.15zM5 15.91l6 3.38v-6.71L5 9.21v6.7z", 
         "Milieu": "M19.36 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96z", 
-        "Moyens": "M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z",
+        "Moyens": "M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z", 
         "Effect": "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" 
-    }
-};
-
-const EXAMPLES = {
-    pizza: {
-        effect: "Pizza Brûlée",
-        details: "La pizza est sortie calcinée après 15min de cuisson.",
-        causes: {
-            "Main-d'œuvre": ["Inattention", "Oubli minuteur", "Fatigue"],
-            "Méthode": ["Cuisson trop longue", "Température max"],
-            "Matière": ["Pâte trop fine", "Sauce sucrée"],
-            "Milieu": ["Cuisine sombre"],
-            "Moyens": ["Four déréglé", "Thermostat HS"]
-        }
-    },
-    livraison: {
-        effect: "Retard Livraison",
-        details: "Le colis client est arrivé avec 48h de retard.",
-        causes: {
-            "Main-d'œuvre": ["Chauffeur malade", "Erreur d'adresse"],
-            "Méthode": ["Trajet non optimisé"],
-            "Matière": ["Colis fragile", "Étiquette illisible"],
-            "Milieu": ["Embouteillages", "Neige"],
-            "Moyens": ["Camion en panne", "GPS défectueux"]
-        }
     }
 };
 
@@ -397,10 +340,12 @@ class IshikawaApp {
         };
         CONSTANTS.CATEGORIES.forEach(c => this.data.causes[c] = []);
         this.dragSource = null;
+        
+        // Context Menu State
         this.ctxItem = null;
         this.ctxCategory = null;
-        this.confirmCallback = null;
 
+        // Global click to hide context menu
         document.addEventListener('click', () => {
             document.getElementById('context-menu').style.display = 'none';
         });
@@ -411,86 +356,6 @@ class IshikawaApp {
     }
 
     generateId() { return this.data.nextId++; }
-
-    // --- MODAL CONFIRMATION LOGIC ---
-    openConfirmModal(msg, actionFn) {
-        document.getElementById('confirm-message').textContent = msg;
-        document.getElementById('modal-confirm').classList.add('open');
-        this.confirmCallback = actionFn;
-    }
-
-    closeConfirmModal() {
-        document.getElementById('modal-confirm').classList.remove('open');
-        this.confirmCallback = null;
-        // Si c'était un chargement d'exemple annulé, reset le select
-        const sel = document.getElementById('example-selector');
-        if(sel && sel.value !== "") sel.value = "";
-    }
-
-    onConfirmYes() {
-        if(this.confirmCallback) this.confirmCallback();
-        this.closeConfirmModal();
-    }
-
-    // --- EXAMPLE LOADING ---
-    loadExample(key) {
-        if(!key) return;
-        const example = EXAMPLES[key];
-        if(!example) return;
-        
-        // Use custom modal instead of window.confirm
-        this.openConfirmModal("Charger cet exemple écrasera vos données actuelles. Continuer ?", () => {
-            // Reset complet
-            this.data = {
-                effect: example.effect,
-                effectDetails: example.details,
-                causes: {},
-                backlog: [],
-                nextId: 1
-            };
-            CONSTANTS.CATEGORIES.forEach(c => this.data.causes[c] = []);
-
-            // Remplissage
-            const exCauses = example.causes;
-            for (const [catName, list] of Object.entries(exCauses)) {
-                // Recherche tolérante pour les catégories
-                const targetCat = CONSTANTS.CATEGORIES.find(c => c === catName);
-                if(targetCat && Array.isArray(list)) {
-                    list.forEach(txt => {
-                        this.data.causes[targetCat].push({
-                            id: this.generateId(),
-                            text: txt,
-                            children: []
-                        });
-                    });
-                }
-            }
-
-            this.syncSidebarInputs();
-            this.renderBacklog();
-            this.renderDiagram();
-            document.getElementById('example-selector').value = ""; // Reset select visual
-            this.showToast("Exemple chargé !");
-        });
-    }
-
-    requestReset() {
-        this.openConfirmModal("Voulez-vous vraiment tout effacer et créer un nouveau diagramme ?", () => {
-            this.data = {
-                effect: "Problème à analyser...",
-                effectDetails: "",
-                causes: {}, 
-                backlog: [], 
-                nextId: 1
-            };
-            CONSTANTS.CATEGORIES.forEach(c => this.data.causes[c] = []);
-            
-            this.syncSidebarInputs();
-            this.renderBacklog();
-            this.renderDiagram();
-            this.showToast("Nouveau diagramme prêt");
-        });
-    }
 
     // --- EFFECT & SIDEBAR ---
     syncSidebarInputs() {
@@ -524,8 +389,11 @@ class IshikawaApp {
         this.ctxCategory = category;
 
         const menu = document.getElementById('context-menu');
+        
+        // Positionnement intelligent
         let x = e.pageX;
         let y = e.pageY;
+        
         menu.style.left = `${x}px`;
         menu.style.top = `${y}px`;
         menu.style.display = 'block';
@@ -538,16 +406,13 @@ class IshikawaApp {
         if(newTxt !== null && newTxt.trim() !== "") {
             this.ctxItem.text = newTxt.trim();
             this.renderDiagram();
-            this.renderBacklog();
+            this.renderBacklog(); // Au cas où
         }
     }
 
     ctxDelete() {
         document.getElementById('context-menu').style.display = 'none';
         if(!this.ctxItem) return;
-        
-        // Utilisation modal confirmation pour suppression aussi ?
-        // Pour l'instant prompt standard OK car moins critique, ou direct suppression
         if(confirm(`Supprimer "${this.ctxItem.text}" ?`)) {
             this.removeItemFromDiagram(this.ctxItem.id);
             this.renderDiagram();
@@ -582,7 +447,7 @@ class IshikawaApp {
             const opt = document.createElement('option');
             opt.value = cat;
             opt.textContent = cat;
-            if(cat === this.ctxCategory) opt.disabled = true;
+            if(cat === this.ctxCategory) opt.disabled = true; // Désactiver catégorie actuelle
             select.appendChild(opt);
         });
 
@@ -599,12 +464,16 @@ class IshikawaApp {
         
         if(!this.ctxItem || !targetCat) return;
 
+        // Retirer de l'ancien emplacement
         const itemToMove = this.removeItemFromDiagram(this.ctxItem.id);
+        
         if(itemToMove) {
+            // Ajouter au nouvel emplacement
             this.data.causes[targetCat].push(itemToMove);
             this.renderDiagram();
             this.showToast(`Déplacé vers ${targetCat}`);
         }
+        
         this.closeMoveModal();
     }
 
@@ -629,27 +498,15 @@ class IshikawaApp {
     }
 
     reset() {
-        if (!confirm("Voulez-vous vraiment tout effacer et créer un nouveau diagramme ?")) return;
-        
-        // REINITIALISATION COMPLETE
-        this.data = {
-            effect: "Problème à analyser...",
-            effectDetails: "",
-            causes: {}, 
-            backlog: [], 
-            nextId: 1
-        };
+        if (!confirm("Voulez-vous vraiment tout effacer ?")) return;
+        this.data.effect = "";
+        this.data.effectDetails = "";
+        this.data.backlog = [];
         CONSTANTS.CATEGORIES.forEach(c => this.data.causes[c] = []);
-        
-        // Reset Inputs explicitly
-        const titleInput = document.getElementById('sb-effect-title');
-        const descInput = document.getElementById('sb-effect-desc');
-        if(titleInput) titleInput.value = "";
-        if(descInput) descInput.value = "";
-        
+        this.syncSidebarInputs();
         this.renderBacklog();
         this.renderDiagram();
-        this.showToast("Nouveau diagramme prêt");
+        this.showToast("Données effacées");
     }
 
     // --- DATA TREE UTILS ---
@@ -834,7 +691,7 @@ class IshikawaApp {
         const effectTitle = this.data.effect && this.data.effect.trim() !== "" ? (this.data.effect.length > 25 ? this.data.effect.substring(0,23)+"..." : this.data.effect) : "Saisir un effet...";
         const headTitle = document.createElementNS("http://www.w3.org/2000/svg", "text");
         headTitle.textContent = effectTitle;
-        headTitle.setAttribute("x", 130); headTitle.setAttribute("y", 45); // Centré
+        headTitle.setAttribute("x", 130); headTitle.setAttribute("y", 40); // Centré
         headTitle.setAttribute("text-anchor", "middle"); 
         headTitle.setAttribute("fill", "#1a1a1a");
         headTitle.setAttribute("font-weight", "bold");
@@ -843,7 +700,7 @@ class IshikawaApp {
         const headDesc = document.createElementNS("http://www.w3.org/2000/svg", "text");
         const details = this.data.effectDetails || "Détails (QQOQCP)...";
         headDesc.textContent = details.length > 30 ? details.substring(0,28)+"..." : details;
-        headDesc.setAttribute("x", 130); headDesc.setAttribute("y", 75); // Centré
+        headDesc.setAttribute("x", 130); headDesc.setAttribute("y", 70); // Centré
         headDesc.setAttribute("text-anchor", "middle"); 
         headDesc.setAttribute("fill", "#555");
         headDesc.setAttribute("font-size", "14px");
