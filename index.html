@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil - Simulations Probabilistes</title>
+    <title>QualiTools - Accueil</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
             --primary: #1a1a1a;
@@ -28,19 +29,23 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
+            padding: 20px;
         }
         .main-content {
             background: var(--panel-bg);
-            padding: 4rem;
+            padding: 3rem;
+            width: 100%;
+            max-width: 1000px;
             border-radius: 12px;
             border: 2px solid var(--accent);
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
         }
         .btn-gold {
             background-color: var(--accent);
@@ -51,8 +56,9 @@
             padding: 1rem 2rem;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 1.25rem;
-            margin: 1rem;
+            font-size: 1rem;
+            margin: 0.5rem;
+            width: 100%;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .btn-gold:hover {
@@ -62,16 +68,101 @@
         .btn-gold:active {
             transform: translateY(1px);
         }
+        .section-title {
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--accent-light);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+        footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #888;
+        }
     </style>
 </head>
 <body>
     <div class="main-content">
-        <h1 class="text-3xl font-bold text-[var(--accent-text)] mb-4 tracking-widest uppercase">Simulations Probabilistes</h1>
-        <p class="text-gray-tify-center gap-8">
-            <a href="galton.html" class="btn-gold">Planche de Galton</a>
-            <a href="lance-de-des.html" class="btn-gold">Lancer de Dés</a>
-            <a href="ishikawa.html" class="btn-gold">Ishikawa</a>
+        <h1 class="text-4xl font-bold text-[var(--accent-text)] mb-2 tracking-widest uppercase">QualiTools</h1>
+        <p class="text-gray-500 mb-8 text-lg">Suite d'outils pour la Qualité et la Simulation Probabiliste</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Section Qualité -->
+            <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <h2 class="section-title">Outils Qualité</h2>
+                <p class="text-sm text-gray-600 mb-4 h-10">Méthodes de résolution de problèmes et d'analyse.</p>
+                <div class="flex flex-col gap-2">
+                    <a href="ishikawa.html" class="btn-gold">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="fish" class="w-8 h-8 mb-1"></i>
+                            <span class="block">Ishikawa (5M)</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-75">Diagramme causes-effets</span>
+                    </a>
+                    <a href="qqoqcp.html" class="btn-gold">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="clipboard-list" class="w-8 h-8 mb-1"></i>
+                            <span class="block">QQOQCP</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-75">Analyse de contexte</span>
+                    </a>
+                    <a href="5pourquoi.html" class="btn-gold">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="list-tree" class="w-8 h-8 mb-1"></i>
+                            <span class="block">5 Pourquoi</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-75">Arbre des causes racines</span>
+                    </a>
+                    <a href="analyse-donnees.html" class="btn-gold">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="bar-chart-3" class="w-8 h-8 mb-1"></i>
+                            <span class="block">Atelier Histogramme</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-75">Construction et Analyse de Données</span>
+                    </a>
+                    <a href="pareto.html" class="btn-gold">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="trending-up" class="w-8 h-8 mb-1"></i>
+                            <span class="block">Diagramme de Pareto</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-75">Loi des 80/20</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Section Simulation -->
+            <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <h2 class="section-title">Simulations</h2>
+                <p class="text-sm text-gray-600 mb-4 h-10">Visualisation de lois statistiques et probabilités.</p>
+                <div class="flex flex-col gap-2">
+                    <a href="galton.html" class="btn-gold">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="git-graph" class="w-8 h-8 mb-1"></i>
+                            <span class="block">Planche de Galton</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-75">Distribution Normale</span>
+                    </a>
+                    <a href="lance-de-des.html" class="btn-gold">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="dices" class="w-8 h-8 mb-1"></i>
+                            <span class="block">Lancer de Dés</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-75">Théorème Central Limite</span>
+                    </a>
+                </div>
+            </div>
         </div>
+
+        <footer>
+            <p>&copy; 2023 QualiTools Suite. Tous droits réservés.</p>
+            <p class="mt-1">Développé pour l'amélioration continue et la pédagogie.</p>
+        </footer>
     </div>
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>

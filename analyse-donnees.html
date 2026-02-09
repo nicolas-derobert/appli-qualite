@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Atelier de l'Histogramme - Apprentissage Interactif</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel pour le JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --accent: #cfa346;
+            --accent-text: #856404;
+            --accent-hover: #b88e35;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; color: #333; }
+        
+        /* Utility classes for custom colors */
+        .bg-custom-primary { background-color: var(--primary); }
+        .text-custom-primary { color: var(--primary); }
+        .bg-custom-accent { background-color: var(--accent); }
+        .text-custom-accent { color: var(--accent-text); }
+        .border-custom-accent { border-color: var(--accent); }
+        .hover-bg-custom-accent:hover { background-color: var(--accent-hover); }
+
+        .slide-in { animation: slideIn 0.3s ease-out forwards; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Custom scrollbar */
+        .data-scroll::-webkit-scrollbar { width: 6px; }
+        .data-scroll::-webkit-scrollbar-track { background: #f1f1f1; }
+        .data-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+        .data-scroll::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        
+        /* Sliders customized with Accent color */
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--accent); cursor: pointer; margin-top: -6px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #e5e7eb; border-radius: 2px; }
+        
+        /* Drag and Drop Styles */
+        .draggable-item { cursor: grab; user-select: none; }
+        .draggable-item:active { cursor: grabbing; }
+        .draggable-item.dragging { opacity: 0.5; border: 2px dashed var(--accent); }
+        .drop-zone { transition: all 0.2s; }
+        .drop-zone.hovered { background-color: #fffbeb; border-color: var(--accent); transform: scale(1.02); }
+        
+        /* Brick Animation */
+        .brick-enter { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        // --- OUTILS MATHÉMATIQUES ---
+        const MathUtils = {
+            generateData: (n = 20, min = 0, max = 20) => {
+                const data = [];
+                for(let i=0; i<n; i++) {
+                    let u = 0, v = 0;
+                    while(u === 0) u = Math.random(); 
+                    while(v === 0) v = Math.random();
+                    let num = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+                    num = num / 10.0 + 0.5; 
+                    if (num > 1 || num < 0) num = Math.random(); 
+                    data.push(parseFloat((min + num * (max - min)).toFixed(1)));
+                }
+                return data;
+            },
+            getMean: (arr) => arr.reduce((a, b) => a + b, 0) / arr.length,
+            getStdDev: (arr, mean) => {
+                const squareDiffs = arr.map(value => Math.pow(value - mean, 2));
+                const avgSquareDiff = MathUtils.getMean(squareDiffs);
+                return Math.sqrt(avgSquareDiff);
+            },
+            getMin: (arr) => Math.min(...arr),
+            getMax: (arr) => Math.max(...arr),
+            
+            getColor: (val, min, max, scheme = 'heat') => {
+                if (max === min) return '#e5e7eb';
+                const ratio = Math.max(0, Math.min(1, (val - min) / (max - min)));
+
+                switch(scheme) {
+                    case 'ocean': return `hsl(210, 90%, ${95 - ratio * 65}%)`;
+                    case 'contrast': 
+                         const hueC = 270 - (ratio * 210);
+                         const lightC = 30 + (ratio * 60);
+                         return `hsl(${hueC}, 70%, ${lightC}%)`;
+                    case 'heat':
+                    default:
+                        const hue = 240 - (ratio * 240);
+                        return `hsl(${hue}, 85%, 60%)`;
+                }
+            },
+            getTextColor: (val, min, max, scheme = 'heat') => {
+                const ratio = Math.max(0, Math.min(1, (val - min) / (max - min)));
+                if (scheme === 'ocean') return ratio > 0.5 ? '#fff' : '#1f2937';
+                if (scheme === 'contrast') return ratio < 0.5 ? '#fff' : '#1f2937'; 
+                if (scheme === 'heat') return (ratio > 0.3 && ratio < 0.7) ? '#1f2937' : '#fff';
+                return '#fff';
+            }
+        };
+
+        // --- COMPOSANTS UI ---
+
+        const Button = ({ onClick, children, variant = 'primary', disabled = false, className = '' }) => {
+            const baseStyle = "px-4 py-2 rounded-lg font-medium transition-all shadow-sm flex items-center gap-2 justify-center";
+            const variants = {
+                primary: "bg-custom-accent text-custom-primary hover-bg-custom-accent disabled:opacity-50 disabled:cursor-not-allowed",
+                secondary: "bg-white text-gray-700 border border-custom-accent hover:bg-yellow-50 disabled:opacity-50 disabled:cursor-not-allowed",
+                success: "bg-green-600 text-white hover:bg-green-700 disabled:opacity-50",
+                danger: "bg-red-100 text-red-700 hover:bg-red-200"
+            };
+            return (
+                <button onClick={onClick} disabled={disabled} className={`${baseStyle} ${variants[variant]} ${className}`}>
+                    {children}
+                </button>
+            );
+        };
+
+        const Card = ({ title, children, className = '' }) => (
+            <div className={`bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden ${className}`}>
+                {title && <div className="px-5 py-3 border-b border-gray-100 bg-gray-50 font-semibold text-gray-800">{title}</div>}
+                <div className="p-5">{children}</div>
+            </div>
+        );
+
+        const Alert = ({ type = 'info', children }) => {
+            const styles = {
+                info: 'bg-blue-50 text-blue-800 border-blue-100',
+                success: 'bg-green-50 text-green-800 border-green-100',
+                warning: 'bg-yellow-50 text-yellow-800 border-yellow-100',
+                error: 'bg-red-50 text-red-800 border-red-100',
+            };
+            return <div className={`p-3 rounded-lg border text-sm ${styles[type]} slide-in`}>{children}</div>
+        };
+
+        // --- COMPOSANTS MÉTIER ---
+
+        const HistogramChart = ({ bins, min, max, showMean, showStdDev, mean, stdDev }) => {
+            const height = 250;
+            const width = 500;
+            const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+            const chartWidth = width - margin.left - margin.right;
+            const chartHeight = height - margin.top - margin.bottom;
+
+            const maxFreq = Math.max(...bins.map(b => b.count), 4);
+            
+            const getX = (val) => ((val - min) / (max - min)) * chartWidth;
+            const getY = (count) => chartHeight - ((count / maxFreq) * chartHeight);
+
+            return (
+                <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto bg-gray-50 rounded border border-gray-200">
+                    <g transform={`translate(${margin.left}, ${margin.top})`}>
+                        <line x1={0} y1={chartHeight} x2={chartWidth} y2={chartHeight} stroke="#cbd5e1" strokeWidth="2" />
+                        <line x1={0} y1={0} x2={0} y2={chartHeight} stroke="#cbd5e1" strokeWidth="2" />
+                        
+                        {bins.map((bin, i) => {
+                            const barX = getX(bin.start);
+                            const barW = getX(bin.end) - barX;
+                            const barH = chartHeight - getY(bin.count);
+                            return (
+                                <g key={i}>
+                                    <rect 
+                                        x={barX + 1} y={getY(bin.count)} 
+                                        width={Math.max(0, barW - 2)} height={Math.max(0, barH)} 
+                                        fill="var(--accent)" opacity="0.8"
+                                        className="transition-all duration-300 ease-out hover:opacity-100"
+                                    >
+                                        <title>Intervalle [{bin.start} - {bin.end}[: {bin.count}</title>
+                                    </rect>
+                                    <text x={barX} y={chartHeight + 15} fontSize="10" fill="#64748b" textAnchor="middle">{bin.start}</text>
+                                    {bin.count > 0 && (
+                                        <text x={barX + barW/2} y={getY(bin.count) - 5} fontSize="10" fill="#1a1a1a" textAnchor="middle" fontWeight="bold">
+                                            {bin.count}
+                                        </text>
+                                    )}
+                                </g>
+                            );
+                        })}
+                        <text x={chartWidth} y={chartHeight + 15} fontSize="10" fill="#64748b" textAnchor="middle">{max}</text>
+
+                        {showMean && (
+                            <g>
+                                <line x1={getX(mean)} y1={0} x2={getX(mean)} y2={chartHeight} stroke="#1a1a1a" strokeWidth="2" strokeDasharray="5,5" />
+                            </g>
+                        )}
+                    </g>
+                </svg>
+            );
+        };
+
+        const BrickChart = ({ bins }) => {
+            return (
+                <div className="flex items-end justify-center gap-1 h-64 border-l-2 border-b-2 border-gray-300 p-2 bg-gray-50 rounded-lg overflow-x-auto">
+                    {bins.map((bin, i) => (
+                        <div key={i} className="flex flex-col-reverse items-center h-full px-1 min-w-[60px] flex-1">
+                            <div className="text-[10px] text-gray-500 mt-2 text-center leading-tight">
+                                [{bin.start}<br/>{bin.end}[
+                            </div>
+                            
+                            <div className="flex flex-col-reverse w-full gap-[1px] flex-1 justify-start">
+                                {Array.from({length: bin.count}).map((_, idx) => (
+                                    <div 
+                                        key={idx} 
+                                        className="w-full h-6 bg-custom-accent border border-yellow-600 shadow-sm rounded-sm brick-enter relative group"
+                                    >
+                                        <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                                    </div>
+                                ))}
+                            </div>
+                            
+                            <div className="text-xs font-bold text-custom-primary mb-1 min-h-[16px]">{bin.count > 0 ? bin.count : ''}</div>
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        // --- NOUVEAU : Panneau de Statistiques ---
+        const StatPanel = ({ n, min, max, mean, stdDev, step }) => {
+            const hasMinMax = min !== null && max !== null;
+            // Modification ici : hasMean n'est vrai qu'à partir de l'étape 5 (index 5) qui est "Interpréter"
+            const hasMean = step >= 5; 
+            const hasStdDev = step >= 5; 
+            const range = hasMinMax ? (max - min).toFixed(1) : '?';
+
+            const StatRow = ({ label, value, visible, highlight = false }) => (
+                <div className={`flex justify-between items-center p-2 rounded ${highlight ? 'bg-yellow-50 border border-yellow-100' : 'border-b border-gray-50'} ${!visible ? 'opacity-40 grayscale' : ''}`}>
+                    <span className="text-xs text-gray-500 font-medium uppercase">{label}</span>
+                    <span className={`font-mono font-bold ${visible ? 'text-custom-primary' : 'text-gray-300'}`}>
+                        {visible ? value : '?'}
+                    </span>
+                </div>
+            );
+
+            return (
+                <Card title="Tableau de Bord" className="h-full">
+                    <div className="space-y-1">
+                        <StatRow label="Échantillon (n)" value={n} visible={true} />
+                        <StatRow label="Minimum" value={min} visible={hasMinMax} highlight={!hasMinMax} />
+                        <StatRow label="Maximum" value={max} visible={hasMinMax} highlight={!hasMinMax} />
+                        <StatRow label="Étendue" value={range} visible={hasMinMax} />
+                        <div className="h-4"></div>
+                        <StatRow label="Moyenne" value={mean ? mean.toFixed(2) : ''} visible={hasMean} highlight={step === 5} />
+                        <StatRow label="Écart-Type" value={stdDev ? stdDev.toFixed(2) : ''} visible={hasStdDev} highlight={step === 5} />
+                    </div>
+                    
+                    {!hasMinMax && (
+                        <div className="mt-4 text-xs text-yellow-700 bg-yellow-50 p-2 rounded">
+                            Terminez l'étape 1 pour débloquer les valeurs extrêmes.
+                        </div>
+                    )}
+                </Card>
+            );
+        };
+
+        // --- COMPOSANT APP ---
+
+        const App = () => {
+            const [step, setStep] = useState(0);
+            
+            // Configuration Données
+            const [sampleSize, setSampleSize] = useState(20);
+            const [dataset, setDataset] = useState([]);
+            const [workingDataset, setWorkingDataset] = useState([]);
+            
+            // États Navigation/Validation
+            const [feedback, setFeedback] = useState(null);
+            
+            // États Step 0 (Découvrir) - SIMPLIFIÉ
+            const [foundMin, setFoundMin] = useState(null);
+            const [foundMax, setFoundMax] = useState(null);
+
+            // États Config Visuelle
+            const [isColored, setIsColored] = useState(false);
+            const [colorScheme, setColorScheme] = useState('heat'); 
+            const [isSorted, setIsSorted] = useState(false);
+            const [numClasses, setNumClasses] = useState(5);
+            const [showMean, setShowMean] = useState(false);
+            const [showStdDev, setShowStdDev] = useState(false);
+
+            // États Construction Manuelle
+            const [manualBins, setManualBins] = useState([]);
+            const [placedItemIndices, setPlacedItemIndices] = useState([]);
+
+            // Calculs Stats
+            const minVal = useMemo(() => dataset.length ? MathUtils.getMin(dataset) : 0, [dataset]);
+            const maxVal = useMemo(() => dataset.length ? MathUtils.getMax(dataset) : 0, [dataset]);
+            const meanVal = useMemo(() => dataset.length ? MathUtils.getMean(dataset) : 0, [dataset]);
+            const stdDevVal = useMemo(() => dataset.length ? MathUtils.getStdDev(dataset, meanVal) : 0, [dataset]);
+
+            // Calcul Classes Auto
+            const autoBins = useMemo(() => {
+                if (!dataset.length) return [];
+                const range = maxVal - minVal + 0.1;
+                const width = range / numClasses;
+                const result = [];
+                const stepSize = (Math.ceil(maxVal) - Math.floor(minVal)) / numClasses;
+                let currentStart = Math.floor(minVal);
+                
+                for(let i=0; i<numClasses; i++) {
+                    let end = currentStart + stepSize;
+                    if(i === numClasses - 1) end = maxVal + 0.01;
+                    const count = dataset.filter(d => d >= currentStart && d < end).length;
+                    result.push({ start: parseFloat(currentStart.toFixed(1)), end: parseFloat(end.toFixed(1)), count });
+                    currentStart = end;
+                }
+                return result;
+            }, [dataset, numClasses, minVal, maxVal]);
+
+            // Initialisation
+            useEffect(() => {
+                generateNewDataset(20);
+            }, []);
+
+            const generateNewDataset = (n) => {
+                const newData = MathUtils.generateData(n, 0, 20);
+                setDataset(newData);
+                setWorkingDataset([...newData]);
+                initManualBins(newData, 5);
+                setFoundMin(null);
+                setFoundMax(null);
+                setPlacedItemIndices([]);
+                setIsSorted(false);
+                setIsColored(false);
+                setFeedback(null);
+            };
+
+            const initManualBins = (data, k) => {
+                const min = Math.min(...data);
+                const max = Math.max(...data);
+                
+                const rangeStart = Math.floor(min);
+                const rangeEnd = Math.ceil(max);
+                const totalRange = Math.max(1, rangeEnd - rangeStart);
+                const stepSize = totalRange / k;
+                
+                const bins = [];
+                
+                // 1. Extra bin below
+                bins.push({
+                    start: parseFloat((rangeStart - stepSize).toFixed(1)),
+                    end: parseFloat(rangeStart.toFixed(1)),
+                    count: 0
+                });
+
+                // 2. Standard bins
+                let currentStart = rangeStart;
+                for(let i=0; i<k; i++) {
+                    let end = currentStart + stepSize;
+                    // Extend last bin boundary slightly to include the exact max value in the main group
+                    // This keeps the "Above" bin empty as a visual margin
+                    if (i === k - 1) {
+                         end = rangeEnd + 0.001; 
+                    }
+                    
+                    bins.push({ 
+                        start: parseFloat(currentStart.toFixed(1)), 
+                        end: parseFloat(end.toFixed(1)), 
+                        count: 0 
+                    });
+                    currentStart = end;
+                }
+
+                // 3. Extra bin above (Starts where previous ended)
+                bins.push({
+                    start: parseFloat(currentStart.toFixed(1)),
+                    end: parseFloat((currentStart + stepSize).toFixed(1)),
+                    count: 0
+                });
+
+                setManualBins(bins);
+            };
+
+            const resetApp = () => {
+                setStep(0);
+                generateNewDataset(20);
+                setSampleSize(20);
+            };
+
+            // --- Navigation Logic ---
+            const goPrev = () => {
+                if(step > 0) {
+                    setFeedback(null);
+                    setStep(s => s - 1);
+                }
+            };
+
+            const goNext = () => {
+                if(step < 5) {
+                    setFeedback(null);
+                    setStep(s => s + 1);
+                }
+            };
+
+            const canGoNext = useMemo(() => {
+                switch(step) {
+                    case 0: return foundMin !== null && foundMax !== null;
+                    case 1: return isColored; 
+                    case 2: return isSorted;
+                    case 3: return placedItemIndices.length === dataset.length;
+                    default: return true;
+                }
+            }, [step, foundMin, foundMax, isColored, isSorted, placedItemIndices, dataset]);
+
+            // --- Drag Logic ---
+            const handleDragStart = (e, val, index, type) => {
+                e.dataTransfer.setData("value", val);
+                e.dataTransfer.setData("index", index);
+                e.dataTransfer.setData("type", type);
+            };
+
+            const handleDragOver = (e) => e.preventDefault();
+
+            const handleDropMinMax = (e, target) => {
+                e.preventDefault();
+                const val = parseFloat(e.dataTransfer.getData("value"));
+                if (target === 'min') {
+                    if (val === minVal) {
+                        setFoundMin(val);
+                        setFeedback({type: 'success', msg: "Correct ! C'est bien le minimum."});
+                    } else {
+                        setFeedback({type: 'error', msg: `Erreur : ${val} n'est pas la plus petite valeur.`});
+                    }
+                } else if (target === 'max') {
+                    if (val === maxVal) {
+                        setFoundMax(val);
+                        setFeedback({type: 'success', msg: "Correct ! C'est bien le maximum."});
+                    } else {
+                        setFeedback({type: 'error', msg: `Erreur : ${val} n'est pas la plus grande valeur.`});
+                    }
+                }
+            };
+
+            const handleDropInBin = (e, binIndex) => {
+                e.preventDefault();
+                const val = parseFloat(e.dataTransfer.getData("value"));
+                const index = parseInt(e.dataTransfer.getData("index"));
+                const bin = manualBins[binIndex];
+
+                if (val >= bin.start && val < bin.end) {
+                    const newBins = [...manualBins];
+                    newBins[binIndex].count += 1;
+                    setManualBins(newBins);
+                    setPlacedItemIndices(prev => [...prev, index]);
+                    setFeedback(null);
+                } else {
+                    setFeedback({type: 'error', msg: `Oups ! ${val} ne va pas dans l'intervalle [${bin.start}; ${bin.end}[`});
+                }
+            };
+
+            const [draggedItemIndex, setDraggedItemIndex] = useState(null);
+            const handleSortDrop = (e, targetIndex) => {
+                e.preventDefault();
+                if (draggedItemIndex === null) return;
+                const newItems = [...workingDataset];
+                const item = newItems[draggedItemIndex];
+                newItems.splice(draggedItemIndex, 1);
+                newItems.splice(targetIndex, 0, item);
+                setWorkingDataset(newItems);
+                setDraggedItemIndex(null);
+            };
+
+            const autoSort = () => {
+                setWorkingDataset([...dataset].sort((a,b) => a-b));
+                setIsSorted(true);
+            };
+            const checkSort = () => {
+                 const sorted = [...dataset].sort((a,b) => a-b);
+                 if (JSON.stringify(workingDataset) === JSON.stringify(sorted)) {
+                     setIsSorted(true); setFeedback({type:'success', msg: "Bravo ! Liste triée."});
+                 } else {
+                     setFeedback({type:'warning', msg: "Ce n'est pas encore bon. Vérifiez l'ordre."});
+                 }
+            };
+
+            // --- RENDER MODULES ---
+
+            const renderStep0 = () => (
+                <div className="space-y-6 slide-in">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-2xl font-bold text-custom-primary">1. Découverte Active</h2>
+                    </div>
+
+                    <Card title="Génération des données">
+                        <div className="flex flex-col md:flex-row items-center gap-4">
+                            <div className="flex-1 w-full">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de mesures : {sampleSize}</label>
+                                <input 
+                                    type="range" min="2" max="30" 
+                                    value={sampleSize} 
+                                    onChange={(e) => setSampleSize(parseInt(e.target.value))}
+                                    className="w-full accent-yellow-500"
+                                />
+                            </div>
+                            <Button onClick={() => generateNewDataset(sampleSize)} variant="primary">
+                                Générer des mesures
+                            </Button>
+                        </div>
+                    </Card>
+
+                    <Card title="Analyse des Extrêmes">
+                        <div className="slide-in">
+                            <p className="text-gray-700 mb-4 font-medium">Glissez le Min et le Max de la grille dans les zones ci-dessous :</p>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div 
+                                    onDragOver={handleDragOver} onDrop={(e) => handleDropMinMax(e, 'min')}
+                                    className={`p-4 rounded-xl border-2 border-dashed text-center transition-all ${foundMin !== null ? 'bg-green-50 border-green-500' : 'bg-white border-custom-accent'}`}
+                                >
+                                    <div className="text-xs font-bold text-gray-400 uppercase mb-1">Minimum</div>
+                                    {foundMin !== null ? <span className="text-2xl font-bold text-green-600">{foundMin}</span> : <span className="text-gray-300 text-2xl">?</span>}
+                                </div>
+                                <div 
+                                    onDragOver={handleDragOver} onDrop={(e) => handleDropMinMax(e, 'max')}
+                                    className={`p-4 rounded-xl border-2 border-dashed text-center transition-all ${foundMax !== null ? 'bg-red-50 border-red-500' : 'bg-white border-custom-accent'}`}
+                                >
+                                    <div className="text-xs font-bold text-gray-400 uppercase mb-1">Maximum</div>
+                                    {foundMax !== null ? <span className="text-2xl font-bold text-red-600">{foundMax}</span> : <span className="text-gray-300 text-2xl">?</span>}
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+
+                    {/* Grille Draggable */}
+                    <div className="p-4 bg-gray-100 rounded-xl">
+                        <div className="flex flex-wrap gap-2 justify-center">
+                            {dataset.map((val, i) => (
+                                <div 
+                                    key={i} draggable 
+                                    onDragStart={(e) => handleDragStart(e, val, i, 'find')}
+                                    className="bg-white px-3 py-2 rounded shadow-sm border border-gray-200 cursor-grab hover:shadow-md active:cursor-grabbing text-gray-700 font-mono"
+                                >
+                                    {val}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {feedback && <Alert type={feedback.type}>{feedback.msg}</Alert>}
+                </div>
+            );
+
+            const renderStep1 = () => (
+                <div className="space-y-6 slide-in">
+                    <h2 className="text-2xl font-bold text-custom-primary">2. Mettre en forme</h2>
+                    <div className="bg-white p-6 rounded-lg border border-gray-100 shadow-sm space-y-4">
+                        
+                        <div className="flex items-center justify-between">
+                             <p className="text-gray-600">Activez les couleurs pour mieux voir les valeurs faibles (bleues) et fortes (rouges).</p>
+                             <Button onClick={() => setIsColored(true)} disabled={isColored} variant="primary">
+                                Mettre les données en couleur
+                             </Button>
+                        </div>
+                        
+                        {/* Always show grid now, colors depend on state */}
+                        <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 mt-4">
+                            <div className="flex flex-wrap gap-2 justify-center">
+                                {dataset.map((val, i) => (
+                                    <div 
+                                        key={i} 
+                                        className="px-3 py-2 rounded shadow-sm border border-gray-200 font-mono transition-colors duration-500"
+                                        style={isColored ? { 
+                                            backgroundColor: MathUtils.getColor(val, minVal, maxVal, colorScheme), 
+                                            color: MathUtils.getTextColor(val, minVal, maxVal, colorScheme) 
+                                        } : {
+                                            backgroundColor: '#fff',
+                                            color: '#333'
+                                        }}
+                                    >
+                                        {val}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {isColored && (
+                            <div className="space-y-4 slide-in pt-4 border-t border-gray-100">
+                                <p className="text-sm text-gray-600">Essayez d'autres palettes :</p>
+                                <div className="flex flex-wrap gap-2">
+                                    <button onClick={() => setColorScheme('heat')} className={`px-3 py-2 rounded border text-sm flex items-center gap-2 ${colorScheme === 'heat' ? 'bg-yellow-50 border-custom-accent ring-1 ring-yellow-500' : 'bg-white border-gray-200'}`}>
+                                        <div className="w-4 h-4 rounded-full bg-gradient-to-r from-blue-500 via-green-400 to-red-500"></div> Chaud/Froid
+                                    </button>
+                                    <button onClick={() => setColorScheme('ocean')} className={`px-3 py-2 rounded border text-sm flex items-center gap-2 ${colorScheme === 'ocean' ? 'bg-blue-50 border-blue-500 ring-1 ring-blue-500' : 'bg-white border-gray-200'}`}>
+                                        <div className="w-4 h-4 rounded-full bg-gradient-to-r from-blue-100 to-blue-800"></div> Océan
+                                    </button>
+                                    <button onClick={() => setColorScheme('contrast')} className={`px-3 py-2 rounded border text-sm flex items-center gap-2 ${colorScheme === 'contrast' ? 'bg-purple-50 border-purple-500 ring-1 ring-purple-500' : 'bg-white border-gray-200'}`}>
+                                        <div className="w-4 h-4 rounded-full bg-gradient-to-r from-purple-700 to-yellow-300"></div> Contraste
+                                    </button>
+                                </div>
+                                <Alert type="success">Les motifs apparaissent dans la grille ci-dessus !</Alert>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+
+            const renderStep2 = () => (
+                <div className="space-y-6 slide-in">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-2xl font-bold text-custom-primary">3. Trier Interactif</h2>
+                        <Button variant="secondary" onClick={autoSort} className="text-xs">⚡ Tri Auto</Button>
+                    </div>
+                    <p className="text-gray-600 mb-2">Glissez les éléments pour les mettre dans l'ordre croissant.</p>
+                    
+                    <div className="bg-gray-50 p-4 rounded-xl border border-dashed border-gray-300 min-h-[150px]">
+                        <div className="flex flex-wrap gap-2 justify-center">
+                            {workingDataset.map((val, index) => (
+                                <div
+                                    key={`${index}-${val}`}
+                                    draggable={!isSorted}
+                                    onDragStart={(e) => { setDraggedItemIndex(index); }}
+                                    onDragOver={(e) => { e.preventDefault(); }}
+                                    onDrop={(e) => handleSortDrop(e, index)}
+                                    className={`
+                                        draggable-item px-3 py-2 rounded shadow-sm border font-mono
+                                        ${draggedItemIndex === index ? 'opacity-50' : ''}
+                                        ${isSorted ? 'bg-green-50 text-green-700 border-green-200' : 'bg-white text-gray-700'}
+                                    `}
+                                    style={isColored ? {backgroundColor: MathUtils.getColor(val, minVal, maxVal, colorScheme), color: MathUtils.getTextColor(val, minVal, maxVal, colorScheme)} : {}}
+                                >
+                                    {val}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    
+                    {feedback && <Alert type={feedback.type}>{feedback.msg}</Alert>}
+                    {!isSorted && <Button onClick={checkSort}>Vérifier l'ordre</Button>}
+                    {isSorted && <Alert type="success">Ordre correct ! Vous pouvez passer à la suite.</Alert>}
+                </div>
+            );
+
+            const renderStep3 = () => (
+                <div className="space-y-6 slide-in">
+                    <h2 className="text-2xl font-bold text-custom-primary">4. Construction Manuelle</h2>
+                    <p className="text-gray-600 text-sm">
+                        Prenez les briques (valeurs) en bas et empilez-les dans la bonne colonne (intervalle).
+                    </p>
+
+                    <Card title="Votre Histogramme (Briques)" className="mb-4">
+                        <BrickChart bins={manualBins} />
+                    </Card>
+
+                    <div className="flex flex-wrap justify-center gap-2 mb-6">
+                        {manualBins.map((bin, i) => (
+                            <div 
+                                key={i}
+                                onDragOver={handleDragOver} onDrop={(e) => handleDropInBin(e, i)}
+                                className="bg-yellow-50 border-2 border-custom-accent border-dashed rounded-lg p-2 text-center h-16 flex flex-col justify-center items-center hover:bg-yellow-100 transition-colors min-w-[60px] flex-1"
+                            >
+                                <span className="text-[10px] text-gray-500 block">Déposer</span>
+                                <span className="text-xs font-bold text-yellow-800 block">[{bin.start} ; {bin.end}[</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="bg-gray-100 p-4 rounded-xl border border-gray-200">
+                        <div className="text-xs text-gray-500 mb-2 uppercase font-bold">Valeurs à placer :</div>
+                        <div className="flex flex-wrap gap-2">
+                            {[...dataset].sort((a,b)=>a-b).map((val, i) => {
+                                if (placedItemIndices.includes(i)) return null; 
+                                return (
+                                    <div 
+                                        key={i} draggable 
+                                        onDragStart={(e) => handleDragStart(e, val, i, 'build')}
+                                        className="bg-white px-2 py-1 rounded shadow-sm border border-gray-300 cursor-grab hover:shadow text-sm font-mono border-l-4 border-l-yellow-500"
+                                        style={isColored ? {
+                                            backgroundColor: MathUtils.getColor(val, minVal, maxVal, colorScheme), 
+                                            color: MathUtils.getTextColor(val, minVal, maxVal, colorScheme),
+                                            borderColor: 'rgba(0,0,0,0.1)'
+                                        } : {}}
+                                    >
+                                        {val}
+                                    </div>
+                                )
+                            })}
+                            {placedItemIndices.length === dataset.length && (
+                                <div className="text-green-600 font-bold w-full text-center py-2 animate-pulse">
+                                    Construction terminée !
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    
+                    {feedback && <Alert type={feedback.type}>{feedback.msg}</Alert>}
+                </div>
+            );
+
+            const renderStep4 = () => (
+                <div className="space-y-6 slide-in">
+                    <h2 className="text-2xl font-bold text-custom-primary">5. Analyse et Classes</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <Card title="Modifier les Classes" className="h-fit">
+                            <p className="text-sm text-gray-600 mb-4">
+                                Vous avez construit l'histogramme avec 5 classes.
+                                Que se passe-t-il si on change ce nombre ?
+                            </p>
+                            <label className="flex justify-between text-sm font-medium mb-2">
+                                <span>Nombre de classes (k)</span> <span className="text-custom-accent font-bold">{numClasses}</span>
+                            </label>
+                            <input 
+                                type="range" min="2" max="10" step="1" 
+                                value={numClasses} onChange={(e) => setNumClasses(parseInt(e.target.value))}
+                                className="w-full"
+                            />
+                        </Card>
+                        <Card title="Résultat Automatique">
+                             <HistogramChart bins={autoBins} min={Math.floor(minVal)} max={Math.ceil(maxVal)} />
+                        </Card>
+                    </div>
+                </div>
+            );
+
+            const renderStep5 = () => (
+                <div className="space-y-6 slide-in">
+                    <h2 className="text-2xl font-bold text-custom-primary">6. Interprétation</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="md:col-span-1 space-y-4">
+                            <Card title="Indicateurs Clés">
+                                <div className="space-y-2">
+                                    <label className="flex items-center justify-between p-2 hover:bg-gray-50 rounded cursor-pointer border border-transparent hover:border-gray-200">
+                                        <div className="flex items-center gap-2">
+                                            <input type="checkbox" checked={showMean} onChange={(e) => setShowMean(e.target.checked)} />
+                                            <span>Moyenne (x̄)</span>
+                                        </div>
+                                        {showMean && <span className="text-red-500 font-bold">{meanVal.toFixed(2)}</span>}
+                                    </label>
+                                    <label className="flex items-center justify-between p-2 hover:bg-gray-50 rounded cursor-pointer border border-transparent hover:border-gray-200">
+                                        <div className="flex items-center gap-2">
+                                            <input type="checkbox" checked={showStdDev} onChange={(e) => setShowStdDev(e.target.checked)} />
+                                            <span>Écart-Type (σ)</span>
+                                        </div>
+                                        {showStdDev && <span className="text-gray-500 font-bold">{stdDevVal.toFixed(2)}</span>}
+                                    </label>
+                                </div>
+                            </Card>
+                            <Button onClick={resetApp} variant="secondary" className="w-full">Recommencer Tout</Button>
+                        </div>
+                        <div className="md:col-span-2">
+                            <Card title="Visualisation Finale">
+                                <HistogramChart 
+                                    bins={autoBins} min={Math.floor(minVal)} max={Math.ceil(maxVal)}
+                                    showMean={showMean} showStdDev={showStdDev} mean={meanVal} stdDev={stdDevVal}
+                                />
+                            </Card>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // --- NAVIGATION ---
+            const steps = ['1. Découvrir', '2. Mettre en forme', '3. Trier', '4. Construire', '5. Analyser', '6. Interpréter'];
+
+            return (
+                <div className="min-h-screen pb-20 flex flex-col relative bg-[#f8f9fa]">
+                    <header className="bg-custom-primary border-b border-gray-800 sticky top-0 z-10 shrink-0 shadow-md">
+                        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <a href="index.html" className="text-gray-400 hover:text-custom-accent transition-colors flex items-center gap-2" title="Retour à l'accueil">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                                </a>
+                                <div className="h-6 w-px bg-gray-700 hidden sm:block"></div>
+                                <div className="flex items-center gap-2">
+                                    <div className="bg-custom-accent text-custom-primary p-1.5 rounded-lg">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+                                    </div>
+                                    <span className="font-bold text-custom-accent hidden sm:inline">L'Atelier Histogramme</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                {steps.map((label, s) => (
+                                    <div key={s} className="flex flex-col items-center px-1 sm:px-2">
+                                        <div className={`h-1.5 w-6 sm:w-10 rounded-full mb-1 transition-all ${step === s ? 'bg-custom-accent scale-110' : step > s ? 'bg-gray-600' : 'bg-gray-800'}`} />
+                                        <span className={`text-[8px] uppercase font-bold hidden sm:block ${step === s ? 'text-custom-accent' : 'text-gray-500'}`}>{label}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="max-w-7xl mx-auto px-4 pt-6 flex-1 w-full pb-10">
+                        <div className="flex flex-col lg:flex-row gap-6 h-full items-start">
+                            
+                            {/* Colonne Gauche : Panneau Stats (Visible tout le temps maintenant) */}
+                            <div className="w-full lg:w-48 shrink-0 lg:sticky lg:top-24 h-auto">
+                                <StatPanel 
+                                    n={dataset.length}
+                                    min={foundMin}
+                                    max={foundMax}
+                                    mean={meanVal}
+                                    stdDev={stdDevVal}
+                                    step={step}
+                                />
+                            </div>
+
+                            {/* Colonne Droite : Espace de travail Principal */}
+                            <div className="flex-1 min-w-0">
+                                {step === 0 && renderStep0()}
+                                {step === 1 && renderStep1()}
+                                {step === 2 && renderStep2()}
+                                {step === 3 && renderStep3()}
+                                {step === 4 && renderStep4()}
+                                {step === 5 && renderStep5()}
+                            </div>
+                        </div>
+                    </main>
+
+                    {/* Barre de Navigation Fixe */}
+                    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-20">
+                        <div className="max-w-7xl mx-auto flex justify-between items-center">
+                            <Button 
+                                onClick={goPrev} 
+                                disabled={step === 0} 
+                                variant="secondary"
+                            >
+                                &larr; Précédent
+                            </Button>
+                            
+                            <div className="text-gray-500 font-medium hidden sm:block">
+                                Étape {step + 1} / {steps.length} : {steps[step]}
+                            </div>
+
+                            <Button 
+                                onClick={goNext} 
+                                disabled={step === 5 || !canGoNext} 
+                                variant="primary"
+                            >
+                                {step === 5 ? "Terminé" : "Suivant"} &rarr;
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

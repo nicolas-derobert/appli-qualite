@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QualiTools - QQOQCP Unique</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel pour JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuration Tailwind avec vos couleurs -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1a1a1a',     // Noir/Gris foncé
+                        accent: {
+                            DEFAULT: '#cfa346', // Or
+                            light: '#fcf3d9',   // Or très clair (fonds)
+                            hover: '#b58b32',   // Or un peu plus foncé (hover)
+                            text: '#856404',    // Or foncé (texte sur fond clair)
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'], // Ajout pour le rapport
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- SheetJS (Excel Export) -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+    <!-- html2canvas (Screenshot) -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { background-color: #f8f9fa; overflow-x: hidden; }
+        
+        /* Styles impression PDF */
+        @media print {
+            @page { margin: 0; size: A4; }
+            body { background-color: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 9999; background: white; }
+            
+            /* Masquer tout sauf le rapport */
+            body > *:not(.print-container) { display: none; }
+            .print-container { display: block !important; }
+        }
+        
+        .print-container { display: none; }
+        
+        /* Classe utilitaire pour la capture d'écran */
+        .force-visible-for-capture {
+            display: block !important;
+            position: absolute;
+            top: -9999px;
+            left: 0;
+            width: 1000px;
+            background: white;
+            z-index: -1;
+        }
+
+        /* Scrollbar custom */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cfa346; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #b58b32; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        // --- CONFIGURATION ---
+
+        const GUIDANCE = {
+            qui: { label: "Qui ?", sub: "Responsables, Acteurs", hint: "Qui est concerné ? Qui a détecté le problème ?" },
+            quoi: { label: "Quoi ?", sub: "Description du problème", hint: "De quoi s'agit-il ? Quelle est la situation ?" },
+            ou: { label: "Où ?", sub: "Lieu, Poste, Machine", hint: "Où cela se passe-t-il physiquement ?" },
+            quand: { label: "Quand ?", sub: "Date, Fréquence", hint: "Depuis quand ? À quel moment précis ?" },
+            comment: { label: "Comment ?", sub: "Circonstances", hint: "Comment cela arrive-t-il ? Dans quelles conditions ?" },
+            pourquoi: { label: "Pourquoi ?", sub: "Analyse préliminaire", hint: "Pourquoi est-ce un problème ?" },
+            combien: { label: "Combien ?", sub: "Quantité, Coût", hint: "Combien de défauts ? Quel coût estimé ?" }
+        };
+
+        const INITIAL_STATE = {
+            title: "Nouveau QQOQCP",
+            updatedAt: new Date().toISOString(),
+            metadata: { context: '', category: 'Qualité', site: '', priority: 'Moyenne' },
+            content: { qui: '', quoi: '', ou: '', quand: '', comment: '', pourquoi: '', combien: '' }
+        };
+
+        // --- COMPOSANTS UTILITAIRES ---
+
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const [svgHtml, setSvgHtml] = useState(null);
+            useEffect(() => {
+                if (window.lucide && window.lucide.icons && window.lucide.icons[name]) {
+                    try {
+                        const elem = window.lucide.createElement(window.lucide.icons[name]);
+                        elem.setAttribute('width', size);
+                        elem.setAttribute('height', size);
+                        const cls = elem.getAttribute('class') || '';
+                        elem.setAttribute('class', `${cls} ${className}`.trim());
+                        setSvgHtml(elem.outerHTML);
+                    } catch (e) {}
+                }
+            }, [name, size, className]);
+            if (!svgHtml) return <span className={`inline-block w-${size} h-${size} opacity-50`}></span>;
+            return <span dangerouslySetInnerHTML={{ __html: svgHtml }} className="inline-flex items-center justify-center" />;
+        };
+
+        const ProgressBar = ({ value }) => (
+            <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                <div className={`h-1.5 rounded-full transition-all duration-500 bg-accent`} style={{ width: `${value}%` }}></div>
+            </div>
+        );
+
+        // --- COMPOSANT RAPPORT (TEMPLATE) ---
+        // Ce composant est utilisé à la fois pour l'aperçu modal et pour l'impression/capture
+        const ReportTemplate = ({ data }) => {
+            if (!data || !data.metadata || !data.content) return null;
+            return (
+                <div className="bg-white w-full h-full relative">
+                    {/* Header Premium */}
+                    <div className="bg-primary text-white p-8 flex justify-between items-start">
+                        <div>
+                            <div className="text-accent text-xs font-bold tracking-[0.2em] uppercase mb-2">Rapport d'analyse</div>
+                            <h1 className="text-4xl font-serif font-bold leading-tight mb-2">{data.title || "Sans Titre"}</h1>
+                            <div className="flex gap-4 text-sm text-gray-400">
+                                <span>Ref: {Math.floor(new Date(data.updatedAt).getTime() / 1000).toString(16).toUpperCase()}</span>
+                            </div>
+                        </div>
+                        <div className="text-right">
+                            <div className="bg-accent text-primary px-3 py-1 font-bold text-sm inline-block rounded-sm mb-2">
+                                {data.metadata.category}
+                            </div>
+                            <div className="text-accent-light text-sm">{new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                        </div>
+                    </div>
+
+                    {/* Meta Banner */}
+                    <div className="bg-gray-50 border-b border-gray-100 p-6 flex gap-8 text-sm">
+                        <div className="flex-1">
+                            <span className="block text-xs font-bold text-accent-text uppercase mb-1">Contexte</span>
+                            <span className="text-primary font-medium">{data.metadata.context || "Non spécifié"}</span>
+                        </div>
+                        <div className="w-1/4">
+                            <span className="block text-xs font-bold text-accent-text uppercase mb-1">Site / Zone</span>
+                            <span className="text-primary font-medium">{data.metadata.site || "Non spécifié"}</span>
+                        </div>
+                        <div className="w-1/6">
+                            <span className="block text-xs font-bold text-accent-text uppercase mb-1">Priorité</span>
+                            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-bold ${
+                                data.metadata.priority === 'Haute' ? 'bg-red-50 text-red-700 border border-red-100' : 
+                                data.metadata.priority === 'Basse' ? 'bg-green-50 text-green-700 border border-green-100' : 
+                                'bg-yellow-50 text-yellow-700 border border-yellow-100'
+                            }`}>
+                                <span className={`w-1.5 h-1.5 rounded-full ${
+                                    data.metadata.priority === 'Haute' ? 'bg-red-500' : 
+                                    data.metadata.priority === 'Basse' ? 'bg-green-500' : 'bg-yellow-500'
+                                }`}></span>
+                                {data.metadata.priority}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Grid Content */}
+                    <div className="p-8">
+                        <div className="grid grid-cols-2 gap-6">
+                            {Object.keys(GUIDANCE).map((key, index) => (
+                                <div key={key} className={`border border-gray-100 rounded-lg p-5 break-inside-avoid shadow-sm ${key === 'combien' ? 'col-span-2 bg-accent-light/10' : 'bg-white'}`}>
+                                    <div className="flex items-center gap-3 mb-3 pb-2 border-b border-gray-100">
+                                        <div className="w-6 h-6 rounded bg-primary text-accent flex items-center justify-center font-bold text-[10px] uppercase">
+                                            {key.substring(0,2)}
+                                        </div>
+                                        <div className="flex-1 flex justify-between items-baseline">
+                                            <h3 className="font-bold text-primary uppercase text-sm tracking-wide">{GUIDANCE[key].label}</h3>
+                                            <span className="text-[10px] text-gray-400 uppercase italic">{GUIDANCE[key].sub}</span>
+                                        </div>
+                                    </div>
+                                    <div className="text-gray-700 text-sm leading-relaxed font-sans whitespace-pre-wrap pl-2 border-l-2 border-accent/20 min-h-[3rem]">
+                                        {data.content[key] || <span className="text-gray-300 italic text-xs">Aucune information saisie.</span>}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- APPLICATION PRINCIPALE ---
+
+        const App = () => {
+            const [data, setData] = useState(INITIAL_STATE);
+            const [mode, setMode] = useState('grid');
+            const [wizardStep, setWizardStep] = useState(0);
+            const [completeness, setCompleteness] = useState(0);
+            const [notification, setNotification] = useState(null);
+            const [showReportModal, setShowReportModal] = useState(false);
+            const printRef = useRef(null);
+
+            // Chargement initial
+            useEffect(() => {
+                try {
+                    const saved = localStorage.getItem('qqoqcp_single_v2'); 
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        if (parsed) {
+                            // Fusion sécurisée avec l'état initial pour éviter les crashs si la structure a changé
+                            const merged = {
+                                ...INITIAL_STATE,
+                                ...parsed,
+                                metadata: { ...INITIAL_STATE.metadata, ...(parsed.metadata || {}) },
+                                content: { ...INITIAL_STATE.content, ...(parsed.content || {}) }
+                            };
+                            setData(merged);
+                        } 
+                    }
+                } catch (e) { console.error("Erreur chargement sauvegarde", e); }
+            }, []);
+
+            // Calcul complétude
+            useEffect(() => {
+                const qFields = Object.keys(GUIDANCE);
+                const filled = qFields.filter(k => data.content[k] && data.content[k].length > 3).length;
+                setCompleteness(Math.round((filled / qFields.length) * 100));
+            }, [data.content]);
+
+            // Sauvegarde LocalStorage
+            const handleSave = () => {
+                localStorage.setItem('qqoqcp_single_v2', JSON.stringify(data));
+                showNotification("Sauvegarde locale effectuée !");
+            };
+
+            // Export Excel (.xlsx)
+            const handleExportExcel = () => {
+                const wb = XLSX.utils.book_new();
+                const ws_data = [
+                    ["TITRE", data.title],
+                    ["DATE", new Date().toLocaleDateString()],
+                    ["CONTEXTE", data.metadata.context],
+                    ["SITE", data.metadata.site],
+                    ["PRIORITÉ", data.metadata.priority],
+                    ["", ""],
+                    ["QUESTION", "ANALYSE"]
+                ];
+                Object.keys(GUIDANCE).forEach(k => {
+                    ws_data.push([GUIDANCE[k].label, data.content[k]]);
+                });
+                const ws = XLSX.utils.aoa_to_sheet(ws_data);
+                ws['!cols'] = [{ wch: 30 }, { wch: 60 }];
+                XLSX.utils.book_append_sheet(wb, ws, "QQOQCP");
+                XLSX.writeFile(wb, `${data.title.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'export'}.xlsx`);
+                showNotification("Fichier Excel généré !");
+            };
+
+            // Capture d'écran (Image) depuis le rapport caché
+            const handleCaptureImage = async () => {
+                if (!printRef.current) return;
+                // On prépare le conteneur pour la capture
+                const element = printRef.current;
+                
+                try {
+                    // Temporairement visible pour html2canvas
+                    element.style.display = 'block';
+                    const canvas = await html2canvas(element, {
+                        scale: 2, // Haute qualité
+                        useCORS: true,
+                        backgroundColor: '#ffffff'
+                    });
+                    element.style.display = 'none'; // On recache
+                    
+                    const image = canvas.toDataURL("image/png");
+                    const link = document.createElement('a');
+                    link.href = image;
+                    link.download = `${data.title.replace(/[^a-z0-9]/gi, '_') || 'qqoqcp'}_rapport.png`;
+                    link.click();
+                    showNotification("Rapport (Image) généré !");
+                } catch (err) {
+                    console.error("Erreur capture", err);
+                    showNotification("Erreur lors de la capture");
+                }
+            };
+
+            // Impression PDF via navigateur
+            const handlePrintPDF = () => {
+                window.print();
+            };
+
+            const handleReset = () => {
+                if (confirm("Attention : Cela va effacer toutes les données actuelles. Continuer ?")) {
+                    setData(INITIAL_STATE);
+                    localStorage.removeItem('qqoqcp_single_v2');
+                    setMode('grid');
+                    showNotification("Fiche réinitialisée");
+                }
+            };
+
+            const showNotification = (msg) => {
+                setNotification(msg);
+                setTimeout(() => setNotification(null), 3000);
+            };
+
+            const updateField = (section, field, value) => {
+                setData(prev => ({
+                    ...prev,
+                    [section]: { ...prev[section], [field]: value },
+                    updatedAt: new Date().toISOString()
+                }));
+            };
+
+            const updateRoot = (field, value) => {
+                setData(prev => ({ ...prev, [field]: value, updatedAt: new Date().toISOString() }));
+            };
+
+            const questions = Object.keys(GUIDANCE);
+
+            return (
+                <div className="min-h-screen bg-gray-50 flex flex-col w-full overflow-hidden">
+                    
+                    {/* BARRE D'OUTILS FLOTTANTE */}
+                    <div className="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex flex-wrap items-center justify-between sticky top-0 z-30 shadow-sm no-print gap-3">
+                        <div className="flex items-center gap-3 md:gap-4 flex-1 min-w-[200px]">
+                            <a href="index.html" className="text-gray-400 hover:text-primary transition-colors" title="Retour à l'accueil">
+                                <Icon name="ArrowLeft" size={24} />
+                            </a>
+                            <div className="bg-primary text-white p-2 rounded-lg shrink-0 shadow-md">
+                                <Icon name="Hexagon" size={24} className="text-accent" />
+                            </div>
+                            <div className="flex flex-col flex-1">
+                                <input 
+                                    value={data.title}
+                                    onChange={(e) => updateRoot('title', e.target.value)}
+                                    className="font-bold text-primary bg-transparent focus:outline-none focus:bg-accent-light rounded px-1 w-full text-sm md:text-base border-b border-transparent focus:border-accent transition-colors"
+                                    placeholder="Titre..."
+                                />
+                                <div className="flex items-center gap-2 text-xs text-gray-500">
+                                    <span className="whitespace-nowrap">{completeness}% rempli</span>
+                                    <div className="w-24"><ProgressBar value={completeness} /></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                            {/* Boutons de vue */}
+                            <div className="bg-gray-100 p-1 rounded-lg flex text-sm mr-2 shrink-0">
+                                <button onClick={() => setMode('grid')} className={`p-1.5 md:px-3 rounded-md flex gap-2 transition-all ${mode === 'grid' ? 'bg-white shadow text-accent-text font-medium' : 'text-gray-500 hover:text-primary'}`} title="Vue Globale">
+                                    <Icon name="LayoutGrid" size={18} />
+                                </button>
+                                <button onClick={() => setMode('wizard')} className={`p-1.5 md:px-3 rounded-md flex gap-2 transition-all ${mode === 'wizard' ? 'bg-white shadow text-accent-text font-medium' : 'text-gray-500 hover:text-primary'}`} title="Assistant">
+                                    <Icon name="Wand2" size={18} />
+                                </button>
+                            </div>
+
+                            <div className="w-px h-6 bg-gray-200 mx-1 shrink-0"></div>
+
+                            {/* BOUTON RAPPORT (Nouveau) */}
+                            <button onClick={() => setShowReportModal(true)} className="bg-accent text-primary px-3 md:px-4 py-2 rounded-lg flex items-center gap-2 font-bold shadow-md hover:bg-accent-hover transition-colors shrink-0 text-sm md:text-base">
+                                <Icon name="FileText" size={18} /> <span className="hidden sm:inline">Rapport</span>
+                            </button>
+
+                            <button onClick={handleExportExcel} className="p-2 text-gray-600 hover:bg-green-50 hover:text-green-700 rounded-lg shrink-0 transition-colors" title="Exporter Excel (.xlsx)">
+                                <Icon name="FileSpreadsheet" size={20} />
+                            </button>
+                            
+                            <button onClick={handleReset} className="p-2 text-gray-400 hover:bg-red-50 hover:text-red-600 rounded-lg shrink-0 transition-colors" title="Effacer / Nouveau">
+                                <Icon name="RotateCcw" size={20} />
+                            </button>
+
+                            <button onClick={handleSave} className="bg-primary hover:bg-black text-white px-3 md:px-4 py-2 rounded-lg flex items-center gap-2 font-medium shadow-md transition shrink-0 text-sm md:text-base border border-primary hover:border-black">
+                                <Icon name="Save" size={18} className="text-accent" /> <span className="hidden sm:inline">Enregistrer</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* NOTIFICATION */}
+                    {notification && (
+                        <div className="fixed top-24 right-6 bg-primary text-white px-4 py-3 rounded-lg shadow-xl text-sm animate-bounce z-50 flex items-center gap-2 border-l-4 border-accent">
+                            <Icon name="Info" size={16} className="text-accent" />
+                            {notification}
+                        </div>
+                    )}
+
+                    {/* CONTENU PRINCIPAL */}
+                    <div className="flex-1 overflow-y-auto p-4 md:p-6 max-w-5xl mx-auto w-full no-print">
+                        
+                        {/* MÉTADONNÉES */}
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 md:p-5 mb-6">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <label className="block text-gray-500 mb-1 text-xs uppercase font-bold tracking-wider">Contexte</label>
+                                    <input 
+                                        type="text" 
+                                        value={data.metadata.context}
+                                        onChange={(e) => updateField('metadata', 'context', e.target.value)}
+                                        className="w-full border-b border-gray-300 focus:border-accent focus:outline-none py-1 transition-colors"
+                                        placeholder="Contexte rapide..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-gray-500 mb-1 text-xs uppercase font-bold tracking-wider">Zone / Site</label>
+                                    <input 
+                                        type="text" 
+                                        value={data.metadata.site}
+                                        onChange={(e) => updateField('metadata', 'site', e.target.value)}
+                                        className="w-full border-b border-gray-300 focus:border-accent focus:outline-none py-1 transition-colors"
+                                        placeholder="Ex: Atelier 2"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-gray-500 mb-1 text-xs uppercase font-bold tracking-wider">Priorité</label>
+                                    <div className="flex gap-2 mt-1">
+                                        {['Basse', 'Moyenne', 'Haute'].map(p => (
+                                            <button 
+                                                key={p}
+                                                onClick={() => updateField('metadata', 'priority', p)}
+                                                className={`flex-1 py-1 px-2 text-xs rounded border transition ${
+                                                    data.metadata.priority === p 
+                                                    ? 'bg-primary text-accent border-primary font-bold shadow-sm' 
+                                                    : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                                                }`}
+                                            >
+                                                {p}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* MODE GRILLE */}
+                        {mode === 'grid' && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {questions.map((key) => (
+                                    <div key={key} className={`bg-white rounded-xl border border-gray-200 p-4 shadow-sm hover:shadow-md transition group ${key === 'combien' ? 'md:col-span-2 bg-accent-light/30' : ''}`}>
+                                        <div className="flex justify-between items-center mb-2">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-8 h-8 rounded-lg bg-accent-light text-accent-text flex items-center justify-center font-bold text-xs uppercase shrink-0 group-hover:bg-accent group-hover:text-white transition-colors">
+                                                    {key.substring(0,2)}
+                                                </div>
+                                                <h3 className="font-bold text-primary">{GUIDANCE[key].label}</h3>
+                                            </div>
+                                            <span className="text-xs text-gray-400 truncate ml-2 group-hover:text-accent-hover transition-colors">{GUIDANCE[key].sub}</span>
+                                        </div>
+                                        <textarea
+                                            value={data.content[key]}
+                                            onChange={(e) => updateField('content', key, e.target.value)}
+                                            className="w-full text-sm p-3 bg-gray-50 rounded-lg border border-transparent focus:bg-white focus:ring-1 focus:ring-accent focus:border-accent outline-none resize-none h-24 transition-all"
+                                            placeholder="..."
+                                        ></textarea>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* MODE ASSISTANT */}
+                        {mode === 'wizard' && (
+                            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 md:p-8 min-h-[400px] flex flex-col justify-between relative overflow-hidden">
+                                <div className="absolute top-0 left-0 w-full h-1 bg-gray-100">
+                                    <div className="h-full bg-accent transition-all duration-300" style={{ width: `${((wizardStep + 1) / questions.length) * 100}%` }}></div>
+                                </div>
+                                <div>
+                                    <div className="mb-2 text-accent-text font-bold uppercase tracking-widest text-xs">Étape {wizardStep + 1}/{questions.length}</div>
+                                    <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2">{GUIDANCE[questions[wizardStep]].label}</h2>
+                                    <p className="text-gray-500 mb-6 border-l-2 border-accent pl-3">{GUIDANCE[questions[wizardStep]].hint}</p>
+                                    
+                                    <textarea
+                                        value={data.content[questions[wizardStep]]}
+                                        onChange={(e) => updateField('content', questions[wizardStep], e.target.value)}
+                                        className="w-full text-base md:text-lg p-4 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-accent focus:border-transparent outline-none h-48 transition-all"
+                                        placeholder="Votre réponse..."
+                                        autoFocus
+                                    ></textarea>
+                                </div>
+                                
+                                <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
+                                    <button 
+                                        onClick={() => setWizardStep(s => Math.max(0, s - 1))}
+                                        disabled={wizardStep === 0}
+                                        className="text-gray-500 hover:text-primary disabled:opacity-30 text-sm md:text-base flex items-center gap-1"
+                                    >
+                                        <Icon name="ChevronLeft" size={16} /> Précédent
+                                    </button>
+                                    
+                                    {wizardStep < questions.length - 1 ? (
+                                        <button 
+                                            onClick={() => setWizardStep(s => s + 1)}
+                                            className="bg-accent text-primary px-6 py-2 rounded-lg hover:bg-accent-hover font-bold text-sm md:text-base flex items-center gap-2 shadow-sm"
+                                        >
+                                            Suivant <Icon name="ChevronRight" size={16} />
+                                        </button>
+                                    ) : (
+                                        <button 
+                                            onClick={() => setMode('grid')}
+                                            className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-black font-bold text-sm md:text-base flex items-center gap-2 shadow-sm"
+                                        >
+                                            <Icon name="Check" size={16} className="text-accent" /> Terminer
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* MODAL APERÇU RAPPORT */}
+                    {showReportModal && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/90 backdrop-blur-sm p-4 animate-fade-in no-print">
+                            <div className="bg-gray-100 w-full max-w-5xl h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+                                {/* Header Modal */}
+                                <div className="bg-white p-4 border-b border-gray-200 flex justify-between items-center">
+                                    <h3 className="font-bold text-primary flex items-center gap-2">
+                                        <Icon name="FileText" size={20} className="text-accent" /> Aperçu du Rapport
+                                    </h3>
+                                    <div className="flex gap-2">
+                                        <button onClick={handlePrintPDF} className="bg-primary hover:bg-black text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-bold transition-colors">
+                                            <Icon name="Printer" size={16} /> Imprimer / PDF
+                                        </button>
+                                        <button onClick={handleCaptureImage} className="bg-accent hover:bg-accent-hover text-primary px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-bold transition-colors">
+                                            <Icon name="Camera" size={16} /> Image
+                                        </button>
+                                        <button onClick={() => setShowReportModal(false)} className="bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg transition-colors">
+                                            <Icon name="X" size={20} />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Contenu Modal (Scrollable) */}
+                                <div className="flex-1 overflow-y-auto p-8 bg-gray-500/10 flex justify-center">
+                                    <div className="bg-white shadow-xl w-[210mm] min-h-[297mm] origin-top transform scale-90 md:scale-100 transition-transform">
+                                        <ReportTemplate data={data} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* CONTENEUR IMPRESSION (Utilisé pour le screenshot et l'impression navigateur) */}
+                    <div ref={printRef} className="print-container bg-white w-[210mm] min-h-[297mm] mx-auto hidden">
+                        <ReportTemplate data={data} />
+                    </div>
+
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

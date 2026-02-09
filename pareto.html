@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QualiTools - Diagramme de Pareto</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+        .chart-container { position: relative; width: 100%; height: 400px; }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // --- COMPOSANT ICON ---
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const [svgHtml, setSvgHtml] = useState(null);
+            useEffect(() => {
+                if (window.lucide && window.lucide.icons && window.lucide.icons[name]) {
+                    try {
+                        const elem = window.lucide.createElement(window.lucide.icons[name]);
+                        elem.setAttribute('width', size);
+                        elem.setAttribute('height', size);
+                        const cls = elem.getAttribute('class') || '';
+                        elem.setAttribute('class', `${cls} ${className}`.trim());
+                        setSvgHtml(elem.outerHTML);
+                    } catch (e) {}
+                }
+            }, [name, size, className]);
+            if (!svgHtml) return <span className={`inline-block w-${size} h-${size} opacity-50`}></span>;
+            return <span dangerouslySetInnerHTML={{ __html: svgHtml }} className="inline-flex items-center justify-center" />;
+        };
+
+        // --- DONNÉES INITIALES ---
+        const EXAMPLES = {
+            blank: {
+                title: "Nouveau Diagramme",
+                data: [
+                    { id: 1, label: "Catégorie 1", value: 0 },
+                    { id: 2, label: "Catégorie 2", value: 0 },
+                    { id: 3, label: "Catégorie 3", value: 0 },
+                    { id: 4, label: "Catégorie 4", value: 0 },
+                    { id: 5, label: "Catégorie 5", value: 0 }
+                ]
+            },
+            defauts: {
+                title: "Analyse des Défauts (Production)",
+                data: [
+                    { id: 1, label: "Rayures", value: 120 },
+                    { id: 2, label: "Défaut Aspect", value: 45 },
+                    { id: 3, label: "Dimension HS", value: 25 },
+                    { id: 4, label: "Emballage", value: 15 },
+                    { id: 5, label: "Manquant", value: 8 }
+                ]
+            },
+            clients: {
+                title: "Réclamations Clients",
+                data: [
+                    { id: 1, label: "Retard Livraison", value: 85 },
+                    { id: 2, label: "Erreur Facture", value: 40 },
+                    { id: 3, label: "Produit Abîmé", value: 20 },
+                    { id: 4, label: "Service Injoignable", value: 10 },
+                    { id: 5, label: "Autre", value: 5 }
+                ]
+            },
+            maintenance: {
+                title: "Causes Arrêts Machine",
+                data: [
+                    { id: 1, label: "Bourrage Papier", value: 150 },
+                    { id: 2, label: "Panne Moteur", value: 30 },
+                    { id: 3, label: "Manque Matière", value: 15 },
+                    { id: 4, label: "Réglages", value: 10 },
+                    { id: 5, label: "Coupure Elec", value: 2 }
+                ]
+            }
+        };
+
+        const App = () => {
+            const [items, setItems] = useState(EXAMPLES.blank.data);
+            const [title, setTitle] = useState(EXAMPLES.blank.title);
+
+            // --- CALCULS PARETO ---
+            const processedData = useMemo(() => {
+                // 1. Trier par valeur décroissante
+                const sorted = [...items].sort((a, b) => b.value - a.value);
+                
+                // 2. Calculer le total
+                const total = sorted.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
+                
+                // 3. Calculer le cumul
+                let currentSum = 0;
+                return sorted.map(item => {
+                    const val = parseFloat(item.value) || 0;
+                    currentSum += val;
+                    return {
+                        ...item,
+                        value: val,
+                        percent: total === 0 ? 0 : (val / total) * 100,
+                        cumulative: total === 0 ? 0 : (currentSum / total) * 100
+                    };
+                });
+            }, [items]);
+
+            const totalValue = processedData.length > 0 
+                ? processedData[processedData.length - 1].cumulative * (processedData.reduce((s, i) => s + i.value, 0) / 100) // Recalcul inverse ou simple somme
+                : 0;
+            
+            // Vrai total pour affichage
+            const grandTotal = items.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0);
+
+            // --- ACTIONS ---
+            const addItem = () => {
+                const newId = Math.max(...items.map(i => i.id), 0) + 1;
+                setItems([...items, { id: newId, label: "Nouveau", value: 0 }]);
+            };
+
+            const updateItem = (id, field, val) => {
+                setItems(items.map(item => item.id === id ? { ...item, [field]: val } : item));
+            };
+
+            const deleteItem = (id) => {
+                if (items.length > 1) {
+                    setItems(items.filter(item => item.id !== id));
+                }
+            };
+
+            const loadExample = (key) => {
+                if (key === "") return;
+                if (confirm("Charger cet exemple remplacera vos données actuelles. Continuer ?")) {
+                    const ex = EXAMPLES[key];
+                    setItems(JSON.parse(JSON.stringify(ex.data)));
+                    setTitle(ex.title);
+                }
+            };
+
+            const resetData = () => {
+                if(confirm("Créer un nouveau diagramme vierge ?")) {
+                    setItems(JSON.parse(JSON.stringify(EXAMPLES.blank.data)));
+                    setTitle(EXAMPLES.blank.title);
+                }
+            };
+
+            // --- RENDER CHART (SVG) ---
+            const Chart = () => {
+                if (processedData.length === 0) return <div className="h-full flex items-center justify-center text-gray-400">Aucune donnée</div>;
+
+                const width = 800;
+                const height = 400;
+                const margin = { top: 40, right: 60, bottom: 60, left: 60 };
+                const chartW = width - margin.left - margin.right;
+                const chartH = height - margin.top - margin.bottom;
+
+                const maxVal = processedData.length > 0 ? processedData[0].value : 10;
+                // On arrondit le max de l'axe Y au "joli" nombre supérieur
+                const yMax = Math.ceil(maxVal * 1.1) || 10; 
+
+                const barWidth = (chartW / processedData.length) * 0.8;
+                const step = chartW / processedData.length;
+
+                // Points pour la ligne de cumul (centrés sur les barres)
+                const linePoints = processedData.map((d, i) => {
+                    const x = (i * step) + (step / 2);
+                    const y = chartH - (d.cumulative / 100) * chartH;
+                    return `${x},${y}`;
+                }).join(" ");
+
+                // Ligne 80%
+                const y80 = chartH - (0.8 * chartH);
+
+                return (
+                    <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full bg-white rounded-lg shadow-sm border border-gray-200">
+                        <g transform={`translate(${margin.left}, ${margin.top})`}>
+                            
+                            {/* Grille horizontale */}
+                            {[0, 0.2, 0.4, 0.6, 0.8, 1].map(t => (
+                                <line key={t} 
+                                    x1={0} y1={chartH * (1-t)} 
+                                    x2={chartW} y2={chartH * (1-t)} 
+                                    stroke="#f0f0f0" strokeWidth="1" 
+                                />
+                            ))}
+
+                            {/* Ligne des 80% */}
+                            <line x1={0} y1={y80} x2={chartW} y2={y80} stroke="#ef4444" strokeWidth="1" strokeDasharray="5,5" />
+                            <text x={chartW + 5} y={y80 + 4} fill="#ef4444" fontSize="12" fontWeight="bold">80%</text>
+
+                            {/* Barres */}
+                            {processedData.map((d, i) => {
+                                const h = (d.value / yMax) * chartH;
+                                const x = (i * step) + (step - barWidth) / 2;
+                                const y = chartH - h;
+                                return (
+                                    <g key={d.id} className="group">
+                                        <rect 
+                                            x={x} y={y} width={barWidth} height={h} 
+                                            fill="#cfa346" className="hover:opacity-80 transition-opacity cursor-pointer"
+                                        >
+                                            <title>{d.label}: {d.value} ({d.percent.toFixed(1)}%)</title>
+                                        </rect>
+                                        {/* Valeur sur la barre */}
+                                        <text x={x + barWidth/2} y={y - 5} textAnchor="middle" fontSize="12" fill="#666" fontWeight="bold">
+                                            {d.value}
+                                        </text>
+                                    </g>
+                                );
+                            })}
+
+                            {/* Courbe Cumulée */}
+                            <polyline 
+                                points={linePoints} 
+                                fill="none" 
+                                stroke="#1a1a1a" 
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+
+                            {/* Points de la courbe */}
+                            {processedData.map((d, i) => {
+                                const x = (i * step) + (step / 2);
+                                const y = chartH - (d.cumulative / 100) * chartH;
+                                return (
+                                    <circle key={i} cx={x} cy={y} r="4" fill="#1a1a1a" stroke="white" strokeWidth="2" />
+                                );
+                            })}
+
+                            {/* Axes */}
+                            <line x1={0} y1={chartH} x2={chartW} y2={chartH} stroke="#333" strokeWidth="2" />
+                            <line x1={0} y1={0} x2={0} y2={chartH} stroke="#333" strokeWidth="2" />
+                            <line x1={chartW} y1={0} x2={chartW} y2={chartH} stroke="#333" strokeWidth="2" />
+
+                            {/* Labels Axe X */}
+                            {processedData.map((d, i) => {
+                                const x = (i * step) + (step / 2);
+                                return (
+                                    <text key={d.id} 
+                                        x={0} y={0} 
+                                        transform={`translate(${x}, ${chartH + 20}) rotate(-45)`} 
+                                        textAnchor="end" 
+                                        fontSize="12" 
+                                        fill="#333"
+                                        fontWeight="500"
+                                    >
+                                        {d.label.length > 15 ? d.label.substring(0,12)+'...' : d.label}
+                                    </text>
+                                );
+                            })}
+
+                            {/* Labels Axe Y (Gauche - Valeurs) */}
+                            <text x="-10" y="10" textAnchor="end" fontSize="10" fill="#666">{yMax}</text>
+                            <text x="-10" y={chartH} textAnchor="end" fontSize="10" fill="#666">0</text>
+                            <text x="-30" y={chartH/2} textAnchor="middle" transform={`rotate(-90, -30, ${chartH/2})`} fontSize="12" fontWeight="bold" fill="#333">Fréquence / Coût</text>
+
+                            {/* Labels Axe Y (Droite - %) */}
+                            <text x={chartW + 10} y="10" textAnchor="start" fontSize="10" fill="#666">100%</text>
+                            <text x={chartW + 10} y={chartH} textAnchor="start" fontSize="10" fill="#666">0%</text>
+                            <text x={chartW + 40} y={chartH/2} textAnchor="middle" transform={`rotate(-90, ${chartW + 40}, ${chartH/2})`} fontSize="12" fontWeight="bold" fill="#333">Cumul %</text>
+
+                        </g>
+                    </svg>
+                );
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col">
+                    {/* HEADER */}
+                    <header className="bg-[#1a1a1a] text-[#cfa346] p-4 shadow-md z-20">
+                        <div className="max-w-7xl mx-auto flex justify-between items-center">
+                            <div className="flex items-center gap-4">
+                                <a href="index.html" className="text-white hover:text-[#cfa346] transition flex items-center gap-2 font-semibold text-sm">
+                                    <Icon name="ArrowLeft" size={20} /> Accueil
+                                </a>
+                                <div className="h-6 w-px bg-gray-700"></div>
+                                <h1 className="text-xl font-bold tracking-widest uppercase flex items-center gap-2">
+                                    <Icon name="BarChart2" /> Diagramme de Pareto
+                                </h1>
+                            </div>
+                            <div className="flex gap-2 items-center">
+                                <select 
+                                    onChange={(e) => { loadExample(e.target.value); e.target.value = ""; }} 
+                                    className="bg-[#333] text-white text-sm rounded border border-gray-600 px-2 py-1 outline-none focus:border-[#cfa346] mr-2"
+                                    defaultValue=""
+                                >
+                                    <option value="" disabled>📂 Exemples...</option>
+                                    <option value="defauts">🏭 Défauts Production</option>
+                                    <option value="clients">📞 Service Client</option>
+                                    <option value="maintenance">🔧 Maintenance</option>
+                                </select>
+                                <button onClick={resetData} className="p-2 text-gray-400 hover:text-white transition" title="Nouveau / Vierge">
+                                    <Icon name="FilePlus" size={20} />
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* MAIN CONTENT */}
+                    <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        {/* COLONNE GAUCHE : DONNÉES */}
+                        <div className="lg:col-span-1 flex flex-col gap-4">
+                            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Titre du graphique</label>
+                                <input 
+                                    type="text" 
+                                    value={title} 
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    className="w-full border-b-2 border-gray-200 focus:border-[#cfa346] outline-none py-1 text-lg font-bold text-[#1a1a1a]"
+                                />
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow-sm border border-gray-200 flex-1 flex flex-col overflow-hidden">
+                                <div className="p-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                                    <h2 className="font-bold text-gray-700">Données</h2>
+                                    <span className="text-xs bg-[#cfa346] text-[#1a1a1a] px-2 py-1 rounded font-bold">Total: {grandTotal}</span>
+                                </div>
+                                
+                                <div className="overflow-y-auto flex-1 p-2">
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr className="text-left text-gray-500 border-b border-gray-100">
+                                                <th className="pb-2 pl-2 font-semibold">Catégorie</th>
+                                                <th className="pb-2 w-20 font-semibold text-right">Valeur</th>
+                                                <th className="pb-2 w-8"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {items.map((item) => (
+                                                <tr key={item.id} className="group hover:bg-gray-50">
+                                                    <td className="py-1">
+                                                        <input 
+                                                            type="text" 
+                                                            value={item.label}
+                                                            onChange={(e) => updateItem(item.id, 'label', e.target.value)}
+                                                            className="w-full bg-transparent border border-transparent hover:border-gray-300 focus:border-[#cfa346] rounded px-2 py-1 outline-none"
+                                                        />
+                                                    </td>
+                                                    <td className="py-1">
+                                                        <input 
+                                                            type="number" 
+                                                            value={item.value}
+                                                            onChange={(e) => updateItem(item.id, 'value', parseFloat(e.target.value) || 0)}
+                                                            className="w-full bg-transparent border border-transparent hover:border-gray-300 focus:border-[#cfa346] rounded px-2 py-1 outline-none text-right font-mono"
+                                                        />
+                                                    </td>
+                                                    <td className="py-1 text-center">
+                                                        <button 
+                                                            onClick={() => deleteItem(item.id)}
+                                                            className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                                                            disabled={items.length <= 1}
+                                                        >
+                                                            <Icon name="Trash2" size={16} />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div className="p-3 border-t border-gray-200 bg-gray-50">
+                                    <button 
+                                        onClick={addItem}
+                                        className="w-full py-2 border-2 border-dashed border-gray-300 text-gray-500 rounded hover:border-[#cfa346] hover:text-[#cfa346] hover:bg-white transition flex items-center justify-center gap-2 font-semibold text-sm"
+                                    >
+                                        <Icon name="Plus" size={16} /> Ajouter une ligne
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* COLONNE DROITE : GRAPHIQUE */}
+                        <div className="lg:col-span-2 flex flex-col gap-4">
+                            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 h-full flex flex-col">
+                                <div className="mb-6">
+                                    <h2 className="text-2xl font-bold text-[#1a1a1a]">{title}</h2>
+                                    <p className="text-gray-500 text-sm">Classement par ordre décroissant (Loi 80/20)</p>
+                                </div>
+                                
+                                <div className="flex-1 min-h-[400px]">
+                                    <Chart />
+                                </div>
+
+                                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="bg-blue-50 p-4 rounded border border-blue-100">
+                                        <h3 className="font-bold text-blue-800 text-sm uppercase mb-2">Analyse ABC (80/20)</h3>
+                                        <ul className="text-sm space-y-1">
+                                            {processedData.filter(d => d.cumulative <= 80).map(d => (
+                                                <li key={d.id} className="flex justify-between text-blue-900">
+                                                    <span>• {d.label}</span>
+                                                    <span className="font-bold">{d.percent.toFixed(1)}%</span>
+                                                </li>
+                                            ))}
+                                            {processedData.find(d => d.cumulative > 80) && (
+                                                <li className="text-xs text-blue-400 mt-1 pt-1 border-t border-blue-200 italic">
+                                                    ...et les autres ({(100 - processedData.filter(d => d.cumulative <= 80).reduce((s,i)=>s+i.percent,0)).toFixed(1)}%)
+                                                </li>
+                                            )}
+                                        </ul>
+                                    </div>
+                                    <div className="bg-yellow-50 p-4 rounded border border-yellow-100">
+                                        <h3 className="font-bold text-yellow-800 text-sm uppercase mb-2">Interprétation</h3>
+                                        <p className="text-sm text-yellow-900">
+                                            Les causes listées dans la zone bleue représentent l'essentiel du problème. 
+                                            Concentrez vos efforts sur ces <strong>{processedData.filter(d => d.cumulative <= 80).length}</strong> catégories prioritaires pour résoudre 80% des effets.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
+```
+
+<!--
+[PROMPT_SUGGESTION]Ajoute une fonctionnalité d'export PDF au diagramme de Pareto[/PROMPT_SUGGESTION]
+[PROMPT_SUGGESTION]Crée une page "kanban.html" pour la gestion des tâches qualité[/PROMPT_SUGGESTION]
+-->
