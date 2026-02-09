@@ -41,7 +41,7 @@
             background: var(--panel-bg);
             padding: 3rem;
             width: 100%;
-            max-width: 1000px;
+            max-width: 1200px;
             border-radius: 12px;
             border: 2px solid var(--accent);
             box-shadow: 0 10px 40px rgba(0,0,0,0.1);
@@ -89,11 +89,11 @@
         <h1 class="text-4xl font-bold text-[var(--accent-text)] mb-2 tracking-widest uppercase">QualiTools</h1>
         <p class="text-gray-500 mb-8 text-lg">Suite d'outils pour la Qualité et la Simulation Probabiliste</p>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Section Qualité -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+            <!-- Section 1 : Résolution de Problèmes -->
             <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                <h2 class="section-title">Outils Qualité</h2>
-                <p class="text-sm text-gray-600 mb-4 h-10">Méthodes de résolution de problèmes et d'analyse.</p>
+                <h2 class="section-title w-full text-center">Résolution de Problèmes</h2>
+                <p class="text-sm text-gray-600 mb-4 h-10 text-center">Méthodes d'analyse et de recherche de causes.</p>
                 <div class="flex flex-col gap-2">
                     <a href="ishikawa.html" class="btn-gold">
                         <div class="flex flex-col items-center">
@@ -116,13 +116,6 @@
                         </div>
                         <span class="text-xs font-normal opacity-75">Arbre des causes racines</span>
                     </a>
-                    <a href="analyse-donnees.html" class="btn-gold">
-                        <div class="flex flex-col items-center">
-                            <i data-lucide="bar-chart-3" class="w-8 h-8 mb-1"></i>
-                            <span class="block">Atelier Histogramme</span>
-                        </div>
-                        <span class="text-xs font-normal opacity-75">Construction et Analyse de Données</span>
-                    </a>
                     <a href="pareto.html" class="btn-gold">
                         <div class="flex flex-col items-center">
                             <i data-lucide="trending-up" class="w-8 h-8 mb-1"></i>
@@ -133,11 +126,54 @@
                 </div>
             </div>
 
-            <!-- Section Simulation -->
+            <!-- Section 2 : Métrologie & Processus -->
             <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                <h2 class="section-title">Simulations</h2>
-                <p class="text-sm text-gray-600 mb-4 h-10">Visualisation de lois statistiques et probabilités.</p>
+                <h2 class="section-title w-full text-center">Métrologie & Processus</h2>
+                <p class="text-sm text-gray-600 mb-4 h-10 text-center">Contrôle, conformité et gestion des gammes.</p>
                 <div class="flex flex-col gap-2">
+                    <a href="conformite.html" class="btn-gold">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="ruler" class="w-8 h-8 mb-1"></i>
+                            <span class="block">Conformité & Tolérances</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-75">Formation Lecture de Plan</span>
+                    </a>
+                    <a href="choix-des-moyens-de-mesure.html" class="btn-gold">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="microscope" class="w-8 h-8 mb-1"></i>
+                            <span class="block">Choix des Moyens</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-75">Capabilité & Incertitude</span>
+                    </a>
+                    <a href="gamme de controle.html" class="btn-gold">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="clipboard-check" class="w-8 h-8 mb-1"></i>
+                            <span class="block">Gamme de Contrôle</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-75">Édition & Rapports</span>
+                    </a>
+                    <a href="processu-de-controle.html" class="btn-gold">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="git-merge" class="w-8 h-8 mb-1"></i>
+                            <span class="block">Processus (SIPOC)</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-75">Cartographie des flux</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Section 3 : Statistiques & Simulations -->
+            <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
+                <h2 class="section-title w-full text-center">Statistiques & Jeux</h2>
+                <p class="text-sm text-gray-600 mb-4 h-10 text-center">Visualisation de lois et probabilités.</p>
+                <div class="flex flex-col gap-2">
+                    <a href="analyse-donnees.html" class="btn-gold">
+                        <div class="flex flex-col items-center">
+                            <i data-lucide="bar-chart-3" class="w-8 h-8 mb-1"></i>
+                            <span class="block">Atelier Histogramme</span>
+                        </div>
+                        <span class="text-xs font-normal opacity-75">Construction et Analyse</span>
+                    </a>
                     <a href="galton.html" class="btn-gold">
                         <div class="flex flex-col items-center">
                             <i data-lucide="git-graph" class="w-8 h-8 mb-1"></i>

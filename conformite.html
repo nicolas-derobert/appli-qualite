@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qualité & Tolérances - Édition Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        :root {
+            /* Palette Principale */
+            --primary: #1a1a1a;       /* Noir/Gris profond */
+            --accent: #cfa346;        /* Or antique */
+            --accent-hover: #b38b36;  /* Or foncé pour hover */
+            --accent-text: #856404;   /* Texte sur fond or light */
+            --accent-light: #f4e8cb;  /* Fond clair or */
+            
+            /* Structure */
+            --bg-color: #f8f9fa;      /* Gris très pâle */
+            --panel-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --text-color: #2d3436;
+            
+            /* Feedback */
+            --success: #27ae60;
+            --danger: #c0392b;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* --- Custom Utility Classes for Colors --- */
+        .bg-primary { background-color: var(--primary); }
+        .text-primary { color: var(--primary); }
+        .border-primary { border-color: var(--primary); }
+        
+        .bg-accent { background-color: var(--accent); }
+        .bg-accent:hover { background-color: var(--accent-hover); }
+        .text-accent { color: var(--accent); }
+        .text-accent-dark { color: var(--accent-text); }
+        .bg-accent-light { background-color: var(--accent-light); }
+        .border-accent { border-color: var(--accent); }
+
+        .text-success { color: var(--success); }
+        .bg-success-light { background-color: rgba(39, 174, 96, 0.1); }
+        .border-success { border-color: var(--success); }
+
+        .text-danger { color: var(--danger); }
+        .bg-danger-light { background-color: rgba(192, 57, 43, 0.1); }
+        .border-danger { border-color: var(--danger); }
+
+        /* Dessin technique */
+        .tech-drawing {
+            font-family: 'Courier New', monospace;
+            position: relative;
+            display: inline-block;
+            padding: 20px 40px;
+            background: white;
+            border: 2px solid var(--primary);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+        }
+        .dimension-line {
+            position: absolute; top: 12px; left: 10px; right: 10px; height: 10px;
+            border-bottom: 1px solid var(--primary); 
+            border-left: 1px solid var(--primary); 
+            border-right: 1px solid var(--primary);
+        }
+        .dimension-line::after {
+            content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; 
+            border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 4px solid var(--primary);
+        }
+
+        /* Jauge visuelle */
+        .visualizer-container {
+            height: 100px; 
+            background: #e9ecef; 
+            border-radius: 4px; 
+            position: relative;
+            overflow: hidden; 
+            border: 1px solid #ced4da;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .zone-tolerance {
+            position: absolute; top: 0; bottom: 0;
+            background-color: rgba(39, 174, 96, 0.2);
+            border-left: 2px solid var(--success); 
+            border-right: 2px solid var(--success);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--success); font-weight: bold; font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+        .measure-cursor {
+            position: absolute; top: 0; bottom: 0; width: 3px; background-color: var(--primary); z-index: 20;
+            transition: left 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 4px rgba(0,0,0,0.3);
+        }
+        .measure-cursor::before {
+            content: '▼'; position: absolute; top: -14px; left: -6px; color: var(--primary); font-size: 14px;
+        }
+        .measure-cursor.valid { background-color: var(--accent); }
+        .measure-cursor.valid::before { color: var(--accent); }
+
+        /* Navigation Tabs */
+        .tab-btn {
+            color: #7f8c8d;
+            font-weight: 600;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .tab-btn::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 3px;
+            background-color: var(--accent); transition: width 0.3s;
+        }
+        .tab-btn:hover { color: var(--primary); }
+        .tab-btn.active { color: var(--primary); }
+        .tab-btn.active::after { width: 100%; }
+
+        /* Range Slider Custom */
+        input[type=range] {
+            -webkit-appearance: none; width: 100%; background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
+            background: var(--accent); cursor: pointer; margin-top: -8px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px; cursor: pointer; background: #dfe6e9; border-radius: 2px;
+        }
+
+        /* Boutons Resolution */
+        .res-btn.active {
+            background-color: var(--primary);
+            color: var(--accent);
+            border-color: var(--primary);
+        }
+
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+
+    <!-- Header Navigation -->
+    <nav class="bg-white border-b border-gray-200 z-10 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <a href="index.html" class="text-gray-400 hover:text-primary mr-2 transition-colors" title="Retour à l'accueil">
+                        <i class="fa-solid fa-arrow-left text-lg"></i>
+                    </a>
+                    <div class="w-10 h-10 bg-primary flex items-center justify-center rounded text-accent">
+                        <i class="fa-solid fa-compass-drafting text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-xl tracking-tight text-primary">METRO<span class="text-accent">LOGIA</span></span>
+                        <span class="text-[10px] block text-gray-400 font-mono uppercase tracking-widest -mt-1">Training Solutions</span>
+                    </div>
+                </div>
+                <div class="flex space-x-8 h-full">
+                    <button onclick="switchTab('theory')" class="tab-btn active h-full px-1 flex items-center gap-2" id="btn-theory">
+                        THÉORIE
+                    </button>
+                    <button onclick="switchTab('sim')" class="tab-btn h-full px-1 flex items-center gap-2" id="btn-sim">
+                        ATELIER
+                    </button>
+                    <button onclick="switchTab('mission')" class="tab-btn h-full px-1 flex items-center gap-2" id="btn-mission">
+                        <span class="bg-accent text-white text-xs px-2 py-0.5 rounded-full mr-1"><i class="fa-solid fa-play"></i></span> MISSION
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 bg-[#f8f9fa]">
+        <div class="max-w-5xl mx-auto">
+
+            <!-- TAB 1: THEORIE -->
+            <section id="tab-theory" class="space-y-6">
+                <div class="bg-white rounded shadow-sm p-8 border border-gray-200">
+                    <div class="flex items-center gap-3 mb-8 pb-4 border-b border-gray-100">
+                        <div class="w-1 bg-accent h-8"></div>
+                        <h2 class="text-2xl font-bold text-primary">Fondamentaux de la Conformité</h2>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div class="bg-gray-50 p-8 rounded border border-gray-200 text-center relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-16 h-16 bg-accent opacity-10 rounded-bl-full"></div>
+                            <div class="tech-drawing text-4xl font-bold mb-6 text-primary">
+                                20 <span class="text-lg align-super text-gray-600">±0.1</span>
+                                <div class="dimension-line"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-left mt-6 text-sm font-mono">
+                                <div class="p-3 border-l-2 border-primary bg-white shadow-sm">
+                                    <div class="text-xs uppercase text-gray-400 mb-1">Cote Nominale</div>
+                                    <div class="text-primary font-bold">20.00 mm</div>
+                                </div>
+                                <div class="p-3 border-l-2 border-accent bg-white shadow-sm">
+                                    <div class="text-xs uppercase text-gray-400 mb-1">Intervalle (IT)</div>
+                                    <div class="text-accent-text font-bold">0.20 mm</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 rounded-full bg-primary text-accent flex items-center justify-center font-bold shrink-0 text-lg shadow-lg">1</div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-primary mb-2">Le Calcul des Limites</h3>
+                                    <p class="text-gray-600 text-sm leading-relaxed mb-3">Avant toute mesure, il faut traduire le plan en limites strictes.</p>
+                                    <div class="bg-gray-800 text-gray-300 p-4 rounded font-mono text-sm border-l-4 border-accent">
+                                        Maxi = Nominale + Écart Sup.<br>
+                                        Mini = Nominale + Écart Inf.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-4">
+                                <div class="w-10 h-10 rounded-full bg-primary text-accent flex items-center justify-center font-bold shrink-0 text-lg shadow-lg">2</div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-primary mb-2">La Décision</h3>
+                                    <p class="text-gray-600 text-sm leading-relaxed mb-3">La pièce est validée uniquement si elle se trouve dans l'intervalle.</p>
+                                    <div class="inline-block bg-success-light text-success px-4 py-2 rounded font-bold border border-success">
+                                        Mini ≤ Mesure ≤ Maxi
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: SIMULATEUR / ATELIER PEDAGOGIQUE -->
+            <section id="tab-sim" class="hidden space-y-6">
+                <div class="bg-white rounded shadow-lg border border-gray-200 overflow-hidden">
+                    <div class="bg-primary p-4 flex justify-between items-center text-white">
+                        <h2 class="font-bold text-lg tracking-wide"><i class="fa-solid fa-microscope mr-2 text-accent"></i>LABORATOIRE DE CONTRÔLE</h2>
+                    </div>
+                    
+                    <div class="p-8 grid gap-10">
+                        
+                        <!-- ETAPE 1: DEFINITION -->
+                        <div class="relative pl-6 border-l-2 border-gray-200">
+                            <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-accent border-2 border-white shadow"></div>
+                            <h3 class="font-bold text-primary mb-4 uppercase text-sm tracking-wider">1. Paramétrage du Plan</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50 p-6 rounded border border-gray-200">
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1 tracking-wider">Nominale</label>
+                                    <input type="number" id="sim-nom" value="50" class="w-full bg-white border border-gray-300 rounded p-2 font-mono font-bold text-center text-primary focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors" oninput="updateSim()">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1 tracking-wider">Écart Sup. (+)</label>
+                                    <input type="number" id="sim-es" value="0.1" step="0.01" class="w-full bg-white border border-gray-300 rounded p-2 font-mono text-center focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors" oninput="updateSim()">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1 tracking-wider">Écart Inf. (-)</label>
+                                    <input type="number" id="sim-ei" value="-0.1" step="0.01" class="w-full bg-white border border-gray-300 rounded p-2 font-mono text-center focus:border-accent focus:ring-1 focus:ring-accent outline-none transition-colors" oninput="updateSim()">
+                                </div>
+                            </div>
+                            <div class="flex justify-center gap-8 mt-4 text-xs font-mono text-gray-500">
+                                <span class="bg-white px-3 py-1 rounded border border-gray-200 shadow-sm">Mini: <strong id="lbl-min" class="text-primary text-sm">49.90</strong></span>
+                                <span class="bg-white px-3 py-1 rounded border border-gray-200 shadow-sm">Maxi: <strong id="lbl-max" class="text-primary text-sm">50.10</strong></span>
+                            </div>
+                        </div>
+
+                        <!-- ETAPE 2: MESURE -->
+                        <div class="relative pl-6 border-l-2 border-gray-200">
+                            <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-primary border-2 border-white shadow"></div>
+                            <h3 class="font-bold text-primary mb-4 uppercase text-sm tracking-wider">2. Acquisition de la Mesure</h3>
+                            <div class="flex flex-col md:flex-row gap-6 items-center bg-gray-50 p-6 rounded border border-gray-200">
+                                <button onclick="generateRandomMeasureSim()" class="bg-primary hover:bg-gray-800 text-white px-6 py-3 rounded shadow transition-all active:transform active:scale-95 text-sm font-semibold flex items-center gap-2">
+                                    <i class="fa-solid fa-shuffle text-accent"></i> Générer Aléatoire
+                                </button>
+                                <div class="text-gray-400 font-bold text-xs uppercase">ou saisie manuelle</div>
+                                <div class="relative">
+                                    <input type="number" id="sim-measure" value="50.05" step="0.01" class="w-40 border-b-2 border-primary bg-transparent p-2 font-mono font-bold text-center text-xl text-primary focus:outline-none focus:border-accent transition-colors" oninput="updateSim(false)">
+                                    <span class="absolute right-2 bottom-3 text-xs text-gray-400 font-mono">mm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ETAPE 3: VERDICT -->
+                        <div class="relative pl-6 border-l-2 border-transparent">
+                            <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-white border-4 border-accent shadow"></div>
+                            <h3 class="font-bold text-primary mb-4 uppercase text-sm tracking-wider">3. Analyse & Verdict</h3>
+                            
+                            <div class="visualizer-container mb-6 bg-white shadow-inner">
+                                <!-- Grille -->
+                                <div class="absolute inset-0 opacity-10" style="background-image: linear-gradient(#1a1a1a 1px, transparent 1px), linear-gradient(90deg, #1a1a1a 1px, transparent 1px); background-size: 20px 20px;"></div>
+                                
+                                <div id="vis-zone" class="zone-tolerance shadow-sm backdrop-blur-sm border-dashed">
+                                    <span class="bg-white px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest text-success border border-success shadow-sm">Zone Conforme</span>
+                                </div>
+                                <div id="vis-marker" class="measure-cursor"></div>
+                            </div>
+                            
+                            <div class="mb-6 px-2">
+                                <input type="range" id="sim-slider" class="accent-accent" oninput="syncMeasureInput(this.value)">
+                            </div>
+
+                            <div class="flex flex-col items-center">
+                                <button id="btn-reveal" onclick="revealVerdict()" class="bg-white border border-gray-300 text-primary px-8 py-2 rounded-full font-bold text-sm hover:border-primary hover:bg-gray-50 transition-all shadow-sm mb-4">
+                                    <i class="fa-regular fa-eye mr-2"></i> Révéler le Résultat
+                                </button>
+
+                                <div id="sim-result-container" class="opacity-0 transition-opacity duration-500 w-full max-w-lg">
+                                    <div id="sim-result" class="p-6 rounded border text-center shadow-sm">
+                                        <!-- Result injected here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: MISSION (JEU) -->
+            <section id="tab-mission" class="hidden h-full flex flex-col gap-6">
+                <!-- Dashboard du Jeu -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-primary p-4 rounded text-white shadow relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 p-4 opacity-10 text-5xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-coins"></i></div>
+                        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Budget</div>
+                        <div class="text-2xl font-mono font-bold text-accent mt-1" id="game-money">1000 €</div>
+                    </div>
+                    <div class="bg-white p-4 rounded border border-gray-200 shadow-sm relative overflow-hidden">
+                        <div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Réputation</div>
+                        <div class="text-2xl font-mono font-bold text-primary mt-1" id="game-score">0 pts</div>
+                        <div class="h-1 bg-gray-100 w-full absolute bottom-0 left-0"><div class="h-full bg-accent" style="width: 0%" id="score-bar"></div></div>
+                    </div>
+                    <div class="bg-white p-4 rounded border border-gray-200 shadow-sm">
+                        <div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Série</div>
+                        <div class="text-2xl font-mono font-bold text-accent-text mt-1" id="game-streak">0 🔥</div>
+                    </div>
+                    <div class="bg-white p-4 rounded border border-gray-200 shadow-sm flex flex-col justify-center">
+                        <div class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Accréditation</div>
+                        <select id="game-level" class="text-sm border-none bg-gray-100 rounded p-1 font-bold text-primary cursor-pointer focus:ring-2 focus:ring-accent" onchange="resetGame()">
+                            <option value="1">Niveau 1 - Opérateur</option>
+                            <option value="2">Niveau 2 - Technicien</option>
+                            <option value="3">Niveau 3 - Expert</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Game Area -->
+                <div class="grid md:grid-cols-12 gap-6 items-start">
+                    <!-- Left Panel: The Job -->
+                    <div class="md:col-span-5 space-y-4">
+                        <div class="bg-white rounded border-t-4 border-accent shadow p-6 relative">
+                            <h3 class="text-sm font-bold text-primary mb-6 flex items-center gap-2 uppercase tracking-wide">
+                                <i class="fa-solid fa-file-contract text-accent"></i> Ordre de Fabrication
+                            </h3>
+                            <!-- Blueprint -->
+                            <div class="bg-gray-50 p-8 rounded border border-gray-200 text-center mb-6">
+                                <div class="tech-drawing text-3xl font-bold bg-white shadow-sm text-primary">
+                                    <span id="mission-nom">0</span> <span id="mission-tol" class="text-base text-gray-600">±0</span>
+                                    <div class="dimension-line"></div>
+                                </div>
+                                <div class="mt-4 text-xs font-mono text-gray-400 uppercase">Plan Réf. #<span id="ref-id">A-001</span></div>
+                            </div>
+                            <!-- Tools Config -->
+                             <div class="bg-gray-100 p-4 rounded flex justify-between items-center text-sm border border-gray-200">
+                                <span class="font-bold text-primary text-xs uppercase tracking-wider"><i class="fa-solid fa-ruler-combined mr-2"></i>Instrument</span>
+                                <div class="flex gap-2">
+                                    <button onclick="setResolution(0.01)" class="px-3 py-1 rounded text-xs font-bold border border-gray-300 bg-white text-gray-500 hover:border-primary transition-colors res-btn active" id="res-0.01">0.01</button>
+                                    <button onclick="setResolution(0.001)" class="px-3 py-1 rounded text-xs font-bold border border-gray-300 bg-white text-gray-500 hover:border-primary transition-colors res-btn" id="res-0.001">0.001</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Panel: The Inspection -->
+                    <div class="md:col-span-7 space-y-4">
+                        <div class="bg-[#2d3436] rounded-lg shadow-xl border border-gray-700 p-6 text-white relative">
+                            <!-- Digital Caliper UI -->
+                            <div class="absolute top-4 right-5 text-gray-500 text-[10px] font-mono tracking-widest uppercase">Precision Series X1</div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                                <div class="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Live Measure</div>
+                            </div>
+                            
+                            <!-- Ecran LCD -->
+                            <div class="bg-[#b8c6a8] p-1 rounded-sm shadow-inner mb-6 relative">
+                                <div class="bg-[#9ea792] h-24 flex items-center justify-end px-4 relative overflow-hidden shadow-inner border border-[#8a947e]">
+                                    <div class="absolute left-2 top-2 text-[#2d3436] opacity-30 font-mono text-xs">mm</div>
+                                    <span id="mission-measure" class="font-mono text-6xl text-[#1a1a1a] tracking-tighter" style="font-family: 'Segment7', monospace;">--.--</span>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-4">
+                                <button onclick="remeasure()" class="w-full bg-gray-700 hover:bg-gray-600 text-white py-4 rounded border-b-4 border-gray-900 active:border-b-0 active:mt-1 transition-all shadow-lg font-bold uppercase tracking-wider text-sm group">
+                                    <i class="fa-solid fa-rotate-right mr-2 group-hover:rotate-180 transition-transform text-accent"></i> Re-mesurer
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Decision Buttons -->
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <button onclick="makeDecision(true)" class="bg-success-light hover:bg-green-100 border-2 border-success text-success py-4 rounded font-bold text-lg transition-all flex flex-col items-center justify-center gap-1 active:scale-95 group">
+                                <span class="group-hover:scale-110 transition-transform"><i class="fa-solid fa-check-circle text-3xl"></i></span>
+                                <span class="uppercase text-sm tracking-widest mt-1">Accepter</span>
+                            </button>
+                            <button onclick="makeDecision(false)" class="bg-danger-light hover:bg-red-100 border-2 border-danger text-danger py-4 rounded font-bold text-lg transition-all flex flex-col items-center justify-center gap-1 active:scale-95 group">
+                                <span class="group-hover:scale-110 transition-transform"><i class="fa-solid fa-ban text-3xl"></i></span>
+                                <span class="uppercase text-sm tracking-widest mt-1">Rejeter</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Game History -->
+                <div class="bg-white rounded shadow-sm border border-gray-200 overflow-hidden mt-auto">
+                    <div class="bg-gray-50 p-3 border-b border-gray-200 flex justify-between items-center">
+                        <span class="text-[10px] font-bold uppercase text-gray-500 tracking-widest">Journal de Contrôle</span>
+                        <span class="text-[10px] text-gray-400"><i class="fa-solid fa-history"></i> Session #<span id="session-id">...</span></span>
+                    </div>
+                    <div class="overflow-x-auto max-h-48">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-[10px] text-gray-500 uppercase bg-gray-50 sticky top-0 tracking-wider">
+                                <tr>
+                                    <th class="px-4 py-3 font-semibold">Plan</th>
+                                    <th class="px-4 py-3 font-semibold">Limites</th>
+                                    <th class="px-4 py-3 font-semibold">Mesure</th>
+                                    <th class="px-4 py-3 font-semibold text-center">Verdict</th>
+                                    <th class="px-4 py-3 font-semibold text-right">Impact</th>
+                                </tr>
+                            </thead>
+                            <tbody id="game-history-body" class="divide-y divide-gray-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal Feedback -->
+    <div id="feedback-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center z-50">
+        <div class="bg-white p-1 max-w-md w-full mx-4 shadow-2xl relative transform transition-all scale-100 border-t-4 border-accent">
+            <div class="bg-white p-8 text-center">
+                <div id="feedback-icon-container" class="mb-6">
+                    <!-- Icon via JS -->
+                </div>
+                
+                <h3 id="feedback-title" class="text-3xl font-black text-primary mb-2 uppercase tracking-tight">TITRE</h3>
+                <p id="feedback-msg" class="text-gray-600 mb-8 font-medium">Message</p>
+                
+                <div class="bg-gray-50 p-6 text-left text-sm font-mono space-y-3 mb-8 border border-gray-200 relative">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+                    <div class="flex justify-between text-gray-500"><span>Mini Autorisé</span> <span id="fb-min" class="font-bold text-primary"></span></div>
+                    <div class="flex justify-between text-gray-500"><span>Maxi Autorisé</span> <span id="fb-max" class="font-bold text-primary"></span></div>
+                    <div class="border-t border-gray-300 my-2"></div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-500 uppercase text-xs font-bold">Valeur Réelle</span> 
+                        <span id="fb-measure" class="font-bold text-lg text-primary bg-white px-2 border border-gray-200 shadow-sm"></span>
+                    </div>
+                </div>
+
+                <button onclick="nextMission()" class="w-full bg-primary text-accent hover:bg-black py-4 font-bold uppercase tracking-widest transition-colors flex justify-center items-center gap-3 group">
+                    Pièce Suivante <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // --- SETUP SESSION ---
+    document.getElementById('session-id').innerText = Math.floor(Math.random() * 10000);
+    document.getElementById('ref-id').innerText = "OP-" + Math.floor(Math.random() * 900 + 100);
+
+    // --- NAVIGATION ---
+    function switchTab(tabId) {
+        ['theory', 'sim', 'mission'].forEach(t => {
+            document.getElementById('tab-' + t).classList.add('hidden');
+            document.getElementById('btn-' + t).classList.remove('active');
+        });
+        document.getElementById('tab-' + tabId).classList.remove('hidden');
+        document.getElementById('btn-' + tabId).classList.add('active');
+
+        if (tabId === 'mission' && gameState.money === 1000 && gameState.totalPlayed === 0) {
+            initGame();
+        }
+    }
+
+    // --- UTILS ---
+    const MathUtils = {
+        round: (num, decimals = 3) => {
+            const factor = Math.pow(10, decimals);
+            return Math.round((num + Number.EPSILON) * factor) / factor;
+        },
+        randFloat: (min, max) => Math.random() * (max - min) + min,
+        fmt: (num) => num > 0 ? `+${num}` : `${num}`
+    };
+
+    // --- SIMULATEUR ---
+    function generateRandomMeasureSim() {
+        const nom = parseFloat(document.getElementById('sim-nom').value) || 0;
+        const es = parseFloat(document.getElementById('sim-es').value) || 0;
+        const ei = parseFloat(document.getElementById('sim-ei').value) || 0;
+        
+        const max = MathUtils.round(nom + es);
+        const min = MathUtils.round(nom + ei);
+        const it = MathUtils.round(max - min);
+        
+        let measure;
+        if(Math.random() > 0.4) {
+            measure = MathUtils.randFloat(min + it*0.1, max - it*0.1);
+        } else {
+            measure = Math.random() > 0.5 ? max + it*0.2 : min - it*0.2;
+        }
+        
+        document.getElementById('sim-measure').value = measure.toFixed(2);
+        document.getElementById('sim-result-container').classList.add('opacity-0');
+        document.getElementById('btn-reveal').classList.remove('hidden');
+        
+        updateSim(true);
+    }
+
+    function revealVerdict() {
+        document.getElementById('sim-result-container').classList.remove('opacity-0');
+        document.getElementById('btn-reveal').classList.add('hidden');
+    }
+
+    function updateSim(hideResult = false) {
+        const nom = parseFloat(document.getElementById('sim-nom').value) || 0;
+        const es = parseFloat(document.getElementById('sim-es').value) || 0;
+        const ei = parseFloat(document.getElementById('sim-ei').value) || 0;
+        const measure = parseFloat(document.getElementById('sim-measure').value) || 0;
+
+        const max = MathUtils.round(nom + es);
+        const min = MathUtils.round(nom + ei);
+        const it = MathUtils.round(max - min);
+
+        document.getElementById('lbl-min').innerText = min.toFixed(2);
+        document.getElementById('lbl-max').innerText = max.toFixed(2);
+
+        const isConform = measure >= min && measure <= max;
+        const resultDiv = document.getElementById('sim-result');
+        
+        if (isConform) {
+            resultDiv.innerHTML = '<div class="text-success text-4xl mb-2"><i class="fa-solid fa-circle-check"></i></div><div class="text-xl font-bold text-primary uppercase tracking-wide">Conforme</div><div class="text-xs text-gray-500 mt-1">La pièce est validée</div>';
+            resultDiv.className = "p-6 rounded border-2 border-success bg-white shadow-sm text-center";
+            document.getElementById('vis-marker').classList.add('valid');
+        } else {
+            const reason = measure < min ? "Cote trop faible (Rebut)" : "Cote trop forte (Retouche?)";
+            resultDiv.innerHTML = `<div class="text-danger text-4xl mb-2"><i class="fa-solid fa-circle-xmark"></i></div><div class="text-xl font-bold text-primary uppercase tracking-wide">Non Conforme</div><div class="text-xs text-danger font-bold mt-1 uppercase">${reason}</div>`;
+            resultDiv.className = "p-6 rounded border-2 border-danger bg-white shadow-sm text-center";
+            document.getElementById('vis-marker').classList.remove('valid');
+        }
+
+        if (!hideResult) {
+             document.getElementById('sim-result-container').classList.remove('opacity-0');
+             document.getElementById('btn-reveal').classList.add('hidden');
+        }
+
+        drawVisualizer(min, max, measure, 'sim-slider', 'vis-zone', 'vis-marker', it);
+    }
+
+    function drawVisualizer(min, max, measure, sliderId, zoneId, markerId, it) {
+        const margin = Math.max(it, 0.1) * 2;
+        const displayMin = min - margin;
+        const displayMax = max + margin;
+        
+        const slider = document.getElementById(sliderId);
+        if (Math.abs(slider.min - displayMin) > 0.1) slider.min = displayMin;
+        if (Math.abs(slider.max - displayMax) > 0.1) slider.max = displayMax;
+        
+        if (measure < slider.min) slider.min = measure - margin;
+        if (measure > slider.max) slider.max = measure + margin;
+
+        const totalRange = slider.max - slider.min;
+        const getPercent = (val) => ((val - slider.min) / totalRange) * 100;
+
+        const leftP = Math.max(0, getPercent(min));
+        const widthP = Math.min(100, getPercent(max) - leftP);
+        const markerP = Math.max(0, Math.min(100, getPercent(measure)));
+
+        document.getElementById(zoneId).style.left = `${leftP}%`;
+        document.getElementById(zoneId).style.width = `${widthP}%`;
+        document.getElementById(markerId).style.left = `${markerP}%`;
+    }
+
+    function syncMeasureInput(val) {
+        document.getElementById('sim-measure').value = val;
+        updateSim(false);
+    }
+
+    // --- GAME ENGINE ---
+    let gameState = {
+        money: 1000,
+        score: 0,
+        streak: 0,
+        totalPlayed: 0,
+        currentLevel: 1,
+        resolution: 0.01,
+        currentPart: null
+    };
+
+    function resetGame() {
+        gameState.money = 1000;
+        gameState.score = 0;
+        gameState.streak = 0;
+        gameState.totalPlayed = 0;
+        gameState.currentLevel = parseInt(document.getElementById('game-level').value);
+        document.getElementById('game-history-body').innerHTML = '';
+        updateDashboard();
+        initGame();
+    }
+
+    function setResolution(res) {
+        gameState.resolution = res;
+        document.querySelectorAll('.res-btn').forEach(b => b.classList.remove('active', 'bg-primary', 'text-accent', 'border-primary'));
+        document.getElementById(`res-${res}`).classList.add('active', 'bg-primary', 'text-accent', 'border-primary');
+        if(gameState.currentPart) remeasure();
+    }
+
+    function initGame() { nextMission(); }
+
+    function nextMission() {
+        document.getElementById('feedback-modal').classList.add('hidden');
+        document.getElementById('ref-id').innerText = "OP-" + Math.floor(Math.random() * 900 + 100);
+        
+        const nom = [10, 20, 25, 30, 40, 50, 60, 80, 100][Math.floor(Math.random() * 9)];
+        let es, ei;
+
+        if (gameState.currentLevel === 1) {
+            const val = [0.1, 0.2, 0.5][Math.floor(Math.random()*3)];
+            es = val; ei = -val;
+        } else if (gameState.currentLevel === 2) {
+            const val = [0.02, 0.05, 0.1][Math.floor(Math.random()*3)];
+            es = val; ei = -val;
+        } else {
+            const r1 = MathUtils.randFloat(-0.1, 0.2);
+            const r2 = MathUtils.randFloat(-0.1, 0.2);
+            es = MathUtils.round(Math.max(r1, r2), 2);
+            ei = MathUtils.round(Math.min(r1, r2), 2);
+            if (es === ei) es += 0.05;
+        }
+
+        const max = MathUtils.round(nom + es);
+        const min = MathUtils.round(nom + ei);
+
+        let trueValue;
+        const isTrap = Math.random() > 0.5;
+        if (!isTrap) {
+            trueValue = MathUtils.randFloat(min + 0.01, max - 0.01);
+        } else {
+            if (Math.random() > 0.5) trueValue = max + MathUtils.randFloat(0.005, 0.05);
+            else trueValue = min - MathUtils.randFloat(0.005, 0.05);
+        }
+        
+        if (gameState.currentLevel > 1 && Math.random() > 0.3) {
+            const edge = Math.random() > 0.5 ? max : min;
+            trueValue = edge + MathUtils.randFloat(-0.008, 0.008); 
+        }
+
+        gameState.currentPart = { nom, es, ei, min, max, trueValue, isActuallyConform: (trueValue >= min && trueValue <= max) };
+
+        document.getElementById('mission-nom').innerText = nom;
+        let tolText = '';
+        if (es === -ei) {
+            tolText = `±${es}`;
+        } else {
+            tolText = `<span class="inline-flex flex-col text-xs align-middle leading-tight border-l border-primary pl-2 ml-1 text-gray-600"><span>${MathUtils.fmt(es)}</span><span>${MathUtils.fmt(ei)}</span></span>`;
+        }
+        document.getElementById('mission-tol').innerHTML = tolText;
+        remeasure(true);
+    }
+
+    function remeasure(isFirst = false) {
+        if (!gameState.currentPart) return;
+        const noise = (Math.random() - 0.5) * gameState.resolution; 
+        const noisyValue = gameState.currentPart.trueValue + (isFirst ? 0 : noise);
+        const decimals = gameState.resolution === 0.01 ? 2 : 3;
+        const displayVal = MathUtils.round(noisyValue, decimals).toFixed(decimals);
+        document.getElementById('mission-measure').innerText = displayVal;
+    }
+
+    function makeDecision(userSaysConform) {
+        const p = gameState.currentPart;
+        const isCorrect = (userSaysConform === p.isActuallyConform);
+        
+        let impactMoney = 0;
+        let impactScore = 0;
+        let msg = "";
+        let type = ""; 
+
+        if (isCorrect) {
+            impactMoney = 50; 
+            impactScore = 10 + (gameState.streak * 2);
+            gameState.streak++;
+            msg = "Décision validée.";
+            type = 'success';
+        } else {
+            gameState.streak = 0;
+            if (userSaysConform && !p.isActuallyConform) {
+                impactMoney = -300;
+                impactScore = -50;
+                msg = "Faux Positif : Pièce non-conforme envoyée au client.";
+                type = 'false-accept';
+            } else {
+                impactMoney = -50;
+                impactScore = -10;
+                msg = "Faux Négatif : Gaspillage d'une pièce conforme.";
+                type = 'false-reject';
+            }
+        }
+
+        gameState.money += impactMoney;
+        gameState.score += impactScore;
+        gameState.totalPlayed++;
+
+        updateDashboard();
+        addToHistory(p, userSaysConform, isCorrect, impactMoney);
+        showFeedback(type, msg, p);
+    }
+
+    function updateDashboard() {
+        const m = document.getElementById('game-money');
+        m.innerText = gameState.money + ' €';
+        m.className = `text-2xl font-mono font-bold ${gameState.money < 0 ? 'text-danger' : 'text-accent'}`;
+        
+        document.getElementById('game-score').innerText = gameState.score + ' pts';
+        document.getElementById('game-streak').innerText = gameState.streak + ' 🔥';
+        
+        // Simple progress bar for reputation (capped at 500 for demo)
+        const progress = Math.min(100, Math.max(0, (gameState.score / 500) * 100));
+        document.getElementById('score-bar').style.width = progress + '%';
+    }
+
+    function addToHistory(part, decision, isCorrect, money) {
+        const tbody = document.getElementById('game-history-body');
+        const row = document.createElement('tr');
+        row.className = "bg-white border-b hover:bg-gray-50 transition-colors";
+        
+        const decisionIcon = decision ? '<i class="fa-solid fa-check text-gray-400"></i>' : '<i class="fa-solid fa-ban text-gray-400"></i>';
+        const verdict = isCorrect 
+            ? '<span class="text-success font-bold text-xs"><i class="fa-solid fa-check"></i> OK</span>' 
+            : '<span class="text-danger font-bold text-xs"><i class="fa-solid fa-xmark"></i> ERR</span>';
+        const moneyClass = money > 0 ? 'text-success' : 'text-danger';
+
+        row.innerHTML = `
+            <td class="px-4 py-3 font-mono font-bold text-primary">${part.nom}</td>
+            <td class="px-4 py-3 font-mono text-[10px] text-gray-500">[${part.min}, ${part.max}]</td>
+            <td class="px-4 py-3 font-mono font-bold text-primary">${part.trueValue.toFixed(3)}</td>
+            <td class="px-4 py-3 text-center">${verdict}</td>
+            <td class="px-4 py-3 text-right font-mono font-bold ${moneyClass}">${money > 0 ? '+' : ''}${money}€</td>
+        `;
+        tbody.prepend(row);
+    }
+
+    function showFeedback(type, text, part) {
+        const modal = document.getElementById('feedback-modal');
+        const iconContainer = document.getElementById('feedback-icon-container');
+        const title = document.getElementById('feedback-title');
+        
+        modal.classList.remove('hidden');
+
+        document.getElementById('fb-min').innerText = part.min.toFixed(3);
+        document.getElementById('fb-max').innerText = part.max.toFixed(3);
+        document.getElementById('fb-measure').innerText = part.trueValue.toFixed(4);
+        document.getElementById('feedback-msg').innerText = text;
+
+        if (type === 'success') {
+            iconContainer.innerHTML = '<div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-success-light text-success border-4 border-success"><i class="fa-solid fa-check text-5xl"></i></div>';
+            title.innerText = "EXCELLENT";
+            title.className = "text-3xl font-black text-success mb-2 uppercase tracking-tight";
+        } else {
+            const color = type === 'false-accept' ? 'text-danger' : 'text-orange-500';
+            const icon = type === 'false-accept' ? 'fa-triangle-exclamation' : 'fa-trash-can';
+            const bg = type === 'false-accept' ? 'bg-danger-light' : 'bg-orange-100';
+            
+            iconContainer.innerHTML = `<div class="inline-flex items-center justify-center w-24 h-24 rounded-full ${bg} ${color} border-4 border-current"><i class="fa-solid ${icon} text-5xl"></i></div>`;
+            title.innerText = "ERREUR";
+            title.className = `text-3xl font-black ${color} mb-2 uppercase tracking-tight`;
+        }
+    }
+
+    // Init Logic on Load
+    updateSim(); 
+</script>
+</body>
+</html>
