@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QMS Pilot - Système de Management de la Qualité</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#1a1a1a',
+                            800: '#1a1a1a', 
+                            900: '#0f0f0f', 
+                            700: '#2d2d2d', 
+                        },
+                        accent: {
+                            50: '#fbf8f1', 
+                            100: '#f5edd6', 
+                            200: '#ebdaa3',
+                            500: '#cfa346', 
+                            600: '#b58b32', 
+                            700: '#856404', 
+                            800: '#6b4f03',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: #f8fafc; color: #334155; }
+        
+        /* Sidebar active link styling */
+        .sidebar-link { border-left: 3px solid transparent; transition: all 0.2s; position: relative; }
+        .sidebar-link:hover { background-color: rgba(255,255,255,0.05); color: #fff; }
+        .sidebar-link.active { 
+            background-color: rgba(207, 163, 70, 0.1); 
+            color: #cfa346; 
+            border-left: 3px solid #cfa346; 
+        }
+
+        /* ISO Tooltip Styling */
+        .iso-tooltip {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            left: 100%;
+            top: 0;
+            width: 300px;
+            background-color: #2d2d2d; /* Primary 700 */
+            color: #fff;
+            padding: 15px;
+            border-radius: 0 8px 8px 8px;
+            box-shadow: 4px 4px 15px rgba(0,0,0,0.3);
+            z-index: 50;
+            transition: opacity 0.3s ease, visibility 0.3s;
+            border-left: 2px solid #cfa346;
+            pointer-events: none;
+        }
+        
+        .sidebar-group:hover .iso-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+
+        /* Status Badges */
+        .badge { @apply px-2.5 py-0.5 rounded text-xs font-medium border; }
+        .badge-success { @apply bg-emerald-50 text-emerald-700 border-emerald-200; }
+        .badge-warning { @apply bg-amber-50 text-amber-700 border-amber-200; }
+        .badge-danger { @apply bg-rose-50 text-rose-700 border-rose-200; }
+        .badge-info { @apply bg-sky-50 text-sky-700 border-sky-200; }
+        .badge-neutral { @apply bg-slate-100 text-slate-600 border-slate-200; }
+        .badge-archived { @apply bg-slate-200 text-slate-500 border-slate-300; } 
+        
+        /* Document Pyramid Badges */
+        .badge-level1 { @apply bg-primary-800 text-white border-primary-700; } 
+        .badge-level2 { @apply bg-accent-100 text-accent-700 border-accent-200; } 
+        .badge-level3 { @apply bg-slate-100 text-slate-700 border-slate-300; }     
+        .badge-level4 { @apply bg-white text-slate-500 border-slate-200 border-dashed; } 
+        
+        /* A4 Paper Simulation */
+        .a4-paper {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm;
+            margin: 10mm auto;
+            background: white;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .doc-preview-container { zoom: 0.65; }
+
+        /* Edit Overlay */
+        .edit-overlay {
+            display: none;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            gap: 5px;
+            z-index: 10;
+        }
+        .dashboard-item:hover .edit-overlay.active { display: flex; }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="w-72 bg-primary-800 text-slate-300 flex flex-col shadow-2xl z-20 transition-all">
+        <div class="h-16 flex items-center px-6 border-b border-white/10 shrink-0">
+            <div class="flex items-center gap-3 text-white font-bold text-lg tracking-wide">
+                <div class="w-8 h-8 rounded bg-accent-500 flex items-center justify-center text-white shadow-lg shadow-accent-500/30">
+                    <i class="fa-solid fa-cube text-sm"></i>
+                </div>
+                <span>QMS Pilot</span>
+            </div>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1" id="sidebar-nav">
+            <!-- Sidebar generated by JS -->
+        </nav>
+
+        <div class="p-4 border-t border-white/10 bg-primary-900 shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-full bg-accent-500 border-2 border-primary-700 flex items-center justify-center text-white font-bold text-xs">JD</div>
+                <div>
+                    <p class="text-sm font-semibold text-white">Jean Dupont</p>
+                    <p class="text-xs text-slate-400">Admin. Qualité</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col bg-slate-50 relative overflow-hidden">
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 z-10 shadow-sm shrink-0">
+            <div class="flex items-center gap-3">
+                <h2 id="page-title" class="text-xl font-bold text-primary-800">Tableau de bord</h2>
+                <span id="iso-badge" class="hidden px-2 py-0.5 rounded text-[10px] font-bold bg-accent-100 text-accent-800 border border-accent-200 uppercase tracking-wide">ISO 9001</span>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <button onclick="app.openCreateModal()" id="btn-create" class="hidden bg-accent-500 hover:bg-accent-600 text-white px-4 py-2 rounded-md text-sm font-medium shadow-md shadow-accent-500/20 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> <span id="btn-create-label">Nouveau</span>
+                </button>
+                <div class="h-6 w-px bg-slate-200 mx-2"></div>
+                <button class="text-slate-400 hover:text-accent-500 relative">
+                    <i class="fa-regular fa-bell text-xl"></i>
+                    <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white"></span>
+                </button>
+            </div>
+        </header>
+
+        <div id="app-content" class="flex-1 overflow-y-auto p-8 fade-in scroll-smooth"></div>
+    </main>
+
+    <!-- GENERIC MODAL -->
+    <div id="modal-overlay" class="hidden fixed inset-0 bg-primary-900/60 backdrop-blur-sm z-50 flex items-center justify-center transition-opacity opacity-0">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-lg transform scale-95 transition-all duration-300" id="modal-panel">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-lg">
+                <h3 class="font-bold text-primary-800 text-lg" id="modal-title">Titre</h3>
+                <button onclick="app.closeModal()" class="text-slate-400 hover:text-primary-800 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="p-6" id="modal-body"></div>
+            <div class="px-6 py-4 bg-slate-50 rounded-b-lg flex justify-end gap-3 border-t border-slate-100" id="modal-footer">
+                <button onclick="app.closeModal()" class="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-md text-sm font-medium transition">Fermer</button>
+                <button id="modal-action-btn" class="px-4 py-2 bg-accent-500 text-white hover:bg-accent-600 rounded-md text-sm font-medium shadow-sm transition">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCUMENT VIEWER MODAL -->
+    <div id="doc-viewer-overlay" class="hidden fixed inset-0 bg-primary-900/80 backdrop-blur-md z-[60] flex items-center justify-center transition-opacity opacity-0">
+        <div class="bg-slate-100 w-full h-full md:w-[95%] md:h-[95%] rounded-lg shadow-2xl flex flex-col relative" id="doc-viewer-panel">
+            <div class="h-14 bg-primary-800 text-white flex justify-between items-center px-4 rounded-t-lg shadow-md z-10 shrink-0">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-file-pdf text-accent-500 text-xl"></i>
+                    <div>
+                        <h4 class="font-bold text-sm" id="viewer-title">Titre</h4>
+                        <p class="text-[10px] text-slate-400" id="viewer-meta">Meta</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="app.closeDocViewer()" class="p-2 hover:bg-red-500/80 rounded text-white transition"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto bg-slate-200/50 p-4 flex justify-center">
+                <div id="viewer-content" class="doc-preview-container transition-transform origin-top"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA & CONFIG ---
+        
+        // ISO 9001:2015 Mapping Data
+        const isoData = {
+            'dashboard': {
+                chapter: '9.1.3 / 5.1',
+                req: 'Surveillance, mesure, analyse et évaluation / Leadership',
+                status: 'Couvert nativement',
+                details: 'Tableaux de bord dynamiques, datavisualisation et rapports pour revues de direction.',
+                adv: 'Vision 360° en temps réel, aide à la décision factuelle.',
+                source: '[1-3, 6, 7]'
+            },
+            'documents': {
+                chapter: '7.5',
+                req: 'Maîtrise des informations documentées',
+                status: 'Couvert nativement',
+                details: 'Cycle de vie complet (création, révision, approbation), gestion des versions.',
+                adv: 'Diffusion instantanée de la bonne version, suppression des doublons, traçabilité.',
+                source: '[1, 2]'
+            },
+            'events': {
+                chapter: '10.2',
+                req: 'Non-conformité et actions correctives',
+                status: 'Couvert nativement',
+                details: 'Saisie structurée, classification, isolement produits.',
+                adv: 'Centralisation des remontées, notifications, statistiques immédiates.',
+                source: '[1-3]'
+            },
+            'capa': {
+                chapter: '10.2',
+                req: 'Action corrective (Éliminer la cause)',
+                status: 'Couvert nativement',
+                details: 'Analyse causes racines (Ishikawa), suivi plan d\'actions, vérification efficacité.',
+                adv: 'Automatisation des relances, lien direct événement source, boucle fermée.',
+                source: '[2-4]'
+            },
+            'audits': {
+                chapter: '9.2',
+                req: 'Audit interne',
+                status: 'Couvert nativement',
+                details: 'Planning, checklists, preuves, rapports automatiques.',
+                adv: 'Élimination re-saisie, accès instantané preuves, suivi centralisé écarts.',
+                source: '[1, 2, 5]'
+            },
+            'risks': {
+                chapter: '6.1',
+                req: 'Actions face aux risques et opportunités',
+                status: 'Couvert nativement',
+                details: 'Registres, matrices de criticité (FMEA), plans de mitigation.',
+                adv: 'Mise à jour dynamique cartographie, alertes seuils, lien CAPA.',
+                source: '[2, 5, 6]'
+            },
+            'training': {
+                chapter: '7.2',
+                req: 'Compétences',
+                status: 'Couvert nativement',
+                details: 'Matrices compétences, habilitations, lien formation/document.',
+                adv: 'Actualisation auto besoins formation, archivage preuves habilitation.',
+                source: '[2, 4]'
+            },
+            'suppliers': {
+                chapter: '8.4',
+                req: 'Maîtrise des processus, produits et services fournis par des prestataires externes',
+                status: 'Couvert nativement',
+                details: 'Fiches évaluation, audits fournisseurs, SCAR.',
+                adv: 'Centralisation documents fournisseurs, transparence échanges.',
+                source: '[2, 4, 7]'
+            },
+            'infrastructure': {
+                chapter: '7.1.3',
+                req: 'Infrastructure',
+                status: 'Couvert par extension',
+                details: 'Suivi équipements, métrologie, maintenance préventive.',
+                adv: 'Suivi rigoureux étalonnages, planification maintenance.',
+                source: '[1]'
+            },
+            'changes': {
+                chapter: '6.3 / 8.5.6',
+                req: 'Planification des modifications',
+                status: 'Couvert nativement',
+                details: 'Workflow demande changement, analyse impact, approbation.',
+                adv: 'Maîtrise des impacts avant mise en œuvre.',
+                source: '[2]'
+            }
+        };
+
+        const sidebarStructure = [
+            {
+                title: "Pilotage & Leadership",
+                items: [
+                    { id: "dashboard", icon: "fa-chart-pie", label: "Tableau de bord" }
+                ]
+            },
+            {
+                title: "Ressources & Support",
+                items: [
+                    { id: "documents", icon: "fa-folder-tree", label: "Documents (GED)" },
+                    { id: "training", icon: "fa-graduation-cap", label: "Formation & RH" },
+                    { id: "infrastructure", icon: "fa-industry", label: "Infrastructures" },
+                    { id: "suppliers", icon: "fa-truck-field", label: "Fournisseurs" }
+                ]
+            },
+            {
+                title: "Opérations Qualité",
+                items: [
+                    { id: "events", icon: "fa-triangle-exclamation", label: "Non-Conformités" },
+                    { id: "capa", icon: "fa-list-check", label: "Actions (CAPA)" }
+                ]
+            },
+            {
+                title: "Système & Amélioration",
+                items: [
+                    { id: "audits", icon: "fa-clipboard-question", label: "Audits" },
+                    { id: "risks", icon: "fa-shield-halved", label: "Risques" },
+                    { id: "changes", icon: "fa-shuffle", label: "Changements" }
+                ]
+            }
+        ];
+
+        // --- UTILS ---
+        const generateId = (prefix) => `${prefix}-${new Date().getFullYear().toString().substr(-2)}-${Math.floor(100 + Math.random() * 900)}`;
+        const getDateNow = () => new Date().toISOString().split('T')[0];
+        const addDays = (days) => { const d = new Date(); d.setDate(d.getDate() + days); return d.toISOString().split('T')[0]; };
+        const getTsNow = () => new Date().toLocaleString('fr-FR');
+        const formatDate = (dateStr) => dateStr ? dateStr.split('-').reverse().join('/') : '-';
+
+        // --- APP STATE ---
+        const app = {
+            state: {
+                currentView: 'dashboard',
+                editMode: false,
+                user: 'Jean Dupont',
+                dashboard: {
+                    kpis: [
+                        { id: 'kpi-1', title: 'NC Ouvertes', value: '3', color: 'text-accent-500', icon: 'fa-triangle-exclamation', footer: 'Dont 1 Critique' },
+                        { id: 'kpi-2', title: 'CAPA en retard', value: '0', color: 'text-slate-600', icon: 'fa-clock', footer: 'Tout est à jour' },
+                        { id: 'kpi-3', title: 'Prochain Audit', value: '10 Mar', color: 'text-primary-800', icon: 'fa-calendar', footer: 'Interne - ISO 9001' }
+                    ],
+                    ops: [
+                        { id: 'op-1', title: 'Contrôle à Réception', subtitle: 'Taux de refus lots', value: '1.2%', trend: '-0.3%', trendIcon: 'fa-arrow-down', trendColor: 'text-emerald-600', icon: 'fa-truck-ramp-box', iconClass: 'bg-blue-100 text-blue-700' },
+                        { id: 'op-2', title: 'Contrôle Final', subtitle: 'Rendement 1er passage', value: '98.5%', trend: '+0.5%', trendIcon: 'fa-arrow-up', trendColor: 'text-emerald-600', icon: 'fa-clipboard-check', iconClass: 'bg-purple-100 text-purple-700' },
+                        { id: 'op-3', title: 'Retour Client', subtitle: 'Réclamations (PPM)', value: '450', trend: '+20', trendIcon: 'fa-arrow-up', trendColor: 'text-rose-600', icon: 'fa-users', iconClass: 'bg-rose-100 text-rose-700' }
+                    ],
+                    chart: { data: [8, 3, 5, 2], labels: ['Produit', 'Process', 'Système', 'Fournisseur'] }
+                },
+                documents: [
+                    { id: 'MQ-001', type: 'Politique', title: 'Manuel Qualité', version: '4.0', status: 'Validé', date: '2023-01-01', author: 'Dir. Qualité' },
+                    { id: 'PROC-001', type: 'Procédure', title: 'Maîtrise des informations documentées', version: '2.0', status: 'Validé', date: '2024-01-15', author: 'J. Dupont' },
+                    { id: 'INS-LAB-04', type: 'Instruction', title: 'Calibration Balance de Précision', version: '1.1', status: 'En révision', date: '2024-02-10', author: 'S. Martin' },
+                ],
+                events: [
+                    { id: 'NC-24-052', title: 'Défaut étanchéité Lot #B402', type: 'Produit', severity: 'Majeure', status: 'Ouvert', created: '2024-02-14' },
+                ],
+                capa: [ // RENAMED FROM 'capas' TO MATCH VIEW ID AND PREVENT RECURSION
+                    { id: 'CAPA-24-12', source: 'NC-24-052', action: 'Maintenance curative presse injection', resp: 'Maint.', due: '2024-02-28', status: 'En cours' }
+                ],
+                audits: [
+                    { id: 'AUD-23-12', type: 'Système', scope: 'ISO 9001 Global', auditor: 'Bureau Veritas', date: '2023-12-15', status: 'Réalisé', result: 'Conforme' },
+                    { id: 'AUD-24-01', type: 'Processus', scope: 'Achats', auditor: 'L. Durand', date: '2024-03-10', status: 'Planifié', result: '-' },
+                    { id: 'AUD-24-02', type: 'Produit', scope: 'Gamme X500', auditor: 'J. Dupont', date: '2024-04-05', status: 'Planifié', result: '-' },
+                    { id: 'AUD-24-06', type: 'Système', scope: 'Revue de Direction', auditor: 'Direction', date: '2024-06-20', status: 'Planifié', result: '-' }
+                ],
+                risks: [
+                    { id: 'RISK-001', process: 'Production', risk: 'Arrêt machine critique', impact: 'Critique', prob: 'Faible', status: 'Actif' },
+                ],
+                changes: [
+                    { id: 'CR-24-08', title: 'Nouvelle ligne de conditionnement', priority: 'Majeur', status: 'En évaluation', requester: 'Prod' }
+                ],
+                training: [
+                    { id: 'TR-001', name: 'L. Durand', role: 'Auditeur', compliance: '95%', next: 'Recyclage ISO 19011', status: 'Actif' }
+                ],
+                suppliers: [
+                    { id: 'SUP-001', name: 'Plastiques du Nord', score: '98/100', status: 'Qualifié', lastAudit: '2023-10-15' },
+                    { id: 'SUP-004', name: 'CartonBox', score: '85/100', status: 'Sous surveillance', lastAudit: '2024-01-10' }
+                ],
+                infrastructure: [
+                    { id: 'EQ-102', name: 'Presse Injection P3', type: 'Production', lastMaint: '2024-01-20', nextMaint: '2024-07-20', status: 'Opérationnel' },
+                    { id: 'EQ-LAB-01', name: 'Spectromètre', type: 'Laboratoire', lastMaint: '2023-12-05', nextMaint: '2024-12-05', status: 'Opérationnel' }
+                ]
+            },
+
+            init() {
+                // Inject future audits based on current date
+                this.state.audits.push(
+                    { id: 'AUD-FUT-01', type: 'Processus', scope: 'Logistique & Expédition', auditor: 'Cabinet Ext.', date: addDays(14), status: 'Planifié', result: '-' },
+                    { id: 'AUD-FUT-02', type: 'Produit', scope: 'Audit Surprise Ligne 2', auditor: 'Qualité Site', date: addDays(30), status: 'Planifié', result: '-' },
+                    { id: 'AUD-FUT-03', type: 'Système', scope: 'Préparation Certification', auditor: 'Resp. Qualité', date: addDays(60), status: 'Planifié', result: '-' }
+                );
+
+                this.renderSidebar();
+                this.navigate('dashboard');
+                
+                ['modal-overlay', 'doc-viewer-overlay'].forEach(id => {
+                    const el = document.getElementById(id);
+                    el.addEventListener('transitionend', () => { if (el.classList.contains('opacity-0')) el.classList.add('hidden'); });
+                });
+            },
+
+            renderSidebar() {
+                const nav = document.getElementById('sidebar-nav');
+                const homeLink = `
+                    <div class="mb-4 pb-4 border-b border-white/10">
+                        <a href="index.html" class="sidebar-link flex items-center px-3 py-2.5 rounded-md text-sm font-medium text-slate-300 hover:bg-white/5 hover:text-white">
+                            <i class="fa-solid fa-arrow-left w-6 opacity-70"></i>
+                            <span>Retour Accueil</span>
+                        </a>
+                    </div>
+                `;
+                nav.innerHTML = homeLink + sidebarStructure.map(group => `
+                    <div class="mb-6">
+                        <p class="px-3 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">${group.title}</p>
+                        ${group.items.map(item => {
+                            const iso = isoData[item.id] || {};
+                            // Tooltip HTML Generation
+                            const tooltipHtml = iso.chapter ? `
+                                <div class="iso-tooltip text-sm">
+                                    <div class="flex items-center gap-2 mb-2 text-accent-500 font-bold border-b border-gray-600 pb-1">
+                                        <i class="fa-solid fa-book"></i> ISO 9001: ${iso.chapter}
+                                    </div>
+                                    <div class="mb-2"><span class="text-gray-400 text-xs uppercase">Exigence:</span><br>${iso.req}</div>
+                                    <div class="mb-2"><span class="text-gray-400 text-xs uppercase">Statut:</span> <span class="text-green-400">${iso.status}</span></div>
+                                    <div class="mb-2 text-xs italic text-gray-300">${iso.details}</div>
+                                    <div class="text-xs text-accent-100"><i class="fa-solid fa-check mr-1"></i>${iso.adv}</div>
+                                </div>
+                            ` : '';
+                            
+                            return `
+                            <div class="sidebar-group relative">
+                                <a href="#" onclick="app.navigate('${item.id}')" id="nav-${item.id}" class="sidebar-link flex items-center px-3 py-2.5 rounded-md text-sm font-medium">
+                                    <i class="fa-solid ${item.icon} w-6 opacity-70"></i>
+                                    <span>${item.label}</span>
+                                </a>
+                                ${tooltipHtml}
+                            </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `).join('');
+            },
+
+            navigate(view) {
+                this.state.currentView = view;
+                this.state.editMode = false;
+                
+                document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active', 'text-accent-500'));
+                const activeLink = document.getElementById('nav-' + view);
+                if(activeLink) activeLink.classList.add('active');
+
+                // Config Buttons
+                const btnCreate = document.getElementById('btn-create');
+                const btnLabel = document.getElementById('btn-create-label');
+                const isoBadge = document.getElementById('iso-badge');
+                
+                // Show/Hide ISO Badge based on context
+                const isoInfo = isoData[view];
+                if (isoInfo && isoInfo.chapter) {
+                    isoBadge.textContent = `ISO ${isoInfo.chapter}`;
+                    isoBadge.classList.remove('hidden');
+                } else {
+                    isoBadge.classList.add('hidden');
+                }
+
+                // Default config
+                const pageTitle = document.querySelector('#sidebar-nav').innerText.includes(view) ? 
+                    document.getElementById('nav-' + view).querySelector('span').innerText : 'QMS Pilot';
+                document.getElementById('page-title').textContent = pageTitle;
+
+                if (view === 'dashboard') {
+                    btnCreate.classList.remove('hidden');
+                    btnCreate.onclick = () => this.toggleEditMode();
+                    btnLabel.textContent = this.state.editMode ? 'Terminer' : 'Personnaliser';
+                } else {
+                    btnCreate.classList.remove('hidden');
+                    btnCreate.onclick = () => this.openCreateModal();
+                    btnLabel.textContent = "Nouveau";
+                }
+
+                const container = document.getElementById('app-content');
+                container.innerHTML = '';
+                
+                // Inject ISO Header
+                if(isoInfo) {
+                    container.innerHTML += `
+                    <div class="bg-gradient-to-r from-slate-100 to-white border-l-4 border-accent-500 p-4 mb-6 rounded shadow-sm text-sm">
+                        <div class="flex items-start gap-3">
+                            <div class="p-2 bg-white rounded-full shadow text-accent-600"><i class="fa-solid fa-circle-info"></i></div>
+                            <div>
+                                <h4 class="font-bold text-primary-800">Contexte ISO 9001 (${isoInfo.chapter}) : ${isoInfo.req}</h4>
+                                <p class="text-slate-600 mt-1">${isoInfo.details}</p>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+
+                if (this['render' + view.charAt(0).toUpperCase() + view.slice(1)]) {
+                    this['render' + view.charAt(0).toUpperCase() + view.slice(1)](container);
+                } else {
+                    this.renderGenericTable(container, view);
+                }
+            },
+
+            // --- CORE FUNCTIONS (Log & Archive) ---
+            archiveItem(type, id) {
+                if (!confirm("Archiver cet élément ?")) return;
+                let item = this.state[type].find(i => i.id === id);
+                if (item) { item.status = 'Archivé'; this.navigate(this.state.currentView); }
+            },
+            editItem(type, id) { this.openCreateModal(id); },
+            toggleEditMode() { this.state.editMode = !this.state.editMode; this.navigate('dashboard'); },
+
+            // --- DASHBOARD CRUD ---
+            editDashboardItem(type, id) {
+                const item = type === 'kpi' ? this.state.dashboard.kpis.find(i => i.id === id) : this.state.dashboard.ops.find(i => i.id === id);
+                this.openDashboardModal(type, item);
+            },
+            deleteDashboardItem(type, id) {
+                if(!confirm("Supprimer cet indicateur ?")) return;
+                if(type === 'kpi') this.state.dashboard.kpis = this.state.dashboard.kpis.filter(i => i.id !== id);
+                else this.state.dashboard.ops = this.state.dashboard.ops.filter(i => i.id !== id);
+                this.navigate('dashboard');
+            },
+            addDashboardItem(type) {
+                this.openDashboardModal(type);
+            },
+            openDashboardModal(type, item = null) {
+                const modal = document.getElementById('modal-overlay');
+                document.getElementById('modal-title').textContent = item ? "Modifier Indicateur" : "Ajouter Indicateur";
+                document.getElementById('modal-action-btn').textContent = "Enregistrer";
+                
+                const fields = type === 'kpi' 
+                    ? [{k:'title', l:'Titre'}, {k:'value', l:'Valeur'}, {k:'footer', l:'Footer'}, {k:'icon', l:'Icon (fa-class)'}, {k:'color', l:'Couleur (text-class)'}]
+                    : [{k:'title', l:'Titre'}, {k:'subtitle', l:'Sous-titre'}, {k:'value', l:'Valeur'}, {k:'trend', l:'Tendance'}, {k:'icon', l:'Icon'}, {k:'iconClass', l:'Style Icone'}];
+                
+                let html = '<form id="dash-form" class="space-y-4">';
+                fields.forEach(f => {
+                    const val = item ? item[f.k] : '';
+                    html += `<div><label class="block text-sm text-slate-700">${f.l}</label><input name="${f.k}" value="${val}" class="w-full border p-2 rounded mt-1"></div>`;
+                });
+                html += '</form>';
+                
+                document.getElementById('modal-body').innerHTML = html;
+                document.getElementById('modal-action-btn').onclick = () => {
+                    const formData = new FormData(document.getElementById('dash-form'));
+                    const data = Object.fromEntries(formData);
+                    if(item) {
+                        Object.assign(item, data);
+                    } else {
+                        data.id = generateId(type);
+                        if(type === 'kpi') this.state.dashboard.kpis.push(data);
+                        else this.state.dashboard.ops.push(data);
+                    }
+                    this.closeModal();
+                    this.navigate('dashboard');
+                };
+                
+                modal.classList.remove('hidden');
+                setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('modal-panel').classList.remove('scale-95'); document.getElementById('modal-panel').classList.add('scale-100'); }, 10);
+            },
+
+            // --- RENDERERS ---
+            renderDashboard(c) {
+                const isEdit = this.state.editMode;
+                const kpisHTML = this.state.dashboard.kpis.map(kpi => 
+                    `<div class="dashboard-item bg-white p-5 rounded-lg shadow-sm border border-slate-200 flex flex-col justify-between h-32 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 p-4 opacity-5"><i class="fa-solid ${kpi.icon} text-6xl text-primary-800"></i></div>
+                        <div><p class="text-xs font-bold text-slate-400 uppercase tracking-wider">${kpi.title}</p><h3 class="text-3xl font-bold ${kpi.color} mt-1">${kpi.value}</h3></div>
+                        <p class="text-xs text-slate-500 font-medium mt-2">${kpi.footer}</p>
+                        <div class="edit-overlay ${isEdit ? 'active' : ''}">
+                             <button onclick="app.editDashboardItem('kpi', '${kpi.id}')" class="p-1 bg-white border rounded hover:text-accent-500"><i class="fa-solid fa-pen text-xs"></i></button>
+                             <button onclick="app.deleteDashboardItem('kpi', '${kpi.id}')" class="p-1 bg-white border rounded hover:text-red-500"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>
+                    </div>`
+                ).join('') + (isEdit ? `<button onclick="app.addDashboardItem('kpi')" class="border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center text-slate-400 hover:text-accent-500 hover:border-accent-500 transition h-32"><i class="fa-solid fa-plus text-2xl"></i></button>` : '');
+
+                const opsHTML = this.state.dashboard.ops.map(op => `
+                    <div class="dashboard-item flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100 mb-3 hover:shadow-md transition relative group">
+                        <div class="flex items-center gap-3"><div class="p-2 rounded ${op.iconClass}"><i class="fa-solid ${op.icon}"></i></div><div><p class="text-sm font-bold text-slate-700">${op.title}</p><p class="text-xs text-slate-500">${op.subtitle}</p></div></div>
+                        <div class="text-right"><p class="text-lg font-bold text-slate-800">${op.value}</p><p class="text-xs ${op.trendColor}"><i class="fa-solid ${op.trendIcon}"></i> ${op.trend}</p></div>
+                        <div class="edit-overlay ${isEdit ? 'active' : ''}">
+                             <button onclick="app.editDashboardItem('op', '${op.id}')" class="p-1 bg-white border rounded hover:text-accent-500"><i class="fa-solid fa-pen text-xs"></i></button>
+                             <button onclick="app.deleteDashboardItem('op', '${op.id}')" class="p-1 bg-white border rounded hover:text-red-500"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>
+                    </div>`).join('') + (isEdit ? `<button onclick="app.addDashboardItem('op')" class="w-full py-3 border-2 border-dashed border-slate-300 rounded-lg text-slate-400 hover:text-accent-500 hover:border-accent-500 transition"><i class="fa-solid fa-plus"></i> Ajouter Indicateur</button>` : '');
+                
+                // Chart
+                const chartData = this.state.dashboard.chart;
+                const maxVal = Math.max(...chartData.data, 1);
+                const chartHTML = chartData.data.map((val, i) => {
+                    const h = (val / maxVal) * 100;
+                    return `<div class="flex flex-col items-center w-1/4 group h-full justify-end">
+                        <div class="w-full bg-slate-100 rounded-t relative flex items-end justify-center overflow-hidden" style="height: 80%">
+                            <div style="height: ${h}%" class="w-full bg-accent-500 opacity-90 group-hover:opacity-100 transition-all relative"></div>
+                            <span class="absolute bottom-2 text-xs font-bold text-slate-700 group-hover:text-white z-10 transition-colors">${val}</span>
+                        </div>
+                        <span class="text-[10px] text-slate-500 mt-2 font-medium uppercase truncate w-full text-center" title="${chartData.labels ? chartData.labels[i] : ''}">${chartData.labels ? chartData.labels[i] : ''}</span>
+                    </div>`;
+                }).join('');
+
+                c.innerHTML += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">${kpisHTML}</div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200"><h3 class="font-bold text-primary-800 mb-4">Répartition des NC</h3><div class="h-48 flex items-end gap-4 px-4 border-b border-slate-100 pb-2">${chartHTML}</div></div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 flex flex-col"><h3 class="font-bold text-primary-800 mb-4">Indicateurs Opérationnels</h3>${opsHTML}</div>
+                    </div>`;
+            },
+
+            // Specific Table Renderers
+            renderDocuments(c) { this.renderGenericTable(c, 'documents', ['Ref', 'Type', 'Titre', 'Version', 'Auteur', 'Date', 'Statut', ''], (i) => 
+                `<td>${i.id}</td><td><span class="badge badge-neutral">${i.type}</span></td><td class="font-medium">${i.title}</td><td class="text-center">${i.version}</td><td>${i.author}</td><td class="text-right">${formatDate(i.date)}</td><td><span class="badge ${i.status==='Validé'?'badge-success':'badge-warning'}">${i.status}</span></td>`
+            );},
+            renderSuppliers(c) { this.renderGenericTable(c, 'suppliers', ['ID', 'Nom Fournisseur', 'Score Qualité', 'Dernier Audit', 'Statut', ''], (i) => 
+                `<td>${i.id}</td><td class="font-bold text-primary-800">${i.name}</td><td class="font-mono">${i.score}</td><td>${formatDate(i.lastAudit)}</td><td><span class="badge ${i.status==='Qualifié'?'badge-success':'badge-warning'}">${i.status}</span></td>`
+            );},
+            renderInfrastructure(c) { this.renderGenericTable(c, 'infrastructure', ['ID', 'Équipement', 'Secteur', 'Dernière Maint.', 'Prochaine Maint.', 'Statut', ''], (i) => 
+                `<td>${i.id}</td><td class="font-medium">${i.name}</td><td>${i.type}</td><td>${formatDate(i.lastMaint)}</td><td class="text-accent-600 font-bold">${formatDate(i.nextMaint)}</td><td><span class="badge badge-info">${i.status}</span></td>`
+            );},
+            renderEvents(c) { this.renderGenericTable(c, 'events', ['ID', 'Description', 'Type', 'Gravité', 'Statut', ''], (i) => 
+                `<td>${i.id}</td><td class="font-medium">${i.title}</td><td>${i.type}</td><td><span class="badge ${i.severity==='Majeure'?'badge-danger':'badge-warning'}">${i.severity}</span></td><td><span class="badge ${i.status==='Ouvert'?'badge-danger':'badge-success'}">${i.status}</span></td>`
+            );},
+
+            // Fallback Generic Table
+            renderGenericTable(container, type, headers, rowTemplate) {
+                const list = this.state[type];
+                if(!list) {
+                    // Try to find a default render or just show generic message if view doesn't exist in state
+                    if(this.state[type]) { 
+                        // If state exists but no specific render, use a generic one (fallback logic)
+                        // Simplified for brevity in this response, ideally map all views
+                    }
+                    if(type === 'changes') { this.renderChanges(container); return; }
+                    if(type === 'risks') { this.renderRisks(container); return; }
+                    if(type === 'audits') { this.renderAudits(container); return; }
+                    // FIXED: Removed recursive call for 'capa' which caused stack overflow
+                    if(type === 'training') { this.renderTraining(container); return; }
+                    
+                    // Safe fallback if data is missing
+                    container.innerHTML += `<div class="p-8 text-center text-slate-400 italic">Aucune donnée trouvée pour ${type}.</div>`;
+                    return; 
+                }
+                
+                const rows = list.map(item => `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100 transition group">
+                        ${rowTemplate(item)}
+                        <td class="px-6 py-4 text-right flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                             ${type === 'documents' ? `<button onclick="app.showDocViewer('${item.id}')" class="text-slate-400 hover:text-primary-800" title="Voir"><i class="fa-solid fa-eye"></i></button>` : ''}
+                             <button onclick="app.editItem('${type}', '${item.id}')" class="text-slate-400 hover:text-accent-500" title="Modifier"><i class="fa-solid fa-pen"></i></button>
+                             ${item.status !== 'Archivé' ? `<button onclick="app.archiveItem('${type}', '${item.id}')" class="text-slate-400 hover:text-red-500" title="Archiver"><i class="fa-solid fa-box-archive"></i></button>` : ''}
+                        </td>
+                    </tr>
+                `).join('');
+                
+                const headerHtml = headers.map(h => `<th class="px-6 py-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">${h}</th>`).join('');
+                container.innerHTML += `<div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden"><table class="w-full whitespace-nowrap"><thead class="bg-slate-50 border-b border-slate-100"><tr>${headerHtml}</tr></thead><tbody>${rows}</tbody></table></div>`;
+            },
+
+            // Missing renders from fallback
+            renderChanges(c) { this.renderGenericTable(c, 'changes', ['ID', 'Titre', 'Priorité', 'Demandeur', 'Statut', ''], (i) => `<td>${i.id}</td><td class="font-medium">${i.title}</td><td>${i.priority}</td><td>${i.requester}</td><td><span class="badge badge-info">${i.status}</span></td>`); },
+            renderRisks(c) { this.renderGenericTable(c, 'risks', ['ID', 'Processus', 'Risque', 'Impact', 'Prob.', 'Statut', ''], (i) => `<td>${i.id}</td><td>${i.process}</td><td class="font-medium">${i.risk}</td><td class="text-red-600 font-bold">${i.impact}</td><td>${i.prob}</td><td><span class="badge ${i.status==='Actif'?'badge-danger':'badge-success'}">${i.status}</span></td>`); },
+            renderAudits(c) { 
+                // Calendar Logic
+                const audits = this.state.audits.sort((a,b) => new Date(a.date) - new Date(b.date));
+                const todayStr = getDateNow();
+                const past = audits.filter(a => a.date < todayStr);
+                const future = audits.filter(a => a.date > todayStr);
+                
+                const renderCard = (a) => `
+                    <div class="bg-white p-3 rounded border-l-4 ${a.type === 'Système' ? 'border-purple-500' : a.type === 'Processus' ? 'border-blue-500' : 'border-emerald-500'} shadow-sm mb-2 text-sm">
+                        <div class="flex justify-between font-bold text-slate-700"><span>${a.type}</span> <span class="text-xs font-normal text-slate-500">${formatDate(a.date)}</span></div>
+                        <div class="text-slate-600 mt-1">${a.scope}</div>
+                        <div class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-user mr-1"></i>${a.auditor}</div>
+                    </div>`;
+
+                c.innerHTML += `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-slate-100 p-4 rounded-lg border border-slate-200">
+                            <h4 class="font-bold text-slate-500 uppercase text-xs mb-3 tracking-wider"><i class="fa-solid fa-clock-rotate-left mr-2"></i>Audits Passés</h4>
+                            ${past.length ? past.map(renderCard).join('') : '<p class="text-xs text-slate-400 italic">Aucun audit passé.</p>'}
+                        </div>
+                        <div class="bg-accent-50 p-4 rounded-lg border border-accent-200">
+                            <h4 class="font-bold text-accent-700 uppercase text-xs mb-3 tracking-wider"><i class="fa-solid fa-calendar-day mr-2"></i>À Venir</h4>
+                            ${future.length ? future.map(renderCard).join('') : '<p class="text-xs text-accent-400 italic">Rien de prévu.</p>'}
+                        </div>
+                    </div>`;
+                this.renderGenericTable(c, 'audits', ['ID', 'Type', 'Périmètre', 'Date', 'Auditeur', 'Statut', ''], (i) => `<td>${i.id}</td><td><span class="badge ${i.type==='Système'?'badge-level1':i.type==='Processus'?'badge-info':'badge-success'}">${i.type}</span></td><td>${i.scope}</td><td>${formatDate(i.date)}</td><td>${i.auditor}</td><td><span class="badge badge-info">${i.status}</span></td>`); 
+            },
+            renderCapa(c) { this.renderGenericTable(c, 'capa', ['ID', 'Action', 'Source', 'Responsable', 'Échéance', 'Statut', ''], (i) => `<td>${i.id}</td><td class="font-medium">${i.action}</td><td>${i.source}</td><td>${i.resp}</td><td>${formatDate(i.due)}</td><td><span class="badge badge-warning">${i.status}</span></td>`); },
+            renderTraining(c) { this.renderGenericTable(c, 'training', ['ID', 'Nom', 'Rôle', 'Conf.', 'Prochaine', 'Statut', ''], (i) => `<td>${i.id}</td><td class="font-medium">${i.name}</td><td>${i.role}</td><td class="font-bold">${i.compliance}</td><td>${i.next}</td><td><span class="badge badge-success">${i.status}</span></td>`); },
+
+            // --- MODALS & FORMS ---
+            openCreateModal(editId = null) {
+                const view = this.state.currentView;
+                const modal = document.getElementById('modal-overlay');
+                document.getElementById('modal-title').textContent = editId ? "Modifier" : "Nouveau";
+                document.getElementById('modal-action-btn').textContent = editId ? "Enregistrer" : "Créer";
+                
+                let content = `<form id="crud-form" class="space-y-4">`;
+                // Simple generic form generation for demo purposes
+                const formConfig = {
+                    'documents': [
+                        { key: 'title', label: 'Titre' }, { key: 'type', label: 'Type' }, 
+                        { key: 'version', label: 'Version' }, { key: 'status', label: 'Statut' },
+                        { key: 'author', label: 'Auteur' }, { key: 'date', label: 'Date (YYYY-MM-DD)' }
+                    ],
+                    'suppliers': [
+                        { key: 'name', label: 'Nom Fournisseur' }, { key: 'score', label: 'Score Qualité' },
+                        { key: 'lastAudit', label: 'Dernier Audit (YYYY-MM-DD)' }, { key: 'status', label: 'Statut' }
+                    ],
+                    'infrastructure': [
+                        { key: 'name', label: 'Équipement' }, { key: 'type', label: 'Type/Secteur' },
+                        { key: 'lastMaint', label: 'Dernière Maint.' }, { key: 'nextMaint', label: 'Prochaine Maint.' },
+                        { key: 'status', label: 'Statut' }
+                    ],
+                    'events': [
+                        { key: 'title', label: 'Description' }, { key: 'type', label: 'Type' },
+                        { key: 'severity', label: 'Gravité' }, { key: 'status', label: 'Statut' }
+                    ],
+                    'capa': [
+                        { key: 'action', label: 'Action' }, { key: 'source', label: 'Source (NC)' },
+                        { key: 'resp', label: 'Responsable' }, { key: 'due', label: 'Échéance' },
+                        { key: 'status', label: 'Statut' }
+                    ],
+                    'audits': [
+                        { key: 'type', label: 'Type (Système/Process/Produit)' }, { key: 'scope', label: 'Périmètre' },
+                        { key: 'date', label: 'Date Prévue' }, { key: 'auditor', label: 'Auditeur' },
+                        { key: 'status', label: 'Statut' }
+                    ],
+                    'risks': [
+                        { key: 'process', label: 'Processus' }, { key: 'risk', label: 'Risque' },
+                        { key: 'impact', label: 'Impact' }, { key: 'prob', label: 'Probabilité' },
+                        { key: 'status', label: 'Statut' }
+                    ],
+                    'changes': [
+                        { key: 'title', label: 'Titre' }, { key: 'priority', label: 'Priorité' },
+                        { key: 'requester', label: 'Demandeur' }, { key: 'status', label: 'Statut' }
+                    ],
+                    'training': [
+                        { key: 'name', label: 'Nom' }, { key: 'role', label: 'Rôle' },
+                        { key: 'compliance', label: 'Conformité (%)' }, { key: 'next', label: 'Prochaine Formation' },
+                        { key: 'status', label: 'Statut' }
+                    ],
+                    'default': [{ key: 'title', label: 'Titre' }, { key: 'description', label: 'Description' }]
+                };
+                const activeFields = formConfig[view] || formConfig['default'];
+                activeFields.forEach(f => content += `<div><label class="block text-sm text-slate-700">${f.label}</label><input name="${f.key}" class="w-full border p-2 rounded mt-1"></div>`);
+                content += `</form>`;
+                
+                document.getElementById('modal-body').innerHTML = content;
+                document.getElementById('modal-action-btn').onclick = () => {
+                    this.submitForm(view);
+                };
+                
+                modal.classList.remove('hidden');
+                setTimeout(() => { modal.classList.remove('opacity-0'); document.getElementById('modal-panel').classList.remove('scale-95'); document.getElementById('modal-panel').classList.add('scale-100'); }, 10);
+            },
+
+            submitForm(view) {
+                // Simplified submit logic
+                const form = document.getElementById('crud-form');
+                if(!form) return;
+                // Add dummy item
+                const id = generateId(view.toUpperCase().slice(0,3));
+                const newItem = { id: id, status: 'Actif', title: 'Nouvel élément', date: getDateNow(), ...Object.fromEntries(new FormData(form)) };
+                // Specific mocks
+                if(view === 'documents') { if(!newItem.version) newItem.version = '0.1'; if(!newItem.author) newItem.author = this.state.user; if(!newItem.status) newItem.status = 'Brouillon'; }
+                
+                if(!this.state[view]) this.state[view] = [];
+                this.state[view].unshift(newItem);
+                
+                this.closeModal();
+                this.navigate(view);
+            },
+
+            // --- DOC VIEWER ---
+            showDocViewer(id) {
+                const viewer = document.getElementById('doc-viewer-overlay');
+                const doc = this.state.documents.find(d => d.id === id);
+                document.getElementById('viewer-title').textContent = doc ? doc.title : id;
+                document.getElementById('viewer-meta').textContent = doc ? `v${doc.version} - ${doc.status}` : '';
+                document.getElementById('viewer-content').innerHTML = `<div class="a4-paper p-10"><h1 class="text-2xl font-bold text-center border-b pb-4 mb-4 text-primary-800">${doc?doc.title:'Document'}</h1><p class="text-justify text-slate-600">Contenu simulé pour la démonstration...</p></div>`;
+                viewer.classList.remove('hidden');
+                setTimeout(() => viewer.classList.remove('opacity-0'), 10);
+            },
+            closeDocViewer() { document.getElementById('doc-viewer-overlay').classList.add('opacity-0'); },
+            closeModal() { document.getElementById('modal-overlay').classList.add('opacity-0'); document.getElementById('modal-panel').classList.remove('scale-100'); }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>

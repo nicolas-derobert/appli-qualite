@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processus de Contrôle - QualiFlow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // --- ICON SYSTEM ---
+        const LucideIcon = ({ name, size = 24, className = "", ...props }) => {
+            const [svgContent, setSvgContent] = useState('');
+            
+            useEffect(() => {
+                if (window.lucide && window.lucide.icons && window.lucide.icons[name]) {
+                    const icon = window.lucide.icons[name];
+                    const elem = window.lucide.createElement(icon);
+                    elem.setAttribute('width', size);
+                    elem.setAttribute('height', size);
+                    if(className) elem.setAttribute('class', className);
+                    if(props.strokeWidth) elem.setAttribute('stroke-width', props.strokeWidth);
+                    setSvgContent(elem.outerHTML);
+                }
+            }, [name, size, className, props.strokeWidth]);
+
+            if (!svgContent) return <span style={{width: size, height: size, display: 'inline-block'}} />;
+            return <span dangerouslySetInnerHTML={{ __html: svgContent }} style={{ display: 'inline-flex' }} />;
+        };
+
+        const iconNames = [
+          "ClipboardCheck", "Package", "AlertTriangle", "CheckCircle", "XCircle", "Search", "Plus", "User", "Settings", 
+          "ArrowRight", "Save", "Trash2", "Archive", "RefreshCw", "Printer", "MapPin", "Factory", "Target", "Box", 
+          "ArrowRightCircle", "Activity", "ShieldCheck", "Zap", "CheckSquare", "Sliders", "BookOpen", "Microscope", 
+          "FileSpreadsheet", "Users", "Clock", "Briefcase", "Eye", "ArrowLeft", "ChevronRight"
+        ];
+        
+        const Icons = {};
+        iconNames.forEach(name => {
+            Icons[name] = (props) => <LucideIcon name={name} {...props} />;
+        });
+        
+        const { 
+          ClipboardCheck, Package, AlertTriangle, CheckCircle, XCircle, Search, Plus, User, Settings, 
+          ArrowRight, Save, Trash2, Archive, RefreshCw, Printer, MapPin, Factory, Target, Box, 
+          ArrowRightCircle, Activity, ShieldCheck, Zap, CheckSquare, Sliders, BookOpen, Microscope, 
+          FileSpreadsheet, Users, Clock, Briefcase, Eye, ArrowLeft, ChevronRight 
+        } = Icons;
+
+        // --- CONFIGURATION & DONNÉES PÉDAGOGIQUES ---
+
+        const PRODUCTS = [
+          { id: 'p1', name: 'Vis H45 Acier Trempé', ref: 'VIS-H45', tolerance: '±0.1mm', nqa: 2, sampleSize: 10 },
+          { id: 'p2', name: 'Boîtier Plastique ABS', ref: 'BOX-ABS-01', tolerance: 'Visuel', nqa: 0, sampleSize: 5 },
+          { id: 'p3', name: 'Connecteur 12 Pins', ref: 'CON-12P', tolerance: 'Continuité', nqa: 1, sampleSize: 20 },
+        ];
+
+        // Configuration des situations stratégiques avec fiches détaillées
+        const CONTEXTS = {
+          RECEIPT_DOC: {
+            id: 'RECEIPT_DOC',
+            label: 'Contrôle Documentaire (Réception)',
+            shortLabel: 'Documentaire',
+            semanticColor: 'text-red-600', 
+            stage: 'Entrants',
+            icon: FileSpreadsheet,
+            definition: "Vérification administrative et documentaire avant tout contrôle physique (Certificats, BL, Commandes).",
+            stakes: "Garantir la traçabilité, la conformité légale (REACH, CITES) et la correspondance administrative.",
+            detailedActivities: [
+              {
+                category: "Contrôle Documentaire",
+                title: "Conformité REACH (Certificat)",
+                icon: FileSpreadsheet,
+                definition: "Vérification de la présence d'un certificat REACH rattaché au lot et conformité vis‑à‑vis des substances SVHC.",
+                method: "Contrôle documentaire strict (référence, n° lot, date) avant entrée en stock.",
+                example: "Exemple : Réception de joints polymères. BL OK mais certificat REACH manquant → Quarantaine immédiate."
+              },
+              {
+                category: "Contrôle Documentaire",
+                title: "Traçabilité CITES (Exotique)",
+                icon: BookOpen,
+                definition: "Lien obligatoire entre n° série/lot (bracelets peaux exotiques) et permis CITES.",
+                method: "Validation documentaire (espèce, origine, dates) pour éviter les risques douaniers.",
+                example: "Exemple : Bracelet alligator sans permis rattaché → Blocage expédition."
+              }
+            ]
+          },
+          RECEIPT_QC: {
+            id: 'RECEIPT_QC',
+            label: 'Contrôle Qualité (IQC)',
+            shortLabel: 'Contrôle Physique',
+            semanticColor: 'text-red-600', 
+            stage: 'Entrants',
+            icon: Microscope,
+            definition: "Inspection physique et technique des composants entrants pour valider leur conformité au plan.",
+            stakes: "Protéger l'outil de production et éviter d'ajouter de la valeur sur une matière défectueuse.",
+            detailedActivities: [
+              {
+                category: "Contrôle Qualité",
+                title: "Titrage métaux précieux (XRF)",
+                icon: Target,
+                definition: "Contrôle de la pureté minimale (ex. or 18K : ≥ 750‰) avec tolérance unilatérale.",
+                method: "Mesures multi‑zones par spectrométrie XRF selon la géométrie de la pièce.",
+                example: "Exemple : Carrure annoncée 18K. Mesure XRF = 749,5‰ → Rejet immédiat (Règle unilatérale)."
+              },
+              {
+                category: "Contrôle Qualité",
+                title: "Contrôle Fermoir (Boucle)",
+                icon: ShieldCheck,
+                definition: "Vérification complète : Identification, Dimensionnel, Esthétique et Fonctionnel (Sécurité).",
+                method: "Pied à coulisse, visuel, test cycles court (20-50 ouvertures) et tenue.",
+                example: "Exemple : Lot de 300 fermoirs. 2 pièces avec bavure (contact poignet) → Quarantaine du lot."
+              }
+            ]
+          },
+          PRODUCTION: {
+            id: 'PRODUCTION',
+            label: 'En cours de production',
+            shortLabel: 'Production',
+            semanticColor: 'text-blue-600',
+            stage: 'Transformation',
+            icon: Activity,
+            definition: "Surveillance active pour détecter les dérives avant qu'elles ne deviennent critiques (Autocontrôle, SPC).",
+            stakes: "Pilotage du processus, réduction des coûts de non-qualité interne et réactivité immédiate.",
+            detailedActivities: [
+              {
+                title: "SPC — Alerte dérive",
+                icon: Activity,
+                definition: "Surveillance de la stabilité du procédé (moyenne + dispersion) pour anticiper les hors tolérances.",
+                method: "Relevé de mesures régulier et analyse des signaux (ex: 7 points consécutifs montants).",
+                example: "Exemple : Axe Ø10 h7. 5 mesures / 2h. 7 points montent vers la limite haute → Changement outil préventif."
+              },
+              {
+                title: "Contrôle Esthétique (Zones)",
+                icon: Eye,
+                definition: "Acceptabilité visuelle définie selon la zone (A/B/C) et les conditions (distance, lumière).",
+                method: "Inspection visuelle standardisée pour réduire la subjectivité des jugements.",
+                example: "Exemple : Micro‑rayure invisible à 30 cm. Acceptable en zone B (cachée), mais NOK en zone A (visible)."
+              },
+              {
+                title: "Autocontrôle Terminaison",
+                icon: User,
+                definition: "Vérification Aspect, Cadran/Aiguilles, Fonctions et Bracelet juste après l'opération.",
+                method: "Contrôle immédiat par l'opérateur (poste disponible) pour corriger sans délai.",
+                example: "Exemple : Après pose aiguilles : aucune poussière, date OK. Validation “OK” → étape suivante."
+              }
+            ]
+          },
+          END_SERIES: {
+            id: 'END_SERIES',
+            label: 'Fin de série / Tests',
+            shortLabel: 'Fin Série',
+            semanticColor: 'text-emerald-600',
+            stage: 'Validation',
+            icon: ShieldCheck,
+            definition: "Validation technique et sécurisation du lot produit avant transfert.",
+            stakes: "Garantir les performances techniques (étanchéité, fiabilité) et sécuriser le lot.",
+            detailedActivities: [
+              {
+                title: "Étanchéité Air (Déformation)",
+                icon: Activity,
+                definition: "Détection de fuite via la courbe de déformation de la boîte sous pression puis relaxation.",
+                method: "Test rapide non destructif. Une pente de relaxation trop raide indique une fuite.",
+                example: "Exemple : Sous 3 bar, la montre “revient” trop vite → Fuite probable → Démontage."
+              },
+              {
+                title: "Condensation 45°C",
+                icon: AlertTriangle,
+                definition: "Détection d'humidité interne ou infiltration par choc thermique (45°C sur plaque froide).",
+                method: "Observation de la buée sur le verre après le choc thermique.",
+                example: "Exemple : Buée persiste > 30 s → NOK → Recherche cause (joint pincé, couple)."
+              }
+            ]
+          },
+          FINAL_STOCK: {
+            id: 'FINAL_STOCK',
+            label: 'Contrôle final (OQC)',
+            shortLabel: 'Final / Stock',
+            semanticColor: 'text-orange-600',
+            stage: 'Sortants',
+            icon: Package,
+            definition: "L'ultime vérification (Firewall) avant l'expédition au client ou la mise en stock.",
+            stakes: "Protéger le client, l'image de marque et éviter les retours SAV coûteux.",
+            detailedActivities: [
+              {
+                title: "Contrôle Final Montre Finie",
+                icon: ClipboardCheck,
+                definition: "Dernier statut “porte” : conformité fonctionnelle, esthétique et documentaire.",
+                method: "Checklist complète : Identification, Esthétique, Fonctions, Mouvement, Étanchéité, Packaging.",
+                example: "Exemple : Inspection finale : rayures, fonctions (date, chrono), marche, étanchéité, présence carte garantie."
+              }
+            ]
+          }
+        };
+
+        // --- COMPOSANTS UI GÉNÉRIQUES ---
+
+        const Card = ({ children, className = '' }) => (
+          <div className={`bg-[#ffffff] rounded-xl shadow-sm border border-[#e0e0e0] ${className}`}>
+            {children}
+          </div>
+        );
+
+        const Button = ({ children, onClick, variant = 'primary', disabled = false, size = 'md', icon: Icon, className = '' }) => {
+          const baseStyle = "flex items-center justify-center rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed";
+          
+          const sizeStyles = {
+            sm: "px-3 py-1.5 text-xs",
+            md: "px-5 py-2.5 text-sm"
+          };
+
+          const variants = {
+            primary: "bg-[#1a1a1a] text-white hover:bg-[#cfa346] hover:text-[#1a1a1a] focus:ring-[#1a1a1a]",
+            secondary: "bg-white text-[#2d3436] border border-[#e0e0e0] hover:border-[#cfa346] hover:text-[#cfa346] focus:ring-[#cfa346]",
+            ghost: "bg-transparent text-[#2d3436] hover:bg-[#f8f9fa] hover:text-[#cfa346]",
+          };
+          
+          return (
+            <button onClick={onClick} disabled={disabled} className={`${baseStyle} ${sizeStyles[size]} ${variants[variant]} ${className}`}>
+              {Icon && <Icon size={size === 'sm' ? 16 : 18} className={children ? "mr-2" : ""} />}
+              {children}
+            </button>
+          );
+        };
+
+        // --- LOGIQUE PRINCIPALE (APP) ---
+
+        function App() {
+          return (
+            <div className="min-h-screen bg-[#f8f9fa] text-[#2d3436] font-sans selection:bg-[#f4e8cb] selection:text-[#856404]">
+              {/* HEADER PREMIUM */}
+              <header className="bg-[#1a1a1a] border-b border-[#cfa346] sticky top-0 z-20 shadow-lg">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                  <div className="flex items-center space-x-6">
+                    <a href="index.html" className="text-white hover:text-[#cfa346] transition-colors" title="Retour à l'accueil">
+                      <ArrowLeft size={24} />
+                    </a>
+                    <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => window.location.reload()}>
+                      <div className="bg-[#cfa346] p-2 rounded-lg text-[#1a1a1a] transition-transform transform group-hover:scale-105 shadow-[0_0_10px_rgba(207,163,70,0.3)]">
+                        <ClipboardCheck size={24} strokeWidth={2.5} />
+                      </div>
+                      <div>
+                        <h1 className="text-xl font-bold text-white tracking-tight leading-none">QualiFlow</h1>
+                        <span className="text-[10px] font-bold text-[#cfa346] uppercase tracking-widest">Excellence & Contrôle</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="hidden md:flex items-center text-xs font-medium text-[#e0e0e0] opacity-80">
+                     <span className="bg-[#2d3436] px-3 py-1 rounded-full border border-[#444]">Module Formation V2.0</span>
+                  </div>
+                </div>
+              </header>
+
+              <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <Dashboard />
+              </main>
+            </div>
+          );
+        }
+
+        // --- COMPOSANT DÉTAILS (INLINE) ---
+
+        function ContextDetails({ contextKey, onClose }) {
+          const context = CONTEXTS[contextKey];
+          const [expandedActivity, setExpandedActivity] = useState(null);
+
+          if (!context) return null;
+
+          return (
+            <div className="max-w-5xl mx-auto fade-in pb-12 bg-white rounded-2xl shadow-xl border border-[#e0e0e0] p-8 relative mt-8">
+               <button 
+                 onClick={onClose}
+                 className="absolute top-4 right-4 p-2 rounded-full hover:bg-[#f8f9fa] text-[#2d3436] transition-colors"
+                 title="Fermer"
+               >
+                 <XCircle size={24} />
+               </button>
+
+               {/* HEADER */}
+               <div className="mb-10 flex flex-col md:flex-row gap-8 items-start">
+                  <div className="flex-1">
+                      <div className="flex flex-col md:flex-row md:items-start gap-6">
+                         <div className="bg-[#1a1a1a] p-4 rounded-2xl text-[#cfa346] shadow-lg shrink-0">
+                            <context.icon size={40} strokeWidth={1.5} />
+                         </div>
+                         <div>
+                            <div className="flex items-center gap-3 mb-2">
+                               <h2 className="text-3xl font-extrabold text-[#1a1a1a] tracking-tight">{context.label}</h2>
+                               <span className="bg-[#f4e8cb] text-[#856404] text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider border border-[#cfa346]">
+                                  {context.stage}
+                               </span>
+                            </div>
+                            <p className="text-[#2d3436] text-lg font-light leading-relaxed opacity-80 border-l-4 border-[#cfa346] pl-4 py-1">
+                               {context.definition}
+                            </p>
+                         </div>
+                      </div>
+                  </div>
+               </div>
+
+               {/* ENJEUX PRINCIPAUX */}
+               <div className="bg-[#1a1a1a] p-8 rounded-2xl shadow-xl mb-12 flex flex-col md:flex-row items-center md:items-start gap-6 text-white relative overflow-hidden">
+                  <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-[#cfa346] rounded-full opacity-10 blur-3xl"></div>
+                  
+                  <div className="bg-[#cfa346] p-3 rounded-full text-[#1a1a1a] shrink-0 shadow-lg z-10">
+                    <Target size={28} />
+                  </div>
+                  <div className="z-10 text-center md:text-left">
+                    <h3 className="font-bold text-[#cfa346] uppercase tracking-widest text-sm mb-2">Enjeux Stratégiques</h3>
+                    <p className="text-white text-xl leading-relaxed font-light">{context.stakes}</p>
+                  </div>
+               </div>
+
+               {/* LISTE DES ACTIVITÉS */}
+               <div className="flex items-center gap-3 mb-8">
+                  <div className="h-px bg-[#e0e0e0] flex-1"></div>
+                  <h3 className="font-bold text-2xl text-[#1a1a1a] flex items-center gap-2">
+                    <BookOpen className="text-[#cfa346]" />
+                    Exemple de contrôle
+                  </h3>
+                  <div className="h-px bg-[#e0e0e0] flex-1"></div>
+               </div>
+
+               <div className="space-y-6">
+                  {context.detailedActivities.map((act, idx) => {
+                    const isExpanded = expandedActivity === idx;
+                    return (
+                      <div 
+                        key={idx} 
+                        className={`bg-white rounded-xl border transition-all duration-300 overflow-hidden ${isExpanded ? 'border-[#cfa346] shadow-[0_10px_40px_rgba(207,163,70,0.15)]' : 'border-[#e0e0e0] shadow-sm hover:border-[#cfa346] hover:shadow-md'}`}
+                      >
+                        <div 
+                          onClick={() => setExpandedActivity(isExpanded ? null : idx)}
+                          className="p-6 cursor-pointer flex items-center justify-between group"
+                        >
+                          <div className="flex items-center gap-6">
+                             <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-md transition-colors ${isExpanded ? 'bg-[#cfa346] text-[#1a1a1a]' : 'bg-[#1a1a1a] text-[#cfa346]'}`}>
+                                <act.icon size={30} strokeWidth={1.5} />
+                             </div>
+                             <div>
+                               {act.category && (
+                                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#cfa346] mb-1 block">
+                                   {act.category}
+                                 </span>
+                               )}
+                               <h4 className={`text-xl font-bold mb-1 ${isExpanded ? 'text-[#1a1a1a]' : 'text-[#2d3436]'}`}>{act.title}</h4>
+                               <p className="text-[#2d3436] opacity-60 text-sm flex items-center gap-1 group-hover:text-[#cfa346] transition-colors">
+                                  {isExpanded ? "Masquer les détails" : "Voir la fiche technique"}
+                               </p>
+                             </div>
+                          </div>
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isExpanded ? 'bg-[#f4e8cb] text-[#856404] rotate-90' : 'bg-[#f8f9fa] text-[#e0e0e0] group-hover:text-[#cfa346]'}`}>
+                            <ChevronRight size={20} />
+                          </div>
+                        </div>
+
+                        {isExpanded && (
+                          <div className="px-8 pb-10 pt-2 border-t border-[#f4e8cb] bg-[#fcfbf8]">
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                <div className="space-y-8">
+                                   <div>
+                                      <h5 className="flex items-center gap-2 font-bold text-[#1a1a1a] text-sm uppercase tracking-wider mb-3">
+                                        <Briefcase size={18} className="text-[#cfa346]"/> Définition
+                                      </h5>
+                                      <p className="text-[#2d3436] leading-relaxed text-justify">{act.definition}</p>
+                                   </div>
+                                   <div>
+                                      <h5 className="flex items-center gap-2 font-bold text-[#1a1a1a] text-sm uppercase tracking-wider mb-3">
+                                        <Settings size={18} className="text-[#cfa346]"/> Méthode / Outils
+                                      </h5>
+                                      <p className="text-[#2d3436] leading-relaxed text-justify">{act.method}</p>
+                                   </div>
+                                </div>
+
+                               <div className="space-y-4">
+                                   <div className="bg-[#ffffff] p-6 rounded-xl border-l-4 border-[#cfa346] shadow-sm relative">
+                                       <h5 className="flex items-center gap-2 font-bold text-[#856404] text-sm uppercase tracking-wider mb-4">
+                                         Sur le terrain
+                                       </h5>
+                                       <p className="text-[#2d3436] italic leading-relaxed text-lg font-serif">
+                                         "{act.example.replace('Exemple :', '')}"
+                                       </p>
+                                   </div>
+                                </div>
+                             </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+               </div>
+            </div>
+          );
+        }
+
+        // --- VUE DASHBOARD ---
+
+        function Dashboard() {
+          const [hoveredContext, setHoveredContext] = useState(null);
+          const [selectedContext, setSelectedContext] = useState(null);
+          const displayContext = CONTEXTS[hoveredContext] || null;
+
+          const handleSelect = (key) => {
+              if (selectedContext === key) setSelectedContext(null);
+              else setSelectedContext(key);
+              
+              if (selectedContext !== key) {
+                  setTimeout(() => {
+                      document.getElementById('details-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 100);
+              }
+          };
+
+          return (
+            <div className="fade-in">
+              <div className="text-center mb-16 space-y-2">
+                <h2 className="text-3xl font-extrabold text-[#1a1a1a]">Cartographie des contrôles</h2>
+                <p className="text-[#2d3436] opacity-70 text-lg max-w-2xl mx-auto">
+                  Explorez le processus de production pour découvrir les points de contrôle clés et les standards associés.
+                </p>
+                <div className="w-24 h-1 bg-[#cfa346] mx-auto rounded mt-4"></div>
+              </div>
+
+              <div className="relative max-w-6xl mx-auto mb-16 px-4">
+                {/* Ligne de flux */}
+                <div className="absolute top-1/2 left-0 w-full h-1 bg-[#e0e0e0] -translate-y-1/2 rounded-full hidden md:block z-0"></div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-6 relative z-10">
+                  
+                  {/* Supplier */}
+                  <div className="flex flex-col items-center justify-center p-6 bg-[#f8f9fa] rounded-xl border border-[#e0e0e0] border-dashed opacity-60">
+                      <Factory size={36} className="text-[#2d3436] mb-3"/>
+                      <div className="font-bold text-[#2d3436] uppercase tracking-widest text-xs">Fournisseur</div>
+                  </div>
+
+                  {/* MANUFACTURE CONTAINER (Wraps Inputs, Process, Outputs) */}
+                  <div className="md:col-span-3 relative rounded-2xl border-2 border-[#cfa346] bg-white/80 p-6 shadow-lg flex flex-col">
+                      {/* Watermark / Logo Background */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none overflow-hidden rounded-2xl">
+                          <Factory size={300} strokeWidth={1} />
+                      </div>
+                      
+                      {/* Label Manufacture */}
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#1a1a1a] text-[#cfa346] px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest shadow-md flex items-center gap-2 z-20 border border-[#cfa346]">
+                          <Clock size={12} /> Manufacture Horlogère
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10 h-full">
+                          {/* INPUTS (Receipt) */}
+                          <div className="relative flex flex-col gap-4">
+                       {/* Container Réception */}
+                       <div className="absolute inset-0 bg-[#f8f9fa] rounded-xl border border-[#e0e0e0] -z-10 translate-x-2 translate-y-2"></div>
+                       <div className="bg-white rounded-xl border border-[#e0e0e0] p-4 h-full flex flex-col justify-between items-center shadow-sm relative">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-[#1a1a1a] rounded-t-xl"></div>
+                            <div className="absolute -top-3 bg-[#1a1a1a] text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm z-10">Entrants</div>
+                            <div className="text-[10px] font-bold text-[#2d3436] uppercase tracking-widest mb-3 w-full text-center border-b border-[#f8f9fa] pb-2 opacity-60 mt-2">Réception</div>
+                            
+                            {/* DOC STEP */}
+                            <div onClick={() => handleSelect('RECEIPT_DOC')} onMouseEnter={() => setHoveredContext('RECEIPT_DOC')} onMouseLeave={() => setHoveredContext(null)}
+                              className="w-full bg-[#f8f9fa] hover:bg-[#f4e8cb] border border-[#e0e0e0] hover:border-[#cfa346] rounded-lg p-3 mb-2 cursor-pointer transition-all flex items-center gap-3 group">
+                                <FileSpreadsheet size={18} className="text-[#2d3436] group-hover:text-[#856404]"/>
+                                <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">Documentaire</div>
+                            </div>
+
+                            {/* QC STEP */}
+                            <div onClick={() => handleSelect('RECEIPT_QC')} onMouseEnter={() => setHoveredContext('RECEIPT_QC')} onMouseLeave={() => setHoveredContext(null)}
+                              className="w-full bg-[#f8f9fa] hover:bg-[#f4e8cb] border border-[#e0e0e0] hover:border-[#cfa346] rounded-lg p-3 cursor-pointer transition-all flex items-center gap-3 group">
+                                <Microscope size={18} className="text-[#2d3436] group-hover:text-[#856404]"/>
+                                <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">Contrôle Qualité</div>
+                            </div>
+                       </div>
+                          </div>
+
+                          {/* PROCESS */}
+                          <div className="relative flex flex-col gap-4">
+                       {/* Container Processus */}
+                       <div className="absolute inset-0 bg-[#f8f9fa] rounded-xl border border-[#e0e0e0] -z-10 translate-x-2 translate-y-2"></div>
+                       <div className="bg-white rounded-xl border border-[#e0e0e0] p-4 h-full flex flex-col justify-between items-center shadow-sm relative">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-[#1a1a1a] rounded-t-xl"></div>
+                            <div className="absolute -top-3 bg-[#1a1a1a] text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm z-10">Atelier</div>
+                            <div className="text-[10px] font-bold text-[#2d3436] uppercase tracking-widest mb-3 w-full text-center border-b border-[#f8f9fa] pb-2 opacity-60 mt-2">Processus de production</div>
+                            
+                            {/* PRODUCTION STEP */}
+                            <div onClick={() => handleSelect('PRODUCTION')} onMouseEnter={() => setHoveredContext('PRODUCTION')} onMouseLeave={() => setHoveredContext(null)}
+                              className="w-full bg-[#f8f9fa] hover:bg-[#f4e8cb] border border-[#e0e0e0] hover:border-[#cfa346] rounded-lg p-3 mb-2 cursor-pointer transition-all flex items-center gap-3 group">
+                                <Activity size={18} className="text-[#2d3436] group-hover:text-[#856404]"/>
+                                <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">En Cours</div>
+                            </div>
+
+                            {/* END SERIES STEP */}
+                            <div onClick={() => handleSelect('END_SERIES')} onMouseEnter={() => setHoveredContext('END_SERIES')} onMouseLeave={() => setHoveredContext(null)}
+                              className="w-full bg-[#f8f9fa] hover:bg-[#f4e8cb] border border-[#e0e0e0] hover:border-[#cfa346] rounded-lg p-3 cursor-pointer transition-all flex items-center gap-3 group">
+                                <ShieldCheck size={18} className="text-[#2d3436] group-hover:text-[#856404]"/>
+                                <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">Fin de Série</div>
+                            </div>
+                       </div>
+                          </div>
+
+                          {/* OUTPUTS (Final) */}
+                          <div className="relative flex flex-col gap-4">
+                       {/* Container Sortants */}
+                       <div className="absolute inset-0 bg-[#f8f9fa] rounded-xl border border-[#e0e0e0] -z-10 translate-x-2 translate-y-2"></div>
+                       <div className="bg-white rounded-xl border border-[#e0e0e0] p-4 h-full flex flex-col justify-between items-center shadow-sm relative">
+                            <div className="absolute top-0 left-0 w-full h-1 bg-[#1a1a1a] rounded-t-xl"></div>
+                            <div className="absolute -top-3 bg-[#1a1a1a] text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm z-10">Sortants</div>
+                            <div className="text-[10px] font-bold text-[#2d3436] uppercase tracking-widest mb-3 w-full text-center border-b border-[#f8f9fa] pb-2 opacity-60 mt-2">Expédition</div>
+                            
+                            {/* FINAL STEP */}
+                            <div onClick={() => handleSelect('FINAL_STOCK')} onMouseEnter={() => setHoveredContext('FINAL_STOCK')} onMouseLeave={() => setHoveredContext(null)}
+                              className="w-full bg-[#f8f9fa] hover:bg-[#f4e8cb] border border-[#e0e0e0] hover:border-[#cfa346] rounded-lg p-3 cursor-pointer transition-all flex flex-col items-center justify-center gap-2 group h-full">
+                                <Package size={28} className="text-[#2d3436] group-hover:text-[#856404]"/>
+                                <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">Contrôle Final</div>
+                            </div>
+                       </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  {/* Customer */}
+                  <div className="flex flex-col items-center justify-center p-6 bg-[#f8f9fa] rounded-xl border border-[#e0e0e0] border-dashed opacity-60">
+                      <Users size={36} className="text-[#2d3436] mb-3"/>
+                      <div className="font-bold text-[#2d3436] uppercase tracking-widest text-xs">Client</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ZONE D'INFO DYNAMIQUE OU DÉTAILS */}
+              <div id="details-section" className="max-w-5xl mx-auto px-4 min-h-[200px] transition-all duration-500">
+                 {selectedContext ? (
+                    <ContextDetails contextKey={selectedContext} onClose={() => setSelectedContext(null)} />
+                 ) : (
+                   <div className="h-36 max-w-4xl mx-auto">
+                     {displayContext ? (
+                   <div className="fade-in relative overflow-hidden rounded-xl border border-[#cfa346] bg-white p-0 flex items-stretch shadow-[0_10px_30px_rgba(0,0,0,0.05)] transition-all duration-300 h-40">
+                       <div className="flex-1 p-6 flex flex-col justify-center">
+                          <h4 className="text-xl font-bold text-[#1a1a1a] mb-2 flex items-center gap-2">
+                             <displayContext.icon size={24} className="text-[#cfa346]" />
+                             {displayContext.label}
+                          </h4>
+                          <div className="text-[#2d3436] text-sm mb-3 opacity-90">{displayContext.stakes}</div>
+                          <div className="flex items-center text-xs font-medium text-[#cfa346]">
+                             <ArrowRightCircle size={14} className="mr-1" />
+                             {displayContext.detailedActivities.length} Fiches disponibles
+                          </div>
+                       </div>
+                       <div className="flex items-center pl-6 border-l border-[#e0e0e0]">
+                          <Button size="md" onClick={() => handleSelect(displayContext.id)} icon={BookOpen} className="shadow-lg">
+                            Consulter
+                          </Button>
+                       </div>
+                   </div>
+                 ) : (
+                   <div className="h-full flex flex-col items-center justify-center text-[#e0e0e0] border-2 border-dashed border-[#e0e0e0] rounded-xl bg-[#f8f9fa]">
+                      <Zap size={32} className="mb-2 opacity-50 text-[#2d3436]"/>
+                      <p className="text-sm font-medium text-[#2d3436] opacity-60">Survolez une étape pour prévisualiser les contrôles</p>
+                   </div>
+                 )}
+                   </div>
+                 )}
+              </div>
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
