@@ -286,7 +286,7 @@
             );
         };
 
-        const VisualizerSVG = ({ u, it, nominal = 0 }) => {
+        const VisualizerSVG = ({ u, it, nominal = 0, tMin, tMax, cpcDisplayMode }) => {
             const nom = parseFloat(nominal) || 0;
             const width = 600; 
             const height = 180; // Hauteur légèrement augmentée pour espacer
@@ -299,29 +299,31 @@
             const tStart = centerX - (fixedITWidth / 2);
             const tEnd = centerX + (fixedITWidth / 2);
             
+            const nomX = centerX + (nom - (tMin + tMax)/2) * scale;
+            
             // Incertitude U
             const uWidth = (u * 2) * scale;
-            const uStart = centerX - (uWidth / 2);
-            const uEnd = centerX + (uWidth / 2);
+            const uStart = nomX - (uWidth / 2);
+            const uEnd = nomX + (uWidth / 2);
 
-            const tMin = nom - (it/2);
-            const tMax = nom + (it/2);
             const uMin = nom - u;
             const uMax = nom + u;
-            const ratioPct = (u / it) * 100;
-            const marginPct = (100 - (2 * ratioPct)) / 2;
+            const ratioPct = ((2 * u) / it) * 100;
+            const marginPct = (100 - ratioPct) / 2;
 
             // Logique anti-chevauchement améliorée
             // On calcule si uStart est trop proche de centerX
             const textClearance = 40; // pixels min between labels
             const uTooSmall = uWidth < 80; // Si barre U très petite, on décale les labels
 
+            const ratioText = cpcDisplayMode === 'cpc' ? "Incertitude U" : `Incertitude U (Ratio ${ratioPct.toFixed(1)}%)`;
+
             return (
                 <div className="w-full mt-2 bg-white rounded-lg border border-gray-100 p-2 overflow-hidden">
                     <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto font-mono">
                         {/* Center Axis (Nominal) */}
-                        <line x1={centerX} y1={10} x2={centerX} y2={165} stroke="#ef4444" strokeWidth="1" strokeDasharray="4 2" />
-                        <text x={centerX} y={175} textAnchor="middle" fontSize="10" fill="#ef4444" fontWeight="bold">Nominal</text>
+                        <line x1={nomX} y1={10} x2={nomX} y2={165} stroke="#ef4444" strokeWidth="1" strokeDasharray="4 2" />
+                        <text x={nomX} y={175} textAnchor="middle" fontSize="10" fill="#ef4444" fontWeight="bold">Nominal</text>
 
                         {/* --- TOLERANCE ZONE (Gray, Bottom) --- */}
                         <rect x={tStart} y={100} width={fixedITWidth} height={35} fill="#e5e7eb" stroke="#9ca3af" strokeWidth="1" rx="2" />
@@ -339,9 +341,9 @@
                         
                         {/* Texte Ratio dans la barre bleue (si assez large) ou au dessus */}
                         {uWidth > 120 ? (
-                            <text x={centerX} y={62} textAnchor="middle" fontSize="11" fill="#1e40af" fontWeight="bold">Incertitude U (Ratio {ratioPct.toFixed(1)}%)</text>
+                            <text x={nomX} y={62} textAnchor="middle" fontSize="11" fill="#1e40af" fontWeight="bold">{ratioText}</text>
                         ) : (
-                            <text x={centerX} y={35} textAnchor="middle" fontSize="11" fill="#1e40af" fontWeight="bold">Incertitude U (Ratio {ratioPct.toFixed(1)}%)</text>
+                            <text x={nomX} y={35} textAnchor="middle" fontSize="11" fill="#1e40af" fontWeight="bold">{ratioText}</text>
                         )}
 
                         {/* Limits U - Anti-overlap Logic */}
@@ -370,7 +372,7 @@
                         </text>
 
                         {/* Marge de conformité (Gris clair, alignée verticalement avec U) */}
-                        {marginPct > 0 && (
+                        {marginPct > 0 && cpcDisplayMode !== 'cpc' && (
                             <>
                                 <text x={tStart + (uStart - tStart)/2} y={60} textAnchor="middle" fontSize="10" fill="#9ca3af">~{marginPct.toFixed(1)}%</text>
                                 <text x={uEnd + (tEnd - uEnd)/2} y={60} textAnchor="middle" fontSize="10" fill="#9ca3af">~{marginPct.toFixed(1)}%</text>
@@ -382,17 +384,15 @@
             );
         };
 
-        const ConformityVisualizerSVG = ({ u, it, nominal = 0 }) => {
+        const ConformityVisualizerSVG = ({ u, it, nominal = 0, tMin, tMax }) => {
             const nom = parseFloat(nominal) || 0;
-            const tHalf = it / 2;
-            const tMin = nom - tHalf;
-            const tMax = nom + tHalf;
             const width = 600;
-            const height = 100;
+            const height = 130;
             const barY = 40;
             const barH = 30;
             const drawSpan = it / 0.7; 
-            const drawMin = nom - (drawSpan/2);
+            const centerIT = (tMin + tMax) / 2;
+            const drawMin = centerIT - (drawSpan / 2);
             const toX = (val) => ((val - drawMin) / drawSpan) * width;
             const greenStart = tMin + u;
             const greenEnd = tMax - u;
@@ -417,11 +417,16 @@
                         <rect x={toX(tMax)} y={barY} width={width - toX(tMax)} height={barH} fill="#fecaca" />
                         <text x={toX(tMax) + (width - toX(tMax))/2} y={barY+20} textAnchor="middle" fontSize="10" fill="#991b1b">Non-Conf.</text>
                         <line x1={toX(tMin)} y1={barY-10} x2={toX(tMin)} y2={barY+barH+10} stroke="#333" strokeWidth="2" />
-                        <text x={toX(tMin)} y={barY-15} textAnchor="middle" fontSize="10" fontWeight="bold">T min</text>
+                        <text x={toX(tMin)} y={barY-15} textAnchor="middle" fontSize="10" fontWeight="bold">{tMin.toFixed(3)}</text>
                         <line x1={toX(tMax)} y1={barY-10} x2={toX(tMax)} y2={barY+barH+10} stroke="#333" strokeWidth="2" />
-                        <text x={toX(tMax)} y={barY-15} textAnchor="middle" fontSize="10" fontWeight="bold">T max</text>
+                        <text x={toX(tMax)} y={barY-15} textAnchor="middle" fontSize="10" fontWeight="bold">{tMax.toFixed(3)}</text>
                         <text x={toX(tMin + u/2)} y={barY+barH+15} textAnchor="middle" fontSize="9" fill="#c2410c">Doute</text>
                         <text x={toX(tMax - u/2)} y={barY+barH+15} textAnchor="middle" fontSize="9" fill="#c2410c">Doute</text>
+                        
+                        <line x1={toX(tMin + u)} y1={barY} x2={toX(tMin + u)} y2={barY+barH+25} stroke="#c2410c" strokeWidth="1" strokeDasharray="2 2" />
+                        <text x={toX(tMin + u)} y={barY+barH+35} textAnchor="middle" fontSize="9" fill="#c2410c" fontWeight="bold">{(tMin + u).toFixed(3)}</text>
+                        <line x1={toX(tMax - u)} y1={barY} x2={toX(tMax - u)} y2={barY+barH+25} stroke="#c2410c" strokeWidth="1" strokeDasharray="2 2" />
+                        <text x={toX(tMax - u)} y={barY+barH+35} textAnchor="middle" fontSize="9" fill="#c2410c" fontWeight="bold">{(tMax - u).toFixed(3)}</text>
                     </svg>
                     <div className="text-center text-[10px] text-gray-500 mt-2">
                         { !hasGreen && <div className="text-red-500 font-bold mt-1">⚠️ ATTENTION : Incertitude trop grande, aucune zone de conformité garantie !</div>}
@@ -458,7 +463,7 @@
                             const uStart = centerX - (uWidth / 2);
                             const y = i * (barHeight + gap) + 10;
                             const isOk = inst.u <= targetU;
-                            const ratio = (inst.u / it) * 100;
+                            const ratio = ((2 * inst.u) / it) * 100;
                             
                             return (
                                 <g key={inst.id}>
@@ -530,40 +535,32 @@
                     
                     <div className="space-y-4">
                         <div className="flex gap-4 items-start p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
-                            <div className="font-bold text-red-700 whitespace-nowrap min-w-[120px]">Capabilité &lt; 3</div>
+                            <div className="font-bold text-red-700 whitespace-nowrap min-w-[120px]">Capabilité &lt; 1.5</div>
                             <div>
-                                <div className="font-bold text-gray-800">Non respectée (Risque majeur)</div>
+                                <div className="font-bold text-gray-800">Inadapté (Risque majeur)</div>
                                 <div className="text-sm text-gray-600">Instrument de mesure non adapté.</div>
                             </div>
                         </div>
 
                         <div className="flex gap-4 items-start p-4 bg-orange-50 border-l-4 border-orange-400 rounded-r-lg">
-                            <div className="font-bold text-orange-700 whitespace-nowrap min-w-[120px]">Capabilité 3 - 5</div>
+                            <div className="font-bold text-orange-700 whitespace-nowrap min-w-[120px]">Capabilité 1.5 - 2.5</div>
                             <div>
-                                <div className="font-bold text-gray-800">Risque acceptable</div>
-                            </div>
-                        </div>
-
-                        <div className="flex gap-4 items-start p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg">
-                            <div className="font-bold text-yellow-700 whitespace-nowrap min-w-[120px]">Capabilité = 5</div>
-                            <div>
-                                <div className="font-bold text-gray-800">Cas particulier PAC Digital</div>
-                                <div className="text-sm text-gray-600">Si le PAC digital démontre une incertitude de mesure pratique de +/- 0.01 mm (Risque acceptable).</div>
+                                <div className="font-bold text-gray-800">Risque acceptable (Règle du 1/3)</div>
                             </div>
                         </div>
 
                         <div className="flex gap-4 items-start p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
-                            <div className="font-bold text-blue-700 whitespace-nowrap min-w-[120px]">Capabilité 6 - 9</div>
+                            <div className="font-bold text-blue-700 whitespace-nowrap min-w-[120px]">Capabilité 2.5 - 5</div>
                             <div>
-                                <div className="font-bold text-gray-800">Risque mineur</div>
+                                <div className="font-bold text-gray-800">Confortable (Risque mineur)</div>
                             </div>
                         </div>
 
                         <div className="flex gap-4 items-start p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
-                            <div className="font-bold text-green-700 whitespace-nowrap min-w-[120px]">Capabilité &ge; 10</div>
+                            <div className="font-bold text-green-700 whitespace-nowrap min-w-[120px]">Capabilité &ge; 5</div>
                             <div>
                                 <div className="font-bold text-gray-800">Respectée (Risque maîtrisé)</div>
-                                <div className="text-sm text-gray-600">L'instrument de mesure est 10 x plus précis que la cote à mesurer.</div>
+                                <div className="text-sm text-gray-600">L'instrument de mesure est 10 x plus précis que la cote à mesurer (Règle du 1/10).</div>
                             </div>
                         </div>
                     </div>
@@ -608,6 +605,19 @@
                 }
             }, [data.toleranceMode, data.tolPlus, data.tolMinus, data.tolMin, data.tolMax]);
 
+            const { trueTMin, trueTMax } = useMemo(() => {
+                const nom = parseFloat(data.nominal) || 0;
+                if (data.toleranceMode === 'pm') {
+                    const p = parseFloat(data.tolPlus) || 0;
+                    const m = parseFloat(data.tolMinus) || 0;
+                    return { trueTMin: nom - Math.abs(m), trueTMax: nom + Math.abs(p) };
+                } else {
+                    const max = parseFloat(data.tolMax) || 0;
+                    const min = parseFloat(data.tolMin) || 0;
+                    return { trueTMin: min, trueTMax: max };
+                }
+            }, [data.toleranceMode, data.nominal, data.tolPlus, data.tolMinus, data.tolMin, data.tolMax]);
+
             const targetU = useMemo(() => {
                 if (data.isCritical) return IT / 10;
                 return IT / 3;
@@ -634,14 +644,14 @@
                     
                     // CPC Calculation (IT / 2u)
                     const cpc = IT / (2 * inst.u);
-                    const ratioPct = (inst.u / IT) * 100;
-                    let cpcStatus = { color: "text-red-600 bg-red-50 border-red-200", label: "Risque Majeur" };
-                    if (cpc >= 10) cpcStatus = { color: "text-green-700 bg-green-50 border-green-200", label: "Maîtrisé" };
-                    else if (cpc >= 6) cpcStatus = { color: "text-blue-700 bg-blue-50 border-blue-200", label: "Mineur" };
-                    else if (cpc >= 3) cpcStatus = { color: "text-orange-700 bg-orange-50 border-orange-200", label: "Acceptable" };
+                    const ratioPct = ((2 * inst.u) / IT) * 100;
+                    let cpcStatus = { color: "text-red-600 bg-red-50 border-red-200", label: "Inadapté" };
+                    if (cpc >= 5) cpcStatus = { color: "text-green-700 bg-green-50 border-green-200", label: "Maîtrisé (1/10)" };
+                    else if (cpc >= 2.5) cpcStatus = { color: "text-blue-700 bg-blue-50 border-blue-200", label: "Confortable" };
+                    else if (cpc >= 1.5) cpcStatus = { color: "text-orange-700 bg-orange-50 border-orange-200", label: "Acceptable (1/3)" };
 
                     return { ...inst, statusR, msgR, statusU, msgU, score, cpc, cpcStatus, ratioPct };
-                }).sort((a, b) => b.score - a.score);
+                }).sort((a, b) => b.cpc - a.cpc);
             }, [data.measureType, IT, data.isCritical, mode, targetU]);
 
             // Auto-select first recommended inst
@@ -653,13 +663,12 @@
 
             // NAVIGATION
             const nextStep = () => {
-                if (step === 1 && mode === 'tolerance') setStep(3);
-                else setStep(s => s + 1);
+                setStep(s => s + 1);
             };
             const prevStep = () => {
                 if (step === 1) setStep(0);
                 else if (step === 4 && mode === 'checklist') { setStep(0); setMode(null); }
-                else if (step === 3 && mode === 'tolerance') setStep(1);
+                else if (step === 3 && mode === 'tolerance') setStep(0);
                 else setStep(s => s - 1);
             };
             const restart = () => {
@@ -667,7 +676,7 @@
                 setData(prev => ({...prev, checklist: { clean:false, noShock:false, zero:false, fluid:false, standard:false, date:false }, selectedInstId: null}));
             };
             
-            const startToleranceFlow = () => { setMode('tolerance'); setStep(1); };
+            const startToleranceFlow = () => { setMode('tolerance'); setStep(3); };
             const startChecklist = () => { setMode('checklist'); setData(prev => ({...prev, checklist: { clean:false, noShock:false, zero:false, fluid:false, standard:false, date:false }})); setStep(4); };
 
             const Header = ({ title }) => (
@@ -688,7 +697,14 @@
                         )}
                     </div>
                     {step === 3 && mode === 'tolerance' && (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 items-center">
+                            <div className="flex bg-white rounded border border-gray-300 overflow-hidden scale-90 mr-2">
+                                <button onClick={() => setCpcDisplayMode('cpc')} className={`px-1.5 py-0.5 ${cpcDisplayMode==='cpc'?'bg-gray-200 text-black font-bold':'text-gray-400 hover:text-gray-600'}`}>CPC</button>
+                                <div className="w-px bg-gray-200"></div>
+                                <button onClick={() => setCpcDisplayMode('ratio')} className={`px-1.5 py-0.5 ${cpcDisplayMode==='ratio'?'bg-gray-200 text-black font-bold':'text-gray-400 hover:text-gray-600'}`}>%</button>
+                                <div className="w-px bg-gray-200"></div>
+                                <button onClick={() => setCpcDisplayMode('both')} className={`px-1.5 py-0.5 ${cpcDisplayMode==='both'?'bg-gray-200 text-black font-bold':'text-gray-400 hover:text-gray-600'}`}>Mix</button>
+                            </div>
                             <button onClick={restart} className="text-sm font-bold text-gray-500 hover:text-[var(--primary)] flex items-center gap-1"><RotateCcw size={14}/> Nouveau</button>
                             <button onClick={() => window.print()} className="bg-[var(--primary)] text-white px-4 py-2 rounded font-bold flex items-center gap-2 hover:bg-gray-800"><Printer size={16}/> Imprimer</button>
                         </div>
@@ -731,74 +747,65 @@
                 </div>
             );
 
-            // 1. DÉFINITION
-            if (step === 1) return (
-                <div className="game-container">
-                    <div className="step-transition">
-                        <Header title="Définition de la mesure" />
-                        <div className="flex-1 space-y-8">
-                            <BlueprintSVG />
-                            <div className="grid grid-cols-2 gap-6 items-end">
-                                <div>
-                                    <label className="block text-sm font-bold text-[var(--text-color)] mb-2 uppercase tracking-wide">Nominal (mm)</label>
-                                    <input type="number" className="w-full p-3 rounded-lg input-tech text-lg h-[50px]" placeholder="20.00" value={data.nominal} onChange={(e) => setData({...data, nominal: e.target.value})} />
-                                </div>
-                                <div>
-                                    <div className="flex justify-between items-center mb-2">
-                                        <label className="block text-sm font-bold text-[var(--text-color)] uppercase tracking-wide">Tolérance</label>
-                                        <div className="flex items-center bg-[var(--bg-color)] rounded-lg border border-[var(--border-color)] p-1 scale-90 origin-right">
-                                            <button onClick={() => setData({...data, toleranceMode: 'pm'})} className={`px-2 py-1 text-xs font-bold rounded transition-all ${data.toleranceMode === 'pm' ? 'bg-[var(--accent)] text-white shadow' : 'text-gray-500 hover:text-gray-700'}`}>±</button>
-                                            <div className="w-px h-3 bg-gray-300 mx-1"></div>
-                                            <button onClick={() => setData({...data, toleranceMode: 'minmax'})} className={`px-2 py-1 text-xs font-bold rounded transition-all ${data.toleranceMode === 'minmax' ? 'bg-[var(--accent)] text-white shadow' : 'text-gray-500 hover:text-gray-700'}`}>Min/Max</button>
-                                        </div>
-                                    </div>
-                                    {data.toleranceMode === 'pm' ? (
-                                        <div className="flex gap-2 items-center h-[50px]"><span className="font-bold text-[var(--primary)] text-xl">±</span><input type="number" placeholder="0.1" className="w-full p-3 rounded-lg input-tech text-lg h-full" value={data.tolPlus} onChange={(e) => setData({...data, tolPlus: e.target.value, tolMinus: e.target.value})} /></div>
-                                    ) : (
-                                        <div className="flex gap-2 h-[50px]"><input type="number" placeholder="Min" className="w-1/2 p-3 rounded-lg input-tech h-full" value={data.tolMin} onChange={(e) => setData({...data, tolMin: e.target.value})} /><input type="number" placeholder="Max" className="w-1/2 p-3 rounded-lg input-tech h-full" value={data.tolMax} onChange={(e) => setData({...data, tolMax: e.target.value})} /></div>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="mt-6">
-                                <div className="flex justify-between items-center mb-3">
-                                    <label className="block text-sm font-bold text-[var(--text-color)] uppercase tracking-wide">Niveau de Criticité</label>
-                                    {IT > 0 && <div className="text-xs bg-gray-100 px-3 py-1 rounded-full font-mono font-bold text-gray-600">IT : {IT.toFixed(3)} mm</div>}
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div onClick={() => setData({...data, isCritical: false})} className={`p-4 rounded-lg border-2 cursor-pointer transition-all flex flex-col justify-between ${!data.isCritical ? 'border-[var(--accent)] bg-yellow-50 shadow-md ring-1 ring-[var(--accent)]' : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'}`}>
-                                        <div><div className="font-bold text-[var(--primary)] flex items-center gap-2"><div className={`w-4 h-4 rounded-full border ${!data.isCritical ? 'bg-[var(--accent)] border-[var(--accent)]' : 'bg-white border-gray-400'}`}></div>Cote Non Critique</div><div className="text-xs text-gray-500 mt-1 pl-6">Standard / Esthétique</div></div>
-                                        <div className="mt-3 pl-6"><div className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-bold rounded">Règle du 1 sur 3</div><div className="text-[10px] text-gray-400 mt-1">U ≤ IT / 3</div></div>
-                                    </div>
-                                    <div onClick={() => setData({...data, isCritical: true})} className={`p-4 rounded-lg border-2 cursor-pointer transition-all flex flex-col justify-between ${data.isCritical ? 'border-[var(--danger)] bg-red-50 shadow-md ring-1 ring-[var(--danger)]' : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'}`}>
-                                        <div><div className="font-bold text-[var(--danger)] flex items-center gap-2"><div className={`w-4 h-4 rounded-full border ${data.isCritical ? 'bg-[var(--danger)] border-[var(--danger)]' : 'bg-white border-gray-400'}`}></div>Cote Critique</div><div className="text-xs text-gray-500 mt-1 pl-6">Sécurité / Ajustement</div></div>
-                                        <div className="mt-3 pl-6"><div className="inline-block px-2 py-1 bg-red-100 text-red-800 text-xs font-bold rounded">Règle du 1 sur 10</div><div className="text-[10px] text-gray-400 mt-1">U ≤ IT / 10</div></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mt-8 flex gap-4">
-                             <button onClick={prevStep} className="flex-1 py-4 rounded-lg btn-outline">Accueil</button>
-                             <button onClick={nextStep} disabled={!IT || IT === 0} className="flex-[3] py-4 rounded-lg btn-gold flex items-center justify-center gap-2 shadow-md">Analyser Directement <ArrowRight size={20} /></button>
-                        </div>
-                    </div>
-                </div>
-            );
-
             // 3. TABLEAU DE BORD
             if (step === 3) {
                 const instrument = recommendations.find(i => i.id === data.selectedInstId) || recommendations[0];
-                const isRecommendationOk = instrument ? instrument.score >= 3 : false;
+                const hasInstrument = !!instrument;
+                const isRecommendationOk = hasInstrument ? instrument.score >= 3 : false;
                 
                 // Calcul du ratio pour l'affichage
-                const ratioPct = (instrument.u / IT) * 100;
+                const ratioPct = hasInstrument && IT ? ((2 * instrument.u) / IT) * 100 : 0;
                 let conclusion = "";
-                if (instrument.u <= targetU) conclusion = "Moyen adapté ✅";
-                else if (instrument.u <= (targetU * 1.5)) conclusion = "Moyen limite ⚠️";
-                else conclusion = "Moyen inadapté ❌";
+                if (hasInstrument) {
+                    if (instrument.u <= targetU) conclusion = "Moyen adapté ✅";
+                    else if (instrument.u <= (targetU * 1.5)) conclusion = "Moyen limite ⚠️";
+                    else conclusion = "Moyen inadapté ❌";
+                }
 
                 return (
                     <div className="game-container h-full relative">
                         <Header title="Analyse & Sélection" />
+                        
+                        {/* DEFINITION BLOCK */}
+                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6 no-print shadow-sm">
+                            <div className="flex flex-col md:flex-row gap-6 items-start">
+                                 <div className="w-full md:w-1/3 shrink-0">
+                                     <BlueprintSVG />
+                                 </div>
+                                 <div className="w-full md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">Nominal (mm)</label>
+                                        <input type="number" className="w-full p-2 rounded border border-gray-300 font-mono font-bold text-lg focus:border-[var(--accent)] outline-none" placeholder="20.00" value={data.nominal} onChange={(e) => setData({...data, nominal: e.target.value})} />
+                                    </div>
+                                    <div>
+                                        <div className="flex justify-between items-center mb-1">
+                                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wide">Tolérance</label>
+                                            <div className="flex bg-white rounded border border-gray-200 scale-90 origin-right">
+                                                 <button onClick={() => setData({...data, toleranceMode: 'pm'})} className={`px-2 py-0.5 text-xs font-bold ${data.toleranceMode === 'pm' ? 'bg-[var(--accent)] text-white' : 'text-gray-500'}`}>±</button>
+                                                 <button onClick={() => setData({...data, toleranceMode: 'minmax'})} className={`px-2 py-0.5 text-xs font-bold ${data.toleranceMode === 'minmax' ? 'bg-[var(--accent)] text-white' : 'text-gray-500'}`}>Min/Max</button>
+                                            </div>
+                                        </div>
+                                        {data.toleranceMode === 'pm' ? (
+                                            <div className="flex gap-2 items-center"><span className="font-bold text-gray-400 text-lg">±</span><input type="number" placeholder="0.1" className="w-full p-2 rounded border border-gray-300 font-mono text-lg focus:border-[var(--accent)] outline-none" value={data.tolPlus} onChange={(e) => setData({...data, tolPlus: e.target.value, tolMinus: e.target.value})} /></div>
+                                        ) : (
+                                            <div className="flex gap-2"><input type="number" placeholder="Min" className="w-1/2 p-2 rounded border border-gray-300 font-mono text-lg focus:border-[var(--accent)] outline-none" value={data.tolMin} onChange={(e) => setData({...data, tolMin: e.target.value})} /><input type="number" placeholder="Max" className="w-1/2 p-2 rounded border border-gray-300 font-mono text-lg focus:border-[var(--accent)] outline-none" value={data.tolMax} onChange={(e) => setData({...data, tolMax: e.target.value})} /></div>
+                                        )}
+                                    </div>
+                                    
+                                    <div className="md:col-span-2 flex items-center gap-4 bg-white p-2 rounded border border-gray-200">
+                                        <span className="text-xs font-bold text-gray-500 uppercase">Criticité :</span>
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="crit" checked={!data.isCritical} onChange={() => setData({...data, isCritical: false})} className="accent-[var(--accent)]"/>
+                                            <span className="text-sm">Standard (1/3)</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="crit" checked={data.isCritical} onChange={() => setData({...data, isCritical: true})} className="accent-[var(--danger)]"/>
+                                            <span className="text-sm">Critique (1/10)</span>
+                                        </label>
+                                    </div>
+                                 </div>
+                            </div>
+                        </div>
                         
                         {/* HEADER KPI */}
                         <div className="grid grid-cols-2 gap-4 mb-6 no-print">
@@ -810,22 +817,16 @@
                                 >
                                     <Info size={18} />
                                 </button>
-                                <h3 className="text-[10px] uppercase font-bold opacity-70 mb-1">Cahier des charges (IT: {IT.toFixed(3)})</h3>
-                                <div className="flex justify-between items-end">
-                                    <span className={`text-xs block font-bold ${data.isCritical ? 'text-[var(--danger)]' : 'text-[var(--accent)]'}`}>{data.isCritical ? "Cible Critique (1/10)" : "Cible Standard (1/3)"}</span>
-                                    <span className={`font-mono font-bold text-lg ${data.isCritical ? 'text-[var(--danger)]' : 'text-[var(--accent)]'}`}>&le; {targetU.toFixed(5)}</span>
+                                <h3 className="text-[10px] uppercase font-bold opacity-70 mb-1">Besoin en précision de mesure</h3>
+                                <div className="flex flex-col">
+                                    <span className={`text-xs font-bold mb-1 ${data.isCritical ? 'text-[var(--danger)]' : 'text-[var(--accent)]'}`}>L'incertitude de mesure du moyen doit être inférieure à :</span>
+                                    <span className={`font-mono font-bold text-lg ${data.isCritical ? 'text-[var(--danger)]' : 'text-[var(--accent)]'}`}>
+                                        {targetU.toFixed(3)} mm <span className="text-xs font-normal opacity-80 ml-1 font-sans">en appliquant la règle : {data.isCritical ? "1/10" : "1/3"}</span>
+                                    </span>
                                 </div>
                             </div>
                             <div className="bg-white border border-[var(--border-color)] p-4 rounded-lg flex flex-col justify-center items-start text-sm text-gray-500 relative">
-                                <div className="absolute top-2 right-2 flex gap-2">
-                                    <button onClick={() => setData(d => ({...d, isCritical: !d.isCritical}))} className="text-[10px] bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded border border-gray-300">
-                                        Basculer {data.isCritical ? "Standard" : "Critique"}
-                                    </button>
-                                </div>
-                                <p className="mb-2 pr-12">{data.isCritical ? <span><strong className="text-[var(--danger)]">Règle 1/10 :</strong> Instrument très précis requis.</span> : <span><strong className="text-[var(--accent-text)]">Règle 1/3 :</strong> Précision standard suffisante.</span>}</p>
-                                <button onClick={() => setShowCompareModal(true)} className="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-full font-bold flex items-center gap-2 transition">
-                                    <BarChart size={14}/> Comparer tous les moyens
-                                </button>
+                                <p className="pr-12">{data.isCritical ? <span><strong className="text-[var(--danger)]">Règle 1/10 :</strong> Instrument très précis requis.</span> : <span><strong className="text-[var(--accent-text)]">Règle 1/3 :</strong> Précision standard suffisante.</span>}</p>
                             </div>
                         </div>
 
@@ -836,13 +837,9 @@
                             <div className="w-full md:w-1/3 flex flex-col border rounded-lg bg-white overflow-hidden shadow-sm inst-list-col">
                                 <div className="bg-gray-100 p-2 text-xs font-bold uppercase text-gray-500 border-b flex justify-between items-center">
                                     <span>Instruments</span>
-                                    <div className="flex bg-white rounded border border-gray-300 overflow-hidden scale-90">
-                                        <button onClick={() => setCpcDisplayMode('cpc')} className={`px-1.5 py-0.5 ${cpcDisplayMode==='cpc'?'bg-gray-200 text-black font-bold':'text-gray-400 hover:text-gray-600'}`}>CPC</button>
-                                        <div className="w-px bg-gray-200"></div>
-                                        <button onClick={() => setCpcDisplayMode('ratio')} className={`px-1.5 py-0.5 ${cpcDisplayMode==='ratio'?'bg-gray-200 text-black font-bold':'text-gray-400 hover:text-gray-600'}`}>%</button>
-                                        <div className="w-px bg-gray-200"></div>
-                                        <button onClick={() => setCpcDisplayMode('both')} className={`px-1.5 py-0.5 ${cpcDisplayMode==='both'?'bg-gray-200 text-black font-bold':'text-gray-400 hover:text-gray-600'}`}>Mix</button>
-                                    </div>
+                                    <button onClick={() => setShowCompareModal(true)} className="text-[10px] bg-white hover:bg-gray-50 border border-gray-300 px-2 py-1 rounded flex items-center gap-1 transition text-gray-600 normal-case font-normal">
+                                        <BarChart size={12}/> Comparer tous les moyens
+                                    </button>
                                 </div>
                                 <div className="flex-1 overflow-y-auto custom-scroll p-2 space-y-2">
                                     {recommendations.map((inst, idx) => (
@@ -872,11 +869,18 @@
                                             </div>
                                         </div>
                                     ))}
+                                    {!hasInstrument && (
+                                        <div className="p-8 text-center text-gray-400 text-xs italic">
+                                            Veuillez définir une tolérance pour voir les instruments adaptés.
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
                             {/* COLONNE DROITE: FICHE DÉTAILLÉE */}
                             <div className="w-full md:w-2/3 bg-white border-2 border-[var(--primary)] rounded-lg p-6 relative overflow-hidden shadow-lg flex flex-col main-content-col print:border-none print:shadow-none print:p-0">
+                                {hasInstrument ? (
+                                <>
                                 <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none no-print"><Target size={120} /></div>
 
                                 <div className="border-b-2 border-[var(--accent)] pb-4 mb-4 flex justify-between items-end">
@@ -890,8 +894,14 @@
                                 </div>
 
                                 <div className="flex-1 overflow-y-auto custom-scroll pr-2">
-                                    <div className="bg-gray-50 p-4 rounded border mb-4">
-                                        <div className="flex gap-8 text-sm font-mono text-gray-700 items-center">
+                                    
+                                    {/* SECTION 1 */}
+                                    <div className="mb-6">
+                                        <h3 className="text-sm font-bold text-[var(--primary)] uppercase tracking-wide mb-2 border-b border-gray-200 pb-1">
+                                            1. Caractéristiques du Moyen
+                                        </h3>
+                                        <p className="text-xs text-gray-500 mb-2">Propriétés intrinsèques de l'instrument sélectionné.</p>
+                                        <div className="bg-gray-50 p-3 rounded border flex gap-8 text-sm font-mono text-gray-700 items-center">
                                             <div className="flex flex-col">
                                                 <span className="text-[10px] text-gray-400 uppercase">Résolution</span>
                                                 <strong>{instrument.res} mm</strong>
@@ -900,33 +910,88 @@
                                                 <span className="text-[10px] text-gray-400 uppercase">Incertitude (U)</span>
                                                 <strong>±{instrument.u} mm</strong>
                                             </div>
-                                            <div className="flex flex-col border-l pl-4 border-gray-300">
-                                                <span className="text-[10px] text-gray-400 uppercase">Ratio U/IT</span>
-                                                <div className="flex items-center gap-2">
-                                                    <strong className={`${ratioPct > 33 ? 'text-red-600' : 'text-green-600'}`}>{ratioPct.toFixed(1)}%</strong>
-                                                    <span className="text-xs font-bold italic opacity-70"> - {conclusion}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* SECTION 2 */}
+                                    <div className="mb-6">
+                                        <h3 className="text-sm font-bold text-[var(--primary)] uppercase tracking-wide mb-2 border-b border-gray-200 pb-1">
+                                            2. Calculs de Performance
+                                        </h3>
+                                        <p className="text-xs text-gray-500 mb-2">Vérification mathématique de la capabilité (CPC) et du ratio d'incertitude.</p>
+                                        <div className="bg-gray-50 border border-gray-200 rounded p-3 text-xs">
+                                            <div className="grid grid-cols-1 gap-3 font-mono text-gray-700">
+                                                {(cpcDisplayMode === 'cpc' || cpcDisplayMode === 'both') && (
+                                                <div className={`flex justify-between items-center ${cpcDisplayMode === 'both' ? 'border-b border-gray-200 pb-2' : ''}`}>
+                                                    <span><span className="font-bold">CPC</span> = IT / (2 × U)</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span>= {IT.toFixed(3)} / (2 × {instrument.u}) = </span>
+                                                        <div className="relative group cursor-help">
+                                                            <span className={`font-bold px-2 py-0.5 rounded border ${instrument.cpcStatus.color}`}>{instrument.cpc.toFixed(2)}</span>
+                                                            <div className="absolute bottom-full right-0 mb-2 w-48 bg-white border border-gray-200 shadow-lg rounded p-2 hidden group-hover:block z-10 text-[10px] font-sans">
+                                                                <div className="font-bold mb-1 border-b pb-1">Échelle CPC</div>
+                                                                <div className="flex justify-between text-green-700"><span>&ge; 5.0</span> <span>Maîtrisé</span></div>
+                                                                <div className="flex justify-between text-blue-700"><span>2.5 - 5.0</span> <span>Confortable</span></div>
+                                                                <div className="flex justify-between text-orange-700"><span>1.5 - 2.5</span> <span>Acceptable</span></div>
+                                                                <div className="flex justify-between text-red-700"><span>&lt; 1.5</span> <span>Inadapté</span></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                                )}
+                                                {(cpcDisplayMode === 'ratio' || cpcDisplayMode === 'both') && (
+                                                <div className="flex justify-between items-center">
+                                                    <span><span className="font-bold">Ratio</span> = (2 × U / IT) × 100</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span>= (2 × {instrument.u} / {IT.toFixed(3)}) × 100 = </span>
+                                                        <div className="relative group cursor-help">
+                                                            <span className={`font-bold px-2 py-0.5 rounded border ${instrument.cpcStatus.color}`}>{ratioPct.toFixed(1)}%</span>
+                                                            <div className="absolute bottom-full right-0 mb-2 w-48 bg-white border border-gray-200 shadow-lg rounded p-2 hidden group-hover:block z-10 text-[10px] font-sans">
+                                                                <div className="font-bold mb-1 border-b pb-1">Échelle Ratio (2U/IT)</div>
+                                                                <div className="flex justify-between text-green-700"><span>&le; 20%</span> <span>Maîtrisé</span></div>
+                                                                <div className="flex justify-between text-blue-700"><span>20% - 40%</span> <span>Confortable</span></div>
+                                                                <div className="flex justify-between text-orange-700"><span>40% - 66%</span> <span>Acceptable</span></div>
+                                                                <div className="flex justify-between text-red-700"><span>&gt; 66%</span> <span>Inadapté</span></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="space-y-6">
-                                        <div>
-                                            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">1. Comparaison de l'incertitude du moyen de mesure par rapport à la tolérance</h3>
-                                            <VisualizerSVG u={instrument.u} it={IT} nominal={data.nominal} />
-                                        </div>
-                                        <div>
-                                            <div className="flex justify-between items-center mb-2">
-                                                <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">2. Zones de Conformité Réelles</h3>
+                                    {/* SECTION 3 */}
+                                    <div className="mb-6">
+                                        <h3 className="text-sm font-bold text-[var(--primary)] uppercase tracking-wide mb-2 border-b border-gray-200 pb-1">
+                                            3. Visualisation de l'Incertitude
+                                        </h3>
+                                        <p className="text-xs text-gray-500 mb-2">Comparaison graphique entre l'intervalle de tolérance (IT) et l'incertitude (U).</p>
+                                        <VisualizerSVG u={instrument.u} it={IT} nominal={data.nominal} tMin={trueTMin} tMax={trueTMax} cpcDisplayMode={cpcDisplayMode} />
+                                    </div>
+
+                                    {/* SECTION 4 */}
+                                    <div className="mb-6">
+                                        <div className="flex justify-between items-center border-b border-gray-200 pb-1 mb-2">
+                                            <h3 className="text-sm font-bold text-[var(--primary)] uppercase tracking-wide">
+                                                4. Zones de Conformité
+                                            </h3>
                                                 <button onClick={() => setShowConformity(!showConformity)} className="text-[10px] bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded border border-gray-300 flex items-center gap-1 no-print">
                                                     {showConformity ? <Eye size={12} /> : <EyeOff size={12} />} 
                                                     {showConformity ? "Masquer" : "Afficher"}
                                                 </button>
-                                            </div>
-                                            {showConformity && <ConformityVisualizerSVG u={instrument.u} it={IT} nominal={data.nominal} />}
                                         </div>
+                                        <p className="text-xs text-gray-500 mb-2">Impact de l'incertitude sur la zone de conformité réelle (réduction de l'IT).</p>
+                                        {showConformity && <ConformityVisualizerSVG u={instrument.u} it={IT} nominal={data.nominal} tMin={trueTMin} tMax={trueTMax} />}
                                     </div>
                                 </div>
+                                </>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center h-full text-gray-400 opacity-50">
+                                        <Target size={80} className="mb-4" />
+                                        <p className="text-lg font-bold uppercase">En attente de données</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
