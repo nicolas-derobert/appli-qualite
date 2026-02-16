@@ -686,24 +686,16 @@
                             <ArrowLeft size={14} /> Accueil
                         </a>
                         <h1 className="text-3xl font-bold tracking-tight text-[var(--primary)]">{title}</h1>
-                        <span className="text-xs font-bold uppercase text-[var(--accent-text)] bg-[var(--accent-light)] px-3 py-1 rounded-full border border-[var(--accent)]">
-                            {mode === 'checklist' ? 'Vérification' : mode === 'tolerance' && step === 3 ? 'Résultats & Analyse' : `Étape ${step}/3`}
-                        </span>
-                        {step === 3 && (
-                            <div className="mt-2 text-sm text-gray-500 font-mono flex gap-4">
-                                <span>Cible : {data.nominal} {data.toleranceMode === 'pm' ? `±${Math.abs(data.tolPlus)}` : `[${data.tolMin};${data.tolMax}]`}</span>
-                                <span className="font-bold text-[var(--primary)]">IT : {IT.toFixed(3)} mm</span>
-                            </div>
-                        )}
                     </div>
                     {step === 3 && mode === 'tolerance' && (
                         <div className="flex gap-2 items-center">
+                            <span className="text-[10px] text-gray-400 uppercase font-bold mr-1">Sélection du type d'indicateur :</span>
                             <div className="flex bg-white rounded border border-gray-300 overflow-hidden scale-90 mr-2">
-                                <button onClick={() => setCpcDisplayMode('cpc')} className={`px-1.5 py-0.5 ${cpcDisplayMode==='cpc'?'bg-gray-200 text-black font-bold':'text-gray-400 hover:text-gray-600'}`}>CPC</button>
+                                <button title="Afficher le Capabilité du Processus de Contrôle (CPC)" onClick={() => setCpcDisplayMode('cpc')} className={`px-1.5 py-0.5 ${cpcDisplayMode==='cpc'?'bg-gray-200 text-black font-bold':'text-gray-400 hover:text-gray-600'}`}>CPC</button>
                                 <div className="w-px bg-gray-200"></div>
-                                <button onClick={() => setCpcDisplayMode('ratio')} className={`px-1.5 py-0.5 ${cpcDisplayMode==='ratio'?'bg-gray-200 text-black font-bold':'text-gray-400 hover:text-gray-600'}`}>%</button>
+                                <button title="Afficher le Ratio (2U/IT en %)" onClick={() => setCpcDisplayMode('ratio')} className={`px-1.5 py-0.5 ${cpcDisplayMode==='ratio'?'bg-gray-200 text-black font-bold':'text-gray-400 hover:text-gray-600'}`}>%</button>
                                 <div className="w-px bg-gray-200"></div>
-                                <button onClick={() => setCpcDisplayMode('both')} className={`px-1.5 py-0.5 ${cpcDisplayMode==='both'?'bg-gray-200 text-black font-bold':'text-gray-400 hover:text-gray-600'}`}>Mix</button>
+                                <button title="Afficher les deux indicateurs" onClick={() => setCpcDisplayMode('both')} className={`px-1.5 py-0.5 ${cpcDisplayMode==='both'?'bg-gray-200 text-black font-bold':'text-gray-400 hover:text-gray-600'}`}>Mix</button>
                             </div>
                             <button onClick={restart} className="text-sm font-bold text-gray-500 hover:text-[var(--primary)] flex items-center gap-1"><RotateCcw size={14}/> Nouveau</button>
                             <button onClick={() => window.print()} className="bg-[var(--primary)] text-white px-4 py-2 rounded font-bold flex items-center gap-2 hover:bg-gray-800"><Printer size={16}/> Imprimer</button>
@@ -766,8 +758,24 @@
                     <div className="game-container h-full relative">
                         <Header title="Analyse & Sélection" />
                         
+                        <h2 className="text-sm font-bold text-[var(--primary)] uppercase tracking-wide mb-2 no-print">Étape 1 : Définition de la mesure</h2>
                         {/* DEFINITION BLOCK */}
-                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6 no-print shadow-sm">
+                        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6 no-print shadow-sm relative">
+                            <div className="absolute top-2 right-2 flex gap-2 z-10">
+                                <button 
+                                    onClick={() => setData(d => ({...d, nominal: '', toleranceMode: 'pm', tolPlus: '', tolMinus: '', tolMin: '', tolMax: ''}))}
+                                    className="text-[10px] bg-white border border-gray-300 text-gray-400 hover:text-red-500 hover:border-red-200 px-2 py-1 rounded shadow-sm transition-colors flex items-center gap-1"
+                                    title="Effacer les champs"
+                                >
+                                    <RotateCcw size={10} /> RAZ
+                                </button>
+                                <button 
+                                    onClick={() => setData(d => ({...d, nominal: '20', toleranceMode: 'pm', tolPlus: '0.05', tolMinus: '0.05'}))}
+                                    className="text-[10px] bg-white border border-gray-300 text-gray-500 hover:border-[var(--accent)] hover:text-[var(--accent-text)] px-2 py-1 rounded shadow-sm transition-colors"
+                                >
+                                    Exemple 1 (±0.05)
+                                </button>
+                            </div>
                             <div className="flex flex-col md:flex-row gap-6 items-start">
                                  <div className="w-full md:w-1/3 shrink-0">
                                      <BlueprintSVG />
@@ -791,45 +799,61 @@
                                             <div className="flex gap-2"><input type="number" placeholder="Min" className="w-1/2 p-2 rounded border border-gray-300 font-mono text-lg focus:border-[var(--accent)] outline-none" value={data.tolMin} onChange={(e) => setData({...data, tolMin: e.target.value})} /><input type="number" placeholder="Max" className="w-1/2 p-2 rounded border border-gray-300 font-mono text-lg focus:border-[var(--accent)] outline-none" value={data.tolMax} onChange={(e) => setData({...data, tolMax: e.target.value})} /></div>
                                         )}
                                     </div>
-                                    
-                                    <div className="md:col-span-2 flex items-center gap-4 bg-white p-2 rounded border border-gray-200">
-                                        <span className="text-xs font-bold text-gray-500 uppercase">Criticité :</span>
-                                        <label className="flex items-center gap-2 cursor-pointer">
-                                            <input type="radio" name="crit" checked={!data.isCritical} onChange={() => setData({...data, isCritical: false})} className="accent-[var(--accent)]"/>
-                                            <span className="text-sm">Standard (1/3)</span>
-                                        </label>
-                                        <label className="flex items-center gap-2 cursor-pointer">
-                                            <input type="radio" name="crit" checked={data.isCritical} onChange={() => setData({...data, isCritical: true})} className="accent-[var(--danger)]"/>
-                                            <span className="text-sm">Critique (1/10)</span>
-                                        </label>
-                                    </div>
                                  </div>
                             </div>
                         </div>
                         
+                        <h2 className="text-sm font-bold text-[var(--primary)] uppercase tracking-wide mb-2 no-print">Étape 2 : Analyser le besoin</h2>
+                        
                         {/* HEADER KPI */}
-                        <div className="grid grid-cols-2 gap-4 mb-6 no-print">
-                            <div className="bg-[var(--primary)] text-white p-4 rounded-lg shadow-inner relative group">
-                                <button 
-                                    onClick={() => setShowCpcInfo(true)} 
-                                    className="absolute top-2 right-2 text-white/40 hover:text-[var(--accent)] transition p-1"
-                                    title="Voir le référentiel Cpc"
-                                >
-                                    <Info size={18} />
-                                </button>
-                                <h3 className="text-[10px] uppercase font-bold opacity-70 mb-1">Besoin en précision de mesure</h3>
-                                <div className="flex flex-col">
-                                    <span className={`text-xs font-bold mb-1 ${data.isCritical ? 'text-[var(--danger)]' : 'text-[var(--accent)]'}`}>L'incertitude de mesure du moyen doit être inférieure à :</span>
-                                    <span className={`font-mono font-bold text-lg ${data.isCritical ? 'text-[var(--danger)]' : 'text-[var(--accent)]'}`}>
-                                        {targetU.toFixed(3)} mm <span className="text-xs font-normal opacity-80 ml-1 font-sans">en appliquant la règle : {data.isCritical ? "1/10" : "1/3"}</span>
-                                    </span>
+                        <div className="mb-1 no-print">
+                            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide">Besoin en précision (Incertitude Max)</h3>
+                        </div>
+                        <div className="bg-blue-50 border border-blue-100 text-gray-800 p-4 rounded-lg shadow-sm relative group mb-6 no-print">
+                            <button 
+                                onClick={() => setShowCpcInfo(true)} 
+                                className="absolute top-2 right-2 text-blue-300 hover:text-blue-600 transition p-1"
+                                title="Voir le référentiel Cpc"
+                            >
+                                <Info size={18} />
+                            </button>
+                            
+                            <div className="flex flex-col md:flex-row gap-6 items-center">
+                                <div className="flex-1">
+                                    <div className="mb-2">
+                                        <span className="text-[10px] uppercase font-bold text-blue-800 opacity-70">Criticité</span>
+                                        <span className="text-[10px] text-blue-400 italic ml-2 border-l border-blue-200 pl-2">La cote impacte-t-elle la sécurité ou une fonction majeure ?</span>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <label className={`flex-1 flex items-center justify-center gap-2 p-2 rounded border cursor-pointer transition-all ${!data.isCritical ? 'bg-white border-blue-300 text-blue-700 shadow-sm' : 'bg-blue-100/50 border-blue-200 text-blue-400 hover:bg-white'}`}>
+                                            <input type="radio" name="crit" checked={!data.isCritical} onChange={() => setData({...data, isCritical: false})} className="hidden"/>
+                                            <div className={`w-2 h-2 rounded-full border ${!data.isCritical ? 'bg-blue-500 border-blue-500' : 'border-blue-300'}`}></div>
+                                            <span className="text-xs font-bold">Non (Standard 1/3)</span>
+                                        </label>
+                                        <label className={`flex-1 flex items-center justify-center gap-2 p-2 rounded border cursor-pointer transition-all ${data.isCritical ? 'bg-white border-red-300 text-red-700 shadow-sm' : 'bg-blue-100/50 border-blue-200 text-blue-400 hover:bg-white'}`}>
+                                            <input type="radio" name="crit" checked={data.isCritical} onChange={() => setData({...data, isCritical: true})} className="hidden"/>
+                                            <div className={`w-2 h-2 rounded-full border ${data.isCritical ? 'bg-red-500 border-red-500' : 'border-blue-300'}`}></div>
+                                            <span className="text-xs font-bold">Oui (Critique 1/10)</span>
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="bg-white border border-[var(--border-color)] p-4 rounded-lg flex flex-col justify-center items-start text-sm text-gray-500 relative">
-                                <p className="pr-12">{data.isCritical ? <span><strong className="text-[var(--danger)]">Règle 1/10 :</strong> Instrument très précis requis.</span> : <span><strong className="text-[var(--accent-text)]">Règle 1/3 :</strong> Précision standard suffisante.</span>}</p>
+
+                                <div className="hidden md:flex items-center justify-center text-blue-200">
+                                    <ArrowRight size={24} />
+                                </div>
+
+                                <div className="flex-1 text-right">
+                                    <div className="flex flex-col items-end">
+                                        <span className={`font-mono font-bold text-3xl ${data.isCritical ? 'text-red-600' : 'text-blue-700'}`}>
+                                            &le; {targetU.toFixed(3)} mm
+                                        </span>
+                                        <span className="text-xs text-blue-400 mt-1">L'instrument doit être au moins aussi précis que cette valeur.</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
+                        <h2 className="text-sm font-bold text-[var(--primary)] uppercase tracking-wide mb-2 no-print">Étape 3 : Sélectionner l'instrument</h2>
                         {/* DASHBOARD GRID */}
                         <div className="flex flex-col md:flex-row gap-6 flex-1 min-h-0">
                             
