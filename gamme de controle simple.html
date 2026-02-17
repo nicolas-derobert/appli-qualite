@@ -15,15 +15,20 @@
     <!-- Babel pour JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-<<<<<<< HEAD
-    <!-- html2canvas -->
+    <!-- html2canvas (Conservé de la version évoluée) -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
-=======
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        /* Style pour masquer la scrollbar tout en gardant le scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
@@ -31,9 +36,9 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState } = React;
+        const { useState, useEffect } = React;
 
-        // --- Icônes Lucide (SVG Components pour éviter les dépendances externes) ---
+        // --- Icônes Lucide ---
         const IconBase = ({ children, color = "currentColor", size = 24, ...props }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
                 {children}
@@ -53,11 +58,9 @@
         const CheckCircle = (props) => <IconBase {...props}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></IconBase>;
         const AlertTriangle = (props) => <IconBase {...props}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></IconBase>;
         const XCircle = (props) => <IconBase {...props}><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></IconBase>;
-<<<<<<< HEAD
+        // Nouveaux composants de la version HEAD
         const GripVertical = (props) => <IconBase {...props}><circle cx="9" cy="12" r="1" /><circle cx="9" cy="5" r="1" /><circle cx="9" cy="19" r="1" /><circle cx="15" cy="12" r="1" /><circle cx="15" cy="5" r="1" /><circle cx="15" cy="19" r="1" /></IconBase>;
         const Camera = (props) => <IconBase {...props}><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></IconBase>;
-=======
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
 
         // --- Définition des couleurs ---
         const theme = {
@@ -74,20 +77,44 @@
             danger: '#c0392b',
         };
 
-        // --- Données simulées ---
+        // --- Données simulées (Version HEAD - Plus complète) ---
         const initialGammes = [
-<<<<<<< HEAD
             { id: 101, ref: 'VIS-H45-001', designation: 'Vis de pont', indice: 'A', date: '2024-02-14', status: 'Validée' },
             { id: 102, ref: 'LUN-CER-002', designation: 'Lunette Céramique', indice: 'C', date: '2024-02-10', status: 'Brouillon' },
             { id: 105, ref: '444316 A-01', designation: 'Couronne CET Fini', indice: 'A', date: '2024-03-15', status: 'Validée' },
             { id: 106, ref: '444301 A-01', designation: 'Fond Fini', indice: 'A', date: '2024-03-15', status: 'Validée' },
-=======
-            { id: 101, ref: 'REF-2024-001', designation: 'Arbre de transmission', indice: 'A', date: '2024-02-14', status: 'Validée' },
-            { id: 102, ref: 'REF-2024-002', designation: 'Boîtier Aluminium', indice: 'C', date: '2024-02-10', status: 'Brouillon' },
-            { id: 103, ref: 'REF-2024-003', designation: 'Axe Pivot', indice: 'B', date: '2024-01-28', status: 'Obsolète' },
-            { id: 104, ref: 'REF-2024-004', designation: 'Support Capteur', indice: 'A', date: '2024-03-01', status: 'Validée' },
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
         ];
+
+        const GAMME_DB = {
+            105: {
+                header: { designation: 'Couronne CET Fini', reference: '444316 A-01', indice: 'A' },
+                measurements: [
+                    { id: 1, sequence: '1.1', designation: 'Ø Extérieur Couronne', target: '6.25', tolerance: '0.09', instrument: "Micromètre / Optique", mesure: '', status: '' },
+                    { id: 2, sequence: '1.2', designation: 'Ø Base', target: '5.55', tolerance: '0.05', instrument: "Optique", mesure: '', status: '' },
+                    { id: 3, sequence: '2.1', designation: 'Ø Logement Intérieur 1', target: '3.30', tolerance: '0.01', instrument: "Tampon Go/No-Go", mesure: '', status: '' },
+                    { id: 4, sequence: '2.2', designation: 'Ø Logement Intérieur 2', target: '1.40', tolerance: '0.01', instrument: "Pige calibrée", mesure: '', status: '' },
+                    { id: 5, sequence: '3.1', designation: 'Profondeur Logement', target: '2.25', tolerance: '0.03', instrument: "Jauge de profondeur", mesure: '', status: '' },
+                    { id: 6, sequence: '3.2', designation: 'Hauteur Totale', target: '3.00', tolerance: '0.05', instrument: "Micromètre", mesure: '', status: '' },
+                    { id: 7, sequence: '4.1', designation: 'Nombre de dents', target: '12', tolerance: '-', instrument: "Visuel", mesure: '', status: '' },
+                    { id: 8, sequence: '6.1', designation: 'Compression O-Ring (%)', target: '23', tolerance: '5', instrument: "Banc de test", mesure: '', status: '' }
+                ]
+            },
+            106: {
+                header: { designation: 'Fond Fini', reference: '444301 A-01', indice: 'A' },
+                measurements: [
+                    { id: 1, sequence: '1.1', designation: 'Ø Extérieur Max', target: '38.80', tolerance: '0.05', instrument: "Pied à coulisse", mesure: '', status: '' },
+                    { id: 2, sequence: '1.2', designation: 'Ø Cercle des trous', target: '36.30', tolerance: '0.05', instrument: "Machine MMT", mesure: '', status: '' },
+                    { id: 3, sequence: '1.3', designation: 'Ø Emboîtage', target: '32.70', tolerance: '0.05', instrument: "Micromètre int.", mesure: '', status: '' },
+                    { id: 4, sequence: '1.4', designation: 'Ø Intérieur', target: '33.10', tolerance: '0.05', instrument: "Alésomètre", mesure: '', status: '' },
+                    { id: 5, sequence: '2.1', designation: 'Ø Fond de gorge', target: '24.80', tolerance: '0.05', instrument: "Optique / MMT", mesure: '', status: '' },
+                    { id: 6, sequence: '2.2', designation: 'Ø Extérieur gorge', target: '26.10', tolerance: '0.05', instrument: "Optique / MMT", mesure: '', status: '' },
+                    { id: 7, sequence: '3.1', designation: 'Épaisseur Totale', target: '1.65', tolerance: '0.05', instrument: "Micromètre", mesure: '', status: '' },
+                    { id: 8, sequence: '3.2', designation: 'Profondeur Lamage', target: '1.05', tolerance: '0.01', instrument: "Jauge profondeur", mesure: '', status: '' },
+                    { id: 9, sequence: '3.3', designation: 'Profondeur Totale', target: '1.50', tolerance: '0.01', instrument: "Jauge profondeur", mesure: '', status: '' },
+                    { id: 10, sequence: '4.1', designation: 'Diamètre trous (x6)', target: '1.40', tolerance: '0.05', instrument: "Pige calibrée", mesure: '', status: '' }
+                ]
+            }
+        };
 
         const App = () => {
             const [currentView, setCurrentView] = useState('home');
@@ -148,12 +175,6 @@
             return (
                 <main className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-<<<<<<< HEAD
-                        {/* Bouton Créer */}
-                        <button 
-                            onClick={onCreate}
-                            className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 text-left p-8 md:col-start-2"
-=======
                         {/* Bouton Utiliser */}
                         <button 
                             onClick={() => document.getElementById('gamme-list').scrollIntoView({ behavior: 'smooth' })}
@@ -174,24 +195,17 @@
                         <button 
                             onClick={onCreate}
                             className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 text-left p-8"
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
                             style={{ backgroundColor: theme.panel, borderLeft: `6px solid ${theme.accent}` }}
                         >
                             <div className="flex justify-between items-start mb-4">
                                 <div className="p-3 rounded-full" style={{ backgroundColor: theme.accentLight }}>
                                     <Plus size={32} style={{ color: theme.accentText }} />
                                 </div>
-<<<<<<< HEAD
-                                <div className="text-6xl font-black opacity-5 pointer-events-none absolute right-4 top-4">1</div>
-=======
                                 <div className="text-6xl font-black opacity-5 pointer-events-none absolute right-4 top-4">2</div>
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
                             </div>
                             <h3 className="text-2xl font-bold mb-2">Créer une gamme</h3>
                             <p className="text-gray-500">Définir un nouveau protocole.</p>
                         </button>
-<<<<<<< HEAD
-=======
 
                         {/* Bouton Éditer */}
                         <button 
@@ -208,7 +222,6 @@
                             <h3 className="text-2xl font-bold mb-2">Éditer une gamme</h3>
                             <p className="text-gray-500">Modifier les spécifications existantes.</p>
                         </button>
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
                     </div>
 
                     {/* Liste */}
@@ -288,63 +301,17 @@
             );
         };
 
-<<<<<<< HEAD
-        const GAMME_DB = {
-            105: {
-                header: { designation: 'Couronne CET Fini', reference: '444316 A-01', indice: 'A' },
-                measurements: [
-                    { id: 1, sequence: '1.1', designation: 'Ø Extérieur Couronne', target: '6.25', tolerance: '0.09', instrument: "Micromètre / Optique", mesure: '', status: '' },
-                    { id: 2, sequence: '1.2', designation: 'Ø Base', target: '5.55', tolerance: '0.05', instrument: "Optique", mesure: '', status: '' },
-                    { id: 3, sequence: '2.1', designation: 'Ø Logement Intérieur 1', target: '3.30', tolerance: '0.01', instrument: "Tampon Go/No-Go", mesure: '', status: '' },
-                    { id: 4, sequence: '2.2', designation: 'Ø Logement Intérieur 2', target: '1.40', tolerance: '0.01', instrument: "Pige calibrée", mesure: '', status: '' },
-                    { id: 5, sequence: '3.1', designation: 'Profondeur Logement', target: '2.25', tolerance: '0.03', instrument: "Jauge de profondeur", mesure: '', status: '' },
-                    { id: 6, sequence: '3.2', designation: 'Hauteur Totale', target: '3.00', tolerance: '0.05', instrument: "Micromètre", mesure: '', status: '' },
-                    { id: 7, sequence: '4.1', designation: 'Nombre de dents', target: '12', tolerance: '-', instrument: "Visuel", mesure: '', status: '' },
-                    { id: 8, sequence: '6.1', designation: 'Compression O-Ring (%)', target: '23', tolerance: '5', instrument: "Banc de test", mesure: '', status: '' }
-                ]
-            },
-            106: {
-                header: { designation: 'Fond Fini', reference: '444301 A-01', indice: 'A' },
-                measurements: [
-                    { id: 1, sequence: '1.1', designation: 'Ø Extérieur Max', target: '38.80', tolerance: '0.05', instrument: "Pied à coulisse", mesure: '', status: '' },
-                    { id: 2, sequence: '1.2', designation: 'Ø Cercle des trous', target: '36.30', tolerance: '0.05', instrument: "Machine MMT", mesure: '', status: '' },
-                    { id: 3, sequence: '1.3', designation: 'Ø Emboîtage', target: '32.70', tolerance: '0.05', instrument: "Micromètre int.", mesure: '', status: '' },
-                    { id: 4, sequence: '1.4', designation: 'Ø Intérieur', target: '33.10', tolerance: '0.05', instrument: "Alésomètre", mesure: '', status: '' },
-                    { id: 5, sequence: '2.1', designation: 'Ø Fond de gorge', target: '24.80', tolerance: '0.05', instrument: "Optique / MMT", mesure: '', status: '' },
-                    { id: 6, sequence: '2.2', designation: 'Ø Extérieur gorge', target: '26.10', tolerance: '0.05', instrument: "Optique / MMT", mesure: '', status: '' },
-                    { id: 7, sequence: '3.1', designation: 'Épaisseur Totale', target: '1.65', tolerance: '0.05', instrument: "Micromètre", mesure: '', status: '' },
-                    { id: 8, sequence: '3.2', designation: 'Profondeur Lamage', target: '1.05', tolerance: '0.01', instrument: "Jauge profondeur", mesure: '', status: '' },
-                    { id: 9, sequence: '3.3', designation: 'Profondeur Totale', target: '1.50', tolerance: '0.01', instrument: "Jauge profondeur", mesure: '', status: '' },
-                    { id: 10, sequence: '4.1', designation: 'Diamètre trous (x6)', target: '1.40', tolerance: '0.05', instrument: "Pige calibrée", mesure: '', status: '' }
-                ]
-            }
-        };
-
-=======
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
         const EditorPage = ({ mode, gammeId, onBack }) => {
             const isRunMode = mode === 'run';
             const isReadOnly = isRunMode;
 
-<<<<<<< HEAD
+            // Chargement des données depuis la DB évoluée
             const dbEntry = GAMME_DB[gammeId];
             const defaultHeader = { designation: gammeId ? 'Vis de pont' : '', reference: gammeId ? 'VIS-H45-001' : '', indice: gammeId ? 'A' : '' };
             const defaultMeasurements = gammeId ? [{ id: 1, sequence: '10', designation: 'Diamètre tête', target: '1.20', tolerance: '0.02', instrument: "Micromètre d'extérieur", mesure: '', status: '' }, { id: 2, sequence: '20', designation: 'Longueur totale', target: '2.50', tolerance: '0.05', instrument: "Pied à coulisse digital", mesure: '', status: '' }] : [];
 
             const [headerInfo, setHeaderInfo] = useState(dbEntry ? dbEntry.header : defaultHeader);
             const [measurements, setMeasurements] = useState(dbEntry ? dbEntry.measurements : defaultMeasurements);
-=======
-            const [headerInfo, setHeaderInfo] = useState({
-                designation: gammeId ? 'Arbre de transmission' : '',
-                reference: gammeId ? 'REF-2024-001' : '',
-                indice: gammeId ? 'A' : ''
-            });
-
-            const [measurements, setMeasurements] = useState([
-                { id: 1, sequence: '10', designation: 'Diamètre extérieur', target: '25.00', tolerance: '0.05', instrument: "Micromètre d'extérieur", mesure: '' },
-                { id: 2, sequence: '20', designation: 'Longueur totale', target: '100.00', tolerance: '0.10', instrument: "Pied à coulisse digital", mesure: '' }
-            ]);
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
 
             const instrumentsEHG = [
                 "Pied à coulisse digital", "Micromètre d'extérieur", "Comparateur", 
@@ -357,14 +324,14 @@
 
             const addRow = () => {
                 const newId = measurements.length > 0 ? Math.max(...measurements.map(m => m.id)) + 1 : 1;
-                const lastSequence = measurements.length > 0 ? parseInt(measurements[measurements.length - 1].sequence) || 0 : 0;
+                const lastSequence = measurements.length > 0 ? parseFloat(measurements[measurements.length - 1].sequence) || 0 : 0;
+                // Logique de séquence intelligente (incrément de 1 ou 10 selon le format)
+                let nextSeq = (Math.floor(lastSequence) + 1).toString();
+                if(lastSequence % 1 !== 0) nextSeq = (lastSequence + 0.1).toFixed(1);
+
                 setMeasurements([...measurements, { 
-                    id: newId, sequence: (lastSequence + 10).toString(), 
-<<<<<<< HEAD
+                    id: newId, sequence: nextSeq, 
                     designation: '', target: '', tolerance: '', instrument: instrumentsEHG[0], mesure: '', status: '' 
-=======
-                    designation: '', target: '', tolerance: '', instrument: instrumentsEHG[0], mesure: '' 
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
                 }]);
             };
 
@@ -381,8 +348,7 @@
                 return { min, max };
             };
 
-<<<<<<< HEAD
-            // --- Drag & Drop Logic ---
+            // --- Drag & Drop Logic (Fonctionnalité avancée HEAD) ---
             const [draggedIndex, setDraggedIndex] = useState(null);
 
             const onDragStart = (e, index) => {
@@ -423,16 +389,6 @@
                     console.error(err);
                     alert("Erreur lors de l'export image");
                 }
-=======
-            const checkConformity = (val, min, max) => {
-                if (val === '' || val === undefined) return 'PENDING';
-                const v = parseFloat(val);
-                const m = parseFloat(min);
-                const M = parseFloat(max);
-                if (isNaN(v) || isNaN(m) || isNaN(M)) return 'PENDING';
-                if (v >= m && v <= M) return 'OK';
-                return 'NOK';
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
             };
 
             return (
@@ -447,12 +403,9 @@
                             </h1>
                         </div>
                         <div className="flex gap-2">
-<<<<<<< HEAD
                             <button onClick={handleExportPNG} className="flex items-center gap-2 px-4 py-2 bg-white border rounded-md shadow-sm text-gray-700 hover:bg-gray-50">
                                 <Camera size={16} /> PNG
                             </button>
-=======
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
                             <button className="flex items-center gap-2 px-4 py-2 bg-white border rounded-md shadow-sm text-gray-700 hover:bg-gray-50">
                                 <Printer size={16} /> Imprimer
                             </button>
@@ -469,171 +422,126 @@
                         </div>
                     </div>
 
-<<<<<<< HEAD
                     <div id="gamme-capture-zone">
-=======
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
-                    <div className="bg-white shadow rounded-lg p-6 mb-8 border-l-4" style={{ borderColor: theme.accent }}>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {['designation', 'reference', 'indice'].map((field) => (
-                                <div key={field}>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">{field}</label>
-                                    <input
-                                        type="text"
-                                        value={headerInfo[field]}
-                                        disabled={isReadOnly}
-                                        onChange={(e) => setHeaderInfo({ ...headerInfo, [field]: e.target.value })}
-                                        className={`w-full rounded-md border border-gray-300 shadow-sm sm:text-sm p-2 ${isReadOnly ? 'bg-gray-100 text-gray-500' : ''}`}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="bg-white shadow rounded-lg overflow-hidden">
-                        <div className="overflow-x-auto">
-<<<<<<< HEAD
-                            <datalist id="instruments-list">
-                                {instrumentsEHG.map((inst, i) => <option key={i} value={inst} />)}
-                            </datalist>
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        {!isRunMode && <th className="w-10 px-3 py-3"></th>}
-=======
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">Seq</th>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Désignation</th>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Cible</th>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Tol (+/-)</th>
-                                        <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20 bg-gray-100 border-l border-gray-200">Lim Inf</th>
-                                        <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20 bg-gray-100 border-r border-gray-200">Lim Sup</th>
-                                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-40">Instrument</th>
-                                        {isRunMode && <th className="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider w-32" style={{ color: theme.accentText, backgroundColor: theme.accentLight }}>Mesure</th>}
-<<<<<<< HEAD
-                                        {isRunMode && <th className="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider w-32">Statut</th>}
-=======
-                                        {isRunMode && <th className="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider w-24">Conformité</th>}
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
-                                        {!isRunMode && <th className="px-3 py-3 w-16"></th>}
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-<<<<<<< HEAD
-                                    {measurements.map((row, index) => {
-                                        const { min, max } = calculateLimits(row.target, row.tolerance);
-                                        
-                                        return (
-                                            <tr 
-                                                key={row.id}
-                                                draggable={!isRunMode}
-                                                onDragStart={(e) => onDragStart(e, index)}
-                                                onDragOver={(e) => onDragOver(e, index)}
-                                                onDrop={(e) => onDrop(e, index)}
-                                                className={!isRunMode ? "cursor-move hover:bg-gray-50 transition-colors" : ""}
-                                            >
-                                                {!isRunMode && (
-                                                    <td className="px-3 py-4 text-center text-gray-400">
-                                                        <GripVertical size={16} />
-                                                    </td>
-                                                )}
-=======
-                                    {measurements.map((row) => {
-                                        const { min, max } = calculateLimits(row.target, row.tolerance);
-                                        const conformity = isRunMode ? checkConformity(row.mesure, min, max) : null;
-                                        
-                                        return (
-                                            <tr key={row.id}>
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
-                                                <td className="px-3 py-4"><input value={row.sequence} disabled={isReadOnly} onChange={(e) => handleTableChange(row.id, 'sequence', e.target.value)} className="w-full text-center font-mono text-sm border-none bg-transparent" /></td>
-                                                <td className="px-3 py-4"><input value={row.designation} disabled={isReadOnly} onChange={(e) => handleTableChange(row.id, 'designation', e.target.value)} className="w-full text-sm border-none bg-transparent" /></td>
-                                                <td className="px-3 py-4"><input value={row.target} disabled={isReadOnly} onChange={(e) => handleTableChange(row.id, 'target', e.target.value)} className="w-full text-right text-sm border-none bg-transparent" /></td>
-                                                <td className="px-3 py-4"><input value={row.tolerance} disabled={isReadOnly} onChange={(e) => handleTableChange(row.id, 'tolerance', e.target.value)} className="w-full text-right text-sm border-none bg-transparent" /></td>
-                                                
-                                                <td className="px-3 py-4 text-center text-sm text-gray-500 bg-gray-50 border-l border-gray-200 font-mono">{min}</td>
-                                                <td className="px-3 py-4 text-center text-sm text-gray-500 bg-gray-50 border-r border-gray-200 font-mono">{max}</td>
-                                                
-                                                <td className="px-3 py-4">
-                                                    {isReadOnly ? <span className="text-sm truncate block">{row.instrument}</span> : 
-<<<<<<< HEAD
-                                                    <>
-                                                        <input list="instruments-list" type="text" value={row.instrument} onChange={(e) => handleTableChange(row.id, 'instrument', e.target.value)} className="w-full text-sm border-gray-300 rounded-md p-1" placeholder="Choisir ou saisir..." />
-                                                    </>
-                                                    }
-=======
-                                                    <select value={row.instrument} onChange={(e) => handleTableChange(row.id, 'instrument', e.target.value)} className="w-full text-sm border-gray-300 rounded-md">
-                                                        {instrumentsEHG.map((inst, i) => <option key={i} value={inst}>{inst}</option>)}
-                                                    </select>}
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
-                                                </td>
-                                                
-                                                {isRunMode && (
-                                                    <td className="px-3 py-4 bg-yellow-50/50">
-                                                        <input 
-                                                            type="text" 
-                                                            placeholder="..." 
-                                                            value={row.mesure}
-                                                            onChange={(e) => handleTableChange(row.id, 'mesure', e.target.value)}
-                                                            className="w-full border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none bg-transparent text-center font-bold"
-                                                            style={{ color: theme.primary }}
-                                                        />
-                                                    </td>
-                                                )}
-                                                
-                                                {isRunMode && (
-                                                    <td className="px-3 py-4 text-center">
-<<<<<<< HEAD
-                                                        <select 
-                                                            value={row.status} 
-                                                            onChange={(e) => handleTableChange(row.id, 'status', e.target.value)}
-                                                            className={`w-full text-sm border-gray-300 rounded-md p-1 ${row.status === 'Conforme' ? 'bg-green-50 text-green-700 border-green-200' : row.status === 'Non-conforme' ? 'bg-red-50 text-red-700 border-red-200' : ''}`}
-                                                        >
-                                                            <option value="">-</option>
-                                                            <option value="Conforme">Conforme</option>
-                                                            <option value="Non-conforme">Non-conforme</option>
-                                                        </select>
-=======
-                                                        {conformity === 'OK' && (
-                                                            <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold">
-                                                                <CheckCircle size={14} /> OK
-                                                            </div>
-                                                        )}
-                                                        {conformity === 'NOK' && (
-                                                            <div className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold animate-pulse">
-                                                                <XCircle size={14} /> NOK
-                                                            </div>
-                                                        )}
-                                                        {conformity === 'PENDING' && <span className="text-gray-300">-</span>}
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
-                                                    </td>
-                                                )}
-
-                                                {!isRunMode && (
-                                                    <td className="px-3 py-4 text-right">
-                                                        <button onClick={() => deleteRow(row.id)} className="text-red-400 hover:text-red-600"><Trash2 size={16} /></button>
-                                                    </td>
-                                                )}
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                        {!isRunMode && (
-                            <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
-                                <button onClick={addRow} className="flex items-center text-sm font-medium hover:opacity-80 transition-opacity" style={{ color: theme.primary }}>
-                                    <Plus size={16} className="mr-2" /> Ajouter une cote
-                                </button>
+                        <div className="bg-white shadow rounded-lg p-6 mb-8 border-l-4" style={{ borderColor: theme.accent }}>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {['designation', 'reference', 'indice'].map((field) => (
+                                    <div key={field}>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">{field}</label>
+                                        <input
+                                            type="text"
+                                            value={headerInfo[field]}
+                                            disabled={isReadOnly}
+                                            onChange={(e) => setHeaderInfo({ ...headerInfo, [field]: e.target.value })}
+                                            className={`w-full rounded-md border border-gray-300 shadow-sm sm:text-sm p-2 ${isReadOnly ? 'bg-gray-100 text-gray-500' : ''}`}
+                                        />
+                                    </div>
+                                ))}
                             </div>
-                        )}
+                        </div>
+
+                        <div className="bg-white shadow rounded-lg overflow-hidden">
+                            <div className="overflow-x-auto">
+                                <datalist id="instruments-list">
+                                    {instrumentsEHG.map((inst, i) => <option key={i} value={inst} />)}
+                                </datalist>
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            {!isRunMode && <th className="w-10 px-3 py-3"></th>}
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">Seq</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Désignation</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Cible</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Tol (+/-)</th>
+                                            <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20 bg-gray-100 border-l border-gray-200">Lim Inf</th>
+                                            <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-20 bg-gray-100 border-r border-gray-200">Lim Sup</th>
+                                            <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-40">Instrument</th>
+                                            {isRunMode && <th className="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider w-32" style={{ color: theme.accentText, backgroundColor: theme.accentLight }}>Mesure</th>}
+                                            {isRunMode && <th className="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider w-32">Statut</th>}
+                                            {!isRunMode && <th className="px-3 py-3 w-16"></th>}
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {measurements.map((row, index) => {
+                                            const { min, max } = calculateLimits(row.target, row.tolerance);
+                                            
+                                            return (
+                                                <tr 
+                                                    key={row.id}
+                                                    draggable={!isRunMode}
+                                                    onDragStart={(e) => onDragStart(e, index)}
+                                                    onDragOver={(e) => onDragOver(e, index)}
+                                                    onDrop={(e) => onDrop(e, index)}
+                                                    className={!isRunMode ? "cursor-move hover:bg-gray-50 transition-colors" : ""}
+                                                >
+                                                    {!isRunMode && (
+                                                        <td className="px-3 py-4 text-center text-gray-400">
+                                                            <GripVertical size={16} />
+                                                        </td>
+                                                    )}
+                                                    <td className="px-3 py-4"><input value={row.sequence} disabled={isReadOnly} onChange={(e) => handleTableChange(row.id, 'sequence', e.target.value)} className="w-full text-center font-mono text-sm border-none bg-transparent" /></td>
+                                                    <td className="px-3 py-4"><input value={row.designation} disabled={isReadOnly} onChange={(e) => handleTableChange(row.id, 'designation', e.target.value)} className="w-full text-sm border-none bg-transparent" /></td>
+                                                    <td className="px-3 py-4"><input value={row.target} disabled={isReadOnly} onChange={(e) => handleTableChange(row.id, 'target', e.target.value)} className="w-full text-right text-sm border-none bg-transparent" /></td>
+                                                    <td className="px-3 py-4"><input value={row.tolerance} disabled={isReadOnly} onChange={(e) => handleTableChange(row.id, 'tolerance', e.target.value)} className="w-full text-right text-sm border-none bg-transparent" /></td>
+                                                    
+                                                    <td className="px-3 py-4 text-center text-sm text-gray-500 bg-gray-50 border-l border-gray-200 font-mono">{min}</td>
+                                                    <td className="px-3 py-4 text-center text-sm text-gray-500 bg-gray-50 border-r border-gray-200 font-mono">{max}</td>
+                                                    
+                                                    <td className="px-3 py-4">
+                                                        {isReadOnly ? <span className="text-sm truncate block">{row.instrument}</span> : 
+                                                        <>
+                                                            <input list="instruments-list" type="text" value={row.instrument} onChange={(e) => handleTableChange(row.id, 'instrument', e.target.value)} className="w-full text-sm border-gray-300 rounded-md p-1" placeholder="Choisir ou saisir..." />
+                                                        </>
+                                                        }
+                                                    </td>
+                                                    
+                                                    {isRunMode && (
+                                                        <td className="px-3 py-4 bg-yellow-50/50">
+                                                            <input 
+                                                                type="text" 
+                                                                placeholder="..." 
+                                                                value={row.mesure}
+                                                                onChange={(e) => handleTableChange(row.id, 'mesure', e.target.value)}
+                                                                className="w-full border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none bg-transparent text-center font-bold"
+                                                                style={{ color: theme.primary }}
+                                                            />
+                                                        </td>
+                                                    )}
+                                                    
+                                                    {isRunMode && (
+                                                        <td className="px-3 py-4 text-center">
+                                                            <select 
+                                                                value={row.status} 
+                                                                onChange={(e) => handleTableChange(row.id, 'status', e.target.value)}
+                                                                className={`w-full text-sm border-gray-300 rounded-md p-1 ${row.status === 'Conforme' ? 'bg-green-50 text-green-700 border-green-200' : row.status === 'Non-conforme' ? 'bg-red-50 text-red-700 border-red-200' : ''}`}
+                                                            >
+                                                                <option value="">-</option>
+                                                                <option value="Conforme">Conforme</option>
+                                                                <option value="Non-conforme">Non-conforme</option>
+                                                            </select>
+                                                        </td>
+                                                    )}
+
+                                                    {!isRunMode && (
+                                                        <td className="px-3 py-4 text-right">
+                                                            <button onClick={() => deleteRow(row.id)} className="text-red-400 hover:text-red-600"><Trash2 size={16} /></button>
+                                                        </td>
+                                                    )}
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {!isRunMode && (
+                                <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
+                                    <button onClick={addRow} className="flex items-center text-sm font-medium hover:opacity-80 transition-opacity" style={{ color: theme.primary }}>
+                                        <Plus size={16} className="mr-2" /> Ajouter une cote
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
-<<<<<<< HEAD
-                    </div>
-=======
->>>>>>> 953bcea304a6dff7c8e89a6d3523a69b53861f2c
                 </main>
             );
         };
