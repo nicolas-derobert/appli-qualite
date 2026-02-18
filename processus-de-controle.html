@@ -12,6 +12,12 @@
     <style>
         .fade-in { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes flowPulse {
+            0%, 100% { transform: translateX(0); opacity: 0.8; }
+            50% { transform: translateX(5px); opacity: 1; }
+        }
+        .animate-flow { animation: flowPulse 2s infinite ease-in-out; }
     </style>
 </head>
 <body>
@@ -70,57 +76,61 @@
         const CONTEXTS = {
           RECEIPT_DOC: {
             id: 'RECEIPT_DOC',
-            label: 'Contrôle Documentaire (Réception)',
+            label: 'Contrôle documentaire (Réception)',
             shortLabel: 'Documentaire',
             semanticColor: 'text-red-600', 
             stage: 'Entrants',
             icon: FileSpreadsheet,
-            definition: "Vérification administrative et documentaire avant tout contrôle physique (Certificats, BL, Commandes).",
+            definition: "Ce contrôle consiste à vérifier la conformité administrative et documentaire avant tout contrôle physique (Certificats, BL, Commandes).",
             stakes: "Garantir la traçabilité, la conformité légale (REACH, CITES) et la correspondance administrative.",
             detailedActivities: [
               {
-                category: "Contrôle Documentaire",
+                category: "Contrôle documentaire",
                 title: "Conformité REACH (Certificat)",
                 icon: FileSpreadsheet,
                 definition: "Vérification de la présence d'un certificat REACH rattaché au lot et conformité vis‑à‑vis des substances SVHC.",
+                who: "Responsables entrées-sorties de marchandises et contrôleurs qualité.",
                 method: "Contrôle documentaire strict (référence, n° lot, date) avant entrée en stock.",
-                example: "Exemple : Réception de joints polymères. BL OK mais certificat REACH manquant → Quarantaine immédiate."
+                example: "Lors de la réception d'un lot de joints polymères, le bon de livraison est conforme, mais l'absence du certificat REACH entraîne la mise en quarantaine immédiate du lot jusqu'à régularisation."
               },
               {
-                category: "Contrôle Documentaire",
+                category: "Contrôle documentaire",
                 title: "Traçabilité CITES (Exotique)",
                 icon: BookOpen,
                 definition: "Lien obligatoire entre n° série/lot (bracelets peaux exotiques) et permis CITES.",
+                who: "Responsables entrées-sorties de marchandises et contrôleurs qualité.",
                 method: "Validation documentaire (espèce, origine, dates) pour éviter les risques douaniers.",
-                example: "Exemple : Bracelet alligator sans permis rattaché → Blocage expédition."
+                example: "Un lot de bracelets en cuir d'alligator arrive sans le permis CITES correspondant, ce qui bloque administrativement l'entrée en stock pour éviter tout risque douanier lors de la réexpédition."
               }
             ]
           },
           RECEIPT_QC: {
             id: 'RECEIPT_QC',
-            label: 'Contrôle Qualité (IQC)',
+            label: 'Contrôle qualité (IQC)',
             shortLabel: 'Contrôle Physique',
             semanticColor: 'text-red-600', 
             stage: 'Entrants',
             icon: Microscope,
-            definition: "Inspection physique et technique des composants entrants pour valider leur conformité au plan.",
-            stakes: "Protéger l'outil de production et éviter d'ajouter de la valeur sur une matière défectueuse.",
+            definition: "Ce contrôle consiste à vérifier physiquement et techniquement les composants entrants pour valider leur conformité au plan.",
+            stakes: "Protéger les ateliers de production de l'arrivée de composant non conforme et inutilisable et éviter d'ajouter de la valeur sur une matière défectueuse.",
             detailedActivities: [
               {
-                category: "Contrôle Qualité",
+                category: "Contrôle qualité",
                 title: "Titrage métaux précieux (XRF)",
                 icon: Target,
                 definition: "Contrôle de la pureté minimale (ex. or 18K : ≥ 750‰) avec tolérance unilatérale.",
+                who: "Contrôleurs qualité.",
                 method: "Mesures multi‑zones par spectrométrie XRF selon la géométrie de la pièce.",
-                example: "Exemple : Carrure annoncée 18K. Mesure XRF = 749,5‰ → Rejet immédiat (Règle unilatérale)."
+                example: "Une carrure annoncée en or 18K est testée par spectrométrie XRF. La mesure révèle un titre de 749,5‰, inférieur au standard légal, entraînant le rejet immédiat du lot selon la règle de tolérance unilatérale."
               },
               {
-                category: "Contrôle Qualité",
-                title: "Contrôle Fermoir (Boucle)",
+                category: "Contrôle qualité",
+                title: "Contrôle dimensionnel, technique et esthétique",
                 icon: ShieldCheck,
                 definition: "Vérification complète : Identification, Dimensionnel, Esthétique et Fonctionnel (Sécurité).",
-                method: "Pied à coulisse, visuel, test cycles court (20-50 ouvertures) et tenue.",
-                example: "Exemple : Lot de 300 fermoirs. 2 pièces avec bavure (contact poignet) → Quarantaine du lot."
+                who: "Contrôleurs qualité.",
+                method: "Utilisation de gammes de contrôle avec moyens à disposition. Contrôle par échantillonnage selon les normes ISO 2859.",
+                example: "Sur un lot de 300 fermoirs, l'inspection par échantillonnage révèle deux pièces présentant des bavures tranchantes sur la zone de contact avec le poignet, provoquant la mise en quarantaine de l'ensemble du lot pour un tri à 100%."
               }
             ]
           },
@@ -131,29 +141,24 @@
             semanticColor: 'text-blue-600',
             stage: 'Transformation',
             icon: Activity,
-            definition: "Surveillance active pour détecter les dérives avant qu'elles ne deviennent critiques (Autocontrôle, SPC).",
+            definition: "Ce contrôle consiste à vérifier et surveiller activement le processus pour détecter les dérives avant qu'elles ne deviennent critiques (Autocontrôle, SPC).",
             stakes: "Pilotage du processus, réduction des coûts de non-qualité interne et réactivité immédiate.",
             detailedActivities: [
               {
-                title: "SPC — Alerte dérive",
-                icon: Activity,
-                definition: "Surveillance de la stabilité du procédé (moyenne + dispersion) pour anticiper les hors tolérances.",
-                method: "Relevé de mesures régulier et analyse des signaux (ex: 7 points consécutifs montants).",
-                example: "Exemple : Axe Ø10 h7. 5 mesures / 2h. 7 points montent vers la limite haute → Changement outil préventif."
-              },
-              {
-                title: "Contrôle Esthétique (Zones)",
-                icon: Eye,
-                definition: "Acceptabilité visuelle définie selon la zone (A/B/C) et les conditions (distance, lumière).",
-                method: "Inspection visuelle standardisée pour réduire la subjectivité des jugements.",
-                example: "Exemple : Micro‑rayure invisible à 30 cm. Acceptable en zone B (cachée), mais NOK en zone A (visible)."
-              },
-              {
-                title: "Autocontrôle Terminaison",
+                title: "Autocontrôle",
                 icon: User,
                 definition: "Vérification Aspect, Cadran/Aiguilles, Fonctions et Bracelet juste après l'opération.",
+                who: "Chaque collaborateur en production (opérateur, régleur, etc.).",
                 method: "Contrôle immédiat par l'opérateur (poste disponible) pour corriger sans délai.",
                 example: "Exemple : Après pose aiguilles : aucune poussière, date OK. Validation “OK” → étape suivante."
+              },
+              {
+                title: "SPC (Statistical Process Control)",
+                icon: Activity,
+                definition: "Surveillance de la stabilité du procédé (moyenne + dispersion) pour anticiper les hors tolérances. Également appelé MSP (Maîtrise Statistique des Procédés).",
+                who: "Régleurs.",
+                method: "Utilisation de cartes de contrôle pour le relevé de mesures régulier et l'analyse des signaux (ex: 7 points consécutifs montants).",
+                example: "Lors de l'usinage d'un axe Ø10 h7, le relevé de 5 mesures toutes les 2 heures montre une dérive de 7 points consécutifs vers la limite haute, déclenchant un changement d'outil préventif avant la production de pièces non conformes."
               }
             ]
           },
@@ -164,22 +169,24 @@
             semanticColor: 'text-emerald-600',
             stage: 'Validation',
             icon: ShieldCheck,
-            definition: "Validation technique et sécurisation du lot produit avant transfert.",
+            definition: "Ce contrôle consiste à vérifier techniquement et sécuriser le lot produit avant transfert.",
             stakes: "Garantir les performances techniques (étanchéité, fiabilité) et sécuriser le lot.",
             detailedActivities: [
               {
-                title: "Étanchéité Air (Déformation)",
+                title: "Contrôle étanchéité",
                 icon: Activity,
-                definition: "Détection de fuite via la courbe de déformation de la boîte sous pression puis relaxation.",
-                method: "Test rapide non destructif. Une pente de relaxation trop raide indique une fuite.",
-                example: "Exemple : Sous 3 bar, la montre “revient” trop vite → Fuite probable → Démontage."
+                definition: "Vérification de l'herméticité par tests physiques (air/déformation) et thermiques (condensation 45°C).",
+                who: "Opérateurs.",
+                method: "Test air pour détection rapide suivi d'un choc thermique (45°C sur plaque froide) pour révéler l'humidité.",
+                example: "Une montre passe le test d'étanchéité à l'air avec succès, mais lors du test de condensation à 45°C, une buée persistante apparaît sous le verre pendant plus de 30 secondes, signalant une micro-fuite ou de l'humidité enfermée lors de l'emboîtage."
               },
               {
-                title: "Condensation 45°C",
-                icon: AlertTriangle,
-                definition: "Détection d'humidité interne ou infiltration par choc thermique (45°C sur plaque froide).",
-                method: "Observation de la buée sur le verre après le choc thermique.",
-                example: "Exemple : Buée persiste > 30 s → NOK → Recherche cause (joint pincé, couple)."
+                title: "Contrôle esthétique",
+                icon: Eye,
+                definition: "Acceptabilité visuelle définie selon la zone (A/B/C) et les conditions (distance, lumière).",
+                who: "Contrôleurs esthétiques.",
+                method: "Inspection visuelle standardisée pour réduire la subjectivité des jugements.",
+                example: "L'inspecteur détecte une micro-rayure sur la carrure. Invisible à 30 cm, elle est jugée acceptable si située en zone B (entre-cornes), mais entraîne un refus si elle se trouve en zone A (lunette ou flanc visible)."
               }
             ]
           },
@@ -190,16 +197,18 @@
             semanticColor: 'text-orange-600',
             stage: 'Sortants',
             icon: Package,
-            definition: "L'ultime vérification (Firewall) avant l'expédition au client ou la mise en stock.",
-            stakes: "Protéger le client, l'image de marque et éviter les retours SAV coûteux.",
+            definition: "Le contrôle final vérifie la conformité documentaire, l’esthétique et le bon fonctionnement de la montre, selon des standards définis, avant validation et livraison.",
+            stakes: "Garantir qu’une montre finie est conforme, esthétique et fonctionnelle avant livraison.",
             detailedActivities: [
               {
-                title: "Contrôle Final Montre Finie",
+                title: "Contrôle final montre",
                 icon: ClipboardCheck,
-                definition: "Dernier statut “porte” : conformité fonctionnelle, esthétique et documentaire.",
-                method: "Checklist complète : Identification, Esthétique, Fonctions, Mouvement, Étanchéité, Packaging.",
-                example: "Exemple : Inspection finale : rayures, fonctions (date, chrono), marche, étanchéité, présence carte garantie."
+                definition: "Vérification globale : Conformité documentaire, Esthétique (aspect, propreté) et Technique (étanchéité, fonctions).",
+                who: "Contrôleurs qualité et horlogers.",
+                method: "Inspection complète selon checklist : Dossier de fabrication, visuel et tests fonctionnels.",
+                example: "L'inspection finale confirme que la montre correspond parfaitement à sa référence, ne présente aucun défaut esthétique visible et que toutes ses fonctions (heure, date, chronographe) sont opérationnelles selon les standards de la marque."
               }
+
             ]
           }
         };
@@ -378,6 +387,12 @@
                                    </div>
                                    <div>
                                       <h5 className="flex items-center gap-2 font-bold text-[#1a1a1a] text-sm uppercase tracking-wider mb-3">
+                                        <Users size={18} className="text-[#cfa346]"/> Qui réalise le contrôle ?
+                                      </h5>
+                                      <p className="text-[#2d3436] leading-relaxed text-justify">{act.who}</p>
+                                   </div>
+                                   <div>
+                                      <h5 className="flex items-center gap-2 font-bold text-[#1a1a1a] text-sm uppercase tracking-wider mb-3">
                                         <Settings size={18} className="text-[#cfa346]"/> Méthode / Outils
                                       </h5>
                                       <p className="text-[#2d3436] leading-relaxed text-justify">{act.method}</p>
@@ -390,7 +405,7 @@
                                          Sur le terrain
                                        </h5>
                                        <p className="text-[#2d3436] italic leading-relaxed text-lg font-serif">
-                                         "{act.example.replace('Exemple :', '')}"
+                                         "{act.example}"
                                        </p>
                                    </div>
                                 </div>
@@ -408,9 +423,7 @@
         // --- VUE DASHBOARD ---
 
         function Dashboard() {
-          const [hoveredContext, setHoveredContext] = useState(null);
           const [selectedContext, setSelectedContext] = useState(null);
-          const displayContext = CONTEXTS[hoveredContext] || null;
 
           const handleSelect = (key) => {
               if (selectedContext === key) setSelectedContext(null);
@@ -428,25 +441,37 @@
               <div className="text-center mb-16 space-y-2">
                 <h2 className="text-3xl font-extrabold text-[#1a1a1a]">Cartographie des contrôles</h2>
                 <p className="text-[#2d3436] opacity-70 text-lg max-w-2xl mx-auto">
-                  Explorez le processus de production pour découvrir les points de contrôle clés et les standards associés.
+                  Explorez le processus de production pour découvrir les étapes de contrôle clés usuels dans les entreprises.
                 </p>
                 <div className="w-24 h-1 bg-[#cfa346] mx-auto rounded mt-4"></div>
               </div>
 
-              <div className="relative max-w-6xl mx-auto mb-16 px-4">
+              <div className="relative max-w-6xl mx-auto mb-16 px-4 group/process">
                 {/* Ligne de flux */}
-                <div className="absolute top-1/2 left-0 w-full h-1 bg-[#e0e0e0] -translate-y-1/2 rounded-full hidden md:block z-0"></div>
+                <div className="absolute top-1/2 left-0 w-full h-1 bg-[#e0e0e0] -translate-y-1/2 rounded-full hidden md:block z-0 overflow-hidden">
+                    <div className="h-full bg-[#cfa346] w-full -translate-x-full group-hover/process:translate-x-0 transition-transform duration-[1.5s] ease-out opacity-40"></div>
+                </div>
+                
+                {/* Flèches de flux statiques */}
+                <div className="absolute top-1/2 left-0 w-full -translate-y-1/2 hidden md:flex justify-between pointer-events-none z-20 px-4">
+                    <div className="absolute left-[19%] -translate-x-1/2 -translate-y-1/2 bg-white p-1.5 rounded-full shadow-sm text-[#cfa346] border border-[#e0e0e0]">
+                        <ArrowRight size={20} strokeWidth={3} />
+                    </div>
+                    <div className="absolute left-[81%] -translate-x-1/2 -translate-y-1/2 bg-white p-1.5 rounded-full shadow-sm text-[#cfa346] border border-[#e0e0e0]">
+                        <ArrowRight size={20} strokeWidth={3} />
+                    </div>
+                </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-6 relative z-10">
                   
                   {/* Supplier */}
-                  <div className="flex flex-col items-center justify-center p-6 bg-[#f8f9fa] rounded-xl border border-[#e0e0e0] border-dashed opacity-60">
+                  <div className="flex flex-col items-center justify-center p-6 bg-[#f8f9fa] rounded-xl border border-[#e0e0e0] border-dashed opacity-70 cursor-default">
                       <Factory size={36} className="text-[#2d3436] mb-3"/>
                       <div className="font-bold text-[#2d3436] uppercase tracking-widest text-xs">Fournisseur</div>
                   </div>
 
                   {/* MANUFACTURE CONTAINER (Wraps Inputs, Process, Outputs) */}
-                  <div className="md:col-span-3 relative rounded-2xl border-2 border-[#cfa346] bg-white/80 p-6 shadow-lg flex flex-col">
+                  <div className="md:col-span-3 relative rounded-2xl border-2 border-[#cfa346] bg-white p-6 shadow-lg flex flex-col hover:shadow-2xl transition-shadow duration-300">
                       {/* Watermark / Logo Background */}
                       <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none overflow-hidden rounded-2xl">
                           <Factory size={300} strokeWidth={1} />
@@ -468,17 +493,17 @@
                             <div className="text-[10px] font-bold text-[#2d3436] uppercase tracking-widest mb-3 w-full text-center border-b border-[#f8f9fa] pb-2 opacity-60 mt-2">Réception</div>
                             
                             {/* DOC STEP */}
-                            <div onClick={() => handleSelect('RECEIPT_DOC')} onMouseEnter={() => setHoveredContext('RECEIPT_DOC')} onMouseLeave={() => setHoveredContext(null)}
+                            <div onClick={() => handleSelect('RECEIPT_DOC')}
                               className="w-full bg-[#f8f9fa] hover:bg-[#f4e8cb] border border-[#e0e0e0] hover:border-[#cfa346] rounded-lg p-3 mb-2 cursor-pointer transition-all flex items-center gap-3 group">
                                 <FileSpreadsheet size={18} className="text-[#2d3436] group-hover:text-[#856404]"/>
                                 <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">Documentaire</div>
                             </div>
 
                             {/* QC STEP */}
-                            <div onClick={() => handleSelect('RECEIPT_QC')} onMouseEnter={() => setHoveredContext('RECEIPT_QC')} onMouseLeave={() => setHoveredContext(null)}
+                            <div onClick={() => handleSelect('RECEIPT_QC')}
                               className="w-full bg-[#f8f9fa] hover:bg-[#f4e8cb] border border-[#e0e0e0] hover:border-[#cfa346] rounded-lg p-3 cursor-pointer transition-all flex items-center gap-3 group">
                                 <Microscope size={18} className="text-[#2d3436] group-hover:text-[#856404]"/>
-                                <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">Contrôle Qualité</div>
+                                <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">Contrôle qualité</div>
                             </div>
                        </div>
                           </div>
@@ -493,17 +518,17 @@
                             <div className="text-[10px] font-bold text-[#2d3436] uppercase tracking-widest mb-3 w-full text-center border-b border-[#f8f9fa] pb-2 opacity-60 mt-2">Processus de production</div>
                             
                             {/* PRODUCTION STEP */}
-                            <div onClick={() => handleSelect('PRODUCTION')} onMouseEnter={() => setHoveredContext('PRODUCTION')} onMouseLeave={() => setHoveredContext(null)}
+                            <div onClick={() => handleSelect('PRODUCTION')}
                               className="w-full bg-[#f8f9fa] hover:bg-[#f4e8cb] border border-[#e0e0e0] hover:border-[#cfa346] rounded-lg p-3 mb-2 cursor-pointer transition-all flex items-center gap-3 group">
                                 <Activity size={18} className="text-[#2d3436] group-hover:text-[#856404]"/>
-                                <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">En Cours</div>
+                                <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">En cours</div>
                             </div>
 
                             {/* END SERIES STEP */}
-                            <div onClick={() => handleSelect('END_SERIES')} onMouseEnter={() => setHoveredContext('END_SERIES')} onMouseLeave={() => setHoveredContext(null)}
+                            <div onClick={() => handleSelect('END_SERIES')}
                               className="w-full bg-[#f8f9fa] hover:bg-[#f4e8cb] border border-[#e0e0e0] hover:border-[#cfa346] rounded-lg p-3 cursor-pointer transition-all flex items-center gap-3 group">
                                 <ShieldCheck size={18} className="text-[#2d3436] group-hover:text-[#856404]"/>
-                                <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">Fin de Série</div>
+                                <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">Fin de série</div>
                             </div>
                        </div>
                           </div>
@@ -518,10 +543,10 @@
                             <div className="text-[10px] font-bold text-[#2d3436] uppercase tracking-widest mb-3 w-full text-center border-b border-[#f8f9fa] pb-2 opacity-60 mt-2">Expédition</div>
                             
                             {/* FINAL STEP */}
-                            <div onClick={() => handleSelect('FINAL_STOCK')} onMouseEnter={() => setHoveredContext('FINAL_STOCK')} onMouseLeave={() => setHoveredContext(null)}
+                            <div onClick={() => handleSelect('FINAL_STOCK')}
                               className="w-full bg-[#f8f9fa] hover:bg-[#f4e8cb] border border-[#e0e0e0] hover:border-[#cfa346] rounded-lg p-3 cursor-pointer transition-all flex flex-col items-center justify-center gap-2 group h-full">
                                 <Package size={28} className="text-[#2d3436] group-hover:text-[#856404]"/>
-                                <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">Contrôle Final</div>
+                                <div className="text-xs font-bold text-[#2d3436] group-hover:text-[#856404]">Contrôle final</div>
                             </div>
                        </div>
                           </div>
@@ -529,7 +554,7 @@
                   </div>
 
                   {/* Customer */}
-                  <div className="flex flex-col items-center justify-center p-6 bg-[#f8f9fa] rounded-xl border border-[#e0e0e0] border-dashed opacity-60">
+                  <div className="flex flex-col items-center justify-center p-6 bg-[#f8f9fa] rounded-xl border border-[#e0e0e0] border-dashed opacity-70 cursor-default">
                       <Users size={36} className="text-[#2d3436] mb-3"/>
                       <div className="font-bold text-[#2d3436] uppercase tracking-widest text-xs">Client</div>
                   </div>
@@ -537,37 +562,9 @@
               </div>
 
               {/* ZONE D'INFO DYNAMIQUE OU DÉTAILS */}
-              <div id="details-section" className="max-w-5xl mx-auto px-4 min-h-[200px] transition-all duration-500">
-                 {selectedContext ? (
+              <div id="details-section" className="max-w-5xl mx-auto px-4 transition-all duration-500">
+                 {selectedContext && (
                     <ContextDetails contextKey={selectedContext} onClose={() => setSelectedContext(null)} />
-                 ) : (
-                   <div className="h-36 max-w-4xl mx-auto">
-                     {displayContext ? (
-                   <div className="fade-in relative overflow-hidden rounded-xl border border-[#cfa346] bg-white p-0 flex items-stretch shadow-[0_10px_30px_rgba(0,0,0,0.05)] transition-all duration-300 h-40">
-                       <div className="flex-1 p-6 flex flex-col justify-center">
-                          <h4 className="text-xl font-bold text-[#1a1a1a] mb-2 flex items-center gap-2">
-                             <displayContext.icon size={24} className="text-[#cfa346]" />
-                             {displayContext.label}
-                          </h4>
-                          <div className="text-[#2d3436] text-sm mb-3 opacity-90">{displayContext.stakes}</div>
-                          <div className="flex items-center text-xs font-medium text-[#cfa346]">
-                             <ArrowRightCircle size={14} className="mr-1" />
-                             {displayContext.detailedActivities.length} Fiches disponibles
-                          </div>
-                       </div>
-                       <div className="flex items-center pl-6 border-l border-[#e0e0e0]">
-                          <Button size="md" onClick={() => handleSelect(displayContext.id)} icon={BookOpen} className="shadow-lg">
-                            Consulter
-                          </Button>
-                       </div>
-                   </div>
-                 ) : (
-                   <div className="h-full flex flex-col items-center justify-center text-[#e0e0e0] border-2 border-dashed border-[#e0e0e0] rounded-xl bg-[#f8f9fa]">
-                      <Zap size={32} className="mb-2 opacity-50 text-[#2d3436]"/>
-                      <p className="text-sm font-medium text-[#2d3436] opacity-60">Survolez une étape pour prévisualiser les contrôles</p>
-                   </div>
-                 )}
-                   </div>
                  )}
               </div>
             </div>
