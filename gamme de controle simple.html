@@ -155,18 +155,10 @@
                                         <div className="p-1 rounded bg-white/10">
                                             <FileText className="h-6 w-6" style={{ color: theme.accent }} />
                                         </div>
-<<<<<<< HEAD
+
                                         <span className="font-bold text-lg tracking-wide">Module contrôle - Simple</span>
                                     </div>
-=======
-                                        <span className="font-bold text-lg tracking-wide">Qualité Microsystèmes v4.2</span>
-                                    </div>
-                                </div>
-                                <div className="text-sm opacity-80">
-                                    {currentView === 'home' ? 'Tableau de bord' : 
-                                    editorMode === 'create' ? 'Nouvelle Gamme' : 
-                                    editorMode === 'run' ? 'Mode Utilisation' : 'Mode Édition'}
->>>>>>> 48e6fcdc162293c6c53af41da0ae3eccba631f42
+
                                 </div>
                                 
                             </div>
@@ -389,6 +381,30 @@
                                 clonedEl.style.width = element.scrollWidth + "px";
                                 const scrollables = clonedEl.querySelectorAll('.overflow-x-auto');
                                 scrollables.forEach(el => el.style.overflow = 'visible');
+
+                                // Correction pour l'export : Remplacement des inputs/selects par du texte
+                                // Cela évite que le texte soit coupé (tronqué) verticalement dans le PNG
+                                const inputs = clonedEl.querySelectorAll('input');
+                                inputs.forEach(input => {
+                                    const div = clonedDoc.createElement('div');
+                                    div.textContent = input.value;
+                                    div.className = input.className;
+                                    div.style.whiteSpace = 'pre-wrap';
+                                    div.style.overflow = 'visible';
+                                    div.style.lineHeight = '1.5'; 
+                                    if (input.parentNode) input.parentNode.replaceChild(div, input);
+                                });
+
+                                const selects = clonedEl.querySelectorAll('select');
+                                selects.forEach(select => {
+                                    const div = clonedDoc.createElement('div');
+                                    div.textContent = select.options[select.selectedIndex]?.text || '';
+                                    div.className = select.className;
+                                    div.style.whiteSpace = 'pre-wrap';
+                                    div.style.overflow = 'visible';
+                                    div.style.appearance = 'none';
+                                    if (select.parentNode) select.parentNode.replaceChild(div, select);
+                                });
                             }
                         }
                     });
@@ -404,7 +420,7 @@
             };
 
             return (
-                <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                <main className="max-w-[98%] mx-auto py-8 px-2">
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-4">
                             <button onClick={onBack} className="p-2 rounded-full hover:bg-gray-200 transition-colors">
@@ -440,7 +456,7 @@
                             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-4">
                                 {[
                                     {key: 'designation', label: 'Désignation'},
-                                    {key: 'reference', label: 'Référence'},
+                                    {key: 'reference', label: 'Référence plan'},
                                     {key: 'indice', label: 'Indice'},
                                     {key: 'controleur', label: 'Contrôleur'},
                                     {key: 'dateControle', label: 'Date du Contrôle', type: 'date'}
