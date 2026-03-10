@@ -374,6 +374,7 @@
                     <marker id="arrowhead-start-selected" markerWidth="10" markerHeight="7" refX="1" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" fill="#cfa346" /></marker>
                 </defs>
                 <g id="viewport-group" transform="translate(0,0) scale(1)">
+                    <g id="nodes-layer"></g>
                     <g id="edges-layer"></g>
                     <g id="nodes-layer"></g>
                     <line id="drag-line" x1="0" y1="0" x2="0" y2="0" stroke="#cfa346" stroke-width="2" stroke-dasharray="4" style="display:none; pointer-events: none;" />
@@ -637,6 +638,10 @@ class AppState {
 
     deleteSelection() {
         if (this.selection.nodes.length === 0 && this.selection.edges.length === 0) return;
+        if (this.selection.nodes.length === 0 && this.selection.edges.length === 0) {
+            this.newProject();
+            return;
+        }
         this.pushHistory();
         this.selection.edges.forEach(id => {
             this.edges = this.edges.filter(e => e.id !== id);
@@ -1398,6 +1403,12 @@ const app = {
         appState.pushHistory();
         const selected = appState.nodes.filter(n => nodes.includes(n.id));
         const unselected = appState.nodes.filter(n => !nodes.includes(n.id));
+        
+        const newOrder = [...selected, ...unselected];
+        const lanes = newOrder.filter(n => n.type.startsWith('lane'));
+        const others = newOrder.filter(n => !n.type.startsWith('lane'));
+        appState.nodes = [...lanes, ...others];
+        
         appState.nodes = [...selected, ...unselected]; // Reorder in array
         // Re-render all to reflect order
         renderer.clearAll();
@@ -1414,6 +1425,12 @@ const app = {
         appState.pushHistory();
         const selected = appState.nodes.filter(n => nodes.includes(n.id));
         const unselected = appState.nodes.filter(n => !nodes.includes(n.id));
+        
+        const newOrder = [...unselected, ...selected];
+        const lanes = newOrder.filter(n => n.type.startsWith('lane'));
+        const others = newOrder.filter(n => !n.type.startsWith('lane'));
+        appState.nodes = [...lanes, ...others];
+        
         appState.nodes = [...unselected, ...selected];
         renderer.clearAll();
         appState.nodes.forEach(n => renderer.renderNode(n));
