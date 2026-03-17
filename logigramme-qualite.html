@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUPERGRAM - Logigramme</title>
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --accent: #cfa346;
+            --accent-text: #856404;
+            --accent-light: #f4e8cb;
+            --bg-color: #f8f9fa;
+            --panel-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --text-color: #2d3436;
+            --danger: #e74c3c;
+            --highlight: #e74c3c;
+            
+            --color-m1: #c0392b;
+            --color-m2: #2980b9;
+            --color-m3: #27ae60;
+            --color-m4: #8e44ad;
+            --color-m5: #d35400;
+        }
+
+        * { box-sizing: border-box; user-select: none; }
+        
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- Toolbar --- */
+        .toolbar {
+            height: 50px;
+            background: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .brand { font-weight: bold; font-size: 1.1rem; color: var(--accent-text); margin-right: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .btn {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-width: 32px;
+        }
+        .btn:hover { background: #f8fafc; border-color: var(--accent); color: var(--accent-text); }
+        .btn-primary { background: var(--accent); color: var(--primary); border: none; font-weight: bold; }
+        .btn-primary:hover { background: #e0b050; color: var(--primary); }
+        .sep { border-left:1px solid #ddd; height: 20px; margin: 0 5px; }
+
+        select.template-select {
+            padding: 6px; border: 1px solid var(--border-color); border-radius: 4px;
+            font-size: 0.85rem; color: var(--text-color); cursor: pointer;
+            background-color: white;
+        }
+
+        /* --- Main Layout --- */
+        .workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* --- Sidebar (Palette) --- */
+        .sidebar {
+            width: 220px;
+            background: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            overflow-y: auto;
+            z-index: 5;
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+            margin-top: 1rem;
+        }
+        .section-title:first-child { margin-top: 0; }
+
+        .shape-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .shape-item:hover { transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-color: var(--accent); }
+        .shape-preview { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 1px solid #ccc; background: #fafafa; }
+        
+        /* Preview shapes */
+        .p-circle { border-radius: 50%; }
+        .p-rect { border-radius: 2px; }
+        .p-diamond { transform: rotate(45deg) scale(0.7); }
+        .p-para { transform: skewX(-15deg); }
+        .p-doc { border-radius: 2px 2px 10px 2px; }
+        .p-note { border: 1px dashed #999; background: #fff; }
+        .p-lane { border: 1px solid #999; border-left: 5px solid #999; }
+        .p-lane-v { border: 1px solid #999; border-top: 5px solid #999; }
+
+        /* --- Canvas Area --- */
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+            overflow: hidden;
+            cursor: grab;
+        }
+        .canvas-container:active { cursor: grabbing; }
+
+        /* SVG Styles */
+        svg { width: 100%; height: 100%; display: block; }
+        
+        .node-group { cursor: pointer; transition: opacity 0.2s; }
+        .node-shape { transition: all 0.2s; vector-effect: non-scaling-stroke; }
+        .node-group:hover .node-shape { stroke: var(--accent); }
+        .node-group.selected .node-shape { stroke: var(--accent); filter: drop-shadow(0 0 4px rgba(207, 163, 70, 0.4)); }
+        
+        /* Resize Handles */
+        .resize-handle {
+            fill: white;
+            stroke: var(--accent);
+            stroke-width: 1.5px;
+            display: none;
+            cursor: nwse-resize; /* Default diagonal */
+        }
+        .node-group.selected .resize-handle { display: block; }
+        .handle-nw { cursor: nw-resize; }
+        .handle-ne { cursor: ne-resize; }
+        .handle-sw { cursor: sw-resize; }
+        .handle-se { cursor: se-resize; }
+
+        .node-text { 
+            font-size: 13px; 
+            fill: #0f172a; 
+            font-family: sans-serif; 
+            pointer-events: none; 
+            text-anchor: middle; 
+            dominant-baseline: middle;
+        }
+
+        .port {
+            fill: white; stroke: var(--accent); stroke-width: 1px;
+            r: 4; opacity: 0; cursor: crosshair; transition: opacity 0.2s;
+        }
+        .node-group:hover .port { opacity: 1; }
+        .port:hover { r: 6; fill: var(--accent); }
+
+        .edge-path {
+            fill: none; stroke: #64748b; stroke-width: 2px;
+            pointer-events: visibleStroke; cursor: pointer;
+            transition: stroke 0.2s, stroke-width 0.2s;
+        }
+        .edge-path:hover { stroke: var(--accent); stroke-width: 3px; }
+        .edge-path.selected { stroke: var(--accent); stroke-width: 3px; stroke-dasharray: 5, 2; }
+
+        /* Arrow Marker Logic via CSS for selection state */
+        .edge-path[data-arrow-end="true"] { marker-end: url(#arrowhead); }
+        .edge-path[data-arrow-start="true"] { marker-start: url(#arrowhead-start); }
+        
+        .edge-path.selected[data-arrow-end="true"] { marker-end: url(#arrowhead-selected); }
+        .edge-path.selected[data-arrow-start="true"] { marker-start: url(#arrowhead-start-selected); }
+
+        .edge-label-bg { fill: white; opacity: 0.9; }
+        .edge-label { font-size: 11px; fill: #334155; text-anchor: middle; cursor: pointer;}
+
+        /* --- Properties Panel --- */
+        .properties {
+            width: 280px;
+            background: var(--panel-bg);
+            border-left: 1px solid var(--border-color);
+            padding: 1rem;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 5;
+        }
+        .properties.active { display: flex; }
+
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-label { font-size: 0.8rem; font-weight: 600; color: #64748b; }
+        .form-row { display: flex; gap: 10px; align-items: center; }
+        .form-control {
+            padding: 6px; border: 1px solid var(--border-color); border-radius: 4px;
+            font-size: 0.9rem; font-family: inherit; width: 100%;
+        }
+        .form-control:focus { outline: none; border-color: var(--accent); }
+        textarea.form-control { resize: vertical; min-height: 60px; }
+        input[type="color"] { width: 40px; height: 36px; padding: 0 2px; cursor: pointer; flex: none;}
+        input[type="range"] { width: 100%; cursor: pointer; }
+        input[type="text"].hex-input { font-family: monospace; text-transform: uppercase; }
+        
+        .dim-input { width: 100%; }
+        .dim-label { font-size: 0.8rem; color: #666; width: 20px; }
+
+        /* Notification */
+        #notification {
+            position: fixed; bottom: 20px; right: 20px;
+            background: #1e293b; color: white;
+            padding: 10px 20px; border-radius: 4px;
+            transform: translateY(100px); transition: transform 0.3s;
+            z-index: 100;
+        }
+        #notification.show { transform: translateY(0); }
+
+        /* Helper Overlay for Dragging */
+        .drag-ghost {
+            position: absolute; pointer-events: none; opacity: 0.7;
+            border: 2px dashed var(--accent); z-index: 50; display: none;
+        }
+
+        /* Context Menu */
+        #context-menu {
+            position: fixed;
+            background: white;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 6px;
+            padding: 4px 0;
+            min-width: 160px;
+            z-index: 200;
+            display: none;
+        }
+        .ctx-item {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .ctx-item:hover { background: #f1f5f9; color: var(--accent-text); }
+        .ctx-divider { border-top: 1px solid var(--border-color); margin: 4px 0; }
+        .ctx-shortcut { margin-left: auto; font-size: 0.75rem; color: #94a3b8; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Toolbar -->
+    <nav class="toolbar">
+        <a href="index.html" class="btn" title="Retour Accueil" style="text-decoration:none; color:var(--text-color); margin-right:10px;">&larr;</a>
+        <div class="brand">Logigramme</div>
+        <button class="btn" onclick="app.newProject()" title="Nouveau projet">📄</button>
+        <button class="btn" onclick="document.getElementById('file-input').click()" title="Ouvrir">📂</button>
+        <button class="btn" onclick="app.saveProject()" title="Sauvegarder">💾</button>
+        <div class="sep"></div>
+        <button class="btn" onclick="app.undo()" title="Annuler (Ctrl+Z)">↩️</button>
+        <button class="btn" onclick="app.deleteSelection()" title="Supprimer (Suppr)">🗑️</button>
+        <div class="sep"></div>
+        <!-- Alignment Tools -->
+        <button class="btn" onclick="app.align('left')" title="Aligner à gauche">⇤</button>
+        <button class="btn" onclick="app.align('center-x')" title="Aligner au centre (H)">⇹</button>
+        <button class="btn" onclick="app.align('right')" title="Aligner à droite">⇥</button>
+        <button class="btn" onclick="app.align('top')" title="Aligner en haut">⤒</button>
+        <button class="btn" onclick="app.align('center-y')" title="Aligner au milieu (V)">⇕</button>
+        <button class="btn" onclick="app.align('bottom')" title="Aligner en bas">⤓</button>
+        <div class="sep"></div>
+        <button class="btn" onclick="app.distribute('h')" title="Distribuer Horizontalement">H=</button>
+        <button class="btn" onclick="app.distribute('v')" title="Distribuer Verticalement">V=</button>
+        <div class="sep"></div>
+        
+        <!-- Templates -->
+        <select id="template-select" class="template-select" onchange="app.loadTemplate(this.value)">
+            <option value="" disabled selected>Exemples...</option>
+            <option value="recrutement">1. RH - Recrutement</option>
+            <option value="frais">2. Finance - Note de Frais</option>
+            <option value="panne">3. Quotidien - Panne Internet</option>
+            <option value="ecommerce">4. Logistique - E-commerce</option>
+        </select>
+
+        <div style="flex:1"></div>
+        <button class="btn" onclick="exporter.toPNG()">🖼️ PNG</button>
+        <button class="btn" onclick="exporter.toSVG()">📐 SVG</button>
+        <input type="file" id="file-input" accept=".json" style="display:none" onchange="app.loadProject(this)">
+    </nav>
+
+    <div class="workspace">
+        <!-- Sidebar Palette -->
+        <aside class="sidebar">
+            <div class="section-title">Blocs de base</div>
+            
+            <div class="shape-item" draggable="true" ondragstart="app.handleDragStart(event, 'start')">
+                <div class="shape-preview p-circle" style="border-radius: 15px;"></div>
+                <span>Début / Fin</span>
+            </div>
+            
+            <div class="shape-item" draggable="true" ondragstart="app.handleDragStart(event, 'process')">
+                <div class="shape-preview p-rect"></div>
+                <span>Action</span>
+            </div>
+            
+            <div class="shape-item" draggable="true" ondragstart="app.handleDragStart(event, 'decision')">
+                <div class="shape-preview p-diamond"></div>
+                <span>Décision</span>
+            </div>
+
+            <div class="shape-item" draggable="true" ondragstart="app.handleDragStart(event, 'io')">
+                <div class="shape-preview p-para"></div>
+                <span>Entrée / Sortie</span>
+            </div>
+
+            <div class="shape-item" draggable="true" ondragstart="app.handleDragStart(event, 'document')">
+                <div class="shape-preview p-doc"></div>
+                <span>Document</span>
+            </div>
+
+            <div class="shape-item" draggable="true" ondragstart="app.handleDragStart(event, 'note')">
+                <div class="shape-preview p-note" style="display: flex; align-items:center; justify-content:center; font-size:10px;">Txt</div>
+                <span>Note / Texte</span>
+            </div>
+
+            <div class="shape-item" draggable="true" ondragstart="app.handleDragStart(event, 'lane')">
+                <div class="shape-preview p-lane" style="display: flex; align-items:center; justify-content:center; font-size:10px;"></div>
+                <span>Couloir Horizontal</span>
+            </div>
+            
+            <div class="shape-item" draggable="true" ondragstart="app.handleDragStart(event, 'lane-v')">
+                <div class="shape-preview p-lane-v" style="display: flex; align-items:center; justify-content:center; font-size:10px;"></div>
+                <span>Couloir Vertical</span>
+            </div>
+            
+            <div class="section-title">Outils</div>
+            <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">
+                <p>• <b>Double Clic</b> : Éditer texte</p>
+                <p>• <b>Glisser Coins</b> : Redimensionner</p>
+                <p>• <b>Shift + Clic</b> : Multi-sélection</p>
+                <p>• <b>Clic Droit</b> : Menu / Options</p>
+                <p>• <b>Molette</b> : Zoom</p>
+            </div>
+        </aside>
+
+        <!-- Main Canvas -->
+        <main class="canvas-container" id="canvas-container" oncontextmenu="return false;">
+            <svg id="main-svg">
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b" /></marker>
+                    <marker id="arrowhead-start" markerWidth="10" markerHeight="7" refX="1" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" fill="#64748b" /></marker>
+                    <marker id="arrowhead-selected" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#cfa346" /></marker>
+                    <marker id="arrowhead-start-selected" markerWidth="10" markerHeight="7" refX="1" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" fill="#cfa346" /></marker>
+                </defs>
+                <g id="viewport-group" transform="translate(0,0) scale(1)">
+                    <g id="nodes-layer"></g>
+                    <g id="edges-layer"></g>
+                    <g id="nodes-layer"></g>
+                    <line id="drag-line" x1="0" y1="0" x2="0" y2="0" stroke="#cfa346" stroke-width="2" stroke-dasharray="4" style="display:none; pointer-events: none;" />
+                </g>
+            </svg>
+        </main>
+
+        <!-- Properties Panel -->
+        <aside class="properties" id="prop-panel">
+            <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">Propriétés</div>
+            
+            <div class="form-group">
+                <label class="form-label">Texte</label>
+                <textarea id="prop-text" class="form-control" oninput="app.updateSelection('text')"></textarea>
+            </div>
+
+            <div id="node-props">
+                <div class="form-group">
+                    <label class="form-label">Dimensions</label>
+                    <div class="form-row">
+                        <span class="dim-label">L</span>
+                        <input type="number" id="prop-w" class="form-control dim-input" oninput="app.updateSelection('dim')">
+                        <span class="dim-label">H</span>
+                        <input type="number" id="prop-h" class="form-control dim-input" oninput="app.updateSelection('dim')">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top:10px;">
+                    <label class="form-label">Remplissage</label>
+                    <div class="form-row">
+                        <input type="color" id="prop-fill" oninput="app.syncHex('fill', this.value)">
+                        <input type="text" id="prop-fill-hex" class="form-control hex-input" oninput="app.syncHex('fill', this.value, true)" maxlength="7">
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-top:10px;">
+                    <label class="form-label">Bordure / Trait</label>
+                    <div class="form-row">
+                        <input type="color" id="prop-stroke" oninput="app.syncHex('stroke', this.value)">
+                        <input type="text" id="prop-stroke-hex" class="form-control hex-input" oninput="app.syncHex('stroke', this.value, true)" maxlength="7">
+                    </div>
+                    <div class="form-row" style="margin-top:5px;">
+                         <input type="range" id="prop-width" min="0" max="10" step="1" oninput="app.updateSelection('width')" title="Épaisseur">
+                         <span style="font-size:0.8rem; color:#666; width:20px; text-align:right" id="val-width">2</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" id="edge-props" style="display:none">
+                <label class="form-label">Style de ligne</label>
+                <select id="prop-style" class="form-control" onchange="app.updateSelection('style')">
+                    <option value="solid">Trait plein</option>
+                    <option value="dashed">Pointillés</option>
+                </select>
+
+                <label class="form-label" style="margin-top:10px;">Flèches</label>
+                <select id="prop-arrow" class="form-control" onchange="app.updateSelection('arrow')">
+                    <option value="end">Fin seulement</option>
+                    <option value="both">Début et Fin</option>
+                    <option value="start">Début seulement</option>
+                    <option value="none">Aucune</option>
+                </select>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Custom Context Menu -->
+    <div id="context-menu">
+        <div class="ctx-item" onclick="app.align('left')"><span>⇤</span> Aligner Gauche</div>
+        <div class="ctx-item" onclick="app.align('center-x')"><span>⇹</span> Aligner Centre (H)</div>
+        <div class="ctx-item" onclick="app.align('right')"><span>⇥</span> Aligner Droite</div>
+        <div class="ctx-divider"></div>
+        <div class="ctx-item" onclick="app.align('top')"><span>⤒</span> Aligner Haut</div>
+        <div class="ctx-item" onclick="app.align('center-y')"><span>⇕</span> Aligner Milieu (V)</div>
+        <div class="ctx-item" onclick="app.align('bottom')"><span>⤓</span> Aligner Bas</div>
+        <div class="ctx-divider"></div>
+        <div class="ctx-item" onclick="app.distribute('h')"><span>H=</span> Espacement Horiz.</div>
+        <div class="ctx-item" onclick="app.distribute('v')"><span>V=</span> Espacement Vert.</div>
+        <div class="ctx-divider"></div>
+        <div class="ctx-item" onclick="app.sendToBack()"><span>▼</span> Mettre à l'arrière</div>
+        <div class="ctx-item" onclick="app.bringToFront()"><span>▲</span> Mettre devant</div>
+        <div class="ctx-divider"></div>
+        <div class="ctx-item" onclick="app.deleteSelection()" style="color:#ef4444"><span>🗑️</span> Supprimer <span class="ctx-shortcut">Del</span></div>
+    </div>
+
+    <div id="notification">Notification</div>
+
+<script>
+const uuid = () => Date.now().toString(36) + Math.random().toString(36).substr(2);
+const el = (id) => document.getElementById(id);
+
+const SHAPES = {
+    start: { w: 120, h: 50, rx: 25, type: 'rect' },
+    process: { w: 140, h: 70, rx: 4, type: 'rect' },
+    decision: { w: 100, h: 100, type: 'diamond' },
+    io: { w: 140, h: 70, type: 'parallelogram' },
+    document: { w: 120, h: 80, type: 'document' },
+    note: { w: 100, h: 50, type: 'rect' },
+    lane: { w: 600, h: 200, type: 'lane' }, // Horizontal Lane
+    'lane-v': { w: 200, h: 600, type: 'lane-v' } // Vertical Lane
+};
+
+const DEFAULT_STYLE = { fill: '#ffffff', stroke: '#334155', strokeWidth: 2 };
+
+// --- TEMPLATES DATA (CONCRETE EXAMPLES) ---
+const TEMPLATES = {
+    recrutement: {
+        nodes: [
+            { id: "s1", type: "start", x: 350, y: 30, w: 140, h: 50, text: "Besoin RH", style: {fill: "#e0f2fe", stroke: "#0284c7", strokeWidth: 2} },
+            { id: "p1", type: "process", x: 350, y: 110, w: 160, h: 70, text: "Rédiger Offre", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2} },
+            { id: "p2", type: "process", x: 350, y: 210, w: 160, h: 70, text: "Publier & Tri CV", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2} },
+            { id: "d1", type: "decision", x: 380, y: 320, w: 100, h: 100, text: "CV OK ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2} },
+            { id: "p3", type: "process", x: 580, y: 335, w: 160, h: 70, text: "Entretien", style: {fill: "#dcfce7", stroke: "#16a34a", strokeWidth: 2} },
+            { id: "e1", type: "start", x: 150, y: 345, w: 120, h: 50, text: "Refus", style: {fill: "#fee2e2", stroke: "#dc2626", strokeWidth: 2} },
+            { id: "e2", type: "start", x: 580, y: 460, w: 140, h: 50, text: "Embauche", style: {fill: "#dcfce7", stroke: "#16a34a", strokeWidth: 2} }
+        ],
+        edges: [
+            { id: "ed_1", source: "s1", target: "p1", sourcePort: "b", targetPort: "t", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
+            { id: "ed_2", source: "p1", target: "p2", sourcePort: "b", targetPort: "t", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
+            { id: "ed_3", source: "p2", target: "d1", sourcePort: "b", targetPort: "t", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
+            { id: "ed_4", source: "d1", target: "e1", sourcePort: "l", targetPort: "r", text: "Non", style: {stroke: "#dc2626", strokeWidth: 2, arrows: "end"} },
+            { id: "ed_5", source: "d1", target: "p3", sourcePort: "r", targetPort: "l", text: "Oui", style: {stroke: "#16a34a", strokeWidth: 2, arrows: "end"} },
+            { id: "ed_6", source: "p3", target: "e2", sourcePort: "b", targetPort: "t", text: "Validé", style: {stroke: "#16a34a", strokeWidth: 2, arrows: "end"} }
+        ]
+    },
+    frais: {
+        nodes: [
+            { id: "l1", type: "lane", x: 50, y: 50, w: 700, h: 200, text: "Employé", style: {fill: "#ffffff", stroke: "#94a3b8", strokeWidth: 2} },
+            { id: "l2", type: "lane", x: 50, y: 250, w: 700, h: 200, text: "Manager", style: {fill: "#f8fafc", stroke: "#94a3b8", strokeWidth: 2} },
+            { id: "l3", type: "lane", x: 50, y: 450, w: 700, h: 150, text: "Compta", style: {fill: "#ffffff", stroke: "#94a3b8", strokeWidth: 2} },
+            { id: "n1", type: "start", x: 120, y: 120, w: 120, h: 50, text: "Dépense", style: {fill: "#e0f2fe", stroke: "#0284c7", strokeWidth: 2} },
+            { id: "n2", type: "process", x: 300, y: 110, w: 140, h: 70, text: "Saisir Note", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2} },
+            { id: "n3", type: "decision", x: 320, y: 300, w: 100, h: 100, text: "Valide ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2} },
+            { id: "n4", type: "process", x: 550, y: 500, w: 140, h: 70, text: "Paiement", style: {fill: "#dcfce7", stroke: "#16a34a", strokeWidth: 2} },
+            { id: "n5", type: "start", x: 560, y: 120, w: 120, h: 50, text: "Corriger", style: {fill: "#fee2e2", stroke: "#dc2626", strokeWidth: 2} }
+        ],
+        edges: [
+            { id: "f_ed1", source: "n1", target: "n2", sourcePort: "r", targetPort: "l", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
+            { id: "f_ed2", source: "n2", target: "n3", sourcePort: "b", targetPort: "t", text: "Envoi", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
+            { id: "f_ed3", source: "n3", target: "n4", sourcePort: "b", targetPort: "l", text: "Oui", style: {stroke: "#16a34a", strokeWidth: 2, arrows: "end"} },
+            { id: "f_ed4", source: "n3", target: "n5", sourcePort: "r", targetPort: "b", text: "Non", style: {stroke: "#dc2626", strokeWidth: 2, arrows: "end"} },
+            { id: "f_ed5", source: "n5", target: "n2", sourcePort: "l", targetPort: "r", text: "Retour", style: {stroke: "#334155", strokeWidth: 2, arrows: "end", strokeDash: "dashed"} }
+        ]
+    },
+    panne: {
+        nodes: [
+            { id: "ps1", type: "start", x: 350, y: 50, w: 140, h: 50, text: "Pas d'Internet", style: {fill: "#fee2e2", stroke: "#dc2626", strokeWidth: 2} },
+            { id: "pp1", type: "process", x: 350, y: 140, w: 140, h: 70, text: "Reboot Box", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2} },
+            { id: "pd1", type: "decision", x: 370, y: 250, w: 100, h: 100, text: "Ça marche ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2} },
+            { id: "pe1", type: "start", x: 600, y: 275, w: 120, h: 50, text: "Fin", style: {fill: "#dcfce7", stroke: "#16a34a", strokeWidth: 2} },
+            { id: "pp2", type: "process", x: 150, y: 265, w: 160, h: 70, text: "Vérifier câbles", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2} },
+            { id: "pd2", type: "decision", x: 180, y: 380, w: 100, h: 100, text: "Et là ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2} },
+            { id: "pp3", type: "process", x: 350, y: 500, w: 160, h: 70, text: "Appeler Support", style: {fill: "#e0f2fe", stroke: "#0284c7", strokeWidth: 2} }
+        ],
+        edges: [
+            { id: "pl1", source: "ps1", target: "pp1", sourcePort: "b", targetPort: "t", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
+            { id: "pl2", source: "pp1", target: "pd1", sourcePort: "b", targetPort: "t", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
+            { id: "pl3", source: "pd1", target: "pe1", sourcePort: "r", targetPort: "l", text: "Oui", style: {stroke: "#16a34a", strokeWidth: 2, arrows: "end"} },
+            { id: "pl4", source: "pd1", target: "pp2", sourcePort: "l", targetPort: "r", text: "Non", style: {stroke: "#dc2626", strokeWidth: 2, arrows: "end"} },
+            { id: "pl5", source: "pp2", target: "pd2", sourcePort: "b", targetPort: "t", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
+            { id: "pl6", source: "pd2", target: "pe1", sourcePort: "r", targetPort: "b", text: "Oui", style: {stroke: "#16a34a", strokeWidth: 2, arrows: "end"} },
+            { id: "pl7", source: "pd2", target: "pp3", sourcePort: "b", targetPort: "l", text: "Non", style: {stroke: "#dc2626", strokeWidth: 2, arrows: "end"} }
+        ]
+    },
+    ecommerce: {
+        nodes: [
+            { id: "s1", type: "start", x: 350, y: 50, w: 140, h: 50, text: "Nouvelle Cde", style: {fill: "#dbeafe", stroke: "#1e40af", strokeWidth: 2} },
+            { id: "p1", type: "process", x: 350, y: 140, w: 160, h: 70, text: "Vérifier Stock", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2} },
+            { id: "d1", type: "decision", x: 380, y: 250, w: 100, h: 100, text: "Dispo ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2} },
+            { id: "p2", type: "process", x: 600, y: 265, w: 160, h: 70, text: "Approvisionner", style: {fill: "#ffedd5", stroke: "#c2410c", strokeWidth: 2} },
+            { id: "p3", type: "process", x: 350, y: 400, w: 160, h: 70, text: "Expédition", style: {fill: "#dcfce7", stroke: "#15803d", strokeWidth: 2} },
+            { id: "e1", type: "start", x: 360, y: 520, w: 140, h: 50, text: "Clôture", style: {fill: "#f1f5f9", stroke: "#475569", strokeWidth: 2} }
+        ],
+        edges: [
+            { id: "e1", source: "s1", target: "p1", sourcePort: "b", targetPort: "t", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
+            { id: "e2", source: "p1", target: "d1", sourcePort: "b", targetPort: "t", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
+            { id: "e3", source: "d1", target: "p3", sourcePort: "b", targetPort: "t", text: "Oui", style: {stroke: "#15803d", strokeWidth: 2, arrows: "end"} },
+            { id: "e4", source: "d1", target: "p2", sourcePort: "r", targetPort: "l", text: "Non", style: {stroke: "#c2410c", strokeWidth: 2, arrows: "end"} },
+            { id: "e5", source: "p2", target: "p3", sourcePort: "b", targetPort: "r", text: "Reçu", style: {stroke: "#334155", strokeWidth: 2, arrows: "end", strokeDash: "dashed"} },
+            { id: "e6", source: "p3", target: "e1", sourcePort: "b", targetPort: "t", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} }
+        ]
+    }
+};
+
+class AppState {
+    constructor() {
+        this.nodes = [];
+        this.edges = [];
+        this.selection = { nodes: [], edges: [] };
+        this.view = { x: 0, y: 0, zoom: 1 };
+        this.history = [];
+        this.historyIndex = -1;
+        this.isDirty = false;
+        this.dragState = null;
+    }
+
+    addNode(type, x, y) {
+        this.pushHistory();
+        const cfg = SHAPES[type];
+        
+        let style = { ...DEFAULT_STYLE };
+        if (type === 'note') {
+            style.fill = '#fff9c4'; 
+            style.stroke = '#f59e0b';
+            style.strokeWidth = 1;
+        } else if (type === 'lane' || type === 'lane-v') {
+            style.stroke = '#94a3b8';
+            style.strokeWidth = 2;
+        }
+
+        const node = {
+            id: uuid(),
+            type,
+            x: x - cfg.w/2,
+            y: y - cfg.h/2,
+            w: cfg.w,
+            h: cfg.h,
+            text: type === 'start' ? 'Début' : (type === 'decision' ? '?' : (type === 'note' ? 'Note' : (type.startsWith('lane') ? 'Titre Couloir' : 'Nouveau'))),
+            style: style
+        };
+
+        // Logic for Lanes: Always to back
+        const isLane = type.startsWith('lane');
+        if (isLane) {
+            this.nodes.unshift(node); // Add to start of array
+            renderer.renderNode(node, true); // Render at bottom of DOM
+        } else {
+            this.nodes.push(node);
+            renderer.renderNode(node);
+        }
+
+        this.select(node.id, 'node');
+    }
+
+    addEdge(sourceId, targetId, sourcePort, targetPort) {
+        if (this.edges.some(e => e.source === sourceId && e.target === targetId)) return;
+        if (sourceId === targetId) return;
+
+        this.pushHistory();
+        const edge = {
+            id: uuid(),
+            source: sourceId,
+            target: targetId,
+            sourcePort,
+            targetPort,
+            text: '',
+            style: { strokeDash: '0', arrows: 'end', stroke: '#334155', strokeWidth: 2 }
+        };
+        this.edges.push(edge);
+        renderer.renderEdge(edge);
+    }
+
+    updateNode(id, props) {
+        const node = this.nodes.find(n => n.id === id);
+        if(node) {
+            Object.assign(node, props);
+            renderer.updateNodeVisuals(node);
+            this.getConnectedEdges(id).forEach(e => renderer.updateEdgeVisuals(e));
+        }
+    }
+
+    deleteSelection() {
+        if (this.selection.nodes.length === 0 && this.selection.edges.length === 0) return;
+        if (this.selection.nodes.length === 0 && this.selection.edges.length === 0) {
+            this.newProject();
+            return;
+        }
+        this.pushHistory();
+        this.selection.edges.forEach(id => {
+            this.edges = this.edges.filter(e => e.id !== id);
+            renderer.removeElement(`edge-${id}`);
+        });
+        this.selection.nodes.forEach(id => {
+            const connected = this.edges.filter(e => e.source === id || e.target === id);
+            connected.forEach(e => {
+                this.edges = this.edges.filter(ed => ed.id !== e.id);
+                renderer.removeElement(`edge-${e.id}`);
+            });
+            this.nodes = this.nodes.filter(n => n.id !== id);
+            renderer.removeElement(`node-${id}`);
+        });
+        this.clearSelection();
+    }
+
+    getConnectedEdges(nodeId) {
+        return this.edges.filter(e => e.source === nodeId || e.target === nodeId);
+    }
+
+    select(id, type, additive = false) {
+        if (!additive) this.clearSelection();
+        if (type === 'node') {
+            if (!this.selection.nodes.includes(id)) this.selection.nodes.push(id);
+        } else {
+            if (!this.selection.edges.includes(id)) this.selection.edges.push(id);
+        }
+        renderer.highlightSelection();
+        ui.updatePropertiesPanel();
+    }
+
+    clearSelection() {
+        this.selection.nodes = [];
+        this.selection.edges = [];
+        renderer.highlightSelection();
+        ui.updatePropertiesPanel();
+    }
+
+    pushHistory() {
+        if (this.historyIndex < this.history.length - 1) {
+            this.history = this.history.slice(0, this.historyIndex + 1);
+        }
+        const snapshot = JSON.stringify({ nodes: this.nodes, edges: this.edges });
+        this.history.push(snapshot);
+        this.historyIndex++;
+        if (this.history.length > 20) this.history.shift();
+    }
+
+    undo() {
+        if (this.historyIndex > 0) {
+            this.historyIndex--;
+            const snapshot = JSON.parse(this.history[this.historyIndex]);
+            this.restoreSnapshot(snapshot);
+        }
+    }
+
+    restoreSnapshot(data) {
+        // Enforce Lanes at background (sort lanes first)
+        this.nodes = data.nodes.sort((a, b) => {
+            const aLane = a.type.startsWith('lane');
+            const bLane = b.type.startsWith('lane');
+            if (aLane && !bLane) return -1;
+            if (!aLane && bLane) return 1;
+            return 0;
+        });
+        this.edges = data.edges;
+        this.clearSelection();
+        renderer.clearAll();
+        this.nodes.forEach(n => renderer.renderNode(n));
+        this.edges.forEach(e => renderer.renderEdge(e));
+    }
+}
+
+const renderer = {
+    svg: el('nodes-layer'),
+    edgeSvg: el('edges-layer'),
+    
+    clearAll() { this.svg.innerHTML = ''; this.edgeSvg.innerHTML = ''; },
+    removeElement(id) { const elem = document.getElementById(id); if (elem) elem.remove(); },
+    createSVGElement(tag, attrs) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        for (let k in attrs) el.setAttribute(k, attrs[k]);
+        return el;
+    },
+
+    renderNode(node, toBack = false) {
+        const g = this.createSVGElement('g', {
+            id: `node-${node.id}`, class: 'node-group', transform: `translate(${node.x}, ${node.y})`
+        });
+        let shape;
+        const s = node.style;
+        const sw = s.strokeWidth || 2;
+        
+        if (node.type === 'decision') {
+            shape = this.createSVGElement('polygon', {
+                points: `0,${node.h/2} ${node.w/2},0 ${node.w},${node.h/2} ${node.w/2},${node.h}`,
+                class: 'node-shape', fill: s.fill, stroke: s.stroke, 'stroke-width': sw
+            });
+        } else if (node.type === 'io') {
+            shape = this.createSVGElement('polygon', {
+                points: `20,0 ${node.w},0 ${node.w-20},${node.h} 0,${node.h}`,
+                class: 'node-shape', fill: s.fill, stroke: s.stroke, 'stroke-width': sw
+            });
+        } else if (node.type === 'document') {
+            const w = node.w, h = node.h;
+            const d = `M0,0 L${w},0 L${w},${h-15} Q${w/4*3},${h} ${w/2},${h-15} T0,${h-15} Z`;
+            shape = this.createSVGElement('path', {
+                d: d, class: 'node-shape', fill: s.fill, stroke: s.stroke, 'stroke-width': sw
+            });
+        } else if (node.type === 'lane') {
+            // Horizontal Lane
+            const headerW = 40;
+            shape = this.createSVGElement('rect', {
+                width: node.w, height: node.h,
+                class: 'node-shape', fill: s.fill, stroke: s.stroke, 'stroke-width': sw
+            });
+            const line = this.createSVGElement('line', {
+                x1: headerW, y1: 0, x2: headerW, y2: node.h,
+                stroke: s.stroke, 'stroke-width': sw, class: 'lane-sep'
+            });
+            g.appendChild(shape);
+            g.appendChild(line);
+        } else if (node.type === 'lane-v') {
+            // Vertical Lane
+            const headerH = 40;
+            shape = this.createSVGElement('rect', {
+                width: node.w, height: node.h,
+                class: 'node-shape', fill: s.fill, stroke: s.stroke, 'stroke-width': sw
+            });
+            const line = this.createSVGElement('line', {
+                x1: 0, y1: headerH, x2: node.w, y2: headerH,
+                stroke: s.stroke, 'stroke-width': sw, class: 'lane-sep'
+            });
+            g.appendChild(shape);
+            g.appendChild(line);
+        } else {
+            shape = this.createSVGElement('rect', {
+                width: node.w, height: node.h, rx: node.type === 'start' ? 25 : 4,
+                class: 'node-shape', fill: s.fill, stroke: s.stroke, 'stroke-width': sw
+            });
+        }
+
+        if(!node.type.startsWith('lane')) {
+            g.appendChild(shape);
+        }
+
+        // Text handling
+        const text = this.createSVGElement('text', { class: 'node-text' });
+        
+        if (node.type === 'lane') {
+            text.setAttribute('transform', `translate(25, ${node.h/2}) rotate(-90)`);
+            text.textContent = node.text;
+            text.setAttribute('text-anchor', 'middle');
+        } else if (node.type === 'lane-v') {
+             text.setAttribute('x', node.w/2); 
+             text.setAttribute('y', 25);
+             text.textContent = node.text;
+             text.setAttribute('text-anchor', 'middle');
+        } else {
+            text.setAttribute('x', node.w / 2); 
+            text.setAttribute('y', node.h / 2);
+            this.wrapText(text, node.text, node.w - 10);
+        }
+        
+        g.appendChild(text);
+
+        // Ports
+        const ports = [ { x: node.w/2, y: 0, id: 't' }, { x: node.w, y: node.h/2, id: 'r' }, { x: node.w/2, y: node.h, id: 'b' }, { x: 0, y: node.h/2, id: 'l' } ];
+        ports.forEach(p => {
+            const circle = this.createSVGElement('circle', { cx: p.x, cy: p.y, r: 4, class: 'port', 'data-pid': p.id, 'data-nid': node.id });
+            g.appendChild(circle);
+        });
+
+        // Resize Handles
+        const handles = [
+            { id: 'nw', x: 0, y: 0 }, { id: 'ne', x: node.w, y: 0 },
+            { id: 'se', x: node.w, y: node.h }, { id: 'sw', x: 0, y: node.h }
+        ];
+        handles.forEach(h => {
+            const r = this.createSVGElement('rect', {
+                x: h.x - 4, y: h.y - 4, width: 8, height: 8,
+                class: `resize-handle handle-${h.id}`, 'data-handle': h.id
+            });
+            g.appendChild(r);
+        });
+
+        g.addEventListener('mousedown', (e) => app.onNodeDown(e, node.id));
+        g.addEventListener('dblclick', (e) => app.onNodeDblClick(e, node.id));
+        
+        if (toBack) {
+            this.svg.prepend(g);
+        } else {
+            this.svg.appendChild(g);
+        }
+    },
+
+    updateNodeVisuals(node) {
+        const g = document.getElementById(`node-${node.id}`);
+        if (!g) return;
+        g.setAttribute('transform', `translate(${node.x}, ${node.y})`);
+        const shape = g.querySelector('.node-shape');
+        const s = node.style;
+        const sw = s.strokeWidth || 2;
+        shape.setAttribute('fill', s.fill);
+        shape.setAttribute('stroke', s.stroke);
+        shape.setAttribute('stroke-width', sw);
+
+        if (node.type === 'decision') {
+            shape.setAttribute('points', `0,${node.h/2} ${node.w/2},0 ${node.w},${node.h/2} ${node.w/2},${node.h}`);
+        } else if (node.type === 'io') {
+            shape.setAttribute('points', `20,0 ${node.w},0 ${node.w-20},${node.h} 0,${node.h}`);
+        } else if (node.type === 'document') {
+             const d = `M0,0 L${node.w},0 L${node.w},${node.h-15} Q${node.w/4*3},${node.h} ${node.w/2},${node.h-15} T0,${node.h-15} Z`;
+             shape.setAttribute('d', d);
+        } else {
+            shape.setAttribute('width', node.w);
+            shape.setAttribute('height', node.h);
+        }
+        
+        // Update Lane Sep
+        if (node.type === 'lane') {
+            const line = g.querySelector('.lane-sep');
+            if(line) {
+                line.setAttribute('y2', node.h);
+                line.setAttribute('stroke', s.stroke);
+                line.setAttribute('stroke-width', sw);
+            }
+        } else if (node.type === 'lane-v') {
+             const line = g.querySelector('.lane-sep');
+            if(line) {
+                line.setAttribute('x2', node.w);
+                line.setAttribute('stroke', s.stroke);
+                line.setAttribute('stroke-width', sw);
+            }
+        }
+
+        const text = g.querySelector('.node-text');
+        
+        if (node.type === 'lane') {
+            text.setAttribute('transform', `translate(25, ${node.h/2}) rotate(-90)`);
+            text.textContent = node.text;
+        } else if (node.type === 'lane-v') {
+             text.setAttribute('x', node.w/2);
+             text.setAttribute('y', 25);
+             text.textContent = node.text;
+        } else {
+            text.setAttribute('x', node.w/2); text.setAttribute('y', node.h/2);
+            this.wrapText(text, node.text, node.w - 10);
+        }
+
+        // Update ports and handles
+        const ports = g.querySelectorAll('.port');
+        if(ports.length >= 4) {
+            ports[0].setAttribute('cx', node.w/2); ports[0].setAttribute('cy', 0);
+            ports[1].setAttribute('cx', node.w); ports[1].setAttribute('cy', node.h/2);
+            ports[2].setAttribute('cx', node.w/2); ports[2].setAttribute('cy', node.h);
+            ports[3].setAttribute('cx', 0); ports[3].setAttribute('cy', node.h/2);
+        }
+        const handles = g.querySelectorAll('.resize-handle');
+        if(handles.length >= 4) {
+             handles[0].setAttribute('x', -4); handles[0].setAttribute('y', -4); // nw
+             handles[1].setAttribute('x', node.w-4); handles[1].setAttribute('y', -4); // ne
+             handles[2].setAttribute('x', node.w-4); handles[2].setAttribute('y', node.h-4); // se
+             handles[3].setAttribute('x', -4); handles[3].setAttribute('y', node.h-4); // sw
+        }
+    },
+
+    renderEdge(edge) {
+        const g = this.createSVGElement('g', { id: `edge-${edge.id}`, class: 'edge-group' });
+        const path = this.createSVGElement('path', { class: 'edge-path', d: this.calculatePath(edge) });
+        this.applyEdgeStyle(path, edge);
+        const hitArea = this.createSVGElement('path', { d: this.calculatePath(edge), stroke: 'transparent', 'stroke-width': 15, fill: 'none', style: 'cursor:pointer' });
+        const center = this.getEdgeCenter(edge);
+        const text = this.createSVGElement('text', { x: center.x, y: center.y - 5, class: 'edge-label' });
+        text.textContent = edge.text || '';
+        g.appendChild(path); g.appendChild(hitArea); g.appendChild(text);
+        g.addEventListener('mousedown', (e) => app.onEdgeDown(e, edge.id));
+        this.edgeSvg.appendChild(g);
+    },
+
+    updateEdgeVisuals(edge) {
+        const g = document.getElementById(`edge-${edge.id}`);
+        if (!g) return;
+        const path = g.querySelector('.edge-path');
+        const hitArea = g.childNodes[1];
+        const d = this.calculatePath(edge);
+        path.setAttribute('d', d);
+        hitArea.setAttribute('d', d);
+        this.applyEdgeStyle(path, edge);
+        const text = g.querySelector('text');
+        const center = this.getEdgeCenter(edge);
+        text.setAttribute('x', center.x); text.setAttribute('y', center.y - 5);
+        text.textContent = edge.text;
+    },
+    
+    applyEdgeStyle(pathEl, edge) {
+        pathEl.setAttribute('stroke-dasharray', edge.style.strokeDash === 'dashed' ? '5,5' : '0');
+        pathEl.setAttribute('stroke', edge.style.stroke || '#334155');
+        pathEl.setAttribute('stroke-width', edge.style.strokeWidth || 2);
+        
+        const type = edge.style.arrows || 'end';
+        pathEl.setAttribute('data-arrow-end', type === 'end' || type === 'both');
+        pathEl.setAttribute('data-arrow-start', type === 'start' || type === 'both');
+    },
+
+    calculatePath(edge) {
+        const n1 = appState.nodes.find(n => n.id === edge.source);
+        const n2 = appState.nodes.find(n => n.id === edge.target);
+        if(!n1 || !n2) return '';
+        const p1 = this.getPortPos(n1, edge.sourcePort);
+        const p2 = this.getPortPos(n2, edge.targetPort);
+        const cp1 = { x: p1.x, y: p1.y };
+        const cp2 = { x: p2.x, y: p2.y };
+        const dist = Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y);
+        const curve = Math.min(dist * 0.5, 100);
+        if (edge.sourcePort === 't') cp1.y -= curve;
+        if (edge.sourcePort === 'b') cp1.y += curve;
+        if (edge.sourcePort === 'l') cp1.x -= curve;
+        if (edge.sourcePort === 'r') cp1.x += curve;
+        if (edge.targetPort === 't') cp2.y -= curve;
+        if (edge.targetPort === 'b') cp2.y += curve;
+        if (edge.targetPort === 'l') cp2.x -= curve;
+        if (edge.targetPort === 'r') cp2.x += curve;
+        return `M ${p1.x} ${p1.y} C ${cp1.x} ${cp1.y}, ${cp2.x} ${cp2.y}, ${p2.x} ${p2.y}`;
+    },
+
+    getPortPos(node, port) {
+        let x = node.x, y = node.y;
+        if (port === 't') { x += node.w/2; }
+        if (port === 'b') { x += node.w/2; y += node.h; }
+        if (port === 'l') { y += node.h/2; }
+        if (port === 'r') { x += node.w; y += node.h/2; }
+        return { x, y };
+    },
+    
+    getEdgeCenter(edge) {
+        const n1 = appState.nodes.find(n => n.id === edge.source);
+        const n2 = appState.nodes.find(n => n.id === edge.target);
+        if(!n1 || !n2) return {x:0, y:0};
+        const p1 = this.getPortPos(n1, edge.sourcePort);
+        const p2 = this.getPortPos(n2, edge.targetPort);
+        return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+    },
+
+    wrapText(textEl, str, width) {
+        if (!str) return;
+        textEl.innerHTML = ''; 
+        const paragraphs = str.split('\n');
+        const lineHeight = 1.2; // em
+        const maxChars = width / 7; 
+        
+        let allLines = [];
+
+        paragraphs.forEach(para => {
+            const words = para.split(' ');
+            let line = [];
+            words.forEach(word => {
+                if ([...line, word].join(' ').length > maxChars && line.length > 0) {
+                    allLines.push(line.join(' '));
+                    line = [word];
+                } else {
+                    line.push(word);
+                }
+            });
+            if(line.length > 0) allLines.push(line.join(' '));
+        });
+
+        if(allLines.length === 0) return;
+
+        allLines.forEach((l, i) => {
+             const tspan = this.createSVGElement('tspan', { 
+                 x: textEl.getAttribute('x'), 
+                 dy: i === 0 ? 0 : lineHeight + 'em'
+             });
+             tspan.textContent = l;
+             textEl.appendChild(tspan);
+        });
+        
+        const startDy = -((allLines.length - 1) * lineHeight) / 2 + 0.3;
+        if(textEl.firstChild) textEl.firstChild.setAttribute('dy', startDy + 'em');
+    },
+
+    highlightSelection() {
+        document.querySelectorAll('.node-group').forEach(el => el.classList.remove('selected'));
+        document.querySelectorAll('.edge-path').forEach(el => el.classList.remove('selected'));
+        appState.selection.nodes.forEach(id => {
+            const el = document.getElementById(`node-${id}`);
+            if(el) el.classList.add('selected');
+        });
+        appState.selection.edges.forEach(id => {
+            const el = document.getElementById(`edge-${id}`);
+            if(el) el.querySelector('.edge-path').classList.add('selected');
+        });
+    },
+    
+    updateViewTransform() {
+        const g = el('viewport-group');
+        g.setAttribute('transform', `translate(${appState.view.x}, ${appState.view.y}) scale(${appState.view.zoom})`);
+        el('canvas-container').style.backgroundPosition = `${appState.view.x}px ${appState.view.y}px`;
+        el('canvas-container').style.backgroundSize = `${20 * appState.view.zoom}px ${20 * appState.view.zoom}px`;
+    }
+};
+
+const appState = new AppState();
+
+const app = {
+    init() {
+        const canvas = el('canvas-container');
+        canvas.addEventListener('mousedown', this.onCanvasDown.bind(this));
+        canvas.addEventListener('contextmenu', this.onContextMenu.bind(this));
+        window.addEventListener('mousemove', this.onGlobalMove.bind(this));
+        window.addEventListener('mouseup', this.onGlobalUp.bind(this));
+        window.addEventListener('click', this.hideContextMenu.bind(this));
+        canvas.addEventListener('wheel', this.onZoom.bind(this));
+        window.addEventListener('keydown', this.onKey.bind(this));
+
+        const saved = localStorage.getItem('logicraft_autosave');
+        if(saved) {
+            try {
+                const data = JSON.parse(saved);
+                appState.nodes = data.nodes;
+                appState.edges = data.edges;
+                appState.history = [saved];
+                appState.historyIndex = 0;
+                appState.restoreSnapshot(data);
+                ui.notify('Projet restauré');
+            } catch(e) {}
+        } else {
+            // Do not add default node, start empty
+        }
+        
+        setInterval(() => {
+            if(appState.isDirty) {
+                localStorage.setItem('logicraft_autosave', JSON.stringify({ nodes: appState.nodes, edges: appState.edges }));
+                appState.isDirty = false;
+            }
+        }, 5000);
+    },
+
+    newProject() {
+        if(confirm("Créer un nouveau projet ? Tout le contenu actuel sera effacé.")) {
+            // Clear State
+            appState.nodes = []; 
+            appState.edges = [];
+            
+            // Clear DOM
+            renderer.clearAll(); 
+            
+            // Reset Selection & History
+            appState.clearSelection(); 
+            appState.history = [];
+            
+            // Reset UI
+            el('template-select').value = "";
+            appState.view = { x: 0, y: 0, zoom: 1 };
+            renderer.updateViewTransform();
+            
+            // Clear Autosave to prevent restore on reload
+            localStorage.removeItem('logicraft_autosave');
+            
+            ui.notify("Nouveau projet vide créé");
+        }
+    },
+
+    loadTemplate(tplKey) {
+        if(!tplKey || !TEMPLATES[tplKey]) return;
+        
+        // Load Data
+        const tpl = JSON.parse(JSON.stringify(TEMPLATES[tplKey]));
+        
+        // Sort Lanes to back (first in array = first in DOM = behind)
+        tpl.nodes.sort((a, b) => {
+            const aLane = a.type.startsWith('lane');
+            const bLane = b.type.startsWith('lane');
+            if (aLane && !bLane) return -1;
+            if (!aLane && bLane) return 1;
+            return 0;
+        });
+
+        appState.nodes = tpl.nodes;
+        appState.edges = tpl.edges;
+        
+        // Clear & Render
+        renderer.clearAll();
+        appState.nodes.forEach(n => renderer.renderNode(n));
+        appState.edges.forEach(e => renderer.renderEdge(e));
+        
+        // Reset State
+        appState.clearSelection();
+        appState.history = []; 
+        appState.view = { x: 0, y: 0, zoom: 1 };
+        renderer.updateViewTransform();
+        
+        // Reset Selector
+        el('template-select').value = "";
+        
+        // Save immediately to persist the loaded template
+        appState.isDirty = true;
+        
+        ui.notify("Modèle chargé !");
+    },
+
+    handleDragStart(e, type) { e.dataTransfer.setData('type', type); },
+
+    onCanvasDown(e) {
+        this.hideContextMenu();
+        if (e.target.tagName === 'svg' || e.target.id === 'canvas-container') {
+            if (!e.shiftKey && e.button !== 2) appState.clearSelection();
+            
+            if (e.buttons === 4 || e.code === 'Space' || e.button === 1 || (e.button === 0 && e.altKey)) {
+                appState.dragState = { type: 'pan', startX: e.clientX, startY: e.clientY, viewX: appState.view.x, viewY: appState.view.y };
+                el('canvas-container').style.cursor = 'grabbing';
+            }
+        }
+    },
+
+    onNodeDown(e, id) {
+        this.hideContextMenu();
+        if(e.button === 2) {
+             if(!appState.selection.nodes.includes(id)) appState.select(id, 'node');
+             return; 
+        }
+        e.stopPropagation();
+
+        if (e.target.classList.contains('resize-handle')) {
+            const handle = e.target.dataset.handle;
+            const node = appState.nodes.find(n => n.id === id);
+            appState.dragState = {
+                type: 'resize', handle, nodeId: id,
+                startX: e.clientX, startY: e.clientY,
+                startW: node.w, startH: node.h, startNX: node.x, startNY: node.y
+            };
+            return;
+        }
+
+        if (e.target.classList.contains('port')) {
+            const bbox = e.target.getBoundingClientRect();
+            appState.dragState = { type: 'connect', sourceNode: e.target.dataset.nid, sourcePort: e.target.dataset.pid, startX: bbox.left + 4, startY: bbox.top + 4 };
+            return;
+        }
+        const isSelected = appState.selection.nodes.includes(id);
+        if (e.shiftKey) { appState.select(id, 'node', true); }
+        else { if (!isSelected) appState.select(id, 'node'); }
+
+        appState.dragState = {
+            type: 'move', startX: e.clientX, startY: e.clientY,
+            initialPos: appState.selection.nodes.map(nid => {
+                const n = appState.nodes.find(node => node.id === nid);
+                return { id: nid, x: n.x, y: n.y };
+            })
+        };
+    },
+
+    onNodeDblClick(e, id) {
+        e.stopPropagation();
+        const node = appState.nodes.find(n => n.id === id);
+        if (node) {
+            ui.updatePropertiesPanel();
+            el('prop-text').focus();
+        }
+    },
+
+    onEdgeDown(e, id) {
+        this.hideContextMenu();
+        if(e.button === 2) {
+            if(!appState.selection.edges.includes(id)) appState.select(id, 'edge');
+            return;
+        }
+        e.stopPropagation();
+        appState.select(id, 'edge', e.shiftKey);
+    },
+
+    onContextMenu(e) {
+        e.preventDefault();
+        const menu = el('context-menu');
+        
+        if (e.target.tagName === 'svg' || e.target.id === 'canvas-container') {
+             appState.clearSelection();
+        }
+
+        if(appState.selection.nodes.length > 0) {
+            menu.style.display = 'block';
+            menu.style.left = e.clientX + 'px';
+            menu.style.top = e.clientY + 'px';
+        }
+    },
+
+    hideContextMenu() {
+        el('context-menu').style.display = 'none';
+    },
+
+    onGlobalMove(e) {
+        if (!appState.dragState) return;
+        const ds = appState.dragState;
+        const z = appState.view.zoom;
+
+        if (ds.type === 'pan') {
+            const dx = e.clientX - ds.startX; const dy = e.clientY - ds.startY;
+            appState.view.x = ds.viewX + dx; appState.view.y = ds.viewY + dy;
+            renderer.updateViewTransform();
+        }
+        else if (ds.type === 'move') {
+            const dx = (e.clientX - ds.startX) / z; const dy = (e.clientY - ds.startY) / z;
+            ds.initialPos.forEach(p => {
+                let nx = Math.round((p.x + dx) / 20) * 20;
+                let ny = Math.round((p.y + dy) / 20) * 20;
+                appState.updateNode(p.id, { x: nx, y: ny });
+            });
+            appState.isDirty = true;
+        }
+        else if (ds.type === 'resize') {
+            const dx = (e.clientX - ds.startX) / z;
+            const dy = (e.clientY - ds.startY) / z;
+            const node = appState.nodes.find(n => n.id === ds.nodeId);
+            const minSize = 20;
+            
+            let newW = ds.startW, newH = ds.startH, newX = ds.startNX, newY = ds.startNY;
+
+            if (ds.handle.includes('e')) newW = Math.max(minSize, ds.startW + dx);
+            if (ds.handle.includes('s')) newH = Math.max(minSize, ds.startH + dy);
+            if (ds.handle.includes('w')) {
+                const w = Math.max(minSize, ds.startW - dx);
+                newX = ds.startNX + (ds.startW - w);
+                newW = w;
+            }
+            if (ds.handle.includes('n')) {
+                const h = Math.max(minSize, ds.startH - dy);
+                newY = ds.startNY + (ds.startH - h);
+                newH = h;
+            }
+            
+            newW = Math.round(newW / 20) * 20;
+            newH = Math.round(newH / 20) * 20;
+            if(ds.handle.includes('w')) newX = Math.round(newX / 20) * 20;
+            if(ds.handle.includes('n')) newY = Math.round(newY / 20) * 20;
+
+            appState.updateNode(node.id, { x: newX, y: newY, w: newW, h: newH });
+            ui.updatePropertiesPanel();
+        }
+        else if (ds.type === 'connect') {
+            const line = el('drag-line');
+            const svgRect = el('main-svg').getBoundingClientRect();
+            const x1 = (ds.startX - svgRect.left - appState.view.x) / appState.view.zoom;
+            const y1 = (ds.startY - svgRect.top - appState.view.y) / appState.view.zoom;
+            const x2 = (e.clientX - svgRect.left - appState.view.x) / appState.view.zoom;
+            const y2 = (e.clientY - svgRect.top - appState.view.y) / appState.view.zoom;
+            line.setAttribute('x1', x1); line.setAttribute('y1', y1); line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+            line.style.display = 'block';
+        }
+    },
+
+    onGlobalUp(e) {
+        if (!appState.dragState) return;
+        if (appState.dragState.type === 'connect') {
+            el('drag-line').style.display = 'none';
+            const target = document.elementFromPoint(e.clientX, e.clientY);
+            if (target && target.classList.contains('port')) {
+                appState.addEdge(appState.dragState.sourceNode, target.dataset.nid, appState.dragState.sourcePort, target.dataset.pid);
+            }
+        }
+        if (['move', 'resize'].includes(appState.dragState.type)) { appState.pushHistory(); }
+        appState.dragState = null;
+        el('canvas-container').style.cursor = 'grab';
+    },
+
+    onZoom(e) {
+        if (e.ctrlKey) {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            appState.view.zoom = Math.min(Math.max(0.1, appState.view.zoom * delta), 4);
+            renderer.updateViewTransform();
+        }
+    },
+
+    onKey(e) {
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+            if(document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') appState.deleteSelection();
+        }
+        if (e.ctrlKey && e.key === 'z') { e.preventDefault(); appState.undo(); }
+    },
+
+    onDrop(e) {
+        e.preventDefault();
+        const type = e.dataTransfer.getData('type');
+        if (type) {
+            const svgRect = el('main-svg').getBoundingClientRect();
+            const x = (e.clientX - svgRect.left - appState.view.x) / appState.view.zoom;
+            const y = (e.clientY - svgRect.top - appState.view.y) / appState.view.zoom;
+            appState.addNode(type, x, y);
+        }
+    },
+
+    align(mode) {
+        const nodes = appState.selection.nodes.map(id => appState.nodes.find(n => n.id === id)).filter(n => n);
+        if (nodes.length < 2) return ui.notify("Sélectionnez au moins 2 objets");
+        
+        appState.pushHistory();
+        
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        nodes.forEach(n => {
+            minX = Math.min(minX, n.x); minY = Math.min(minY, n.y);
+            maxX = Math.max(maxX, n.x + n.w); maxY = Math.max(maxY, n.y + n.h);
+        });
+        const midX = (minX + maxX) / 2;
+        const midY = (minY + maxY) / 2;
+
+        nodes.forEach(n => {
+            if (mode === 'left') n.x = minX;
+            else if (mode === 'right') n.x = maxX - n.w;
+            else if (mode === 'center-x') n.x = midX - n.w / 2;
+            else if (mode === 'top') n.y = minY;
+            else if (mode === 'bottom') n.y = maxY - n.h;
+            else if (mode === 'center-y') n.y = midY - n.h / 2;
+            renderer.updateNodeVisuals(n);
+        });
+        
+        nodes.forEach(n => appState.getConnectedEdges(n.id).forEach(e => renderer.updateEdgeVisuals(e)));
+        appState.isDirty = true;
+        this.hideContextMenu();
+    },
+
+    distribute(mode) {
+        const nodes = appState.selection.nodes.map(id => appState.nodes.find(n => n.id === id)).filter(n => n);
+        if (nodes.length < 3) return ui.notify("Sélectionnez au moins 3 objets");
+
+        appState.pushHistory();
+
+        if (mode === 'h') {
+            nodes.sort((a, b) => a.x - b.x);
+            const totalW = nodes[nodes.length-1].x - nodes[0].x;
+            const step = totalW / (nodes.length - 1);
+            nodes.forEach((n, i) => {
+                if (i > 0 && i < nodes.length - 1) {
+                    n.x = nodes[0].x + (step * i);
+                    renderer.updateNodeVisuals(n);
+                }
+            });
+        } else {
+            nodes.sort((a, b) => a.y - b.y);
+            const totalH = nodes[nodes.length-1].y - nodes[0].y;
+            const step = totalH / (nodes.length - 1);
+            nodes.forEach((n, i) => {
+                if (i > 0 && i < nodes.length - 1) {
+                    n.y = nodes[0].y + (step * i);
+                    renderer.updateNodeVisuals(n);
+                }
+            });
+        }
+        nodes.forEach(n => appState.getConnectedEdges(n.id).forEach(e => renderer.updateEdgeVisuals(e)));
+        appState.isDirty = true;
+        this.hideContextMenu();
+    },
+
+    sendToBack() {
+        const nodes = appState.selection.nodes;
+        if(nodes.length === 0) return;
+        // Move selected nodes to start of array
+        appState.pushHistory();
+        const selected = appState.nodes.filter(n => nodes.includes(n.id));
+        const unselected = appState.nodes.filter(n => !nodes.includes(n.id));
+        
+        const newOrder = [...selected, ...unselected];
+        const lanes = newOrder.filter(n => n.type.startsWith('lane'));
+        const others = newOrder.filter(n => !n.type.startsWith('lane'));
+        appState.nodes = [...lanes, ...others];
+        
+        appState.nodes = [...selected, ...unselected]; // Reorder in array
+        // Re-render all to reflect order
+        renderer.clearAll();
+        appState.nodes.forEach(n => renderer.renderNode(n));
+        appState.edges.forEach(e => renderer.renderEdge(e));
+        // Restore selection
+        appState.select(nodes[0], 'node'); // simplified selection restore
+        this.hideContextMenu();
+    },
+
+    bringToFront() {
+        const nodes = appState.selection.nodes;
+        if(nodes.length === 0) return;
+        appState.pushHistory();
+        const selected = appState.nodes.filter(n => nodes.includes(n.id));
+        const unselected = appState.nodes.filter(n => !nodes.includes(n.id));
+        
+        const newOrder = [...unselected, ...selected];
+        const lanes = newOrder.filter(n => n.type.startsWith('lane'));
+        const others = newOrder.filter(n => !n.type.startsWith('lane'));
+        appState.nodes = [...lanes, ...others];
+        
+        appState.nodes = [...unselected, ...selected];
+        renderer.clearAll();
+        appState.nodes.forEach(n => renderer.renderNode(n));
+        appState.edges.forEach(e => renderer.renderEdge(e));
+        appState.select(nodes[0], 'node');
+        this.hideContextMenu();
+    },
+
+    syncHex(type, val, isHexInput = false) {
+        if (isHexInput) {
+            if (/^#[0-9A-F]{6}$/i.test(val)) {
+                el(`prop-${type}`).value = val;
+                this.updateSelection(type);
+            }
+        } else {
+            el(`prop-${type}-hex`).value = val;
+            this.updateSelection(type);
+        }
+    },
+
+    updateSelection(prop) {
+        const sNodes = appState.selection.nodes;
+        const sEdges = appState.selection.edges;
+
+        const text = el('prop-text').value;
+        const fill = el('prop-fill').value;
+        const stroke = el('prop-stroke').value;
+        const strokeWidth = el('prop-width').value;
+        const style = el('prop-style').value;
+        const arrow = el('prop-arrow').value;
+        const w = parseInt(el('prop-w').value);
+        const h = parseInt(el('prop-h').value);
+
+        el('val-width').textContent = strokeWidth;
+
+        sNodes.forEach(id => {
+            const node = appState.nodes.find(n => n.id === id);
+            if(prop === 'text' || prop === 'all') node.text = text;
+            if(prop === 'fill' || prop === 'all') node.style.fill = fill;
+            if(prop === 'stroke' || prop === 'all') node.style.stroke = stroke;
+            if(prop === 'width' || prop === 'all') node.style.strokeWidth = strokeWidth;
+            if(prop === 'dim') {
+                if(!isNaN(w) && w > 10) node.w = w;
+                if(!isNaN(h) && h > 10) node.h = h;
+            }
+            renderer.updateNodeVisuals(node);
+        });
+
+        if(prop === 'dim') {
+            sNodes.forEach(id => appState.getConnectedEdges(id).forEach(e => renderer.updateEdgeVisuals(e)));
+        }
+
+        sEdges.forEach(id => {
+            const edge = appState.edges.find(e => e.id === id);
+            if(prop === 'text' || prop === 'all') edge.text = text;
+            if(prop === 'style' || prop === 'all') edge.style.strokeDash = style;
+            if(prop === 'arrow' || prop === 'all') edge.style.arrows = arrow;
+            if(prop === 'stroke' || prop === 'all') edge.style.stroke = stroke;
+            if(prop === 'width' || prop === 'all') edge.style.strokeWidth = strokeWidth;
+            renderer.updateEdgeVisuals(edge);
+        });
+        
+        appState.isDirty = true;
+    },
+
+    saveProject() {
+        const data = JSON.stringify({ metadata: { version: "1.0" }, nodes: appState.nodes, edges: appState.edges }, null, 2);
+        const blob = new Blob([data], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `logigramme-${Date.now()}.json`;
+        a.click(); URL.revokeObjectURL(url);
+        ui.notify("Projet sauvegardé !");
+    },
+
+    loadProject(input) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if(data.nodes && data.edges) {
+                    appState.restoreSnapshot(data); appState.history = [];
+                    ui.notify("Projet chargé avec succès");
+                }
+            } catch(err) { alert("Fichier invalide"); }
+        };
+        reader.readAsText(file); input.value = '';
+    },
+
+    undo() {
+        appState.undo();
+    },
+    
+    deleteSelection() {
+        appState.deleteSelection();
+    }
+};
+
+const ui = {
+    updatePropertiesPanel() {
+        const panel = el('prop-panel');
+        const sNodes = appState.selection.nodes;
+        const sEdges = appState.selection.edges;
+
+        if (sNodes.length === 0 && sEdges.length === 0) {
+            panel.classList.remove('active');
+            return;
+        }
+        panel.classList.add('active');
+
+        let target = null;
+        let isNode = false;
+
+        if (sNodes.length > 0) {
+            target = appState.nodes.find(node => node.id === sNodes[0]);
+            isNode = true;
+        } else if (sEdges.length > 0) {
+            target = appState.edges.find(edge => edge.id === sEdges[0]);
+        }
+
+        if (target) {
+             el('prop-text').value = target.text || '';
+             // Use default values if property missing
+             el('prop-fill').value = target.style.fill || '#ffffff';
+             el('prop-fill-hex').value = target.style.fill || '#ffffff';
+             el('prop-stroke').value = target.style.stroke || '#334155';
+             el('prop-stroke-hex').value = target.style.stroke || '#334155';
+             el('prop-width').value = target.style.strokeWidth || 2;
+             el('val-width').textContent = target.style.strokeWidth || 2;
+             
+             if(isNode) {
+                 el('node-props').style.display = 'block';
+                 el('edge-props').style.display = 'none';
+                 el('prop-w').value = target.w;
+                 el('prop-h').value = target.h;
+             } else {
+                 el('node-props').style.display = 'none';
+                 el('edge-props').style.display = 'flex';
+                 el('prop-style').value = target.style.strokeDash === 'dashed' ? 'dashed' : 'solid';
+                 el('prop-arrow').value = target.style.arrows || 'end';
+             }
+        }
+    },
+    notify(msg) {
+        const n = el('notification'); n.textContent = msg; n.classList.add('show');
+        setTimeout(() => n.classList.remove('show'), 3000);
+    }
+};
+
+const exporter = {
+    toSVG() {
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        appState.nodes.forEach(n => {
+            minX = Math.min(minX, n.x); minY = Math.min(minY, n.y);
+            maxX = Math.max(maxX, n.x + n.w); maxY = Math.max(maxY, n.y + n.h);
+        });
+        const padding = 50; minX -= padding; minY -= padding;
+        const width = (maxX - minX) + padding * 2; const height = (maxY - minY) + padding * 2;
+        if (!isFinite(width) || width <= 0) return ui.notify("Rien à exporter");
+
+        const svgContent = el('main-svg').cloneNode(true);
+        svgContent.setAttribute("viewBox", `${minX} ${minY} ${width} ${height}`);
+        svgContent.setAttribute("width", width); svgContent.setAttribute("height", height);
+
+        const g = svgContent.querySelector('#viewport-group');
+        g.setAttribute('transform', 'translate(0,0) scale(1)');
+        const grid = svgContent.querySelector('#drag-line'); if(grid) grid.remove();
+        
+        // Remove UI handles for export
+        svgContent.querySelectorAll('.resize-handle').forEach(h => h.remove());
+
+        const style = document.createElement('style');
+        style.textContent = `
+            .node-text { font-family: sans-serif; font-size: 13px; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
+            .node-shape { stroke-width: 2px; vector-effect: non-scaling-stroke; }
+            .edge-path { fill: none; stroke: #334155; stroke-width: 2px; }
+            .edge-label { font-family: sans-serif; font-size: 11px; fill: #334155; text-anchor: middle; }
+            .edge-path[data-arrow-end="true"] { marker-end: url(#arrowhead); }
+            .edge-path[data-arrow-start="true"] { marker-start: url(#arrowhead-start); }
+        `;
+        svgContent.prepend(style);
+        const serializer = new XMLSerializer();
+        let source = serializer.serializeToString(svgContent);
+        if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){ source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"'); }
+        const blob = new Blob([source], {type: "image/svg+xml;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = "logigramme.svg"; a.click();
+    },
+
+    toPNG() {
+        const svgEl = el('main-svg');
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        appState.nodes.forEach(n => {
+            minX = Math.min(minX, n.x); minY = Math.min(minY, n.y);
+            maxX = Math.max(maxX, n.x + n.w); maxY = Math.max(maxY, n.y + n.h);
+        });
+        const padding = 50; minX -= padding; minY -= padding;
+        const width = (maxX - minX) + padding * 2; const height = (maxY - minY) + padding * 2;
+        if (!isFinite(width) || width <= 0) return ui.notify("Rien à exporter");
+
+        const img = new Image();
+        const clone = el('viewport-group').cloneNode(true);
+        // Remove handles for PNG
+        clone.querySelectorAll('.resize-handle').forEach(h => h.remove());
+        
+        const svgString = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#64748b" /></marker>
+                <marker id="arrowhead-start" markerWidth="10" markerHeight="7" refX="1" refY="3.5" orient="auto"><polygon points="10 0, 0 3.5, 10 7" fill="#64748b" /></marker>
+            </defs>
+            <style>
+                .node-text { font-family: sans-serif; font-size: 13px; text-anchor: middle; dominant-baseline: middle; }
+                .edge-path { fill: none; stroke: #334155; stroke-width: 2px; }
+                .edge-path[data-arrow-end="true"] { marker-end: url(#arrowhead); }
+                .edge-path[data-arrow-start="true"] { marker-start: url(#arrowhead-start); }
+                .edge-label { font-family: sans-serif; font-size: 11px; fill: #334155; text-anchor: middle; }
+            </style>
+            <g transform="translate(${-minX}, ${-minY})">
+                ${clone.innerHTML}
+            </g>
+        </svg>`;
+
+        const blob = new Blob([svgString], {type: 'image/svg+xml;charset=utf-8'});
+        const url = URL.createObjectURL(blob);
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = width * 2; canvas.height = height * 2;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(2, 2); ctx.fillStyle = "#ffffff"; ctx.fillRect(0,0, width, height);
+            ctx.drawImage(img, 0, 0);
+            const a = document.createElement('a'); a.download = "logigramme.png";
+            a.href = canvas.toDataURL('image/png'); a.click(); URL.revokeObjectURL(url);
+        };
+        img.src = url;
+    }
+};
+
+el('canvas-container').addEventListener('dragover', (e) => e.preventDefault());
+el('canvas-container').addEventListener('drop', (e) => app.onDrop(e));
+app.init();
+</script>
+</body>
+</html>
