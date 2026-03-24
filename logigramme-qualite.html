@@ -306,6 +306,7 @@
         <div style="flex:1"></div>
         <button class="btn" onclick="exporter.toPNG()">🖼️ PNG</button>
         <button class="btn" onclick="exporter.toSVG()">📐 SVG</button>
+        <button class="btn" onclick="exporter.toJSON()">📄 JSON</button>
         <input type="file" id="file-input" accept=".json" style="display:none" onchange="app.loadProject(this)">
     </nav>
 
@@ -421,6 +422,18 @@
                          <span style="font-size:0.8rem; color:#666; width:20px; text-align:right" id="val-width">2</span>
                     </div>
                 </div>
+
+                <div class="form-group" style="margin-top:10px;">
+                    <label class="form-label">Texte (Couleur / Taille)</label>
+                    <div class="form-row">
+                        <input type="color" id="prop-text-color" oninput="app.syncHex('text-color', this.value)">
+                        <input type="text" id="prop-text-color-hex" class="form-control hex-input" oninput="app.syncHex('text-color', this.value, true)" maxlength="7">
+                    </div>
+                    <div class="form-row" style="margin-top:5px;">
+                        <input type="range" id="prop-fontsize" min="8" max="48" step="1" oninput="app.updateSelection('fontsize')" title="Taille du texte">
+                        <span style="font-size:0.8rem; color:#666; width:20px; text-align:right" id="val-fontsize">13</span>
+                    </div>
+                </div>
             </div>
 
             <div class="form-group" id="edge-props" style="display:none">
@@ -477,19 +490,19 @@ const SHAPES = {
     'lane-v': { w: 200, h: 600, type: 'lane-v' } // Vertical Lane
 };
 
-const DEFAULT_STYLE = { fill: '#ffffff', stroke: '#334155', strokeWidth: 2 };
+const DEFAULT_STYLE = { fill: '#ffffff', stroke: '#334155', strokeWidth: 2, fontSize: 13, textColor: '#0f172a' };
 
 // --- TEMPLATES DATA (CONCRETE EXAMPLES) ---
 const TEMPLATES = {
     recrutement: {
         nodes: [
-            { id: "s1", type: "start", x: 350, y: 30, w: 140, h: 50, text: "Besoin RH", style: {fill: "#e0f2fe", stroke: "#0284c7", strokeWidth: 2} },
-            { id: "p1", type: "process", x: 350, y: 110, w: 160, h: 70, text: "Rédiger Offre", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2} },
-            { id: "p2", type: "process", x: 350, y: 210, w: 160, h: 70, text: "Publier & Tri CV", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2} },
-            { id: "d1", type: "decision", x: 380, y: 320, w: 100, h: 100, text: "CV OK ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2} },
-            { id: "p3", type: "process", x: 580, y: 335, w: 160, h: 70, text: "Entretien", style: {fill: "#dcfce7", stroke: "#16a34a", strokeWidth: 2} },
-            { id: "e1", type: "start", x: 150, y: 345, w: 120, h: 50, text: "Refus", style: {fill: "#fee2e2", stroke: "#dc2626", strokeWidth: 2} },
-            { id: "e2", type: "start", x: 580, y: 460, w: 140, h: 50, text: "Embauche", style: {fill: "#dcfce7", stroke: "#16a34a", strokeWidth: 2} }
+            { id: "s1", type: "start", x: 350, y: 30, w: 140, h: 50, text: "Besoin RH", style: {fill: "#e0f2fe", stroke: "#0284c7", strokeWidth: 2, fontSize: 13} },
+            { id: "p1", type: "process", x: 350, y: 110, w: 160, h: 70, text: "Rédiger Offre", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2, fontSize: 13} },
+            { id: "p2", type: "process", x: 350, y: 210, w: 160, h: 70, text: "Publier & Tri CV", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2, fontSize: 13} },
+            { id: "d1", type: "decision", x: 380, y: 320, w: 100, h: 100, text: "CV OK ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2, fontSize: 13} },
+            { id: "p3", type: "process", x: 580, y: 335, w: 160, h: 70, text: "Entretien", style: {fill: "#dcfce7", stroke: "#16a34a", strokeWidth: 2, fontSize: 13} },
+            { id: "e1", type: "start", x: 150, y: 345, w: 120, h: 50, text: "Refus", style: {fill: "#fee2e2", stroke: "#dc2626", strokeWidth: 2, fontSize: 13} },
+            { id: "e2", type: "start", x: 580, y: 460, w: 140, h: 50, text: "Embauche", style: {fill: "#dcfce7", stroke: "#16a34a", strokeWidth: 2, fontSize: 13} }
         ],
         edges: [
             { id: "ed_1", source: "s1", target: "p1", sourcePort: "b", targetPort: "t", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
@@ -502,14 +515,14 @@ const TEMPLATES = {
     },
     frais: {
         nodes: [
-            { id: "l1", type: "lane", x: 50, y: 50, w: 700, h: 200, text: "Employé", style: {fill: "#ffffff", stroke: "#94a3b8", strokeWidth: 2} },
-            { id: "l2", type: "lane", x: 50, y: 250, w: 700, h: 200, text: "Manager", style: {fill: "#f8fafc", stroke: "#94a3b8", strokeWidth: 2} },
-            { id: "l3", type: "lane", x: 50, y: 450, w: 700, h: 150, text: "Compta", style: {fill: "#ffffff", stroke: "#94a3b8", strokeWidth: 2} },
-            { id: "n1", type: "start", x: 120, y: 120, w: 120, h: 50, text: "Dépense", style: {fill: "#e0f2fe", stroke: "#0284c7", strokeWidth: 2} },
-            { id: "n2", type: "process", x: 300, y: 110, w: 140, h: 70, text: "Saisir Note", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2} },
-            { id: "n3", type: "decision", x: 320, y: 300, w: 100, h: 100, text: "Valide ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2} },
-            { id: "n4", type: "process", x: 550, y: 500, w: 140, h: 70, text: "Paiement", style: {fill: "#dcfce7", stroke: "#16a34a", strokeWidth: 2} },
-            { id: "n5", type: "start", x: 560, y: 120, w: 120, h: 50, text: "Corriger", style: {fill: "#fee2e2", stroke: "#dc2626", strokeWidth: 2} }
+            { id: "l1", type: "lane", x: 50, y: 50, w: 700, h: 200, text: "Employé", style: {fill: "#ffffff", stroke: "#94a3b8", strokeWidth: 2, fontSize: 13} },
+            { id: "l2", type: "lane", x: 50, y: 250, w: 700, h: 200, text: "Manager", style: {fill: "#f8fafc", stroke: "#94a3b8", strokeWidth: 2, fontSize: 13} },
+            { id: "l3", type: "lane", x: 50, y: 450, w: 700, h: 150, text: "Compta", style: {fill: "#ffffff", stroke: "#94a3b8", strokeWidth: 2, fontSize: 13} },
+            { id: "n1", type: "start", x: 120, y: 120, w: 120, h: 50, text: "Dépense", style: {fill: "#e0f2fe", stroke: "#0284c7", strokeWidth: 2, fontSize: 13} },
+            { id: "n2", type: "process", x: 300, y: 110, w: 140, h: 70, text: "Saisir Note", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2, fontSize: 13} },
+            { id: "n3", type: "decision", x: 320, y: 300, w: 100, h: 100, text: "Valide ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2, fontSize: 13} },
+            { id: "n4", type: "process", x: 550, y: 500, w: 140, h: 70, text: "Paiement", style: {fill: "#dcfce7", stroke: "#16a34a", strokeWidth: 2, fontSize: 13} },
+            { id: "n5", type: "start", x: 560, y: 120, w: 120, h: 50, text: "Corriger", style: {fill: "#fee2e2", stroke: "#dc2626", strokeWidth: 2, fontSize: 13} }
         ],
         edges: [
             { id: "f_ed1", source: "n1", target: "n2", sourcePort: "r", targetPort: "l", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
@@ -521,13 +534,13 @@ const TEMPLATES = {
     },
     panne: {
         nodes: [
-            { id: "ps1", type: "start", x: 350, y: 50, w: 140, h: 50, text: "Pas d'Internet", style: {fill: "#fee2e2", stroke: "#dc2626", strokeWidth: 2} },
-            { id: "pp1", type: "process", x: 350, y: 140, w: 140, h: 70, text: "Reboot Box", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2} },
-            { id: "pd1", type: "decision", x: 370, y: 250, w: 100, h: 100, text: "Ça marche ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2} },
-            { id: "pe1", type: "start", x: 600, y: 275, w: 120, h: 50, text: "Fin", style: {fill: "#dcfce7", stroke: "#16a34a", strokeWidth: 2} },
-            { id: "pp2", type: "process", x: 150, y: 265, w: 160, h: 70, text: "Vérifier câbles", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2} },
-            { id: "pd2", type: "decision", x: 180, y: 380, w: 100, h: 100, text: "Et là ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2} },
-            { id: "pp3", type: "process", x: 350, y: 500, w: 160, h: 70, text: "Appeler Support", style: {fill: "#e0f2fe", stroke: "#0284c7", strokeWidth: 2} }
+            { id: "ps1", type: "start", x: 350, y: 50, w: 140, h: 50, text: "Pas d'Internet", style: {fill: "#fee2e2", stroke: "#dc2626", strokeWidth: 2, fontSize: 13} },
+            { id: "pp1", type: "process", x: 350, y: 140, w: 140, h: 70, text: "Reboot Box", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2, fontSize: 13} },
+            { id: "pd1", type: "decision", x: 370, y: 250, w: 100, h: 100, text: "Ça marche ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2, fontSize: 13} },
+            { id: "pe1", type: "start", x: 600, y: 275, w: 120, h: 50, text: "Fin", style: {fill: "#dcfce7", stroke: "#16a34a", strokeWidth: 2, fontSize: 13} },
+            { id: "pp2", type: "process", x: 150, y: 265, w: 160, h: 70, text: "Vérifier câbles", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2, fontSize: 13} },
+            { id: "pd2", type: "decision", x: 180, y: 380, w: 100, h: 100, text: "Et là ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2, fontSize: 13} },
+            { id: "pp3", type: "process", x: 350, y: 500, w: 160, h: 70, text: "Appeler Support", style: {fill: "#e0f2fe", stroke: "#0284c7", strokeWidth: 2, fontSize: 13} }
         ],
         edges: [
             { id: "pl1", source: "ps1", target: "pp1", sourcePort: "b", targetPort: "t", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
@@ -541,12 +554,12 @@ const TEMPLATES = {
     },
     ecommerce: {
         nodes: [
-            { id: "s1", type: "start", x: 350, y: 50, w: 140, h: 50, text: "Nouvelle Cde", style: {fill: "#dbeafe", stroke: "#1e40af", strokeWidth: 2} },
-            { id: "p1", type: "process", x: 350, y: 140, w: 160, h: 70, text: "Vérifier Stock", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2} },
-            { id: "d1", type: "decision", x: 380, y: 250, w: 100, h: 100, text: "Dispo ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2} },
-            { id: "p2", type: "process", x: 600, y: 265, w: 160, h: 70, text: "Approvisionner", style: {fill: "#ffedd5", stroke: "#c2410c", strokeWidth: 2} },
-            { id: "p3", type: "process", x: 350, y: 400, w: 160, h: 70, text: "Expédition", style: {fill: "#dcfce7", stroke: "#15803d", strokeWidth: 2} },
-            { id: "e1", type: "start", x: 360, y: 520, w: 140, h: 50, text: "Clôture", style: {fill: "#f1f5f9", stroke: "#475569", strokeWidth: 2} }
+            { id: "s1", type: "start", x: 350, y: 50, w: 140, h: 50, text: "Nouvelle Cde", style: {fill: "#dbeafe", stroke: "#1e40af", strokeWidth: 2, fontSize: 13} },
+            { id: "p1", type: "process", x: 350, y: 140, w: 160, h: 70, text: "Vérifier Stock", style: {fill: "#ffffff", stroke: "#334155", strokeWidth: 2, fontSize: 13} },
+            { id: "d1", type: "decision", x: 380, y: 250, w: 100, h: 100, text: "Dispo ?", style: {fill: "#fef9c3", stroke: "#ca8a04", strokeWidth: 2, fontSize: 13} },
+            { id: "p2", type: "process", x: 600, y: 265, w: 160, h: 70, text: "Approvisionner", style: {fill: "#ffedd5", stroke: "#c2410c", strokeWidth: 2, fontSize: 13} },
+            { id: "p3", type: "process", x: 350, y: 400, w: 160, h: 70, text: "Expédition", style: {fill: "#dcfce7", stroke: "#15803d", strokeWidth: 2, fontSize: 13} },
+            { id: "e1", type: "start", x: 360, y: 520, w: 140, h: 50, text: "Clôture", style: {fill: "#f1f5f9", stroke: "#475569", strokeWidth: 2, fontSize: 13} }
         ],
         edges: [
             { id: "e1", source: "s1", target: "p1", sourcePort: "b", targetPort: "t", text: "", style: {stroke: "#334155", strokeWidth: 2, arrows: "end"} },
@@ -709,6 +722,13 @@ class AppState {
             return 0;
         });
         this.edges = data.edges;
+        if (data.view) {
+            this.view = data.view;
+            renderer.updateViewTransform();
+        } else {
+            this.view = { x: 0, y: 0, zoom: 1 };
+            renderer.updateViewTransform();
+        }
         this.clearSelection();
         renderer.clearAll();
         this.nodes.forEach(n => renderer.renderNode(n));
@@ -791,6 +811,20 @@ const renderer = {
 
         // Text handling
         const text = this.createSVGElement('text', { class: 'node-text' });
+        if (node.style && node.style.fontSize) {
+            text.style.fontSize = node.style.fontSize + 'px';
+            text.setAttribute('font-size', node.style.fontSize);
+        } else {
+            text.style.fontSize = '13px';
+            text.setAttribute('font-size', 13);
+        }
+        if (node.style && node.style.textColor) {
+            text.style.fill = node.style.textColor;
+            text.setAttribute('fill', node.style.textColor);
+        } else {
+            text.style.fill = '#0f172a';
+            text.setAttribute('fill', '#0f172a');
+        }
         
         if (node.type === 'lane') {
             text.setAttribute('transform', `translate(25, ${node.h/2}) rotate(-90)`);
@@ -880,6 +914,20 @@ const renderer = {
         }
 
         const text = g.querySelector('.node-text');
+        if (node.style && node.style.fontSize) {
+            text.style.fontSize = node.style.fontSize + 'px';
+            text.setAttribute('font-size', node.style.fontSize);
+        } else {
+            text.style.fontSize = '13px';
+            text.setAttribute('font-size', 13);
+        }
+        if (node.style && node.style.textColor) {
+            text.style.fill = node.style.textColor;
+            text.setAttribute('fill', node.style.textColor);
+        } else {
+            text.style.fill = '#0f172a';
+            text.setAttribute('fill', '#0f172a');
+        }
         
         if (node.type === 'lane') {
             text.setAttribute('transform', `translate(25, ${node.h/2}) rotate(-90)`);
@@ -991,8 +1039,10 @@ const renderer = {
         if (!str) return;
         textEl.innerHTML = ''; 
         const paragraphs = str.split('\n');
+        const fontSizeStr = textEl.getAttribute('font-size') || textEl.style.fontSize || 13;
+        const fontSize = parseInt(fontSizeStr);
         const lineHeight = 1.2; // em
-        const maxChars = width / 7; 
+        const maxChars = width / (fontSize * 0.6); 
         
         let allLines = [];
 
@@ -1076,7 +1126,7 @@ const app = {
         
         setInterval(() => {
             if(appState.isDirty) {
-                localStorage.setItem('logicraft_autosave', JSON.stringify({ nodes: appState.nodes, edges: appState.edges }));
+                localStorage.setItem('logicraft_autosave', JSON.stringify({ nodes: appState.nodes, edges: appState.edges, view: appState.view }));
                 appState.isDirty = false;
             }
         }, 5000);
@@ -1441,7 +1491,7 @@ const app = {
 
     syncHex(type, val, isHexInput = false) {
         if (isHexInput) {
-            if (/^#[0-9A-F]{6}$/i.test(val)) {
+            if (/^#[0-9A-F]{6}$/i.test(val) || /^#[0-9A-F]{3}$/i.test(val)) {
                 el(`prop-${type}`).value = val;
                 this.updateSelection(type);
             }
@@ -1463,8 +1513,11 @@ const app = {
         const arrow = el('prop-arrow').value;
         const w = parseInt(el('prop-w').value);
         const h = parseInt(el('prop-h').value);
+        const fontSize = el('prop-fontsize').value;
+        const textColor = el('prop-text-color').value;
 
         el('val-width').textContent = strokeWidth;
+        el('val-fontsize').textContent = fontSize;
 
         sNodes.forEach(id => {
             const node = appState.nodes.find(n => n.id === id);
@@ -1472,6 +1525,8 @@ const app = {
             if(prop === 'fill' || prop === 'all') node.style.fill = fill;
             if(prop === 'stroke' || prop === 'all') node.style.stroke = stroke;
             if(prop === 'width' || prop === 'all') node.style.strokeWidth = strokeWidth;
+            if(prop === 'fontsize' || prop === 'all') node.style.fontSize = parseInt(fontSize);
+            if(prop === 'text-color' || prop === 'all') node.style.textColor = textColor;
             if(prop === 'dim') {
                 if(!isNaN(w) && w > 10) node.w = w;
                 if(!isNaN(h) && h > 10) node.h = h;
@@ -1497,7 +1552,7 @@ const app = {
     },
 
     saveProject() {
-        const data = JSON.stringify({ metadata: { version: "1.0" }, nodes: appState.nodes, edges: appState.edges }, null, 2);
+        const data = JSON.stringify({ metadata: { version: "1.0" }, nodes: appState.nodes, edges: appState.edges, view: appState.view }, null, 2);
         const blob = new Blob([data], {type: "application/json"});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1516,6 +1571,8 @@ const app = {
                 if(data.nodes && data.edges) {
                     appState.restoreSnapshot(data); appState.history = [];
                     ui.notify("Projet chargé avec succès");
+                } else {
+                    alert("Format de fichier non reconnu.");
                 }
             } catch(err) { alert("Fichier invalide"); }
         };
@@ -1555,7 +1612,6 @@ const ui = {
 
         if (target) {
              el('prop-text').value = target.text || '';
-             // Use default values if property missing
              el('prop-fill').value = target.style.fill || '#ffffff';
              el('prop-fill-hex').value = target.style.fill || '#ffffff';
              el('prop-stroke').value = target.style.stroke || '#334155';
@@ -1568,6 +1624,12 @@ const ui = {
                  el('edge-props').style.display = 'none';
                  el('prop-w').value = target.w;
                  el('prop-h').value = target.h;
+                 const fontSize = target.style.fontSize || 13;
+                 el('prop-fontsize').value = fontSize;
+                 el('val-fontsize').textContent = fontSize;
+                 const textColor = target.style.textColor || '#0f172a';
+                 el('prop-text-color').value = textColor;
+                 el('prop-text-color-hex').value = textColor;
              } else {
                  el('node-props').style.display = 'none';
                  el('edge-props').style.display = 'flex';
@@ -1583,6 +1645,15 @@ const ui = {
 };
 
 const exporter = {
+    toJSON() {
+        const data = JSON.stringify({ metadata: { version: "1.0" }, nodes: appState.nodes, edges: appState.edges, view: appState.view }, null, 2);
+        const blob = new Blob([data], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `logigramme-export-${Date.now()}.json`;
+        a.click(); URL.revokeObjectURL(url);
+        ui.notify("Diagramme exporté en JSON !");
+    },
     toSVG() {
         let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
         appState.nodes.forEach(n => {
