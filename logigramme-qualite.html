@@ -473,6 +473,8 @@
         <div class="ctx-item" onclick="app.deleteSelection()" style="color:#ef4444"><span>🗑️</span> Supprimer <span class="ctx-shortcut">Del</span></div>
     </div>
 
+    <div style="position: fixed; bottom: 5px; left: 10px; font-size: 0.75rem; color: #94a3b8; pointer-events: none; z-index: 100;">v1.1</div>
+
     <div id="notification">Notification</div>
 
 <script>
@@ -1674,6 +1676,7 @@ const exporter = {
         
         // Remove UI handles for export
         svgContent.querySelectorAll('.resize-handle').forEach(h => h.remove());
+        svgContent.querySelectorAll('.port').forEach(p => p.remove());
 
         const style = document.createElement('style');
         style.textContent = `
@@ -1708,6 +1711,7 @@ const exporter = {
         const clone = el('viewport-group').cloneNode(true);
         // Remove handles for PNG
         clone.querySelectorAll('.resize-handle').forEach(h => h.remove());
+        clone.querySelectorAll('.port').forEach(p => p.remove());
         
         const svgString = `
         <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
