@@ -40,6 +40,12 @@
             <button id="btn-nav-editor" onclick="goToEditor()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 border-l-2 border-transparent">
                 <i data-lucide="edit-3" class="w-4 h-4"></i> Édition de gamme
             </button>
+            <div class="pt-4 mt-4 border-t border-zinc-800">
+                <label class="cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200 text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200 border-l-2 border-transparent">
+                    <i data-lucide="upload" class="w-4 h-4"></i> Importer une gamme
+                    <input type="file" accept=".json" class="hidden" onchange="importJSON(event)" />
+                </label>
+            </div>
         </nav>
 
         <div class="p-4 text-xs text-zinc-600 text-center border-t border-zinc-800">
@@ -91,9 +97,6 @@
                     <h2 id="editor-title" class="text-lg font-semibold text-zinc-800">Nouvelle Gamme</h2>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="exportJSON()" class="flex items-center gap-1.5 text-zinc-600 hover:text-zinc-900 bg-white border border-zinc-300 hover:bg-zinc-100 px-4 py-1.5 rounded text-sm font-medium transition-colors">
-                        <i data-lucide="file-json" class="w-4 h-4"></i> Export JSON
-                    </button>
                     <button onclick="handleSaveGamme()" class="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 text-amber-500 px-4 py-1.5 rounded shadow-md text-sm font-medium transition-colors">
                         <i data-lucide="save" class="w-4 h-4"></i> Sauvegarder
                     </button>
@@ -537,11 +540,8 @@
             } else {
                 gammesDB.unshift(updatedGamme);
             }
-            alert('Gamme sauvegardée avec succès !');
-            renderDashboard(); // Re-render dashboard to show updated data if we switch back
-        }
 
-        function exportJSON() {
+            // Téléchargement du fichier JSON
             const data = JSON.stringify({ meta, surfacesDef, rows }, null, 2);
             const blob = new Blob([data], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -549,6 +549,49 @@
             a.href = url;
             a.download = `Gamme_${meta.ref || 'Terminaison'}.json`;
             a.click();
+            URL.revokeObjectURL(url);
+
+            alert('Gamme sauvegardée et fichier JSON téléchargé avec succès !');
+            renderDashboard(); // Re-render dashboard to show updated data if we switch back
+        }
+
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    
+                    if (!parsed.meta || !parsed.rows) {
+                        throw new Error("Format de fichier JSON invalide.");
+                    }
+
+                    const newGamme = {
+                        id: Date.now(),
+                        lastModified: new Date().toISOString(),
+                        meta: parsed.meta,
+                        surfacesDef: parsed.surfacesDef || [],
+                        rows: parsed.rows || []
+                    };
+                    
+                    // Assurer un identifiant unique à chaque surface et chaque ligne
+                    newGamme.surfacesDef = newGamme.surfacesDef.map(s => ({ ...s, id: Date.now() + Math.random() }));
+                    newGamme.rows = newGamme.rows.map(r => ({ ...r, id: Date.now() + Math.random() }));
+
+                    gammesDB.unshift(newGamme);
+                    
+                    alert('Gamme importée avec succès !');
+                    handleEditGamme(newGamme.id);
+                } catch (error) {
+                    alert("Erreur lors de l'importation : " + error.message);
+                }
+                
+                // Réinitialiser l'input pour permettre l'importation du même fichier par la suite
+                event.target.value = '';
+            };
+            reader.readAsText(file);
         }
 
         function renderDashboard() {
