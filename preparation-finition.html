@@ -390,7 +390,7 @@
                 <em id="expl-quote">"Quote here"</em>
             </div>
             <div style="text-align: center; margin-top: auto;">
-                <button class="btn-gold" onclick="closeExplanation()">Question suivante</button>
+            <button class="btn-gold" onclick="closeExplanation()">Question suivante<br><span style="font-size: 0.75rem; font-weight: normal; text-transform: none;">(ou balayez l'écran)</span></button>
             </div>
         </div>
 
@@ -581,6 +581,25 @@
         const endScreen = document.getElementById('end-screen');
         const controls = document.getElementById('controls');
         const explanationOverlay = document.getElementById('explanation-overlay');
+
+        // Logique de swipe pour fermer l'explication
+        let explStartX = 0, explStartY = 0, isExplDragging = false;
+        const startExplSwipe = (x, y) => {
+            explStartX = x; explStartY = y; isExplDragging = true;
+        };
+        const endExplSwipe = (x, y) => {
+            if (!isExplDragging || !explanationOverlay.classList.contains('active')) return;
+            isExplDragging = false;
+            let diffX = x - explStartX;
+            let diffY = y - explStartY;
+            if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+                closeExplanation();
+            }
+        };
+        explanationOverlay.addEventListener('touchstart', (e) => startExplSwipe(e.changedTouches[0].screenX, e.changedTouches[0].screenY), {passive: true});
+        explanationOverlay.addEventListener('touchend', (e) => endExplSwipe(e.changedTouches[0].screenX, e.changedTouches[0].screenY), {passive: true});
+        explanationOverlay.addEventListener('mousedown', (e) => startExplSwipe(e.clientX, e.clientY));
+        explanationOverlay.addEventListener('mouseup', (e) => endExplSwipe(e.clientX, e.clientY));
 
         totalQNum.textContent = questions.length;
 
