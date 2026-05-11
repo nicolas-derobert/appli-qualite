@@ -14,7 +14,7 @@
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
         
         /* Custom UI Elements */
-        .tab-active { border-bottom: 4px solid var(--accent); color: var(--accent); font-weight: 700; }
+        .tab-active { border-bottom: 4px solid var(--accent); color: var(--accent) !important; font-weight: 700; background-color: #f8fafc; }
         .card { background: white; border-radius: 12px; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); border-top: 4px solid var(--primary); }
         .stat-card { background: #fdfdfd; border: 1px solid #e2e8f0; transition: all 0.2s; }
         .stat-card:hover { border-color: var(--accent); transform: translateY(-2px); }
@@ -30,11 +30,34 @@
         .text-gold { color: var(--accent); }
         .border-gold { border-color: var(--accent); }
         .bg-navy { background-color: var(--primary); }
+
+        /* Visualization animations */
+        .highlight-row { background-color: rgba(177, 139, 71, 0.15) !important; transition: background-color 0.5s; }
+        .highlight-col { background-color: rgba(177, 139, 71, 0.15) !important; transition: background-color 0.5s; }
+        .highlight-cell { 
+            background-color: var(--accent) !important; 
+            color: white !important; 
+            font-weight: 900 !important; 
+            transform: scale(1.15); 
+            transition: all 0.5s; 
+            box-shadow: 0 4px 15px rgba(177,139,71,0.6); 
+            z-index: 10; 
+            position: relative;
+            border-radius: 4px;
+        }
+        .anim-arrow { animation: pulse 1s infinite; font-weight: 900 !important; color: #dc2626 !important; font-size: 1.25rem; transform: scale(1.2); display: inline-block; }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1.2) translateY(0); } 50% { opacity: 0.7; transform: scale(1.2) translateY(3px); } }
+        
+        /* Table Styles */
+        .table-vis { width: 100%; border-collapse: collapse; font-size: 0.875rem; text-align: left; background: white; }
+        .table-vis th, .table-vis td { border: 1px solid #e2e8f0; padding: 0.75rem; transition: background-color 0.3s; }
+        .table-vis th { background-color: #f8fafc; font-weight: 600; color: var(--primary); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
+        .table-vis tr:hover td { background-color: #f1f5f9; }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
-    <div class="max-w-5xl mx-auto">
+    <div class="max-w-6xl mx-auto">
         <div class="mb-4">
             <a href="index.html" class="text-slate-500 hover:text-[#B18B47] font-bold text-sm flex items-center gap-2 transition-colors">
                 <span>&larr;</span> Retour Accueil
@@ -48,11 +71,14 @@
         </header>
 
         <!-- Navigation -->
-        <nav class="flex border-b border-slate-200 mb-8 bg-white rounded-t-xl shadow-sm overflow-hidden">
-            <button onclick="switchTab('calc')" id="btn-tab-calc" class="flex-1 py-5 text-center transition-all tab-active uppercase tracking-widest text-sm">
+        <nav class="flex flex-col md:flex-row border-b border-slate-200 mb-8 bg-white rounded-t-xl shadow-sm overflow-hidden">
+            <button onclick="switchTab('calc')" id="btn-tab-calc" class="flex-1 py-5 px-2 text-center transition-all tab-active uppercase tracking-widest text-xs md:text-sm">
                 Simulateur de Plan
             </button>
-            <button onclick="switchTab('quiz')" id="btn-tab-quiz" class="flex-1 py-5 text-center transition-all text-slate-500 hover:bg-slate-50 uppercase tracking-widest text-sm">
+            <button onclick="switchTab('vis')" id="btn-tab-vis" class="flex-1 py-5 px-2 text-center transition-all text-slate-500 hover:bg-slate-50 uppercase tracking-widest text-xs md:text-sm border-t md:border-t-0 md:border-l border-slate-100">
+                Visualisation Interactive
+            </button>
+            <button onclick="switchTab('quiz')" id="btn-tab-quiz" class="flex-1 py-5 px-2 text-center transition-all text-slate-500 hover:bg-slate-50 uppercase tracking-widest text-xs md:text-sm border-t md:border-t-0 md:border-l border-slate-100">
                 Mode Entraînement
             </button>
         </nav>
@@ -156,12 +182,85 @@
                 </div>
             </section>
 
-            <!-- TAB 2: EXERCISES -->
+            <!-- TAB 2: VISUALIZATION -->
+            <section id="tab-visualize" class="hidden space-y-6">
+                <div class="card p-8">
+                    <div class="text-center md:text-left mb-8 border-b border-slate-100 pb-6">
+                        <h2 class="text-2xl font-black text-navy uppercase italic">Visualisation Interactive des Tables</h2>
+                        <p class="text-slate-500 font-medium mt-2">Suivez pas à pas le raisonnement pour déterminer le plan d'échantillonnage.</p>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 bg-slate-50 p-6 rounded-xl border border-slate-200">
+                        <div>
+                            <label class="block text-xs font-bold text-navy uppercase mb-2 tracking-wider">1. Taille du lot</label>
+                            <input type="number" id="vis-lot-size" value="500" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#B18B47] focus:outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-navy uppercase mb-2 tracking-wider">2. Niveau</label>
+                            <select id="vis-insp-level" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#B18B47] focus:outline-none bg-white">
+                                <option value="I">Général I</option>
+                                <option value="II" selected>Général II</option>
+                                <option value="III">Général III</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-navy uppercase mb-2 tracking-wider">3. NQA (AQL) %</label>
+                            <select id="vis-aql-value" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#B18B47] focus:outline-none bg-white">
+                                <option value="0.65">0.65</option>
+                                <option value="1.0">1.0</option>
+                                <option value="1.5">1.5</option>
+                                <option value="2.5" selected>2.5</option>
+                                <option value="4.0">4.0</option>
+                                <option value="6.5">6.5</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button onclick="startVisualization()" id="btn-vis-start" class="w-full md:w-auto px-10 btn-accent font-bold py-4 rounded-xl transform active:scale-[0.98] shadow-lg text-sm uppercase tracking-widest mb-10 flex items-center justify-center gap-2 mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg>
+                        Lancer l'animation
+                    </button>
+
+                    <!-- Feedback Panel -->
+                    <div id="vis-feedback" class="hidden mb-10 p-6 bg-navy text-white rounded-xl shadow-inner text-center font-medium leading-relaxed transition-all duration-300">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Table 1 Container -->
+                    <div class="mb-12">
+                        <h3 class="font-bold text-navy text-lg mb-4 flex items-center gap-2">
+                            <span class="bg-navy text-white w-6 h-6 rounded-full inline-flex items-center justify-center text-xs">1</span> 
+                            Tableau 1 : Lettres codes (Extrait Niveaux Généraux)
+                        </h3>
+                        <div class="overflow-x-auto relative rounded-xl shadow-sm border border-slate-200">
+                            <table id="vis-table-1" class="table-vis">
+                                <!-- Generated by JS -->
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Table 2 Container -->
+                    <div class="mb-4">
+                        <h3 class="font-bold text-navy text-lg mb-4 flex items-center gap-2">
+                            <span class="bg-navy text-white w-6 h-6 rounded-full inline-flex items-center justify-center text-xs">2</span> 
+                            Tableau 2-A : Plans d'échantillonnage simple (Extrait)
+                        </h3>
+                        <div class="overflow-x-auto relative rounded-xl shadow-sm border border-slate-200">
+                            <table id="vis-table-2" class="table-vis">
+                                <!-- Generated by JS -->
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: EXERCISES -->
             <section id="tab-quiz" class="hidden space-y-6">
                 <div class="card p-8">
                     <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-10">
                         <div class="text-center md:text-left">
-                            <h2 class="text-2xl font-black text-navy uppercase italic">Entraînement</h2>
+                            <h2 class="text-2xl font-black text-navy uppercase italic">Entraînement / Workshop Contrôle</h2>
                             <p class="text-slate-500 font-medium">Améliorez votre lecture des tables normatives.</p>
                         </div>
                         <div id="score-box" class="flex items-center gap-3 bg-navy text-white px-8 py-3 rounded-full shadow-xl">
@@ -300,9 +399,20 @@
         function switchTab(tab) {
             document.getElementById('tab-calc').classList.toggle('hidden', tab !== 'calc');
             document.getElementById('tab-quiz').classList.toggle('hidden', tab !== 'quiz');
+            document.getElementById('tab-visualize').classList.toggle('hidden', tab !== 'vis');
+            
             document.getElementById('btn-tab-calc').classList.toggle('tab-active', tab === 'calc');
             document.getElementById('btn-tab-quiz').classList.toggle('tab-active', tab === 'quiz');
+            document.getElementById('btn-tab-vis').classList.toggle('tab-active', tab === 'vis');
+            
+            document.getElementById('btn-tab-calc').classList.toggle('text-slate-500', tab !== 'calc');
+            document.getElementById('btn-tab-quiz').classList.toggle('text-slate-500', tab !== 'quiz');
+            document.getElementById('btn-tab-vis').classList.toggle('text-slate-500', tab !== 'vis');
+
             if(tab === 'quiz') generateScenario();
+            if(tab === 'vis' && document.getElementById('vis-table-1').innerHTML.trim() === '') {
+                buildVisTables();
+            }
         }
 
         function calculateResults() {
@@ -322,6 +432,170 @@
                 document.getElementById('result-box').classList.remove('hidden');
                 document.getElementById('result-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+        }
+
+        // --- VISUALIZATION LOGIC ---
+
+        function buildVisTables() {
+            // Table 1
+            const t1 = document.getElementById('vis-table-1');
+            let html1 = `<thead><tr><th>Taille du lot</th><th class="text-center col-I">Niv. I</th><th class="text-center col-II">Niv. II</th><th class="text-center col-III">Niv. III</th></tr></thead><tbody>`;
+            LOT_RANGES.forEach((r, idx) => {
+                let rangeText = r.max === Infinity ? `${r.min} et +` : `${r.min} à ${r.max}`;
+                html1 += `<tr id="tr1-${idx}"><td>${rangeText}</td>`;
+                ['I', 'II', 'III'].forEach(lvl => {
+                    html1 += `<td class="text-center font-semibold col-${lvl}" id="td1-${idx}-${lvl}">${r.letters[lvl]}</td>`;
+                });
+                html1 += `</tr>`;
+            });
+            html1 += `</tbody>`;
+            t1.innerHTML = html1;
+
+            // Table 2
+            const t2 = document.getElementById('vis-table-2');
+            const aqlsToShow = ['0.65', '1.0', '1.5', '2.5', '4.0', '6.5'];
+            let html2 = `<thead><tr><th>Lettre</th><th>Effectif (n)</th>`;
+            aqlsToShow.forEach(aql => { html2 += `<th class="text-center col-aql-${aql.replace('.','')}">NQA ${aql}</th>`; });
+            html2 += `</tr></thead><tbody>`;
+            
+            LETTER_ORDER.forEach((letter) => {
+                html2 += `<tr id="tr2-${letter}"><td class="font-bold text-center">${letter}</td>`;
+                const plan = SAMPLING_PLAN[letter];
+                html2 += `<td class="text-center font-bold text-slate-600" id="td2-n-${letter}">${plan.size}</td>`;
+                aqlsToShow.forEach(aql => {
+                    let val = plan.aqls[aql];
+                    let display = '';
+                    if (val === 'down') display = '↓';
+                    else if (val === 'up') display = '↑';
+                    else if (Array.isArray(val)) display = `<span class="text-green-600">${val[0]}</span> / <span class="text-red-600">${val[1]}</span>`;
+                    
+                    html2 += `<td class="text-center font-medium col-aql-${aql.replace('.','')}" id="td2-${letter}-${aql.replace('.','')}">${display}</td>`;
+                });
+                html2 += `</tr>`;
+            });
+            html2 += `</tbody>`;
+            t2.innerHTML = html2;
+        }
+
+        function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+        function showFeedback(text, bgClass = 'bg-navy') {
+            const fb = document.getElementById('vis-feedback');
+            fb.innerHTML = text;
+            fb.className = `mb-10 p-6 text-white rounded-xl shadow-inner text-center font-medium leading-relaxed transition-all duration-300 ${bgClass}`;
+            fb.classList.remove('hidden');
+        }
+
+        async function startVisualization() {
+            // Reset previous highlights
+            document.querySelectorAll('.highlight-row, .highlight-col, .highlight-cell, .anim-arrow').forEach(el => {
+                el.classList.remove('highlight-row', 'highlight-col', 'highlight-cell', 'anim-arrow');
+            });
+            document.getElementById('vis-feedback').classList.add('hidden');
+            
+            const lot = parseInt(document.getElementById('vis-lot-size').value);
+            const level = document.getElementById('vis-insp-level').value;
+            const aql = document.getElementById('vis-aql-value').value;
+            
+            if (!lot || lot < 2) { alert("Veuillez saisir une taille de lot valide."); return; }
+
+            const btn = document.getElementById('btn-vis-start');
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Recherche en cours...`;
+
+            // --- ÉTAPE 1 : Table 1 ---
+            showFeedback("<strong>Étape 1 :</strong> On cherche la plage correspondant à la taille du lot (" + lot + ") dans la Table 1.");
+            
+            const lotIdx = LOT_RANGES.findIndex(r => lot >= r.min && lot <= r.max);
+            await sleep(1500);
+            
+            const tr1 = document.getElementById(`tr1-${lotIdx}`);
+            tr1.classList.add('highlight-row');
+            tr1.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            await sleep(1500);
+            showFeedback("On croise cette ligne avec la colonne du Niveau d'inspection sélectionné (" + level + ").");
+            
+            document.querySelectorAll(`.col-${level}`).forEach(el => el.classList.add('highlight-col'));
+            
+            await sleep(1500);
+            const td1 = document.getElementById(`td1-${lotIdx}-${level}`);
+            td1.classList.add('highlight-cell');
+            const letter = td1.innerText;
+            
+            showFeedback(`Intersection trouvée ! La lettre code initiale est <strong><span class="text-gold text-xl">${letter}</span></strong>. Passons à la Table 2-A.`, 'bg-green-700');
+            
+            await sleep(2500);
+            
+            // --- ÉTAPE 2 : Table 2 ---
+            const tr2 = document.getElementById(`tr2-${letter}`);
+            tr2.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            showFeedback(`<strong>Étape 2 :</strong> Dans la Table 2-A, on se place sur la ligne de la lettre <strong>${letter}</strong>.`);
+            await sleep(500);
+            tr2.classList.add('highlight-row');
+            
+            await sleep(1500);
+            showFeedback(`On croise avec la colonne du NQA exigé (<strong>${aql}</strong>).`);
+            
+            const aqlClass = `col-aql-${aql.replace('.','')}`;
+            document.querySelectorAll(`.${aqlClass}`).forEach(el => el.classList.add('highlight-col'));
+            
+            await sleep(1500);
+            let currentLetter = letter;
+            let td2 = document.getElementById(`td2-${currentLetter}-${aql.replace('.','')}`);
+            td2.classList.add('highlight-cell');
+            
+            await sleep(2000);
+            
+            // --- GESTION DES FLÈCHES ---
+            let val = SAMPLING_PLAN[currentLetter].aqls[aql];
+            let arrowFollowed = false;
+
+            while (val === 'down' || val === 'up') {
+                arrowFollowed = true;
+                td2.classList.remove('highlight-cell');
+                td2.classList.add('anim-arrow'); // Mark arrow as animated
+                
+                let dirText = val === 'down' ? 'le bas (↓)' : 'le haut (↑)';
+                showFeedback(`Attention ! La case indique une flèche vers ${dirText}.<br>La norme impose de suivre la flèche pour trouver un plan applicable.`, 'bg-amber-600');
+                
+                await sleep(2500);
+                
+                let dir = val;
+                const idx = LETTER_ORDER.indexOf(currentLetter);
+                if (dir === 'down' && idx < LETTER_ORDER.length - 1) currentLetter = LETTER_ORDER[idx + 1];
+                else if (dir === 'up' && idx > 0) currentLetter = LETTER_ORDER[idx - 1];
+                else break;
+                
+                // Move row highlight
+                document.getElementById(`tr2-${LETTER_ORDER[dir==='down'?idx:idx]}`).classList.remove('highlight-row');
+                
+                const currentLetterRow = document.getElementById(`tr2-${currentLetter}`);
+                currentLetterRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                currentLetterRow.classList.add('highlight-row');
+                
+                td2.classList.remove('anim-arrow'); // Remove from old cell
+                
+                td2 = document.getElementById(`td2-${currentLetter}-${aql.replace('.','')}`);
+                td2.classList.add('highlight-cell');
+                
+                await sleep(2000);
+                val = SAMPLING_PLAN[currentLetter].aqls[aql];
+            }
+            
+            // --- RÉSULTAT FINAL ---
+            const td2n = document.getElementById(`td2-n-${currentLetter}`);
+            td2n.classList.add('highlight-cell');
+            
+            let finalMsg = arrowFollowed 
+                ? `Plan trouvé après suivi des flèches !<br>On lit les nouveaux critères <strong>Ac/Re (${val[0]}/${val[1]})</strong> et on utilise le <strong>nouvel effectif n=${SAMPLING_PLAN[currentLetter].size}</strong> de la ligne ${currentLetter}.`
+                : `Plan trouvé directement !<br>Taille d'échantillon <strong>n=${SAMPLING_PLAN[currentLetter].size}</strong>, avec critères <strong>Ac=${val[0]} / Re=${val[1]}</strong>.`;
+                
+            showFeedback(finalMsg, 'bg-green-700');
+            
+            btn.disabled = false;
+            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg> Relancer l'animation`;
         }
 
         // --- QUIZ HANDLERS ---
