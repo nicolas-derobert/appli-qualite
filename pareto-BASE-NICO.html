@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QualiTools - Diagramme de Pareto amélioré</title>
+
+    <!-- React & ReactDOM - version production -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Babel : pratique pour une version pédagogique directement éditable -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --accent: #cfa346;
+            --accent-dark: #9d7627;
+            --soft-bg: #f8f9fa;
+        }
+
+        body {
+            background-color: var(--soft-bg);
+            font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .chart-card {
+            min-height: 430px;
+        }
+
+        @media print {
+            header,
+            .no-print,
+            button,
+            select {
+                display: none !important;
+            }
+
+            body {
+                background: white !important;
+            }
+
+            main {
+                display: block !important;
+                max-width: none !important;
+                padding: 0 !important;
+            }
+
+            .print-card {
+                box-shadow: none !important;
+                border: none !important;
+                page-break-inside: avoid;
+            }
+
+            .print-full-width {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // -----------------------------
+        // Icônes Lucide sécurisées
+        // -----------------------------
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const [svgHtml, setSvgHtml] = useState(null);
+
+            useEffect(() => {
+                if (window.lucide && window.lucide.icons && window.lucide.icons[name]) {
+                    try {
+                        const elem = window.lucide.createElement(window.lucide.icons[name]);
+                        elem.setAttribute("width", size);
+                        elem.setAttribute("height", size);
+                        const cls = elem.getAttribute("class") || "";
+                        elem.setAttribute("class", `${cls} ${className}`.trim());
+                        setSvgHtml(elem.outerHTML);
+                    } catch (e) {
+                        setSvgHtml(null);
+                    }
+                }
+            }, [name, size, className]);
+
+            if (!svgHtml) {
+                return <span className="inline-flex items-center justify-center" style={{ width: size, height: size }}>•</span>;
+            }
+
+            return <span dangerouslySetInnerHTML={{ __html: svgHtml }} className="inline-flex items-center justify-center" />;
+        };
+
+        // -----------------------------
+        // Données d'exemple
+        // -----------------------------
+        const EXAMPLES = {
+            blank: {
+                title: "Nouveau diagramme de Pareto",
+                valueType: "Nombre d'occurrences",
+                data: [
+                    { id: 1, label: "Catégorie 1", value: 0, action: "" },
+                    { id: 2, label: "Catégorie 2", value: 0, action: "" },
+                    { id: 3, label: "Catégorie 3", value: 0, action: "" },
+                    { id: 4, label: "Catégorie 4", value: 0, action: "" },
+                    { id: 5, label: "Catégorie 5", value: 0, action: "" }
+                ]
+            },
+            horlogerie: {
+                title: "Défauts sur composants horlogers",
+                valueType: "Nombre de défauts",
+                data: [
+                    { id: 1, label: "Rayures sur ponts", value: 42, action: "Améliorer la protection et la manutention des pièces" },
+                    { id: 2, label: "Bavures", value: 25, action: "Revoir l’ébavurage et l’état des outils" },
+                    { id: 3, label: "Cotes hors tolérance", value: 18, action: "Contrôler les réglages machine et les moyens de mesure" },
+                    { id: 4, label: "Défaut de propreté", value: 10, action: "Renforcer le nettoyage et les contrôles visuels" },
+                    { id: 5, label: "Mauvais conditionnement", value: 5, action: "Standardiser les contenants et la méthode de rangement" }
+                ]
+            },
+            defauts: {
+                title: "Analyse des défauts en production",
+                valueType: "Nombre de défauts",
+                data: [
+                    { id: 1, label: "Rayures", value: 120, action: "Protéger les pièces et revoir les manipulations" },
+                    { id: 2, label: "Défaut aspect", value: 45, action: "Renforcer le contrôle visuel et les standards d’acceptation" },
+                    { id: 3, label: "Dimension HS", value: 25, action: "Vérifier les réglages et les instruments de mesure" },
+                    { id: 4, label: "Emballage", value: 15, action: "Revoir les consignes de conditionnement" },
+                    { id: 5, label: "Manquant", value: 8, action: "Contrôler la préparation avant expédition" }
+                ]
+            },
+            clients: {
+                title: "Réclamations clients",
+                valueType: "Nombre de réclamations",
+                data: [
+                    { id: 1, label: "Retard livraison", value: 85, action: "Analyser les causes de retard et sécuriser le planning" },
+                    { id: 2, label: "Erreur facture", value: 40, action: "Mettre en place une vérification avant envoi" },
+                    { id: 3, label: "Produit abîmé", value: 20, action: "Revoir l’emballage et le transport" },
+                    { id: 4, label: "Service injoignable", value: 10, action: "Clarifier les créneaux de contact client" },
+                    { id: 5, label: "Autre", value: 5, action: "Analyser au cas par cas" }
+                ]
+            },
+            maintenance: {
+                title: "Causes d’arrêts machine",
+                valueType: "Temps perdu en minutes",
+                data: [
+                    { id: 1, label: "Bourrage", value: 150, action: "Nettoyer, régler et contrôler les zones de passage" },
+                    { id: 2, label: "Panne moteur", value: 30, action: "Planifier une maintenance préventive" },
+                    { id: 3, label: "Manque matière", value: 15, action: "Sécuriser l’approvisionnement poste" },
+                    { id: 4, label: "Réglages", value: 10, action: "Créer une fiche de réglage standard" },
+                    { id: 5, label: "Coupure électrique", value: 2, action: "Contrôler l’alimentation et les protections" }
+                ]
+            },
+            cinqS: {
+                title: "Non-conformités observées lors d’un audit 5S",
+                valueType: "Nombre d’écarts",
+                data: [
+                    { id: 1, label: "Outils non rangés", value: 34, action: "Définir des emplacements visuels" },
+                    { id: 2, label: "Documents obsolètes", value: 21, action: "Mettre à jour le classeur ou l’affichage" },
+                    { id: 3, label: "Poste encombré", value: 16, action: "Trier et retirer l’inutile" },
+                    { id: 4, label: "Étiquetage absent", value: 9, action: "Ajouter des repères clairs" },
+                    { id: 5, label: "Sol sale", value: 6, action: "Définir une fréquence de nettoyage" }
+                ]
+            }
+        };
+
+        const STORAGE_KEY = "qualitools-pareto-v2";
+        const DEFAULT_SUBTITLE = "Classement décroissant, pourcentage par catégorie et courbe de cumul.";
+
+        const METHOD_STEPS = [
+            "Saisir les causes ou catégories.",
+            "Saisir la fréquence, le coût, le temps perdu ou l’impact.",
+            "Classer les causes par ordre décroissant.",
+            "Calculer le pourcentage de chaque cause.",
+            "Calculer le pourcentage cumulé.",
+            "Repérer les causes qui permettent d’atteindre environ 80 % du total.",
+            "Définir les actions d’amélioration prioritaires."
+        ];
+
+        const cloneExample = (key) => JSON.parse(JSON.stringify(EXAMPLES[key]));
+
+        const formatPercent = (value) => `${Number(value || 0).toFixed(1).replace(".", ",")} %`;
+
+        const sanitizeItems = (items) => {
+            return items.map((item, index) => ({
+                id: item.id || index + 1,
+                label: item.label || `Catégorie ${index + 1}`,
+                value: Math.max(0, Number(item.value) || 0),
+                action: item.action || ""
+            }));
+        };
+
+        const App = () => {
+            const initialState = (() => {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY);
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        return {
+                            title: parsed.title || EXAMPLES.blank.title,
+                            subtitle: parsed.subtitle || DEFAULT_SUBTITLE,
+                            valueType: parsed.valueType || EXAMPLES.blank.valueType,
+                            items: sanitizeItems(parsed.items || EXAMPLES.blank.data),
+                            showHelp: parsed.showHelp ?? true
+                        };
+                    }
+                } catch (e) {
+                    console.warn("Impossible de charger la sauvegarde locale.", e);
+                }
+
+                const blank = cloneExample("blank");
+                return {
+                    title: blank.title,
+                    subtitle: DEFAULT_SUBTITLE,
+                    valueType: blank.valueType,
+                    items: blank.data,
+                    showHelp: true
+                };
+            })();
+
+            const [items, setItems] = useState(initialState.items);
+            const [title, setTitle] = useState(initialState.title);
+            const [subtitle, setSubtitle] = useState(initialState.subtitle);
+            const [valueType, setValueType] = useState(initialState.valueType);
+            const [showHelp, setShowHelp] = useState(initialState.showHelp);
+            const [showMethodModal, setShowMethodModal] = useState(false);
+            const [showLegendModal, setShowLegendModal] = useState(false);
+
+            // -----------------------------
+            // Calculs Pareto
+            // -----------------------------
+            const grandTotal = useMemo(() => {
+                return items.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+            }, [items]);
+
+            const processedData = useMemo(() => {
+                const sorted = sanitizeItems(items)
+                    .filter(item => item.label.trim() !== "" || item.value > 0)
+                    .sort((a, b) => b.value - a.value);
+
+                let currentSum = 0;
+
+                return sorted.map((item, index) => {
+                    const value = Number(item.value) || 0;
+                    currentSum += value;
+
+                    return {
+                        ...item,
+                        rank: index + 1,
+                        value,
+                        percent: grandTotal === 0 ? 0 : (value / grandTotal) * 100,
+                        cumulative: grandTotal === 0 ? 0 : (currentSum / grandTotal) * 100
+                    };
+                });
+            }, [items, grandTotal]);
+
+            // Inclut la catégorie qui fait atteindre ou dépasser 80 %.
+            const priorityData = useMemo(() => {
+                if (grandTotal <= 0) return [];
+
+                let reached80 = false;
+
+                return processedData.filter(item => {
+                    if (reached80) return false;
+
+                    if (item.cumulative >= 80) {
+                        reached80 = true;
+                        return true;
+                    }
+
+                    return true;
+                });
+            }, [processedData, grandTotal]);
+
+            const priorityTotalPercent = useMemo(() => {
+                return priorityData.reduce((sum, item) => sum + item.percent, 0);
+            }, [priorityData]);
+
+            const priorityCategoryPercent = useMemo(() => {
+                if (processedData.length === 0) return 0;
+                return (priorityData.length / processedData.length) * 100;
+            }, [priorityData, processedData]);
+
+            const paretoDiagnosis = useMemo(() => {
+                if (grandTotal === 0 || processedData.length === 0) {
+                    return {
+                        label: "Données insuffisantes",
+                        tone: "gray",
+                        text: "Saisissez des valeurs supérieures à zéro pour obtenir une interprétation du diagramme."
+                    };
+                }
+
+                if (priorityCategoryPercent <= 30) {
+                    return {
+                        label: "Pareto marqué",
+                        tone: "green",
+                        text: "Peu de causes concentrent la majorité des effets. La priorisation est nette."
+                    };
+                }
+
+                if (priorityCategoryPercent <= 50) {
+                    return {
+                        label: "Pareto modéré",
+                        tone: "yellow",
+                        text: "Plusieurs causes contribuent fortement au problème. Il faut prioriser, mais sans négliger les causes secondaires."
+                    };
+                }
+
+                return {
+                    label: "Pareto peu marqué",
+                    tone: "red",
+                    text: "Les effets sont répartis entre beaucoup de causes. Une action globale ou systémique peut être nécessaire."
+                };
+            }, [grandTotal, processedData, priorityCategoryPercent]);
+
+            // -----------------------------
+            // Sauvegarde locale automatique
+            // -----------------------------
+            useEffect(() => {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                        title,
+                        subtitle,
+                        valueType,
+                        items,
+                        showHelp
+                    }));
+                } catch (e) {
+                    console.warn("Impossible d’enregistrer la sauvegarde locale.", e);
+                }
+            }, [title, subtitle, valueType, items, showHelp]);
+
+            // -----------------------------
+            // Actions
+            // -----------------------------
+            const addItem = () => {
+                const newId = Math.max(...items.map(i => Number(i.id) || 0), 0) + 1;
+                setItems([...items, {
+                    id: newId,
+                    label: `Nouvelle catégorie ${newId}`,
+                    value: 0,
+                    action: ""
+                }]);
+            };
+
+            const updateItem = (id, field, val) => {
+                setItems(items.map(item => {
+                    if (item.id !== id) return item;
+
+                    if (field === "value") {
+                        return { ...item, value: Math.max(0, Number(val) || 0) };
+                    }
+
+                    return { ...item, [field]: val };
+                }));
+            };
+
+            const deleteItem = (id) => {
+                if (items.length <= 1) return;
+                setItems(items.filter(item => item.id !== id));
+            };
+
+            const loadExample = (key) => {
+                if (!key || !EXAMPLES[key]) return;
+
+                const confirmed = confirm("Charger cet exemple remplacera vos données actuelles. Continuer ?");
+                if (!confirmed) return;
+
+                const example = cloneExample(key);
+                setItems(example.data);
+                setTitle(example.title);
+                setSubtitle(example.subtitle || DEFAULT_SUBTITLE);
+                setValueType(example.valueType);
+            };
+
+            const resetData = () => {
+                const confirmed = confirm("Créer un nouveau diagramme vierge ? Les données actuelles seront remplacées.");
+                if (!confirmed) return;
+
+                const blank = cloneExample("blank");
+                setItems(blank.data);
+                setTitle(blank.title);
+                setSubtitle(DEFAULT_SUBTITLE);
+                setValueType(blank.valueType);
+            };
+
+            const clearSavedData = () => {
+                const confirmed = confirm("Supprimer la sauvegarde locale de ce navigateur ?");
+                if (!confirmed) return;
+
+                localStorage.removeItem(STORAGE_KEY);
+                alert("Sauvegarde locale supprimée.");
+            };
+
+            const printReport = () => {
+                window.print();
+            };
+
+            const exportCSV = () => {
+                const header = ["Rang", "Catégorie", "Valeur", "Pourcentage", "Pourcentage cumulé", "Priorité", "Action proposée"];
+                const rows = processedData.map(item => [
+                    item.rank,
+                    item.label,
+                    item.value,
+                    item.percent.toFixed(2),
+                    item.cumulative.toFixed(2),
+                    priorityData.some(p => p.id === item.id) ? "Prioritaire" : "Complémentaire",
+                    item.action || ""
+                ]);
+
+                const csv = [header, ...rows]
+                    .map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(";"))
+                    .join("\n");
+
+                const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = `${title || "pareto"}.csv`.replace(/[\\/:*?"<>|]/g, "-");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            };
+
+            const isPriority = (id) => priorityData.some(item => item.id === id);
+
+            const LegendContent = () => (
+                <div className="space-y-4">
+                    <div className="bg-blue-50 p-4 rounded border border-blue-100">
+                        <h4 className="font-bold text-blue-800 text-sm uppercase mb-2 flex items-center gap-2">
+                            <span className="inline-block w-4 h-4 rounded bg-blue-100 border border-blue-300"></span>
+                            Zone prioritaire
+                        </h4>
+                        {priorityData.length === 0 ? (
+                            <p className="text-sm text-blue-900">Aucune priorité calculée pour le moment.</p>
+                        ) : (
+                            <>
+                                <p className="text-sm text-blue-900 mb-2">
+                                    {priorityData.length} catégorie(s) sur {processedData.length} représentent {formatPercent(priorityTotalPercent)} du total.
+                                </p>
+                                <ul className="text-sm space-y-1">
+                                    {priorityData.map(d => (
+                                        <li key={d.id} className="flex justify-between gap-3 text-blue-900">
+                                            <span>• {d.label}</span>
+                                            <span className="font-bold whitespace-nowrap">{formatPercent(d.percent)}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </>
+                        )}
+                    </div>
+
+                    <div className={`${toneClasses[paretoDiagnosis.tone]} p-4 rounded border`}>
+                        <h4 className="font-bold text-sm uppercase mb-2 flex items-center gap-2">
+                            <Icon name="Activity" size={16} /> Diagnostic
+                        </h4>
+                        <p className="text-sm font-bold mb-1">{paretoDiagnosis.label}</p>
+                        <p className="text-sm">{paretoDiagnosis.text}</p>
+                    </div>
+
+                    <div className="bg-yellow-50 p-4 rounded border border-yellow-100">
+                        <h4 className="font-bold text-yellow-800 text-sm uppercase mb-2 flex items-center gap-2">
+                            <Icon name="Lightbulb" size={16} /> Interprétation
+                        </h4>
+                        <p className="text-sm text-yellow-900">
+                            Les causes prioritaires sont celles qui permettent d’atteindre environ 80 % du total cumulé. Elles doivent être traitées en premier, car elles concentrent l’impact principal du problème.
+                        </p>
+                    </div>
+
+                    <div className="bg-white p-4 rounded border border-gray-200">
+                        <h4 className="font-bold text-gray-800 text-sm uppercase mb-2">Repères visuels du graphique</h4>
+                        <ul className="text-sm text-gray-700 space-y-2">
+                            <li><span className="inline-block w-3 h-3 rounded bg-[#cfa346] mr-2"></span>Barres dorées : catégories prioritaires.</li>
+                            <li><span className="inline-block w-3 h-3 rounded bg-gray-300 mr-2"></span>Barres grises : catégories complémentaires.</li>
+                            <li><span className="inline-block w-8 h-[3px] bg-[#111827] mr-2 align-middle"></span>Courbe noire : pourcentage cumulé.</li>
+                            <li><span className="inline-block w-8 border-t-2 border-dashed border-red-500 mr-2 align-middle"></span>Ligne rouge : seuil de 80 %.</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+
+            // -----------------------------
+            // Graphique SVG
+            // -----------------------------
+            const Chart = () => {
+                if (processedData.length === 0 || grandTotal === 0) {
+                    return (
+                        <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-gray-400 bg-white rounded-lg border border-dashed border-gray-300">
+                            <Icon name="BarChart2" size={42} className="mb-3" />
+                            <p className="font-semibold">Aucune donnée exploitable</p>
+                            <p className="text-sm">Ajoutez des valeurs supérieures à zéro pour afficher le Pareto.</p>
+                        </div>
+                    );
+                }
+
+                const width = 900;
+                const height = 460;
+                const margin = { top: 45, right: 78, bottom: 95, left: 72 };
+                const chartW = width - margin.left - margin.right;
+                const chartH = height - margin.top - margin.bottom;
+                const maxVal = Math.max(...processedData.map(d => d.value), 1);
+                const yMax = Math.ceil(maxVal * 1.15);
+                const step = chartW / processedData.length;
+                const barWidth = Math.max(18, step * 0.72);
+                const yTicks = [0, 0.25, 0.5, 0.75, 1];
+                const y80 = chartH - 0.8 * chartH;
+
+                const linePoints = processedData.map((d, i) => {
+                    const x = (i * step) + (step / 2);
+                    const y = chartH - (d.cumulative / 100) * chartH;
+                    return `${x},${y}`;
+                }).join(" ");
+
+                return (
+                    <svg
+                        viewBox={`0 0 ${width} ${height}`}
+                        className="w-full h-full bg-white rounded-lg shadow-sm border border-gray-200"
+                        role="img"
+                        aria-label="Diagramme de Pareto avec barres de valeurs et courbe de pourcentage cumulé"
+                    >
+                        <g transform={`translate(${margin.left}, ${margin.top})`}>
+                            {/* Fond zone graphique */}
+                            <rect x="0" y="0" width={chartW} height={chartH} fill="#ffffff" />
+
+                            {/* Grille et graduations gauche */}
+                            {yTicks.map(t => {
+                                const y = chartH * (1 - t);
+                                const value = Math.round(yMax * t);
+
+                                return (
+                                    <g key={t}>
+                                        <line x1={0} y1={y} x2={chartW} y2={y} stroke="#ededed" strokeWidth="1" />
+                                        <text x="-12" y={y + 4} textAnchor="end" fontSize="11" fill="#555">
+                                            {value}
+                                        </text>
+                                        <text x={chartW + 12} y={y + 4} textAnchor="start" fontSize="11" fill="#555">
+                                            {Math.round(t * 100)}%
+                                        </text>
+                                    </g>
+                                );
+                            })}
+
+                            {/* Ligne 80 % */}
+                            <line x1={0} y1={y80} x2={chartW} y2={y80} stroke="#ef4444" strokeWidth="1.5" strokeDasharray="6,5" />
+                            <text x={chartW - 4} y={y80 - 8} fill="#ef4444" fontSize="12" fontWeight="700" textAnchor="end">
+                                Seuil 80 %
+                            </text>
+
+                            {/* Zone prioritaire visuelle */}
+                            {priorityData.length > 0 && (
+                                <rect
+                                    x="0"
+                                    y="0"
+                                    width={priorityData.length * step}
+                                    height={chartH}
+                                    fill="#dbeafe"
+                                    opacity="0.28"
+                                />
+                            )}
+
+                            {/* Barres */}
+                            {processedData.map((d, i) => {
+                                const h = yMax === 0 ? 0 : (d.value / yMax) * chartH;
+                                const x = (i * step) + (step - barWidth) / 2;
+                                const y = chartH - h;
+                                const priority = isPriority(d.id);
+
+                                return (
+                                    <g key={d.id}>
+                                        <rect
+                                            x={x}
+                                            y={y}
+                                            width={barWidth}
+                                            height={h}
+                                            rx="4"
+                                            fill={priority ? "#cfa346" : "#d1d5db"}
+                                            stroke={priority ? "#9d7627" : "#9ca3af"}
+                                            className="transition-opacity cursor-pointer hover:opacity-80"
+                                        >
+                                            <title>{`${d.label} : ${d.value} - ${formatPercent(d.percent)} - cumul ${formatPercent(d.cumulative)}`}</title>
+                                        </rect>
+
+                                        <text
+                                            x={x + barWidth / 2}
+                                            y={Math.max(14, y - 7)}
+                                            textAnchor="middle"
+                                            fontSize="12"
+                                            fill="#333"
+                                            fontWeight="700"
+                                        >
+                                            {d.value}
+                                        </text>
+                                    </g>
+                                );
+                            })}
+
+                            {/* Courbe cumulée */}
+                            <polyline
+                                points={linePoints}
+                                fill="none"
+                                stroke="#111827"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+
+                            {/* Points cumulés */}
+                            {processedData.map((d, i) => {
+                                const x = (i * step) + (step / 2);
+                                const y = chartH - (d.cumulative / 100) * chartH;
+
+                                return (
+                                    <g key={`point-${d.id}`}>
+                                        <circle cx={x} cy={y} r="5" fill="#111827" stroke="white" strokeWidth="2" />
+                                        <text x={x} y={y - 12} textAnchor="middle" fontSize="10" fill="#111827" fontWeight="700">
+                                            {d.cumulative.toFixed(0)}%
+                                        </text>
+                                    </g>
+                                );
+                            })}
+
+                            {/* Axes */}
+                            <g className="cursor-help">
+                                <line x1={0} y1={chartH} x2={chartW} y2={chartH} stroke="#333" strokeWidth="2" />
+                                <rect x="0" y={chartH - 8} width={chartW} height="28" fill="transparent" />
+                                <title>Axe horizontal : catégories classées automatiquement de la valeur la plus élevée à la valeur la plus faible.</title>
+                            </g>
+                            <g className="cursor-help">
+                                <line x1={0} y1={0} x2={0} y2={chartH} stroke="#333" strokeWidth="2" />
+                                <rect x="-55" y="0" width="65" height={chartH} fill="transparent" />
+                                <title>Axe gauche : valeur réelle saisie pour chaque catégorie. Ici : {valueType}.</title>
+                            </g>
+                            <g className="cursor-help">
+                                <line x1={chartW} y1={0} x2={chartW} y2={chartH} stroke="#333" strokeWidth="2" />
+                                <rect x={chartW - 5} y="0" width="65" height={chartH} fill="transparent" />
+                                <title>Axe droit : pourcentage cumulé. La courbe noire montre la progression vers 100 %.</title>
+                            </g>
+
+                            {/* Libellés X */}
+                            {processedData.map((d, i) => {
+                                const x = (i * step) + (step / 2);
+                                const label = d.label.length > 18 ? `${d.label.substring(0, 16)}…` : d.label;
+
+                                return (
+                                    <text
+                                        key={`label-${d.id}`}
+                                        x={0}
+                                        y={0}
+                                        transform={`translate(${x}, ${chartH + 24}) rotate(-38)`}
+                                        textAnchor="end"
+                                        fontSize="12"
+                                        fill="#333"
+                                        fontWeight="600"
+                                    >
+                                        {label}
+                                    </text>
+                                );
+                            })}
+
+                            {/* Titres axes */}
+                            <g className="cursor-help">
+                                <text
+                                    x="-48"
+                                    y={chartH / 2}
+                                    textAnchor="middle"
+                                    transform={`rotate(-90, -48, ${chartH / 2})`}
+                                    fontSize="12"
+                                    fontWeight="700"
+                                    fill="#333"
+                                >
+                                    {valueType}
+                                </text>
+                                <title>Axe gauche : il indique la valeur brute de chaque catégorie, par exemple un nombre de défauts, un coût ou un temps perdu.</title>
+                            </g>
+
+                            <g className="cursor-help">
+                                <text
+                                    x={chartW + 54}
+                                    y={chartH / 2}
+                                    textAnchor="middle"
+                                    transform={`rotate(-90, ${chartW + 54}, ${chartH / 2})`}
+                                    fontSize="12"
+                                    fontWeight="700"
+                                    fill="#333"
+                                >
+                                    Pourcentage cumulé
+                                </text>
+                                <title>Axe droit : il indique le pourcentage cumulé utilisé pour repérer le seuil des 80 %.</title>
+                            </g>
+
+                            {/* Légende */}
+                            <g transform={`translate(0, -25)`}>
+                                <rect x="0" y="0" width="13" height="13" rx="2" fill="#cfa346" />
+                                <text x="20" y="11" fontSize="12" fill="#333">Causes prioritaires</text>
+                                <line x1="158" y1="7" x2="188" y2="7" stroke="#111827" strokeWidth="3" />
+                                <circle cx="173" cy="7" r="4" fill="#111827" />
+                                <text x="198" y="11" fontSize="12" fill="#333">Cumul</text>
+                                <line x1="252" y1="7" x2="290" y2="7" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="6,5" />
+                                <text x="300" y="11" fontSize="12" fill="#333">80 %</text>
+                            </g>
+                        </g>
+                    </svg>
+                );
+            };
+
+            const toneClasses = {
+                green: "bg-green-50 border-green-200 text-green-900",
+                yellow: "bg-yellow-50 border-yellow-200 text-yellow-900",
+                red: "bg-red-50 border-red-200 text-red-900",
+                gray: "bg-gray-50 border-gray-200 text-gray-700"
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col">
+                    {/* Header */}
+                    <header className="bg-[#1a1a1a] text-[#cfa346] p-4 shadow-md z-20 no-print">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:justify-between md:items-center gap-3">
+                            <div className="flex items-center gap-4">
+                                <a href="index.html" className="text-white hover:text-[#cfa346] transition flex items-center gap-2 font-semibold text-sm" aria-label="Retour à l’accueil">
+                                    <Icon name="ArrowLeft" size={20} /> Accueil
+                                </a>
+                                <div className="h-6 w-px bg-gray-700 hidden sm:block"></div>
+                                <h1 className="text-lg md:text-xl font-bold tracking-widest uppercase flex items-center gap-2">
+                                    <Icon name="BarChart2" /> Diagramme de Pareto
+                                </h1>
+                            </div>
+
+                            <div className="flex flex-wrap gap-2 items-center">
+                                <select
+                                    onChange={(e) => { loadExample(e.target.value); e.target.value = ""; }}
+                                    className="bg-[#333] text-white text-sm rounded border border-gray-600 px-2 py-2 outline-none focus:border-[#cfa346]"
+                                    defaultValue=""
+                                    aria-label="Charger un exemple"
+                                >
+                                    <option value="" disabled>📂 Exemples</option>
+                                    <option value="horlogerie">⌚ Défauts horlogers</option>
+                                    <option value="defauts">🏭 Défauts production</option>
+                                    <option value="clients">📞 Réclamations clients</option>
+                                    <option value="maintenance">🔧 Arrêts machine</option>
+                                    <option value="cinqS">🧹 Audit 5S</option>
+                                </select>
+
+                                <button onClick={resetData} className="p-2 text-gray-300 hover:text-white transition" title="Nouveau diagramme" aria-label="Créer un nouveau diagramme">
+                                    <Icon name="FilePlus" size={20} />
+                                </button>
+
+                                <button onClick={exportCSV} className="px-3 py-2 bg-[#333] text-white rounded text-sm hover:bg-[#444] transition flex items-center gap-2" aria-label="Exporter les résultats en CSV">
+                                    <Icon name="Download" size={16} /> CSV
+                                </button>
+
+                                <button onClick={printReport} className="px-3 py-2 bg-[#cfa346] text-[#1a1a1a] rounded text-sm font-bold hover:bg-[#d9b45f] transition flex items-center gap-2" aria-label="Imprimer ou exporter en PDF">
+                                    <Icon name="Printer" size={16} /> PDF / Imprimer
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    {showMethodModal && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true" aria-labelledby="method-modal-title">
+                            <div className="bg-white w-full max-w-2xl rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
+                                <div className="p-5 bg-[#1a1a1a] text-white flex items-center justify-between">
+                                    <h2 id="method-modal-title" className="font-bold text-lg flex items-center gap-2">
+                                        <Icon name="GraduationCap" size={22} /> Rappel de la méthode Pareto
+                                    </h2>
+                                    <button onClick={() => setShowMethodModal(false)} className="text-gray-300 hover:text-white" aria-label="Fermer le rappel méthode">
+                                        <Icon name="X" size={22} />
+                                    </button>
+                                </div>
+                                <div className="p-6 space-y-4">
+                                    <p className="text-gray-700">
+                                        Le diagramme de Pareto sert à identifier les causes qui concentrent l’essentiel d’un problème afin de prioriser les actions d’amélioration.
+                                    </p>
+                                    <ol className="space-y-3">
+                                        {METHOD_STEPS.map((step, index) => (
+                                            <li key={step} className="flex gap-3 items-start">
+                                                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-[#cfa346] text-[#1a1a1a] font-bold flex items-center justify-center text-sm">{index + 1}</span>
+                                                <span className="text-gray-800">{step}</span>
+                                            </li>
+                                        ))}
+                                    </ol>
+                                    <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 text-sm text-blue-900">
+                                        La catégorie qui fait atteindre ou dépasser le seuil de 80 % est incluse dans les causes prioritaires.
+                                    </div>
+                                </div>
+                                <div className="p-4 bg-gray-50 border-t border-gray-200 flex justify-end">
+                                    <button onClick={() => setShowMethodModal(false)} className="px-4 py-2 rounded bg-[#cfa346] text-[#1a1a1a] font-bold hover:bg-[#d9b45f] transition">
+                                        J’ai compris
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {showLegendModal && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true" aria-labelledby="legend-modal-title">
+                            <div className="bg-white w-full max-w-2xl max-h-[90vh] rounded-xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col">
+                                <div className="p-5 bg-[#1a1a1a] text-white flex items-center justify-between">
+                                    <h2 id="legend-modal-title" className="font-bold text-lg flex items-center gap-2">
+                                        <Icon name="Info" size={22} /> Légende et interprétation
+                                    </h2>
+                                    <button onClick={() => setShowLegendModal(false)} className="text-gray-300 hover:text-white" aria-label="Fermer la légende">
+                                        <Icon name="X" size={22} />
+                                    </button>
+                                </div>
+                                <div className="p-6 overflow-y-auto bg-gray-50">
+                                    <LegendContent />
+                                </div>
+                                <div className="p-4 bg-white border-t border-gray-200 flex justify-end">
+                                    <button onClick={() => setShowLegendModal(false)} className="px-4 py-2 rounded bg-[#cfa346] text-[#1a1a1a] font-bold hover:bg-[#d9b45f] transition">
+                                        Fermer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="max-w-7xl mx-auto w-full px-4 md:px-6 pt-4 no-print">
+                        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                            <div>
+                                <h2 className="font-bold text-gray-800 flex items-center gap-2">
+                                    <Icon name="GraduationCap" size={18} /> Rappel de la méthode
+                                </h2>
+                                <p className="text-sm text-gray-500">Afficher les étapes de construction et d’interprétation du diagramme de Pareto.</p>
+                            </div>
+                            <button onClick={() => setShowMethodModal(true)} className="px-4 py-2 bg-[#1a1a1a] text-white rounded font-semibold hover:bg-[#333] transition flex items-center justify-center gap-2">
+                                <Icon name="BookOpen" size={18} /> Voir la méthode
+                            </button>
+                        </div>
+                    </div>
+
+                    <main className="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* Colonne gauche */}
+                        <section className="lg:col-span-1 flex flex-col gap-4 print-full-width">
+                            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 print-card">
+                                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Titre du graphique</label>
+                                <input
+                                    type="text"
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    className="w-full border-b-2 border-gray-200 focus:border-[#cfa346] outline-none py-1 text-lg font-bold text-[#1a1a1a]"
+                                />
+
+                                <label className="block text-xs font-bold text-gray-500 uppercase mt-4 mb-1">Sous-titre du graphique</label>
+                                <input
+                                    type="text"
+                                    value={subtitle}
+                                    onChange={(e) => setSubtitle(e.target.value)}
+                                    className="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:border-[#cfa346] outline-none"
+                                    placeholder="Ex. Classement décroissant, pourcentage par catégorie et courbe de cumul."
+                                />
+
+                                <label className="block text-xs font-bold text-gray-500 uppercase mt-4 mb-1">Type de valeur analysée</label>
+                                <select
+                                    value={valueType}
+                                    onChange={(e) => setValueType(e.target.value)}
+                                    className="w-full border border-gray-200 rounded px-3 py-2 text-sm focus:border-[#cfa346] outline-none bg-white"
+                                >
+                                    <option>Nombre d'occurrences</option>
+                                    <option>Nombre de défauts</option>
+                                    <option>Nombre de réclamations</option>
+                                    <option>Temps perdu en minutes</option>
+                                    <option>Coût en CHF</option>
+                                    <option>Coût en €</option>
+                                    <option>Impact client</option>
+                                </select>
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow-sm border border-gray-200 flex-1 flex flex-col overflow-hidden print-card">
+                                <div className="p-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                                    <h2 className="font-bold text-gray-700">Données à analyser</h2>
+                                    <span className="text-xs bg-[#cfa346] text-[#1a1a1a] px-2 py-1 rounded font-bold">Total : {grandTotal}</span>
+                                </div>
+
+                                <div className="overflow-y-auto flex-1 p-2">
+                                    <table className="w-full text-sm">
+                                        <thead>
+                                            <tr className="text-left text-gray-500 border-b border-gray-100">
+                                                <th className="pb-2 pl-2 font-semibold">Catégorie</th>
+                                                <th className="pb-2 w-24 font-semibold text-right">Valeur</th>
+                                                <th className="pb-2 w-10 text-center">Suppr.</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {items.map((item) => (
+                                                <tr key={item.id} className="hover:bg-gray-50 align-top">
+                                                    <td className="py-1">
+                                                        <input
+                                                            type="text"
+                                                            value={item.label}
+                                                            onChange={(e) => updateItem(item.id, "label", e.target.value)}
+                                                            className="w-full bg-transparent border border-transparent hover:border-gray-300 focus:border-[#cfa346] rounded px-2 py-1 outline-none"
+                                                            aria-label="Nom de la catégorie"
+                                                        />
+                                                    </td>
+                                                    <td className="py-1">
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="1"
+                                                            value={item.value}
+                                                            onChange={(e) => updateItem(item.id, "value", e.target.value)}
+                                                            className="w-full bg-transparent border border-transparent hover:border-gray-300 focus:border-[#cfa346] rounded px-2 py-1 outline-none text-right font-mono"
+                                                            aria-label="Valeur de la catégorie"
+                                                        />
+                                                    </td>
+                                                    <td className="py-1 text-center">
+                                                        <button
+                                                            onClick={() => deleteItem(item.id)}
+                                                            className="text-gray-400 hover:text-red-500 transition disabled:opacity-20"
+                                                            disabled={items.length <= 1}
+                                                            aria-label={`Supprimer ${item.label}`}
+                                                        >
+                                                            <Icon name="Trash2" size={16} />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div className="p-3 border-t border-gray-200 bg-gray-50 no-print">
+                                    <button
+                                        onClick={addItem}
+                                        className="w-full py-2 border-2 border-dashed border-gray-300 text-gray-600 rounded hover:border-[#cfa346] hover:text-[#cfa346] hover:bg-white transition flex items-center justify-center gap-2 font-semibold text-sm"
+                                    >
+                                        <Icon name="Plus" size={16} /> Ajouter une ligne
+                                    </button>
+                                </div>
+                            </div>
+
+                            
+                        </section>
+
+                        {/* Colonne droite */}
+                        <section className="lg:col-span-2 flex flex-col gap-4 print-full-width">
+                            <div className="bg-white p-5 md:p-6 rounded-lg shadow-sm border border-gray-200 h-full flex flex-col print-card">
+                                <div className="mb-5 flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                                    <div>
+                                        <input
+                                            type="text"
+                                            value={title}
+                                            onChange={(e) => setTitle(e.target.value)}
+                                            className="w-full text-2xl font-bold text-[#1a1a1a] bg-transparent border-b border-transparent hover:border-gray-200 focus:border-[#cfa346] outline-none"
+                                            aria-label="Titre du graphique"
+                                        />
+                                        <input
+                                            type="text"
+                                            value={subtitle}
+                                            onChange={(e) => setSubtitle(e.target.value)}
+                                            className="w-full text-gray-500 text-sm bg-transparent border-b border-transparent hover:border-gray-200 focus:border-[#cfa346] outline-none mt-1"
+                                            aria-label="Sous-titre du graphique"
+                                        />
+                                    </div>
+
+                                    <div className="flex gap-2 flex-wrap text-xs no-print">
+                                        <button onClick={clearSavedData} className="px-3 py-2 border border-gray-300 rounded hover:bg-gray-50 text-gray-600">
+                                            Supprimer sauvegarde locale
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end mb-3 no-print">
+                                    <button
+                                        onClick={() => setShowLegendModal(true)}
+                                        className="px-4 py-2 bg-blue-50 text-blue-900 border border-blue-200 rounded font-semibold hover:bg-blue-100 transition flex items-center gap-2"
+                                        aria-label="Afficher la légende et l’interprétation du diagramme"
+                                    >
+                                        <Icon name="Info" size={18} /> Voir la légende
+                                    </button>
+                                </div>
+
+                                <div className="chart-card">
+                                    <Chart />
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden print-card">
+                                <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                                    <h2 className="font-bold text-gray-800 flex items-center gap-2">
+                                        <Icon name="Table" size={18} /> Tableau des résultats
+                                    </h2>
+                                    <span className="text-xs text-gray-500">Trié automatiquement par ordre décroissant</span>
+                                </div>
+
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm">
+                                        <thead className="bg-white border-b border-gray-200 text-gray-600">
+                                            <tr>
+                                                <th className="text-left px-4 py-3">Rang</th>
+                                                <th className="text-left px-4 py-3">Catégorie</th>
+                                                <th className="text-right px-4 py-3">Valeur</th>
+                                                <th className="text-right px-4 py-3">%</th>
+                                                <th className="text-right px-4 py-3">% cumulé</th>
+                                                <th className="text-left px-4 py-3">Priorité</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {processedData.map(item => (
+                                                <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
+                                                    <td className="px-4 py-3 font-mono text-gray-500">{item.rank}</td>
+                                                    <td className="px-4 py-3 font-semibold text-gray-800">{item.label}</td>
+                                                    <td className="px-4 py-3 text-right font-mono">{item.value}</td>
+                                                    <td className="px-4 py-3 text-right font-mono">{formatPercent(item.percent)}</td>
+                                                    <td className="px-4 py-3 text-right font-mono font-bold">{formatPercent(item.cumulative)}</td>
+                                                    <td className="px-4 py-3">
+                                                        {isPriority(item.id) ? (
+                                                            <span className="inline-flex items-center px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">Prioritaire</span>
+                                                        ) : (
+                                                            <span className="inline-flex items-center px-2 py-1 rounded bg-gray-100 text-gray-600 text-xs font-semibold">Complémentaire</span>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))}
+
+                                            {processedData.length === 0 && (
+                                                <tr>
+                                                    <td colSpan="6" className="px-4 py-8 text-center text-gray-400">
+                                                        Aucune donnée à afficher.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden print-card">
+                                <div className="p-4 border-b border-gray-200 bg-gray-50">
+                                    <h2 className="font-bold text-gray-800 flex items-center gap-2">
+                                        <Icon name="Wrench" size={18} /> Actions proposées
+                                    </h2>
+                                    <p className="text-xs text-gray-500 mt-1">Compléter les actions pour relier l’analyse Pareto à l’amélioration continue.</p>
+                                </div>
+
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-sm">
+                                        <thead className="bg-white border-b border-gray-200 text-gray-600">
+                                            <tr>
+                                                <th className="text-left px-4 py-3 w-1/4">Catégorie</th>
+                                                <th className="text-left px-4 py-3">Action proposée</th>
+                                                <th className="text-left px-4 py-3 w-32">Statut</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {items.map(item => (
+                                                <tr key={item.id} className="border-b border-gray-100 align-top">
+                                                    <td className="px-4 py-3 font-semibold text-gray-800">{item.label}</td>
+                                                    <td className="px-4 py-3">
+                                                        <input
+                                                            type="text"
+                                                            value={item.action || ""}
+                                                            onChange={(e) => updateItem(item.id, "action", e.target.value)}
+                                                            className="w-full border border-gray-200 rounded px-3 py-2 focus:border-[#cfa346] outline-none"
+                                                            placeholder="Ex. modifier le standard, former, contrôler, sécuriser..."
+                                                            aria-label={`Action proposée pour ${item.label}`}
+                                                        />
+                                                    </td>
+                                                    <td className="px-4 py-3">
+                                                        {isPriority(item.id) ? (
+                                                            <span className="inline-flex px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">À traiter d’abord</span>
+                                                        ) : (
+                                                            <span className="inline-flex px-2 py-1 rounded bg-gray-100 text-gray-600 text-xs font-semibold">Secondaire</span>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </section>
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(<App />);
+    </script>
+</body>
+</html>
