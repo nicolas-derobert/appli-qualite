@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz MT_322 – Qualité industrielle</title>
+<meta name="description" content="Quiz de fin de chapitre du cours Qualité industrielle (MT_322, hepia) : métrologie, normalisation, SMQ, coûts de la qualité, fournisseurs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#DA291C; --red-deep:#A8180F; --red-tint:#FBE6E3;
+  --ink:#1D1D1B; --grey:#575756; --mist:#F4F3F3; --line:#D9D7D7; --paper:#FFFFFF;
+  --ok:#1E7046; --ok-tint:#E4F1EA;
+  --fs:clamp(16px, 0.55vw + 13.5px, 21px);
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{font-size:var(--fs);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Archivo",Arial,Helvetica,sans-serif;line-height:1.45}
+a{color:inherit}
+.wrap{max-width:46rem;margin:0 auto;padding:0 1rem}
+:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* en-tête */
+header{padding:1.1rem 0 .4rem}
+.course{display:flex;justify-content:space-between;gap:1rem;font-size:.78rem;color:var(--grey)}
+.course a{text-decoration:none}
+.course a:hover{text-decoration:underline}
+.course b{color:var(--ink);font-weight:600}
+
+/* la chaîne : cinq maillons, un par chapitre */
+.chain{display:flex;margin:1rem 0 0;padding:0;list-style:none}
+.chain li{flex:1 1 0;min-width:0}
+.chain li+li{margin-left:-.55rem}
+.chain a{display:block;text-align:center;text-decoration:none;font-weight:600;font-size:.74rem;
+  padding:.5rem .2rem;border:2px solid var(--red);border-radius:999px;background:var(--paper);color:var(--red);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
+.chain a:hover{background:var(--red-tint)}
+.chain a[aria-current="page"]{background:var(--red);color:#fff;z-index:1}
+.chain small{display:block;font-weight:400;font-size:.62rem;color:var(--grey);margin-top:.2rem;text-align:center}
+.chain a[aria-current="page"]+small{color:var(--red);font-weight:600}
+
+/* titre du chapitre */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:0 1rem;align-items:end;margin:1.8rem 0 1.2rem}
+.numeral{font-weight:800;font-size:5.6rem;line-height:.78;color:var(--red);letter-spacing:-.04em}
+.hero h1{margin:0;font-size:2rem;line-height:1.05;font-weight:800;letter-spacing:-.01em}
+.hero p{margin:.35rem 0 0;color:var(--grey);font-size:.9rem}
+.brief{border-left:4px solid var(--red);padding:.15rem 0 .15rem .8rem;margin:0 0 1.6rem;font-size:.95rem}
+.brief p{margin:.1rem 0}
+
+/* questions */
+.q{border:0;margin:0 0 1.6rem;padding:0}
+.q legend,.q .legend{display:grid;grid-template-columns:2rem 1fr;gap:.7rem;padding:0;margin:0 0 .75rem;font-weight:600;font-size:1.05rem;line-height:1.35}
+.q .n{display:grid;place-items:center;width:2rem;height:2rem;border-radius:50%;background:var(--red);color:#fff;font-weight:800;font-size:.95rem}
+.opts{display:grid;gap:.5rem;margin-left:2.7rem}
+.opt{display:grid;grid-template-columns:1.9rem 1fr auto;gap:.65rem;align-items:center;cursor:pointer;
+  background:var(--mist);border:2px solid transparent;border-radius:.6rem;padding:.6rem .75rem;min-height:3rem}
+.opt:hover{border-color:var(--line)}
+.opt input{position:absolute;opacity:0;width:1px;height:1px}
+.opt .l{display:grid;place-items:center;width:1.9rem;height:1.9rem;border-radius:.35rem;background:var(--paper);border:1.5px solid var(--line);font-weight:800;font-size:.85rem}
+.opt:has(input:focus-visible){outline:3px solid var(--red);outline-offset:2px}
+.opt:has(input:checked){border-color:var(--red);background:var(--red-tint)}
+.opt:has(input:checked) .l{background:var(--red);border-color:var(--red);color:#fff}
+.opt .tag{font-size:.72rem;font-weight:600;white-space:nowrap}
+.done .opt{cursor:default}
+.done .opt:hover{border-color:transparent}
+.done .opt.right{border-color:var(--ok);background:var(--ok-tint)}
+.done .opt.right .l{background:var(--ok);border-color:var(--ok);color:#fff}
+.done .opt.right .tag{color:var(--ok)}
+.done .opt.wrong{border-color:var(--red);background:var(--red-tint)}
+.done .opt.wrong .l{background:var(--red);border-color:var(--red);color:#fff}
+.done .opt.wrong .tag{color:var(--red-deep)}
+.fb{margin:.7rem 0 0 2.7rem;padding:.7rem .85rem;border-radius:.6rem;font-size:.92rem;background:var(--mist)}
+.fb strong{font-weight:800}
+.fb.ok strong{color:var(--ok)}
+.fb.ko strong{color:var(--red-deep)}
+.fb .src{display:block;margin-top:.25rem;color:var(--grey);font-size:.8rem}
+
+/* résultat */
+.result{margin:0 0 1.8rem;padding:1.1rem 1.2rem;border-radius:.8rem;background:var(--ink);color:#fff}
+.result h2{margin:0;font-size:1rem;font-weight:600}
+.result .score{font-size:3.2rem;color:#fff;font-weight:800;line-height:1;margin:.3rem 0 .6rem;letter-spacing:-.02em}
+.result .score span{font-size:1.4rem;font-weight:600;color:#bdbdbd}
+.dots{display:flex;gap:.4rem;margin:0 0 .9rem;padding:0;list-style:none}
+.dots li{width:1.6rem;height:.45rem;border-radius:999px;background:#5f5f5c}
+.dots li.ok{background:#6CC495}
+.dots li.ko{background:var(--red)}
+.result p{margin:0 0 .9rem;font-size:.9rem;color:#e5e5e5}
+.actions{display:flex;flex-wrap:wrap;gap:.6rem}
+
+button,.btn{font:inherit;font-weight:600;font-size:.95rem;border-radius:999px;padding:.7rem 1.3rem;cursor:pointer;text-decoration:none;display:inline-block;border:2px solid var(--red)}
+.primary{background:var(--red);color:#fff}
+.primary:hover{background:var(--red-deep);border-color:var(--red-deep)}
+.ghost{background:transparent;color:#fff;border-color:#fff}
+.ghost:hover{background:#fff;color:var(--ink)}
+
+/* barre de validation */
+.bar{position:sticky;bottom:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);padding:.7rem 0;margin-top:1rem}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.count{font-size:.9rem;color:var(--grey)}
+.count b{color:var(--ink)}
+.msg{margin:.6rem 0 0;color:var(--red-deep);font-weight:600;font-size:.9rem}
+
+/* accueil */
+.home h1{font-size:2.2rem;line-height:1.05;margin:1.6rem 0 .4rem;font-weight:800}
+.home .lead{color:var(--grey);margin:0 0 1.4rem}
+.list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.list a{display:grid;grid-template-columns:3.2rem 1fr auto;align-items:center;gap:.8rem;padding:.9rem .2rem;border-bottom:1px solid var(--line);text-decoration:none}
+.list a:hover .t{color:var(--red)}
+.list .d{font-size:2.6rem;font-weight:800;color:var(--red);line-height:1}
+.list .t{font-weight:800;font-size:1.15rem;display:block}
+.list .s{color:var(--grey);font-size:.85rem}
+.list .go{font-size:.8rem;font-weight:600;color:var(--red);white-space:nowrap}
+
+footer{color:var(--grey);font-size:.75rem;padding:1.6rem 0 2rem}
+footer p{margin:.2rem 0}
+
+@media (max-width:480px){
+  .numeral{font-size:4.2rem}
+  .hero h1{font-size:1.6rem}
+  .opts,.fb{margin-left:0}
+  .chain small{display:none}
+  .chain li+li{margin-left:-.3rem}
+  .chain a{font-size:.66rem;padding:.5rem .1rem}
+}
+@media (prefers-reduced-motion:no-preference){
+  .opt{transition:border-color .15s,background-color .15s}
+  .result{animation:rise .35s ease-out}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+}
+@media print{.bar,.chain{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="course"><span><b>Qualité industrielle</b> · MT_322 · hepia</span><a href="https://nicolas-derobert.github.io/appli-qualite/">QualiTools</a></div>
+    <nav aria-label="Chapitres"><ul class="chain" id="chain"></ul></nav>
+  </div>
+</header>
+<main class="wrap" id="app" tabindex="-1"></main>
+<div class="bar" id="bar" hidden>
+  <div class="wrap">
+    <span class="count" id="count" aria-live="polite"></span>
+    <button type="button" class="primary" id="validate">Valider mes réponses</button>
+  </div>
+</div>
+<footer class="wrap">
+  <p>Support de cours Qualité industrielle, version VII (2026-2027). Les numéros de page renvoient à ce support.</p>
+</footer>
+<script>
+const QUIZ = {
+ "3": {
+  "nom": "Mesurer",
+  "sujet": "La métrologie",
+  "pages": "21–27",
+  "questions": [
+   {
+    "q": "« Ce portable mesure 35,5 cm. » Que manque-t-il à ce résultat de mesure ?",
+    "o": [
+     "L’unité",
+     "L’incertitude",
+     "Le nom de l’instrument",
+     "La tolérance"
+    ],
+    "a": 1,
+    "e": "Un résultat complet comporte une valeur, une unité et une incertitude. Ici, l’incertitude manque.",
+    "p": "21"
+   },
+   {
+    "q": "En 1999, la sonde Mars Climate Orbiter est détruite. Quelle est la cause ?",
+    "o": [
+     "Une panne de moteur",
+     "Une confusion d’unités entre deux équipes",
+     "Un défaut de soudure",
+     "Une collision avec un astéroïde"
+    ],
+    "a": 1,
+    "e": "Un logiciel donnait des valeurs en livres-force seconde. La navigation attendait des newtons seconde.",
+    "p": "21"
+   },
+   {
+    "q": "Le contrôle d’une pompe à essence relève de quelle métrologie ?",
+    "o": [
+     "Scientifique",
+     "Industrielle",
+     "Légale",
+     "Fondamentale"
+    ],
+    "a": 2,
+    "e": "La métrologie légale s’applique aux mesures soumises à des exigences réglementaires, comme la vente de carburant.",
+    "p": "21–22"
+   },
+   {
+    "q": "Une cote mesurée tombe dans la zone de doute, près d’une limite de tolérance. Quelle décision prenez-vous ?",
+    "o": [
+     "J’accepte la pièce.",
+     "Je refuse la pièce.",
+     "Je réduis l’incertitude avant de décider.",
+     "J’élargis la tolérance."
+    ],
+    "a": 2,
+    "e": "Dans la zone de doute, la conformité reste incertaine. Réduisez d’abord l’incertitude, par exemple avec un instrument plus précis.",
+    "p": "21–22"
+   },
+   {
+    "q": "Un pied à coulisse est étalonné avec des cales étalons raccordées à METAS. Comment s’appelle cette chaîne de comparaisons ?",
+    "o": [
+     "La répétabilité",
+     "La traçabilité métrologique",
+     "La reproductibilité",
+     "L’exactitude de mesure"
+    ],
+    "a": 1,
+    "e": "La traçabilité relie un résultat à une référence nationale par une chaîne ininterrompue d’étalonnages, chacun avec une incertitude connue.",
+    "p": "22–23"
+   }
+  ]
+ },
+ "4": {
+  "nom": "Normaliser",
+  "sujet": "La normalisation",
+  "pages": "28–34",
+  "questions": [
+   {
+    "q": "Le nom ISO vient du grec isos. Que signifie ce mot ?",
+    "o": [
+     "Norme",
+     "Égal",
+     "Qualité",
+     "Monde"
+    ],
+    "a": 1,
+    "e": "Isos signifie « égal ». Le nom ISO reste identique dans toutes les langues.",
+    "p": "28"
+   },
+   {
+    "q": "Quelle norme de la famille ISO 9000 permet d’obtenir une certification ?",
+    "o": [
+     "ISO 9000",
+     "ISO 9001",
+     "ISO 9002",
+     "ISO 9004"
+    ],
+    "a": 1,
+    "e": "L’ISO 9001 fixe les exigences du système de management de la qualité. Les autres normes de la famille donnent un vocabulaire ou des lignes directrices.",
+    "p": "28"
+   },
+   {
+    "q": "L’ISO 9001 exige de mesurer la satisfaction des clients. Qui choisit la méthode de mesure ?",
+    "o": [
+     "L’ISO",
+     "L’organisme de certification",
+     "L’entreprise",
+     "Le client"
+    ],
+    "a": 2,
+    "e": "La norme dit quoi faire, pas comment le faire. L’entreprise choisit sa méthode : enquête, notes des clients, analyse des réclamations.",
+    "p": "30"
+   },
+   {
+    "q": "Quelle norme traite de la santé et de la sécurité au travail ?",
+    "o": [
+     "ISO 14001",
+     "ISO 13485",
+     "ISO 45001",
+     "ISO 9004"
+    ],
+    "a": 2,
+    "e": "L’ISO 45001 remplace l’OHSAS 18001. L’ISO 14001 traite du management environnemental.",
+    "p": "29"
+   },
+   {
+    "q": "Un horloger importe des bracelets en cuir de crocodile. Quel texte encadre ce commerce ?",
+    "o": [
+     "REACH",
+     "RoHS",
+     "La CITES",
+     "Le Processus de Kimberley"
+    ],
+    "a": 2,
+    "e": "La CITES, ou Convention de Washington, encadre le commerce international des espèces de faune et de flore menacées.",
+    "p": "32"
+   }
+  ]
+ },
+ "5": {
+  "nom": "Organiser",
+  "sujet": "Le système de management de la qualité",
+  "pages": "35–47",
+  "questions": [
+   {
+    "q": "Sur combien de principes repose le système de management de la qualité (SMQ) ?",
+    "o": [
+     "5",
+     "7",
+     "9",
+     "12"
+    ],
+    "a": 1,
+    "e": "Orientation client, leadership, implication du personnel, approche processus, amélioration, décision fondée sur des preuves, relations avec les parties intéressées.",
+    "p": "35"
+   },
+   {
+    "q": "« Établir une culture de confiance et d’intégrité » : à quel principe appartient cette action ?",
+    "o": [
+     "Orientation client",
+     "Leadership",
+     "Approche processus",
+     "Prise de décision fondée sur des preuves"
+    ],
+    "a": 1,
+    "e": "Les dirigeants créent les conditions de l’implication du personnel. Cette action relève du leadership.",
+    "p": "36"
+   },
+   {
+    "q": "Dans l’approche processus, que devient la sortie d’un processus ?",
+    "o": [
+     "Un enregistrement archivé",
+     "L’entrée du processus suivant",
+     "Une non-conformité",
+     "Un indicateur de la direction"
+    ],
+    "a": 1,
+    "e": "Chaque processus reçoit des données d’entrée et produit des données de sortie. Ces sorties alimentent le processus suivant.",
+    "p": "37"
+   },
+   {
+    "q": "Dans la structure documentaire du SMQ, quel document décrit les tâches d’un processus ?",
+    "o": [
+     "Le manuel qualité",
+     "La procédure",
+     "L’instruction",
+     "Le formulaire"
+    ],
+    "a": 2,
+    "e": "Le manuel décrit les processus, la procédure les activités, l’instruction les tâches. Le formulaire sert de support aux enregistrements.",
+    "p": "42"
+   },
+   {
+    "q": "Qui signe la politique qualité d’une entreprise ?",
+    "o": [
+     "Le responsable qualité",
+     "Le président de l’entreprise ou son équivalent",
+     "L’auditeur de certification",
+     "Le client principal"
+    ],
+    "a": 1,
+    "e": "La politique qualité exprime l’engagement de la direction. Le président ou son équivalent la signe.",
+    "p": "43"
+   }
+  ]
+ },
+ "6": {
+  "nom": "Chiffrer",
+  "sujet": "Les coûts de la qualité",
+  "pages": "48–52",
+  "questions": [
+   {
+    "q": "Le coût d’obtention de la qualité (COQ) est la somme de quels coûts ?",
+    "o": [
+     "Prévention + détection",
+     "Défaillances internes + défaillances externes",
+     "Coûts d’investissement (CIQ) + coûts de non-qualité (CNQ)",
+     "Achats + production"
+    ],
+    "a": 2,
+    "e": "Le CIQ regroupe la prévention et la détection. Le CNQ regroupe les défaillances internes et externes.",
+    "p": "48"
+   },
+   {
+    "q": "La formation d’un opérateur au contrôle est un coût de quelle catégorie ?",
+    "o": [
+     "Prévention",
+     "Détection",
+     "Défaillance interne",
+     "Défaillance externe"
+    ],
+    "a": 0,
+    "e": "La formation évite les défauts avant leur apparition : c’est un coût de prévention.",
+    "p": "48"
+   },
+   {
+    "q": "Une montre revient au service après-vente sous garantie. Comment classez-vous ce coût de non-qualité ?",
+    "o": [
+     "Interne et direct",
+     "Interne et indirect",
+     "Externe et direct",
+     "Externe et indirect"
+    ],
+    "a": 2,
+    "e": "Le défaut est découvert chez le client : externe. La garantie est une dépense identifiable : direct.",
+    "p": "49"
+   },
+   {
+    "q": "Un défaut évité en planification coûte 1. Combien coûte-t-il s’il est découvert chez le client ?",
+    "o": [
+     "10",
+     "100",
+     "1000",
+     "10 000"
+    ],
+    "a": 2,
+    "e": "Règle des 10 : le coût est multiplié par 10 à chaque étape. Plus le défaut est découvert tard, plus il coûte cher.",
+    "p": "51"
+   },
+   {
+    "q": "Sur le graphique du COQ, où se situe l’optimum économique ?",
+    "o": [
+     "À un indice qualité de 100 %",
+     "Au point où le CIQ est minimal",
+     "Au point où le COQ total est minimal",
+     "Au point où le CNQ est nul"
+    ],
+    "a": 2,
+    "e": "Le CIQ augmente avec l’indice qualité, le CNQ diminue. Leur somme, le COQ, passe par un minimum : environ 82 % dans l’exemple du cours.",
+    "p": "50"
+   }
+  ]
+ },
+ "7": {
+  "nom": "Partager",
+  "sujet": "Le fournisseur, un partenaire",
+  "pages": "53–64",
+  "questions": [
+   {
+    "q": "Que décrit le plan d’assurance qualité (PAQ) ?",
+    "o": [
+     "Les résultats des audits internes",
+     "Les dispositions qualité convenues entre le client et le fournisseur",
+     "Le classement annuel des fournisseurs",
+     "Les prix négociés avec le fournisseur"
+    ],
+    "a": 1,
+    "e": "Le PAQ décrit les dispositions qualité d’une prestation. Toute dérogation demande un accord préalable des deux parties.",
+    "p": "53"
+   },
+   {
+    "q": "À quel moment a lieu l’appréciation d’un fournisseur ?",
+    "o": [
+     "Avant la commande",
+     "À la signature de la commande",
+     "Au fil des livraisons",
+     "À la fin du contrat"
+    ],
+    "a": 0,
+    "e": "L’appréciation a lieu avant la commande, souvent par un audit. L’évaluation suit, au fil des livraisons.",
+    "p": "55–56"
+   },
+   {
+    "q": "Un fournisseur livre 50 lots. 45 lots sont acceptés. Quel est son indice qualité fournisseur (IQF) simple ?",
+    "o": [
+     "45 %",
+     "85 %",
+     "90 %",
+     "95 %"
+    ],
+    "a": 2,
+    "e": "IQF simple = lots acceptés ÷ nombre total de lots × 100 = 45 ÷ 50 × 100 = 90 %.",
+    "p": "59"
+   },
+   {
+    "q": "Classes obtenues : qualité 3, délais 2, prix 2, service 3. Pondérations : 40, 30, 20, 10. Quelle est la catégorie du fournisseur ?",
+    "o": [
+     "Fournisseur A (240 à 300 points)",
+     "Fournisseur B (180 à 239 points)",
+     "Fournisseur C (100 à 179 points)",
+     "Nouvelle appréciation obligatoire"
+    ],
+    "a": 0,
+    "e": "IF global = 3 × 40 + 2 × 30 + 2 × 20 + 3 × 10 = 250 points. De 240 à 300 points : fournisseur A.",
+    "p": "62–63"
+   },
+   {
+    "q": "Un agrément qualité est signé avec un fournisseur. Comment évolue le contrôle de réception chez le client ?",
+    "o": [
+     "Il devient plus étendu.",
+     "Il devient moins étendu.",
+     "Il reste identique.",
+     "Il passe à l’auditeur externe."
+    ],
+    "a": 1,
+    "e": "Le client délègue une partie du contrôle au fournisseur. Le fournisseur reste entièrement responsable de la qualité de ses produits.",
+    "p": "64"
+   }
+  ]
+ }
+};
+const L = "ABCD";
+const NB = " ";
+const app = document.getElementById("app");
+const bar = document.getElementById("bar");
+const count = document.getElementById("count");
+const chain = document.getElementById("chain");
+const btn = document.getElementById("validate");
+const keys = Object.keys(QUIZ).map(Number);
+
+function chapterFromUrl(){
+  const p = new URLSearchParams(location.search).get("partie") || (location.hash.match(/\d+/)||[])[0];
+  const n = Number(p);
+  return keys.includes(n) ? n : null;
+}
+function el(tag, attrs, ...kids){
+  const e = document.createElement(tag);
+  for (const [k,v] of Object.entries(attrs||{})){
+    if (k === "class") e.className = v; else if (k === "text") e.textContent = v; else e.setAttribute(k, v);
+  }
+  for (const k of kids) if (k != null) e.append(k);
+  return e;
+}
+const MODE_CORRIGE = new URLSearchParams(location.search).has("corrige");
+function link(ch, corrige){ return "?partie=" + ch + (corrige ? "&corrige" : ""); }
+
+function renderChain(current){
+  chain.replaceChildren(...keys.map(ch => {
+    const a = el("a", {href: link(ch, MODE_CORRIGE), text: QUIZ[ch].nom});
+    if (ch === current) a.setAttribute("aria-current", "page");
+    return el("li", {}, a, el("small", {text: "Chapitre " + ch}));
+  }));
+}
+
+function renderHome(){
+  document.title = "Quiz MT_322 – Qualité industrielle";
+  renderChain(null);
+  bar.hidden = true;
+  const list = el("ul", {class: "list"}, ...keys.map(ch => {
+    const c = QUIZ[ch];
+    return el("li", {}, el("a", {href: link(ch)},
+      el("span", {class: "d", text: String(ch), "aria-hidden": "true"}),
+      el("span", {}, el("span", {class: "t", text: c.nom}), el("span", {class: "s", text: c.sujet + " · cours" + NB + "p." + NB + c.pages})),
+      el("span", {class: "go", text: c.questions.length + " questions"})));
+  }));
+  app.replaceChildren(el("section", {class: "home"},
+    el("h1", {text: "Quiz de fin de chapitre"}),
+    el("p", {class: "lead", text: "Choisissez le chapitre indiqué par votre enseignant."}),
+    list));
+}
+
+function renderQuiz(ch){
+  const c = QUIZ[ch];
+  document.title = "Quiz " + ch + " · " + c.nom + " – MT_322";
+  renderChain(ch);
+  const form = el("form", {id: "quiz", novalidate: ""});
+  c.questions.forEach((q, i) => {
+    const fs = el("fieldset", {class: "q", id: "q" + i});
+    fs.append(el("legend", {}, el("span", {class: "n", text: String(i + 1), "aria-hidden": "true"}),
+      el("span", {}, el("span", {class: "vh", text: "Question " + (i + 1) + " : "}), q.q)));
+    const opts = el("div", {class: "opts"});
+    q.o.forEach((o, j) => {
+      const id = "q" + i + "o" + j;
+      const input = el("input", {type: "radio", name: "q" + i, id, value: String(j)});
+      opts.append(el("label", {class: "opt", for: id}, input,
+        el("span", {class: "l", text: L[j], "aria-hidden": "true"}),
+        el("span", {}, el("span", {class: "vh", text: "Réponse " + L[j] + " : "}), o),
+        el("span", {class: "tag"})));
+    });
+    fs.append(opts);
+    form.append(fs);
+  });
+  form.addEventListener("change", updateCount);
+  const next = keys[keys.indexOf(ch) + 1];
+  app.replaceChildren(
+    el("section", {class: "hero"},
+      el("span", {class: "numeral", text: String(ch), "aria-hidden": "true"}),
+      el("div", {}, el("h1", {text: c.nom}), el("p", {text: "Chapitre " + ch + " · " + c.sujet + " · cours" + NB + "p." + NB + c.pages}))),
+    el("div", {id: "result"}),
+    el("div", {class: "brief"},
+      el("p", {text: "Choisissez une réponse par question."}),
+      el("p", {text: "Validez à la fin : la page affiche votre score et la correction."})),
+    form,
+    el("p", {class: "msg", id: "msg", role: "alert"}));
+  app.dataset.chapter = ch;
+  app.dataset.next = next || "";
+  bar.hidden = false;
+  btn.hidden = false;
+  updateCount();
+}
+
+function answers(){
+  const c = QUIZ[app.dataset.chapter];
+  return c.questions.map((_, i) => {
+    const r = document.querySelector('input[name="q' + i + '"]:checked');
+    return r ? Number(r.value) : null;
+  });
+}
+function updateCount(){
+  const a = answers();
+  const n = a.filter(v => v !== null).length;
+  count.innerHTML = "<b>" + n + " / " + a.length + "</b> réponses";
+  document.getElementById("msg").textContent = "";
+}
+
+function validate(){
+  const ch = Number(app.dataset.chapter);
+  const c = QUIZ[ch];
+  const a = answers();
+  const missing = a.map((v, i) => v === null ? i + 1 : null).filter(Boolean);
+  if (missing.length){
+    document.getElementById("msg").textContent =
+      "Répondez à toutes les questions. Sans réponse" + NB + ": question" + (missing.length > 1 ? "s " : " ") + missing.join(", ") + ".";
+    document.getElementById("q" + (missing[0] - 1)).querySelector("input").focus();
+    return;
+  }
+  let score = 0;
+  const form = document.getElementById("quiz");
+  form.classList.add("done");
+  c.questions.forEach((q, i) => {
+    const fs = document.getElementById("q" + i);
+    const ok = a[i] === q.a;
+    if (ok) score++;
+    fs.querySelectorAll("input").forEach(inp => inp.disabled = true);
+    const labels = fs.querySelectorAll(".opt");
+    labels[q.a].classList.add("right");
+    labels[q.a].querySelector(".tag").textContent = "Bonne réponse";
+    if (!ok){
+      labels[a[i]].classList.add("wrong");
+      labels[a[i]].querySelector(".tag").textContent = "Votre réponse";
+    }
+    const fb = el("div", {class: "fb " + (ok ? "ok" : "ko")},
+      el("strong", {text: ok ? "Juste." : "Faux. Bonne réponse" + NB + ": " + L[q.a] + "."}), " " + q.e,
+      el("span", {class: "src", text: "Cours p." + NB + q.p}));
+    fs.append(fb);
+  });
+  const total = c.questions.length;
+  const actions = el("div", {class: "actions"});
+  const again = el("button", {type: "button", class: "ghost", text: "Recommencer"});
+  again.addEventListener("click", () => { renderQuiz(ch); window.scrollTo(0, 0); });
+  actions.append(again);
+  if (app.dataset.next){
+    const n = Number(app.dataset.next);
+    actions.append(el("a", {class: "btn primary", href: link(n), text: "Quiz suivant" + NB + ": " + QUIZ[n].nom}));
+  }
+  const res = el("section", {class: "result", "aria-labelledby": "rt"},
+    el("h2", {id: "rt", text: "Votre résultat"}),
+    el("p", {class: "score"}, String(score), el("span", {text: " / " + total})),
+    el("ul", {class: "dots", "aria-hidden": "true"}, ...a.map((v, i) => el("li", {class: v === c.questions[i].a ? "ok" : "ko"}))),
+    el("p", {text: score === total ? "Toutes vos réponses sont justes." : "Relisez la correction sous chaque question."}),
+    actions);
+  document.getElementById("result").replaceChildren(res);
+  bar.hidden = true;
+  res.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start"});
+}
+
+btn.addEventListener("click", validate);
+function renderCorrige(ch){
+  const c = QUIZ[ch];
+  document.title = "Corrigé " + ch + " · " + c.nom + " – MT_322";
+  renderChain(ch);
+  bar.hidden = true;
+  const list = el("div", {class: "done"});
+  c.questions.forEach((q, i) => {
+    const fs = el("section", {class: "q", "aria-labelledby": "h" + i});
+    fs.append(el("h2", {class: "legend", id: "h" + i}, el("span", {class: "n", text: String(i + 1), "aria-hidden": "true"}), el("span", {}, q.q)));
+    const opts = el("div", {class: "opts"});
+    q.o.forEach((o, j) => {
+      const row = el("div", {class: "opt" + (j === q.a ? " right" : "")},
+        el("span", {class: "l", text: L[j]}), el("span", {}, o), el("span", {class: "tag", text: j === q.a ? "Bonne réponse" : ""}));
+      opts.append(row);
+    });
+    fs.append(opts, el("div", {class: "fb ok"}, el("strong", {text: "Réponse" + NB + ": " + L[q.a] + "."}), " " + q.e,
+      el("span", {class: "src", text: "Cours p." + NB + q.p})));
+    list.append(fs);
+  });
+  app.replaceChildren(
+    el("section", {class: "hero"},
+      el("span", {class: "numeral", text: String(ch), "aria-hidden": "true"}),
+      el("div", {}, el("h1", {text: "Corrigé : " + c.nom}), el("p", {text: "Chapitre " + ch + " · " + c.sujet + " · cours" + NB + "p." + NB + c.pages}))),
+    el("div", {class: "brief"},
+      el("p", {text: "Les bonnes réponses sont en vert, avec l’explication et la page du cours."}),
+      el("p", {}, el("a", {href: link(ch, false), text: "Ouvrir le quiz du chapitre " + ch}))),
+    list);
+}
+
+function route(){
+  const ch = chapterFromUrl();
+  if (ch && MODE_CORRIGE) renderCorrige(ch);
+  else if (ch) renderQuiz(ch);
+  else renderHome();
+}
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
