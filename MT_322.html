@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<title>Quiz MT_322</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Quiz de fin de chapitre du cours Qualité industrielle (MT_322, hepia) : une question à la fois, correction immédiate, synthèse et citations du cours.">
+<script>
+/* ==========================================================================
+   QUIZ MT_322 – QUESTIONS, RÉPONSES ET CITATIONS DU COURS
+   Source de toutes les réponses : Qualité_Industrielle_hepia_cours 2026-2027.
+   Une rubrique par chapitre (3 à 7). Pour chaque question :
+     question     texte de la question
+     choix        4 réponses proposées, dans l’ordre A, B, C, D
+     reponse      lettre de la bonne réponse
+     explication  texte affiché à la correction
+     page         page du cours
+     citation     extrait exact du cours ([…] = coupure)
+   Pour modifier : changez le texte entre guillemets, enregistrez, rechargez la page.
+   Liens : ADRESSE_SITE?partie=3 (quiz) – ADRESSE_SITE?partie=3&corrige (correction)
+   ========================================================================== */
+const ADRESSE_SITE = "https://nicolas-derobert.github.io/appli-qualite/MT_322"; // adresse publique utilisée pour les QR codes
+const SUPPORT = "Qualité_Industrielle_hepia_cours 2026-2027"; // cours cité dans les corrections
+
+const QUIZ = {
+
+  /* ---------- Chapitre 3 · Mesurer ---------- */
+  3: {
+    nom: "Mesurer",
+    sujet: "La métrologie",
+    pages: "21–27",
+    questions: [
+      { // Question 1
+        question: "Grâce à quoi peut-on qualifier quantitativement la qualité d’un résultat de mesure ?",
+        choix: ["Son unité", "Son incertitude", "L’instrument utilisé", "La tolérance du dessin"],
+        reponse: "B",
+        explication: "L’incertitude qualifie la qualité d’un résultat de mesure. Elle permet de comparer des résultats entre eux ou à une spécification.",
+        page: "22",
+        citation: "[…] on peut qualifier quantitativement la qualité d’un résultat de mesure grâce à son incertitude. En effet sans incertitude les résultats de mesure ne peuvent plus être comparés"
+      },
+      { // Question 2
+        question: "Mesurer, c’est attribuer une valeur à une grandeur en prenant pour référence une grandeur de même nature. Comment s’appelle cette référence ?",
+        choix: ["Le mesurande", "L’unité", "L’incertitude", "La tolérance"],
+        reponse: "B",
+        explication: "Mesurer, c’est comparer une grandeur à une unité de même nature.",
+        page: "21",
+        citation: "Mesurer une grandeur physique consiste à lui attribuer une valeur quantitative en prenant pour référence une grandeur de même nature appelée unité."
+      },
+      { // Question 3
+        question: "Le contrôle d’une pompe à essence relève de quelle métrologie ?",
+        choix: ["Scientifique", "Industrielle", "Légale", "Fondamentale"],
+        reponse: "C",
+        explication: "La métrologie légale s’applique aux mesures soumises à des exigences réglementaires, comme la vente de carburant.",
+        page: "21–22",
+        citation: "La métrologie légale, liée aux mesures sur lesquelles s’appliquent des exigences réglementaires […] Métrologie légale, exemple d’une pompe à essence"
+      },
+      { // Question 4
+        question: "Quel ouvrage est la référence du vocabulaire métrologique ?",
+        choix: ["Le GUM", "Le VIM", "L’ISO 9001", "Le Système international d’unités (SI)"],
+        reponse: "B",
+        explication: "Le VIM est le Vocabulaire international de métrologie. Le GUM traite de l’expression de l’incertitude de mesure.",
+        page: "26",
+        citation: "La référence du vocabulaire métrologique est : Vocabulaire international de métrologie – Concepts fondamentaux et généraux et termes associés (VIM)"
+      },
+      { // Question 5
+        question: "Un pied à coulisse est étalonné avec des cales étalons raccordées à METAS. Comment s’appelle cette chaîne de comparaisons ?",
+        choix: ["La répétabilité", "La traçabilité métrologique", "La reproductibilité", "L’exactitude de mesure"],
+        reponse: "B",
+        explication: "La traçabilité relie un résultat à une référence nationale par une chaîne ininterrompue de comparaisons, chacune avec une incertitude connue.",
+        page: "23",
+        citation: "La traçabilité est la propriété du résultat d’un mesurage tel qu’il puisse être relié à des références déterminées, généralement des étalons nationaux ou internationaux, par l’intermédiaire d’une chaîne ininterrompue de comparaisons ayant toutes des incertitudes déterminées."
+      }
+    ]
+  },
+
+  /* ---------- Chapitre 4 · Normaliser ---------- */
+  4: {
+    nom: "Normaliser",
+    sujet: "La normalisation",
+    pages: "28–34",
+    questions: [
+      { // Question 1
+        question: "Le nom ISO vient du grec isos. Que signifie ce mot ?",
+        choix: ["Norme", "Égal", "Qualité", "Monde"],
+        reponse: "B",
+        explication: "Isos signifie « égal ». Le nom ISO reste identique dans toutes les langues.",
+        page: "28",
+        citation: "Ce nom est également dérivé du grec isos, signifiant « égal »."
+      },
+      { // Question 2
+        question: "Quelle norme définit les critères d’un système de management de la qualité (SMQ) ?",
+        choix: ["ISO 9000", "ISO 9001", "ISO 9004", "ISO 14001"],
+        reponse: "B",
+        explication: "L’ISO 9001 définit les critères du SMQ. L’ISO 9000 donne le cadre général, l’ISO 9004 des lignes directrices pour des performances durables.",
+        page: "28",
+        citation: "ISO 9001:2015 définit les critères d’un système de management de la qualité (SMQ)"
+      },
+      { // Question 3
+        question: "L’ISO 9001 exige de mesurer la satisfaction des clients. Qui choisit la méthode de mesure ?",
+        choix: ["L’ISO", "L’organisme de certification", "L’entreprise", "Le client"],
+        reponse: "C",
+        explication: "La norme dit quoi faire, pas comment le faire. L’entreprise choisit sa méthode : enquête, notes des clients, analyse des réclamations.",
+        page: "30",
+        citation: "La norme donne des exigences sur le « Quoi faire ? », et pas sur le « Comment faire ? ». Exemple : ISO 9001 vous demande de mesurer la satisfaction de vos clients. Elle ne vous dit pas comment le faire, elle vous laisse libre de choisir avec quelle(s) méthode(s)"
+      },
+      { // Question 4
+        question: "Quelle norme traite de la santé et de la sécurité au travail ?",
+        choix: ["ISO 14001", "ISO 13485", "ISO 45001", "ISO 9004"],
+        reponse: "C",
+        explication: "L’ISO 45001 remplace l’OHSAS 18001. L’ISO 14001 traite du management environnemental.",
+        page: "29",
+        citation: "Anciennement la norme OHSAS 18001, la norme 45001:2018 indique la méthode de mise en place d’un management de la santé et de la sécurité au travail."
+      },
+      { // Question 5
+        question: "Un horloger importe des bracelets en cuir de crocodile. Quel texte encadre ce commerce ?",
+        choix: ["REACH", "RoHS", "La CITES", "Le Processus de Kimberley"],
+        reponse: "C",
+        explication: "La CITES, ou Convention de Washington, encadre le commerce international des espèces de faune et de flore menacées.",
+        page: "32",
+        citation: "CITES : Convention sur le commerce international des espèces de faune et de flore sauvages menacées d’extinction […] L’industrie du luxe et l’horlogerie sont très friandes de peaux de serpent ou de crocodile, notamment pour les bracelets de montres."
+      }
+    ]
+  },
+
+  /* ---------- Chapitre 5 · Organiser ---------- */
+  5: {
+    nom: "Organiser",
+    sujet: "Le système de management de la qualité",
+    pages: "35–47",
+    questions: [
+      { // Question 1
+        question: "Sur combien de principes repose le système de management de la qualité (SMQ) ?",
+        choix: ["5", "7", "9", "12"],
+        reponse: "B",
+        explication: "Le SMQ repose sur sept principes, de l’orientation client au management des relations avec les parties intéressées.",
+        page: "35",
+        citation: "Ceci repose sur sept principes : 1. Orientation client 2. Leadership 3. Implication du personnel 4. Approche processus 5. Amélioration continue 6. Prise de décision fondée sur des preuves 7. Management des relations avec les parties intéressées"
+      },
+      { // Question 2
+        question: "« Établir une culture de confiance et d’intégrité » : à quel principe appartient cette action ?",
+        choix: ["Orientation client", "Leadership", "Approche processus", "Prise de décision fondée sur des preuves"],
+        reponse: "B",
+        explication: "Les dirigeants créent les conditions de l’implication du personnel. Cette action relève du leadership.",
+        page: "36",
+        citation: "Leadership : les dirigeants créent des conditions dans lesquelles le personnel est impliqué à tous les niveaux […] Actions possibles : […] Établir une culture de confiance et d’intégrité."
+      },
+      { // Question 3
+        question: "Dans l’approche processus, que devient la sortie d’un processus ?",
+        choix: ["Un enregistrement archivé", "L’entrée du processus suivant", "Une non-conformité", "Un indicateur de la direction"],
+        reponse: "B",
+        explication: "Chaque processus reçoit des données d’entrée et produit des données de sortie. Ces données passent d’un processus à un autre.",
+        page: "37",
+        citation: "Dans ce modèle chaque processus prend en compte des données d’entrée et produit des données de sortie. Ces données pouvant aller d’un processus vers un autre."
+      },
+      { // Question 4
+        question: "Que comporte toujours une procédure documentée ?",
+        choix: ["Le plan de détail du produit", "La définition des rôles et responsabilités", "La liste des fournisseurs", "Le prix de revient du produit"],
+        reponse: "B",
+        explication: "Une procédure documentée définit toujours les rôles et responsabilités. Elle comporte aussi un titre, un but, la méthodologie, les enregistrements et l’historique des modifications.",
+        page: "42",
+        citation: "Une procédure documentée comporte toujours : Un titre, un but et le domaine d’application. La définition des rôles et responsabilités. La méthodologie (description de l’activité). Les enregistrements nécessaires à la documentation des résultats. L’historique des modifications."
+      },
+      { // Question 5
+        question: "Qui signe la politique qualité d’une entreprise ?",
+        choix: ["Le responsable qualité", "Le président de l’entreprise ou son équivalent", "L’auditeur de certification", "Le client principal"],
+        reponse: "B",
+        explication: "La politique qualité exprime l’engagement de la direction. Le président ou son équivalent la signe.",
+        page: "43",
+        citation: "Elle est signée par le Président (ou équivalent) de votre société."
+      }
+    ]
+  },
+
+  /* ---------- Chapitre 6 · Chiffrer ---------- */
+  6: {
+    nom: "Chiffrer",
+    sujet: "Les coûts de la qualité",
+    pages: "48–52",
+    questions: [
+      { // Question 1
+        question: "Le coût d’obtention de la qualité (COQ) est la somme de quels coûts ?",
+        choix: ["Prévention + détection", "Défaillances internes + défaillances externes", "Coûts d’investissement (CIQ) + coûts de non-qualité (CNQ)", "Achats + production"],
+        reponse: "C",
+        explication: "Le CIQ regroupe la prévention et la détection. Le CNQ regroupe les défaillances internes et externes.",
+        page: "48",
+        citation: "Le COQ est composé des : 1. Coûts d’Investissement de la Qualité (CIQ) […] 2. Coûts de la Non-Qualité (CNQ)"
+      },
+      { // Question 2
+        question: "La formation du personnel est un coût de quelle catégorie ?",
+        choix: ["Prévention", "Détection", "Défaillance interne", "Défaillance externe"],
+        reponse: "A",
+        explication: "La formation évite les défauts avant leur apparition : c’est un coût de prévention.",
+        page: "48",
+        citation: "[Coûts de la prévention] Conception et évaluation de produits améliorés ; conception des méthodes de production et de contrôle ; tests fiabilité ; formation de personnel ; acquisition et analyse de données, etc."
+      },
+      { // Question 3
+        question: "L’entretien des appareils de mesure est un coût de quelle catégorie ?",
+        choix: ["Prévention", "Détection", "Défaillance interne", "Défaillance externe"],
+        reponse: "B",
+        explication: "Les coûts de la détection regroupent l’inspection, les tests et l’entretien des appareils de mesure.",
+        page: "48",
+        citation: "[Coûts de la détection] Temps et matériaux nécessaires à l’inspection et au test des matières premières, des pièces, des assemblages, des machines ; entretien des appareils de mesure, personnel requis, etc."
+      },
+      { // Question 4
+        question: "Les garanties et le service après-vente (SAV) font partie de quels coûts ?",
+        choix: ["Coûts de prévention", "Coûts de détection", "Coûts de défaillances internes", "Coûts de défaillances externes"],
+        reponse: "D",
+        explication: "Les défaillances externes apparaissent chez le client : garanties, SAV, plaintes, remboursements.",
+        page: "48",
+        citation: "[Coûts de défaillances externes] Garanties, service après-vente (SAV), traitement des plaintes, remboursements, risques de poursuites, pertes d’opportunités d’affaires, etc."
+      },
+      { // Question 5
+        question: "Quelles phases du cycle de vie d’un produit le cours désigne-t-il comme cruciales ?",
+        choix: ["La fabrication et le contrôle final", "Le développement : R&D et industrialisation", "La distribution et le service après-vente", "La fin de vie et le recyclage"],
+        reponse: "B",
+        explication: "Un défaut évité pendant le développement coûte beaucoup moins cher qu’un défaut découvert en fabrication ou chez le client.",
+        page: "51",
+        citation: "Conclusion : Les phases de développement (R&D et Industrialisation) sont cruciales dans le cycle de vie d’un produit."
+      }
+    ]
+  },
+
+  /* ---------- Chapitre 7 · Partager ---------- */
+  7: {
+    nom: "Partager",
+    sujet: "Le fournisseur, un partenaire",
+    pages: "53–64",
+    questions: [
+      { // Question 1
+        question: "Que décrit le plan d’assurance qualité (PAQ) ?",
+        choix: ["Les résultats des audits internes", "Les dispositions qualité prévues pour répondre aux exigences contractuelles", "Le classement annuel des fournisseurs", "Les prix négociés avec le fournisseur"],
+        reponse: "B",
+        explication: "Le PAQ décrit les dispositions particulières d’une prestation. Client et fournisseur le valident ensemble.",
+        page: "53",
+        citation: "Un plan qualité, ou plan d’assurance qualité (PAQ), est un document qui décrit les dispositions particulières mises en œuvre pour la réalisation d’un produit ou d’un service afin de répondre aux exigences contractuelles en matière de qualité."
+      },
+      { // Question 2
+        question: "À quel moment a lieu l’appréciation d’un fournisseur ?",
+        choix: ["Avant la commande", "À la signature de la commande", "Au fil des livraisons", "À la fin du contrat"],
+        reponse: "A",
+        explication: "L’appréciation a lieu avant la commande. L’évaluation suit, après la commande.",
+        page: "55",
+        citation: "Avant la commande à une : Appréciation du fournisseur puis après la commande à une : Evaluation du fournisseur"
+      },
+      { // Question 3
+        question: "Comment calcule-t-on l’indice fournisseur le plus simple ?",
+        choix: ["Lots refusés ÷ lots acceptés", "Lots acceptés ÷ ensemble des livraisons", "Nombre de réclamations ÷ nombre de commandes", "Prix payé ÷ prix convenu"],
+        reponse: "B",
+        explication: "L’indice simple est le rapport entre les lots acceptés et l’ensemble des livraisons. Il donne la proportion de lots acceptés, en %.",
+        page: "59",
+        citation: "L’indice fournisseur le plus simple à calculer est sans conteste le rapport entre le nombre de lots acceptés et l’ensemble des livraisons. Cet indice fournisseur correspond en même temps à la proportion de lots acceptés en %."
+      },
+      { // Question 4
+        question: "Indice fournisseur global : en dessous de combien de points une nouvelle appréciation du fournisseur est-elle nécessaire ?",
+        choix: ["100 points", "150 points", "180 points", "240 points"],
+        reponse: "C",
+        explication: "De 100 à 179 points, le fournisseur est classé C. Une nouvelle appréciation est alors nécessaire.",
+        page: "63",
+        citation: "Fournisseur C 100 – 179 […] Une nouvelle appréciation du fournisseur est nécessaire en dessous de 180 points"
+      },
+      { // Question 5
+        question: "Un agrément qualité est signé avec un fournisseur. Comment évolue le contrôle de réception chez le client ?",
+        choix: ["Il devient plus étendu.", "Il devient moins étendu.", "Il reste identique.", "Il passe à l’auditeur externe."],
+        reponse: "B",
+        explication: "Le client délègue une partie du contrôle au fournisseur. Le fournisseur reste entièrement responsable de la qualité de ses produits.",
+        page: "64",
+        citation: "[Chez le client] Un contrôle moins étendu […] La délégation de l’obligation de contrôler chez le fournisseur […] Le fournisseur est entièrement responsable du respect des exigences de qualité de ses produits."
+      }
+    ]
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* Une colonne ; la chaîne des 5 chapitres en tête ; une question par écran, couleurs du support de présentation */
+:root{
+  --red:#DA291C; --red-deep:#A8180F; --red-tint:#FBE6E3;
+  --ink:#1D1D1B; --grey:#5F5E5A; --mist:#F4F3F3; --line:#D9D7D7; --paper:#FFFFFF;
+  --ok:#1E7046; --ok-tint:#E4F1EA; --on-accent:#FFFFFF;
+  --panel:#1D1D1B; --on-panel:#FFFFFF; --on-panel-soft:#D6D5D2;
+  --seg:#E3E2DF; --veil:rgba(29,29,27,.55);
+  --font:"Archivo",Arial,Helvetica,sans-serif;
+  --fs:clamp(16px, 0.55vw + 13.5px, 21px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --red:#EF4A3C; --red-deep:#FF9B90; --red-tint:#3B1E1B;
+    --ink:#F2F1EF; --grey:#B8B6B1; --mist:#232220; --line:#3B3A37; --paper:#151514;
+    --ok:#6CC495; --ok-tint:#16301F; --on-accent:#FFFFFF;
+    --panel:#2A2927; --on-panel:#FFFFFF; --on-panel-soft:#D6D5D2;
+    --seg:#33322F; --veil:rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --red:#EF4A3C; --red-deep:#FF9B90; --red-tint:#3B1E1B;
+  --ink:#F2F1EF; --grey:#B8B6B1; --mist:#232220; --line:#3B3A37; --paper:#151514;
+  --ok:#6CC495; --ok-tint:#16301F; --on-accent:#FFFFFF;
+  --panel:#2A2927; --on-panel:#FFFFFF; --on-panel-soft:#D6D5D2;
+  --seg:#33322F; --veil:rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{font-size:var(--fs);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);line-height:1.45}
+a{color:inherit}
+.wrap{max-width:46rem;margin:0 auto;padding-inline:1rem}
+:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+h1,h2{text-wrap:balance}
+
+/* en-tête et chaîne des chapitres */
+header{padding-block:1.1rem .4rem}
+.course{display:flex;justify-content:space-between;gap:1rem;font-size:.78rem;color:var(--grey)}
+.course a{text-decoration:none}
+.course a:hover{text-decoration:underline}
+.course b{color:var(--ink);font-weight:600}
+.chain{display:flex;margin:1rem 0 0;padding:0;list-style:none}
+.chain li{flex:1 1 0;min-width:0}
+.chain li+li{margin-left:-.55rem}
+.chain a{display:block;text-align:center;text-decoration:none;font-weight:600;font-size:.74rem;
+  padding:.5rem .2rem;border:2px solid var(--red);border-radius:999px;background:var(--paper);color:var(--red);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
+.chain a:hover{background:var(--red-tint)}
+.chain a[aria-current="page"]{background:var(--red);color:var(--on-accent);z-index:1}
+.chain small{display:block;font-weight:400;font-size:.62rem;color:var(--grey);margin-top:.2rem;text-align:center}
+.chain a[aria-current="page"]+small{color:var(--red);font-weight:600}
+
+/* titres */
+.hero{display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 1rem;align-items:end;margin:1.8rem 0 1rem}
+.numeral{font-weight:800;font-size:5.6rem;line-height:.78;color:var(--red);letter-spacing:-.04em}
+.hero h1{margin:0;font-size:2rem;line-height:1.05;font-weight:800;letter-spacing:-.01em}
+.hero p{margin:.35rem 0 0;color:var(--grey);font-size:.9rem}
+.tools{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 1.4rem}
+.brief{border-left:4px solid var(--red);padding:.15rem 0 .15rem .8rem;margin:0 0 1.4rem;font-size:.95rem}
+.brief p{margin:.1rem 0}
+.hint{color:var(--grey);font-size:.8rem;margin:.8rem 0 0}
+
+/* boutons */
+button,.btn{font:inherit;font-weight:600;font-size:.9rem;border-radius:999px;padding:.6rem 1.15rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:2px solid var(--red)}
+.primary{background:var(--red);color:var(--on-accent)}
+.primary:hover{background:var(--red-deep);border-color:var(--red-deep)}
+.outline{background:var(--paper);color:var(--red)}
+.outline:hover{background:var(--red-tint)}
+.outline[aria-pressed="true"]{background:var(--red);color:var(--on-accent)}
+.ghost{background:transparent;color:var(--on-panel);border-color:var(--on-panel)}
+.ghost:hover{background:var(--on-panel);color:var(--panel)}
+.link{border:0;background:none;padding:.3rem 0;color:var(--grey);font-weight:600;text-decoration:underline;border-radius:0}
+.big{font-size:1rem;padding:.8rem 1.6rem}
+.ico{width:1.05em;height:1.05em;flex:none}
+.row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+
+/* écran d'introduction */
+.start{display:grid;gap:1rem;margin:0 0 1.5rem}
+.facts{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin:0;padding:0;list-style:none;font-size:.9rem;color:var(--grey)}
+.facts b{color:var(--ink)}
+.check{display:flex;align-items:center;gap:.55rem;font-size:.9rem;cursor:pointer}
+.check input{width:1.15rem;height:1.15rem;accent-color:var(--red)}
+
+/* question */
+.qhead{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin:1.6rem 0 .5rem;font-size:.85rem;color:var(--grey);font-variant-numeric:tabular-nums}
+.qhead b{color:var(--ink)}
+.segs{display:flex;gap:.3rem;margin:0 0 1.4rem;padding:0;list-style:none}
+.segs li{flex:1;height:.45rem;border-radius:999px;background:var(--seg)}
+.segs li.now{background:var(--ink)}
+.segs li.ok{background:var(--ok)}
+.segs li.ko{background:var(--red)}
+.qtitle{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.9rem;align-items:start;margin:0 0 1.1rem}
+.qnum{font-weight:800;font-size:3rem;line-height:.85;color:var(--red);font-variant-numeric:tabular-nums}
+.qtitle h2{margin:0;font-size:1.3rem;line-height:1.3;font-weight:700}
+.qtitle h2:focus{outline:none}
+.qchap{display:block;font-size:.75rem;font-weight:600;color:var(--grey);margin-bottom:.25rem}
+.opts{display:grid;gap:.55rem}
+.opt{display:grid;grid-template-columns:2.1rem minmax(0,1fr) auto;gap:.75rem;align-items:center;text-align:left;width:100%;
+  background:var(--mist);color:var(--ink);border:2px solid transparent;border-radius:.7rem;padding:.75rem .85rem;min-height:3.4rem;font-weight:400;font-size:1rem}
+.opt:hover{border-color:var(--line);background:var(--mist)}
+.opt .l{display:grid;place-items:center;width:2.1rem;height:2.1rem;border-radius:.4rem;background:var(--paper);border:1.5px solid var(--line);font-weight:800;font-size:.9rem}
+.opt .tag{font-size:.75rem;font-weight:700;white-space:nowrap}
+.opt[aria-disabled="true"]{cursor:default}
+.opt[aria-disabled="true"]:hover{border-color:transparent}
+.opt.right{border-color:var(--ok);background:var(--ok-tint)}
+.opt.right .l{background:var(--ok);border-color:var(--ok);color:var(--paper)}
+.opt.right .tag{color:var(--ok)}
+.opt.wrong{border-color:var(--red);background:var(--red-tint)}
+.opt.wrong .l{background:var(--red);border-color:var(--red);color:var(--on-accent)}
+.opt.wrong .tag{color:var(--red-deep)}
+.opt.dim{opacity:.55}
+
+/* correction et citation */
+.fb{margin:1rem 0 0;padding:.9rem 1rem;border-radius:.7rem;background:var(--mist);font-size:.95rem}
+.fb strong{font-weight:800}
+.fb.ok strong{color:var(--ok)}
+.fb.ko strong{color:var(--red-deep)}
+.cite{margin:.7rem 0 0;padding:.1rem 0 .1rem .75rem;border-left:3px solid var(--line)}
+.cite figcaption{font-size:.74rem;font-weight:600;color:var(--grey);margin-bottom:.15rem}
+.cite blockquote{margin:0;font-size:.86rem;font-style:italic}
+.next{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin:1.2rem 0 0}
+.score-live{font-size:.85rem;color:var(--grey);font-variant-numeric:tabular-nums}
+
+/* synthèse */
+.result{margin:1.6rem 0 1.4rem;padding:1.2rem 1.25rem;border-radius:.9rem;background:var(--panel);color:var(--on-panel)}
+.result h2{margin:0;font-size:1rem;font-weight:600}
+.result .score{font-size:3.4rem;font-weight:800;line-height:1;margin:.35rem 0 .2rem;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.result .score span{font-size:1.4rem;font-weight:600;color:var(--on-panel-soft)}
+.result .meta{margin:0 0 .8rem;color:var(--on-panel-soft);font-size:.85rem;font-variant-numeric:tabular-nums}
+.result .verdict{margin:0 0 1rem;font-size:.95rem}
+.result .segs li{background:#5F5F5C}
+.result .segs li.ok{background:#6CC495}
+.result .segs li.ko{background:var(--red)}
+.result .row button,.result .row .btn{font-size:.85rem}
+.bychap{width:100%;border-collapse:collapse;margin:0 0 1.4rem;font-size:.9rem;font-variant-numeric:tabular-nums}
+.bychap th,.bychap td{text-align:left;padding:.45rem .3rem;border-bottom:1px solid var(--line)}
+.bychap td:last-child,.bychap th:last-child{text-align:right}
+.recap{display:grid;gap:.5rem;margin:0 0 1.4rem;padding:0;list-style:none}
+.recap details{background:var(--mist);border-radius:.7rem;padding:.7rem .9rem}
+.recap summary{cursor:pointer;display:grid;grid-template-columns:1.6rem minmax(0,1fr);gap:.6rem;align-items:start;font-weight:600;font-size:.92rem}
+.recap summary::-webkit-details-marker{display:none}
+.mark{display:grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:50%;font-size:.8rem;font-weight:800;color:var(--on-accent)}
+.mark.ok{background:var(--ok);color:var(--paper)}
+.mark.ko{background:var(--red)}
+.recap .body{margin:.6rem 0 0 2.2rem;font-size:.9rem}
+.recap .body p{margin:.2rem 0}
+h3.sec{font-size:1rem;margin:0 0 .6rem}
+
+/* accueil */
+.home h1{font-size:2.2rem;line-height:1.05;margin:1.6rem 0 .4rem;font-weight:800}
+.home .lead{color:var(--grey);margin:0 0 1rem}
+.list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.list a{display:grid;grid-template-columns:3.2rem minmax(0,1fr) auto;align-items:center;gap:.8rem;padding:.9rem .2rem;border-bottom:1px solid var(--line);text-decoration:none}
+.list a:hover .t{color:var(--red)}
+.list .d{font-size:2.6rem;font-weight:800;color:var(--red);line-height:1}
+.list .t{font-weight:800;font-size:1.15rem;display:block}
+.list .s{color:var(--grey);font-size:.85rem}
+.list .go{font-size:.78rem;font-weight:600;color:var(--grey);white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.list .go b{display:block;color:var(--red);font-size:.95rem}
+.list .all .d{font-size:1.6rem}
+.foot-actions{margin:1rem 0 0}
+
+/* fenêtre QR code */
+dialog.qr{border:0;border-radius:1rem;padding:0;width:min(34rem,calc(100vw - 2rem));max-height:calc(100dvh - 2rem);background:var(--paper);color:var(--ink)}
+dialog.qr::backdrop{background:var(--veil)}
+.qr-in{display:grid;gap:.9rem;padding:1.2rem;text-align:center}
+.qr-in h2{margin:0;font-size:1.25rem;font-weight:800}
+.qr-in p{margin:0;color:var(--grey);font-size:.9rem}
+.qr-code{background:#FFFFFF;border-radius:.6rem;padding:.6rem;width:min(100%,62vmin);margin:0 auto}
+.qr-code svg{display:block;width:100%;height:auto}
+.qr-url{font-size:.85rem;font-weight:600;word-break:break-all;user-select:all}
+.qr-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem}
+
+/* correction enseignant */
+.q{margin:0 0 1.6rem}
+.q h2{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:.7rem;margin:0 0 .75rem;font-size:1.05rem;line-height:1.35}
+.q .n{display:grid;place-items:center;width:2rem;height:2rem;border-radius:50%;background:var(--red);color:var(--on-accent);font-weight:800;font-size:.95rem}
+
+footer{color:var(--grey);font-size:.75rem;padding-block:2rem calc(2rem + env(safe-area-inset-bottom, 0px))}
+footer p{margin:.2rem 0}
+
+@media (max-width:480px){
+  .numeral{font-size:4.2rem}
+  .hero h1{font-size:1.6rem}
+  .qnum{font-size:2.3rem}
+  .qtitle h2{font-size:1.12rem}
+  .chain small{display:none}
+  .chain li+li{margin-left:-.3rem}
+  .chain a{font-size:.66rem;padding:.5rem .1rem}
+  .tools button{font-size:.8rem;padding:.5rem .8rem}
+  .hint{display:none}
+}
+@media (prefers-reduced-motion:no-preference){
+  .opt{transition:border-color .15s,background-color .15s,opacity .15s}
+  .fb,.result{animation:rise .3s ease-out}
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="course"><span><b>Qualité industrielle</b> · MT_322 · hepia</span><a href="https://nicolas-derobert.github.io/appli-qualite/" target="_blank" rel="noopener">QualiTools</a></div>
+    <nav aria-label="Chapitres"><ul class="chain" id="chain"></ul></nav>
+  </div>
+</header>
+<main class="wrap" id="app" tabindex="-1"></main>
+<div class="vh" id="live" aria-live="polite"></div>
+<footer class="wrap">
+  <p>Les citations et les numéros de page renvoient au support de cours Qualité_Industrielle_hepia_cours 2026-2027 (version VII).</p>
+</footer>
+
+<dialog class="qr" id="qrDialog" aria-labelledby="qrTitle">
+  <div class="qr-in">
+    <h2 id="qrTitle"></h2>
+    <p>Scannez le code avec votre téléphone pour ouvrir le quiz.</p>
+    <div class="qr-code" id="qrCode"></div>
+    <div class="qr-url" id="qrUrl"></div>
+    <div class="qr-actions">
+      <button type="button" class="outline" id="qrCopy">Copier le lien</button>
+      <button type="button" class="primary" id="qrClose">Fermer</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+const L = "ABCD";
+const NB = "\u00a0";
+const STORE_KEY = "mt322-quiz-v5";
+const ICON_QR = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm11-2h2v2h-2v-2zm-3 0h2v3h-2v-3zm5 3h3v2h-3v-2zm-5 2h3v3h-3v-3zm5 2h3v1h-3v-1zm1-7h2v3h-2v-3z"/></svg>';
+
+/* ---------- préparation des données (ne pas modifier) ---------- */
+function typo(s){
+  return String(s).replace(/ ([:;?!%])/g, NB + "$1").replace(/« /g, "«" + NB).replace(/ »/g, NB + "»").replace(/(\d) (\d{3})\b/g, "$1" + NB + "$2");
+}
+const CHAPS = Object.keys(QUIZ).map(Number);
+for (const ch of CHAPS){
+  const c = QUIZ[ch];
+  c.sujet = typo(c.sujet);
+  c.questions.forEach((q, i) => {
+    q.ch = ch; q.i = i;
+    q.q = typo(q.question); q.o = q.choix.map(typo); q.a = L.indexOf(String(q.reponse).trim().toUpperCase());
+    q.e = typo(q.explication); q.p = q.page; q.c = q.citation ? typo(q.citation) : "";
+    if (q.a < 0 || q.a >= q.o.length) console.error("Chapitre " + ch + ", question " + (i + 1) + " : réponse invalide (" + q.reponse + ").");
+  });
+}
+const ALL = "tout";
+function pool(key){ return key === ALL ? CHAPS.flatMap(ch => QUIZ[ch].questions) : QUIZ[key].questions; }
+function title(key){ return key === ALL ? "Tous les chapitres" : QUIZ[key].nom; }
+
+/* ---------- mémoire locale (résultats et quiz en cours) ---------- */
+function load(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {best: {}, progress: {}}; } catch (e) { return {best: {}, progress: {}}; } }
+let store = load();
+store.best = store.best || {}; store.progress = store.progress || {};
+function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) {} }
+
+/* ---------- état ---------- */
+const S = {view: "home", key: null, order: [], answers: [], idx: 0, start: 0, shuffle: false, retry: false};
+
+/* ---------- outils ---------- */
+const app = document.getElementById("app");
+const chain = document.getElementById("chain");
+const live = document.getElementById("live");
+const dlg = document.getElementById("qrDialog");
+function el(tag, attrs, ...kids){
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})){
+    if (v === null || v === undefined || v === false) continue;
+    if (k === "class") e.className = v; else if (k === "text") e.textContent = v; else if (k === "html") e.innerHTML = v; else e.setAttribute(k, v);
+  }
+  for (const k of kids) if (k != null && k !== false) e.append(k);
+  return e;
+}
+function button(text, cls, onClick, attrs){
+  const b = el("button", Object.assign({type: "button", class: cls}, attrs || {}));
+  if (text.startsWith("<")) b.innerHTML = text; else b.textContent = text;
+  b.addEventListener("click", onClick);
+  return b;
+}
+function put(...nodes){ app.replaceChildren(...nodes.filter(Boolean)); }
+function say(t){ live.textContent = ""; setTimeout(() => { live.textContent = t; }, 30); }
+function link(key, corrige){ return key ? "?partie=" + key + (corrige ? "&corrige" : "") : "?"; }
+function quizUrl(key){ return ADRESSE_SITE + (key ? "?partie=" + key : ""); }
+function shuffled(a){ const r = a.slice(); for (let i = r.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; }
+function duration(sec){ const m = Math.floor(sec / 60), s = sec % 60; return (m ? m + NB + "min" + NB : "") + s + NB + "s"; }
+function today(){ return new Date().toLocaleDateString("fr-CH"); }
+function pct(score, total){ return Math.round(score / total * 100); }
+
+/* ---------- navigation sans rechargement ---------- */
+function go(view, key){
+  S.view = view; S.key = key === undefined ? S.key : key;
+  const url = view === "home" ? location.pathname : link(S.key, view === "correction");
+  try { history.replaceState(null, "", url); } catch (e) {}
+  render();
+  window.scrollTo(0, 0);
+}
+function navLink(text, view, key, cls){
+  const a = el("a", {href: link(key, view === "correction"), class: cls});
+  if (text) a.textContent = text;
+  a.addEventListener("click", ev => { ev.preventDefault(); go(view, key); });
+  return a;
+}
+function renderChain(){
+  chain.replaceChildren(...CHAPS.map(ch => {
+    const a = navLink(QUIZ[ch].nom, S.view === "correction" ? "correction" : "intro", ch);
+    if (ch === S.key) a.setAttribute("aria-current", "page");
+    return el("li", {}, a, el("small", {text: "Chapitre " + ch}));
+  }));
+}
+function hero(key, h1){
+  const sub = key === ALL ? CHAPS.length + " chapitres · " + pool(ALL).length + " questions"
+    : "Chapitre " + key + " · " + QUIZ[key].sujet + " · cours" + NB + "p." + NB + QUIZ[key].pages;
+  return el("section", {class: "hero"},
+    el("span", {class: "numeral", text: key === ALL ? "3–7" : String(key), "aria-hidden": "true"}),
+    el("div", {}, el("h1", {text: h1}), el("p", {text: sub})));
+}
+function tools(key){
+  const t = el("div", {class: "tools"}, button(ICON_QR + "<span>Afficher le QR code</span>", "outline", () => openQr(key)));
+  if (key !== ALL){
+    const on = S.view === "correction";
+    t.append(button(on ? "Masquer la correction" : "Afficher la correction", "outline", () => go(on ? "intro" : "correction", key), {"aria-pressed": String(on)}));
+  }
+  if (document.fullscreenEnabled){
+    t.append(button(document.fullscreenElement ? "Quitter le plein écran" : "Plein écran", "outline", () => {
+      const p = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+      Promise.resolve(p).catch(() => {}).then(() => render());
+    }));
+  }
+  return t;
+}
+function citation(q){
+  if (!q.c) return null;
+  return el("figure", {class: "cite"},
+    el("figcaption", {text: "Source : " + SUPPORT + ", p." + NB + q.p}),
+    el("blockquote", {text: "«" + NB + q.c + NB + "»"}));
+}
+
+/* ---------- accueil ---------- */
+function bestLabel(key){
+  const b = store.best[key];
+  const p = store.progress[key];
+  if (p && p.answers && p.answers.length && p.answers.length < p.order.length) return el("span", {class: "go"}, el("b", {text: "En cours"}), "question " + (p.answers.length + 1) + " / " + p.order.length);
+  if (b) return el("span", {class: "go"}, el("b", {text: b.score + " / " + b.total}), "meilleur score");
+  return el("span", {class: "go"}, el("b", {text: pool(key).length + " questions"}), "à faire");
+}
+function renderHome(){
+  document.title = "Quiz MT_322";
+  const items = CHAPS.map(ch => {
+    const c = QUIZ[ch];
+    const a = navLink("", "intro", ch);
+    a.append(el("span", {class: "d", text: String(ch), "aria-hidden": "true"}),
+      el("span", {}, el("span", {class: "t", text: c.nom}), el("span", {class: "s", text: c.sujet + " · cours" + NB + "p." + NB + c.pages})),
+      bestLabel(ch));
+    return el("li", {}, a);
+  });
+  const all = navLink("", "intro", ALL);
+  all.append(el("span", {class: "d", text: "3–7", "aria-hidden": "true"}),
+    el("span", {}, el("span", {class: "t", text: "Tous les chapitres"}), el("span", {class: "s", text: "Révision complète · " + pool(ALL).length + " questions"})),
+    bestLabel(ALL));
+  items.push(el("li", {class: "all"}, all));
+  const reset = Object.keys(store.best).length || Object.keys(store.progress).length
+    ? el("div", {class: "foot-actions"}, button("Effacer mes résultats sur cet appareil", "link", () => { store = {best: {}, progress: {}}; save(); render(); say("Résultats effacés."); }))
+    : null;
+  put(el("section", {class: "home"},
+    el("h1", {text: "Quiz de fin de chapitre"}),
+    el("p", {class: "lead", text: "Choisissez le chapitre indiqué par votre enseignant. Une question s’affiche à la fois, avec sa correction."}),
+    el("div", {class: "tools"}, button(ICON_QR + "<span>Afficher le QR code</span>", "outline", () => openQr(null))),
+    el("ul", {class: "list"}, ...items), reset));
+}
+
+/* ---------- introduction d'un quiz ---------- */
+function startQuiz(key, opts){
+  const n = pool(key).length;
+  let order = opts && opts.order ? opts.order : [...Array(n).keys()];
+  if (S.shuffle && !(opts && opts.order)) order = shuffled(order);
+  Object.assign(S, {key, order, answers: [], idx: 0, start: Date.now(), retry: !!(opts && opts.retry)});
+  if (!S.retry){ store.progress[key] = {order, answers: [], start: S.start, shuffle: S.shuffle}; save(); }
+  go("question", key);
+}
+function resumeQuiz(key){
+  const p = store.progress[key];
+  Object.assign(S, {key, order: p.order, answers: p.answers.slice(), idx: p.answers.length, start: p.start || Date.now(), retry: false, shuffle: !!p.shuffle});
+  go("question", key);
+}
+function renderIntro(){
+  const key = S.key, n = pool(key).length;
+  document.title = "Quiz · " + title(key);
+  const p = store.progress[key];
+  const inProgress = p && p.answers && p.answers.length > 0 && p.answers.length < p.order.length;
+  const b = store.best[key];
+  const shuffle = el("input", {type: "checkbox", id: "shuffle"});
+  shuffle.checked = S.shuffle;
+  shuffle.addEventListener("change", () => { S.shuffle = shuffle.checked; });
+  const actions = el("div", {class: "row"});
+  if (inProgress){
+    actions.append(button("Reprendre à la question " + (p.answers.length + 1), "primary big", () => resumeQuiz(key)),
+      button("Recommencer", "outline big", () => startQuiz(key)));
+  } else {
+    actions.append(button("Commencer le quiz", "primary big", () => startQuiz(key)));
+  }
+  put(
+    hero(key, title(key)),
+    tools(key),
+    el("section", {class: "start"},
+      el("ul", {class: "facts"},
+        el("li", {}, el("b", {text: String(n)}), " questions"),
+        el("li", {}, "Durée" + NB + ": ", el("b", {text: "environ " + Math.max(1, Math.round(n * 0.75)) + NB + "min"})),
+        b ? el("li", {}, "Meilleur score" + NB + ": ", el("b", {text: b.score + " / " + b.total})) : null),
+      el("div", {class: "brief"},
+        el("p", {text: "Lisez la question et choisissez une réponse."}),
+        el("p", {text: "La correction s’affiche aussitôt, avec la citation du cours."}),
+        el("p", {text: "Une synthèse termine le quiz."})),
+      el("label", {class: "check", for: "shuffle"}, shuffle, "Mélanger l’ordre des questions"),
+      actions,
+      el("p", {class: "hint", text: "Clavier" + NB + ": touches A, B, C, D pour répondre, Entrée pour continuer."})));
+}
+
+/* ---------- question ---------- */
+function current(){ return pool(S.key)[S.order[S.idx]]; }
+function segs(){
+  return el("ol", {class: "segs", "aria-hidden": "true"}, ...S.order.map((qi, k) => {
+    const q = pool(S.key)[qi];
+    const a = S.answers[k];
+    return el("li", {class: a === undefined ? (k === S.idx ? "now" : "") : (a === q.a ? "ok" : "ko")});
+  }));
+}
+function scoreSoFar(){ return S.answers.filter((a, k) => a === pool(S.key)[S.order[k]].a).length; }
+function renderQuestion(){
+  const q = current(), total = S.order.length, n = S.idx + 1;
+  const answered = S.answers[S.idx] !== undefined;
+  document.title = "Question " + n + " / " + total + " · " + title(S.key);
+  const opts = el("div", {class: "opts", role: "group", "aria-labelledby": "qt"});
+  q.o.forEach((o, j) => {
+    const b = el("button", {type: "button", class: "opt", "data-j": String(j)},
+      el("span", {class: "l", text: L[j], "aria-hidden": "true"}),
+      el("span", {}, el("span", {class: "vh", text: "Réponse " + L[j] + " : "}), o),
+      el("span", {class: "tag"}));
+    b.addEventListener("click", () => choose(j));
+    opts.append(b);
+  });
+  const fbBox = el("div", {id: "fb"});
+  const nextBox = el("div", {class: "next", id: "nextBox"});
+  put(
+    el("div", {class: "qhead"},
+      el("span", {}, "Question ", el("b", {text: n + " / " + total}), S.retry ? " · questions manquées" : ""),
+      button("Quitter", "link", () => go("intro", S.key))),
+    segs(),
+    el("section", {class: "qtitle"},
+      el("span", {class: "qnum", text: String(n), "aria-hidden": "true"}),
+      el("h2", {id: "qt", tabindex: "-1"},
+        el("span", {class: "qchap", text: "Chapitre " + q.ch + " · " + QUIZ[q.ch].nom}), q.q)),
+    opts, fbBox, nextBox);
+  if (answered) showFeedback(false); else document.getElementById("qt").focus({preventScroll: true});
+}
+function choose(j){
+  if (S.view !== "question" || S.answers[S.idx] !== undefined) return;
+  S.answers[S.idx] = j;
+  if (!S.retry){ store.progress[S.key] = {order: S.order, answers: S.answers.slice(), start: S.start, shuffle: S.shuffle}; save(); }
+  showFeedback(true);
+}
+function showFeedback(announce){
+  const q = current(), j = S.answers[S.idx], ok = j === q.a;
+  document.querySelectorAll(".opt").forEach((b, k) => {
+    b.setAttribute("aria-disabled", "true");
+    if (k === q.a){ b.classList.add("right"); b.querySelector(".tag").textContent = "Bonne réponse"; }
+    else if (k === j){ b.classList.add("wrong"); b.querySelector(".tag").textContent = "Votre réponse"; }
+    else b.classList.add("dim");
+  });
+  document.querySelector(".segs").replaceWith(segs());
+  const head = ok ? "Juste." : "Faux. Bonne réponse" + NB + ": " + L[q.a] + ".";
+  document.getElementById("fb").replaceChildren(el("div", {class: "fb " + (ok ? "ok" : "ko")},
+    el("strong", {text: head}), " " + q.e, citation(q)));
+  const last = S.idx === S.order.length - 1;
+  const nb = button(last ? "Voir la synthèse" : "Question suivante", "primary big", next, {id: "nextBtn"});
+  document.getElementById("nextBox").replaceChildren(
+    el("span", {class: "score-live", text: "Score" + NB + ": " + scoreSoFar() + " / " + (S.idx + 1)}), nb);
+  if (announce) say(head + " " + q.e);
+  nb.focus({preventScroll: true});
+  document.getElementById("fb").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest"});
+}
+function next(){
+  if (S.answers[S.idx] === undefined) return;
+  if (S.idx < S.order.length - 1){ S.idx++; render(); window.scrollTo(0, 0); }
+  else finish();
+}
+
+/* ---------- synthèse ---------- */
+function finish(){
+  const total = S.order.length, score = scoreSoFar();
+  S.seconds = Math.round((Date.now() - S.start) / 1000);
+  if (!S.retry){
+    const b = store.best[S.key];
+    if (!b || score > b.score) store.best[S.key] = {score, total, date: today()};
+    delete store.progress[S.key];
+    save();
+  }
+  go("summary", S.key);
+}
+function verdict(score, total){
+  const r = score / total;
+  if (r === 1) return "Toutes vos réponses sont justes.";
+  if (r >= 0.8) return "Très bon résultat. Relisez la correction des questions manquées.";
+  if (r >= 0.6) return "Résultat correct. Relisez les passages du cours cités ci-dessous.";
+  return "Relisez le chapitre dans le cours, puis refaites le quiz.";
+}
+function renderSummary(){
+  const key = S.key, total = S.order.length, score = scoreSoFar();
+  const qs = S.order.map(i => pool(key)[i]);
+  const missed = S.order.filter((qi, k) => S.answers[k] !== pool(key)[qi].a);
+  document.title = "Synthèse · " + title(key);
+  const resultText = "Quiz MT_322 · " + (key === ALL ? "Tous les chapitres" : "Chapitre " + key + " " + QUIZ[key].nom)
+    + (S.retry ? " (questions manquées)" : "") + " : " + score + "/" + total + " (" + pct(score, total) + " %) · " + today();
+  const actions = el("div", {class: "row"});
+  if (missed.length) actions.append(button(missed.length > 1 ? "Refaire les " + missed.length + " questions manquées" : "Refaire la question manquée", "primary", () => startQuiz(key, {order: missed, retry: true})));
+  actions.append(button("Recommencer le quiz", "ghost", () => startQuiz(key)));
+  const nextCh = key === ALL ? null : CHAPS[CHAPS.indexOf(key) + 1];
+  if (nextCh) actions.append(button("Quiz suivant" + NB + ": " + QUIZ[nextCh].nom, "ghost", () => go("intro", nextCh)));
+  actions.append(button("Copier mon résultat", "ghost", ev => copyText(resultText, ev.currentTarget, "Résultat copié")));
+  const best = store.best[key];
+  const result = el("section", {class: "result", "aria-labelledby": "rt"},
+    el("h2", {id: "rt", text: S.retry ? "Synthèse des questions manquées" : "Synthèse"}),
+    el("p", {class: "score"}, String(score), el("span", {text: " / " + total})),
+    el("p", {class: "meta", text: pct(score, total) + NB + "% de réponses justes · durée" + NB + ": " + duration(S.seconds || 0)
+      + (best && !S.retry ? " · meilleur score" + NB + ": " + best.score + " / " + best.total : "")}),
+    el("ol", {class: "segs", "aria-hidden": "true"}, ...S.order.map((qi, k) => el("li", {class: S.answers[k] === pool(key)[qi].a ? "ok" : "ko"}))),
+    el("p", {class: "verdict", text: verdict(score, total)}),
+    actions);
+  let table = null;
+  if (key === ALL){
+    const rows = CHAPS.map(ch => {
+      const ks = S.order.map((qi, k) => k).filter(k => pool(ALL)[S.order[k]].ch === ch);
+      if (!ks.length) return null;
+      const ok = ks.filter(k => S.answers[k] === pool(ALL)[S.order[k]].a).length;
+      return el("tr", {}, el("td", {text: ch + " · " + QUIZ[ch].nom}), el("td", {text: ok + " / " + ks.length}));
+    }).filter(Boolean);
+    table = el("table", {class: "bychap"}, el("thead", {}, el("tr", {}, el("th", {text: "Chapitre"}), el("th", {text: "Score"}))), el("tbody", {}, ...rows));
+  }
+  const recap = el("ol", {class: "recap"}, ...qs.map((q, k) => {
+    const a = S.answers[k], ok = a === q.a;
+    const d = el("details", {open: ok ? null : ""},
+      el("summary", {}, el("span", {class: "mark " + (ok ? "ok" : "ko"), text: ok ? "✓" : "✗", "aria-label": ok ? "Juste" : "Faux"}), el("span", {text: (k + 1) + ". " + q.q})),
+      el("div", {class: "body"},
+        el("p", {}, el("strong", {text: "Votre réponse" + NB + ": "}), L[a] + ". " + q.o[a]),
+        ok ? null : el("p", {}, el("strong", {text: "Bonne réponse" + NB + ": "}), L[q.a] + ". " + q.o[q.a]),
+        el("p", {text: q.e}),
+        citation(q)));
+    return el("li", {}, d);
+  }));
+  put(
+    hero(key, title(key)),
+    result,
+    table ? el("h3", {class: "sec", text: "Résultat par chapitre"}) : null, table,
+    el("h3", {class: "sec", text: "Détail des réponses"}), recap,
+    el("div", {class: "row"}, navLink("Retour aux chapitres", "home", null, "btn outline")));
+  say("Synthèse : " + score + " sur " + total + ". " + verdict(score, total));
+}
+
+/* ---------- correction enseignant ---------- */
+function renderCorrection(){
+  const key = S.key, c = QUIZ[key];
+  document.title = "Correction · " + c.nom;
+  const list = el("div", {});
+  c.questions.forEach((q, i) => {
+    const s = el("section", {class: "q"});
+    s.append(el("h2", {}, el("span", {class: "n", text: String(i + 1), "aria-hidden": "true"}), el("span", {}, q.q)));
+    const opts = el("div", {class: "opts"});
+    q.o.forEach((o, j) => opts.append(el("div", {class: "opt" + (j === q.a ? " right" : " dim"), "aria-disabled": "true"},
+      el("span", {class: "l", text: L[j]}), el("span", {}, o), el("span", {class: "tag", text: j === q.a ? "Bonne réponse" : ""}))));
+    s.append(opts, el("div", {class: "fb ok"}, el("strong", {text: "Réponse" + NB + ": " + L[q.a] + "."}), " " + q.e, citation(q)));
+    list.append(s);
+  });
+  put(hero(key, "Correction" + NB + ": " + c.nom), tools(key),
+    el("div", {class: "brief"}, el("p", {text: "Les bonnes réponses sont en vert, avec l’explication et la citation du cours " + SUPPORT + "."})),
+    list);
+}
+
+/* ---------- rendu ---------- */
+function render(){
+  renderChain();
+  if (S.view === "intro") renderIntro();
+  else if (S.view === "question") renderQuestion();
+  else if (S.view === "summary") renderSummary();
+  else if (S.view === "correction") renderCorrection();
+  else renderHome();
+}
+
+/* ---------- clavier ---------- */
+document.addEventListener("keydown", ev => {
+  if (dlg.open || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+  if (S.view !== "question") return;
+  const k = ev.key.toUpperCase();
+  const map = {A: 0, B: 1, C: 2, D: 3, "1": 0, "2": 1, "3": 2, "4": 3};
+  if (k in map && S.answers[S.idx] === undefined && map[k] < current().o.length){ ev.preventDefault(); choose(map[k]); }
+  else if ((ev.key === "Enter" || ev.key === "ArrowRight") && S.answers[S.idx] !== undefined && document.activeElement.id !== "nextBtn"){ ev.preventDefault(); next(); }
+});
+
+/* ---------- copie dans le presse-papiers ---------- */
+function copyText(text, btn, okLabel){
+  const label = btn.textContent;
+  const done = () => { btn.textContent = okLabel; setTimeout(() => { btn.textContent = label; }, 2000); };
+  const fallback = () => {
+    const t = el("textarea", {class: "vh"}); t.value = text; document.body.append(t); t.select();
+    try { document.execCommand("copy"); done(); } catch (e) {} t.remove();
+  };
+  try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+}
+
+/* ---------- fenêtre QR code ---------- */
+function openQr(key){
+  const url = quizUrl(key);
+  document.getElementById("qrTitle").textContent = key ? "Quiz · " + (key === ALL ? "tous les chapitres" : "chapitre " + key + " · " + QUIZ[key].nom) : "Quiz de fin de chapitre";
+  document.getElementById("qrUrl").textContent = url;
+  const box = document.getElementById("qrCode");
+  if (typeof qrcode === "function"){
+    const qr = qrcode(0, "M"); qr.addData(url); qr.make();
+    box.innerHTML = qr.createSvgTag({cellSize: 8, margin: 16, scalable: true, title: "QR code : " + url});
+  } else {
+    box.textContent = "QR code indisponible sans connexion internet. Utilisez le lien ci-dessous.";
+  }
+  if (typeof dlg.showModal === "function") dlg.showModal(); else dlg.setAttribute("open", "");
+}
+function closeQr(){ if (typeof dlg.close === "function") dlg.close(); else dlg.removeAttribute("open"); }
+document.getElementById("qrClose").addEventListener("click", closeQr);
+dlg.addEventListener("click", ev => { if (ev.target === dlg) closeQr(); });
+document.getElementById("qrCopy").addEventListener("click", ev => copyText(document.getElementById("qrUrl").textContent, ev.currentTarget, "Lien copié"));
+document.addEventListener("fullscreenchange", () => { if (S.view === "intro" || S.view === "correction") render(); });
+
+/* ---------- démarrage ---------- */
+(function init(){
+  let p = null, corrige = false;
+  try { const u = new URLSearchParams(location.search); p = u.get("partie"); corrige = u.has("corrige"); } catch (e) {}
+  if (!p){ const m = location.hash.match(/\d+|tout/); if (m) p = m[0]; }
+  const key = p === ALL ? ALL : (CHAPS.includes(Number(p)) ? Number(p) : null);
+  if (!key){ S.view = "home"; render(); return; }
+  S.key = key;
+  S.view = corrige && key !== ALL ? "correction" : "intro";
+  render();
+})();
+</script>
+</body>
+</html>
