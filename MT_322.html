@@ -4,16 +4,17 @@
 <title>Quiz MT_322</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Quiz de fin de chapitre du cours Qualité industrielle (MT_322, hepia) et partie Bonus de révision de l’évaluation 1 : une question à la fois, correction immédiate, synthèse et citations du cours.">
+<meta name="description" content="Quiz de fin de chapitre du cours Qualité industrielle (MT_322, hepia), par partie du cours, avec questions bonus : une question à la fois, correction immédiate, synthèse et citations du cours.">
 <script>
 /* ==========================================================================
    QUIZ MT_322 – QUESTIONS, RÉPONSES ET CITATIONS DU COURS
    Source de toutes les réponses : Qualité_Industrielle_hepia_cours 2026-2027.
-   QUIZ  : une rubrique par chapitre (3 à 7), 5 questions chacune.
-   BONUS : 30 questions de révision de l’évaluation 1 (chapitres 1 à 6).
+   PARTIES   : parties du cours (onglets du haut) et leurs chapitres.
+   QUIZ      : une rubrique par chapitre, 5 questions chacune.
+   CHAPITRES : noms des chapitres affichés au-dessus des questions bonus.
+   BONUS     : questions complémentaires, une rubrique par partie.
    Pour chaque question :
      chapitre     (bonus) numéro du chapitre du cours
-     evaluation   (bonus) question liée de l’évaluation 1, visible dans la correction
      question     texte de la question
      choix        3 ou 4 réponses proposées, dans l’ordre A, B, C, D
      reponse      lettre de la bonne réponse
@@ -21,12 +22,31 @@
      page         page du cours
      citation     extrait exact du cours ([…] = coupure)
    Pour modifier : changez le texte entre guillemets, enregistrez, rechargez la page.
-   Liens : ADRESSE_SITE?partie=3 (quiz) – ADRESSE_SITE?partie=3&corrige (correction)
-           ADRESSE_SITE?partie=bonus – ADRESSE_SITE?partie=bonus&corrige
+   Liens : ADRESSE_SITE?partie=3 (quiz du chapitre 3) – ADRESSE_SITE?partie=3&corrige (correction)
+           ADRESSE_SITE?partie=tout (tous les chapitres de la partie I) – ADRESSE_SITE?partie=bonus (bonus de la partie I)
+   Ajouter la partie II :
+     1. dans PARTIES, ajoutez la rubrique 2 (modèle en commentaire) ;
+     2. dans QUIZ, ajoutez ses chapitres (8, 9, …) sur le modèle des chapitres 3 à 7 ;
+     3. facultatif : dans BONUS, ajoutez la rubrique 2 (lien ?partie=bonus-2).
    ========================================================================== */
 const ADRESSE_SITE = "https://nicolas-derobert.github.io/appli-qualite/MT_322"; // adresse publique utilisée pour les QR codes
 const SUPPORT = "Qualité_Industrielle_hepia_cours 2026-2027"; // cours cité dans les corrections
 
+/* ---------- Parties du cours : un onglet par partie ---------- */
+const PARTIES = {
+  1: {
+    numero: "I",
+    titre: "Le système de management de la Qualité",
+    chapitres: [3, 4, 5, 6, 7]
+  },
+  // 2: {
+  //   numero: "II",
+  //   titre: "La démarche Qualité en entreprise",
+  //   chapitres: [8, 9, 10]
+  // }
+};
+
+/* ---------- Quiz de fin de chapitre ---------- */
 const QUIZ = {
 
   /* ---------- Chapitre 3 · Mesurer ---------- */
@@ -275,27 +295,28 @@ const QUIZ = {
   }
 };
 
-/* ---------- Partie Bonus : révision de l’évaluation 1 ---------- */
-/* Noms des chapitres du cours affichés au-dessus des questions bonus */
+/* ---------- Noms des chapitres du cours (questions bonus) ---------- */
 const CHAPITRES = {
   1: "Les définitions",
   2: "L’historique de la qualité",
   3: "La métrologie",
   4: "Les organismes de normalisation",
   5: "Le système de management de la qualité",
-  6: "Les coûts de la qualité"
+  6: "Les coûts de la qualité",
+  7: "Le fournisseur, un partenaire commercial"
 };
 
+/* ---------- Questions bonus : une rubrique par partie (1 = partie I) ---------- */
 const BONUS = {
-  nom: "Bonus",
-  sujet: "Révision de l’évaluation 1",
-  pages: "8–51",
-  questions: [
+  1: {
+    nom: "Bonus",
+    sujet: "Questions complémentaires",
+    pages: "8–51",
+    questions: [
 
       /* ----- Chapitre 1 · Les définitions ----- */
       { // Question 1
         chapitre: 1,
-        evaluation: "2",
         question: "Un produit de qualité fonctionne bien et longtemps. Quel mot le cours associe-t-il à cette propriété ?",
         choix: ["La fiabilité", "La conformité", "La traçabilité", "La répétabilité"],
         reponse: "A",
@@ -305,7 +326,6 @@ const BONUS = {
       },
       { // Question 2
         chapitre: 1,
-        evaluation: "2",
         question: "Au sens industriel, la qualité est l’aptitude de caractéristiques intrinsèques à satisfaire quoi ?",
         choix: ["Les objectifs financiers de l’entreprise", "Les besoins exprimés ou potentiels des utilisateurs", "Les exigences de la direction", "Les tolérances fixées par le bureau technique"],
         reponse: "B",
@@ -315,7 +335,6 @@ const BONUS = {
       },
       { // Question 3
         chapitre: 1,
-        evaluation: "9",
         question: "La politique qualité et les objectifs qualité appartiennent à quelle famille de documents ?",
         choix: ["Documents de suivi / enregistrements / preuves", "Documents liés à l’amélioration continue et la prévention des risques", "Documents « directeurs / stratégiques »", "Documents relatifs à la formation, la communication, la conformité"],
         reponse: "C",
@@ -325,7 +344,6 @@ const BONUS = {
       },
       { // Question 4
         chapitre: 1,
-        evaluation: "9",
         question: "Les fiches de non-conformité et les rapports d’audits internes appartiennent à quelle famille de documents ?",
         choix: ["Documents de suivi / enregistrements / preuves", "Documents « directeurs / stratégiques »", "Documents de structuration / normes / procédures", "Documents relatifs à la formation, la communication, la conformité"],
         reponse: "A",
@@ -337,7 +355,6 @@ const BONUS = {
       /* ----- Chapitre 2 · L’historique de la qualité ----- */
       { // Question 5
         chapitre: 2,
-        evaluation: "4",
         question: "Quels secteurs ont joué un rôle de précurseur dans le développement de la qualité ?",
         choix: ["Le textile et l’habillement", "Le bâtiment et les travaux publics", "La banque et l’assurance", "L’aéronautique, le spatial et le nucléaire"],
         reponse: "D",
@@ -347,7 +364,6 @@ const BONUS = {
       },
       { // Question 6
         chapitre: 2,
-        evaluation: "3",
         question: "Sur quelle idée repose la production en série ?",
         choix: ["Les pièces fabriquées sont identiques.", "Chaque pièce est contrôlée à 100 %.", "Les machines restent parfaitement stables.", "Les tolérances deviennent inutiles."],
         reponse: "A",
@@ -357,7 +373,6 @@ const BONUS = {
       },
       { // Question 7
         chapitre: 2,
-        evaluation: "8",
         question: "En combien de facteurs regroupe-t-on généralement les causes de variation d’un procédé ?",
         choix: ["3", "4", "5", "7"],
         reponse: "C",
@@ -367,7 +382,6 @@ const BONUS = {
       },
       { // Question 8
         chapitre: 2,
-        evaluation: "6",
         question: "Entre quelles exigences les tolérances établissent-elles un compromis ?",
         choix: ["Le prix de vente et la marge", "La précision requise pour fonctionner et les contraintes de fabrication", "Le délai de livraison et la quantité", "L’esthétique et le poids du produit"],
         reponse: "B",
@@ -377,7 +391,6 @@ const BONUS = {
       },
       { // Question 9
         chapitre: 2,
-        evaluation: "11",
         question: "Dans la gestion systématique de la qualité, comment agit l’entreprise ?",
         choix: ["Elle réagit après l’apparition du défaut.", "Elle anticipe : elle agit avant l’apparition du défaut.", "Elle cherche le responsable du défaut.", "Elle contrôle uniquement le produit fini."],
         reponse: "B",
@@ -387,7 +400,6 @@ const BONUS = {
       },
       { // Question 10
         chapitre: 2,
-        evaluation: "11",
         question: "Le passage du contrôle qualité à l’assurance qualité traduit une « vision du futur ». Quel en est l’objectif ?",
         choix: ["Déceler les fautes", "Chercher les coupables", "Accuser", "Prévenir les fautes"],
         reponse: "D",
@@ -399,7 +411,6 @@ const BONUS = {
       /* ----- Chapitre 3 · La métrologie ----- */
       { // Question 11
         chapitre: 3,
-        evaluation: "22",
         question: "Quelle métrologie crée, développe et maintient les étalons de référence ?",
         choix: ["La métrologie fondamentale, ou scientifique", "La métrologie légale", "La métrologie industrielle", "La métrologie commerciale"],
         reponse: "A",
@@ -409,7 +420,6 @@ const BONUS = {
       },
       { // Question 12
         chapitre: 3,
-        evaluation: "22",
         question: "Quelle métrologie est la plus fréquente ?",
         choix: ["La métrologie fondamentale, ou scientifique", "La métrologie légale", "La métrologie industrielle"],
         reponse: "C",
@@ -419,7 +429,6 @@ const BONUS = {
       },
       { // Question 13
         chapitre: 3,
-        evaluation: "23",
         question: "Pourquoi des organisations internationales ont-elles défini des guides métrologiques ?",
         choix: ["Pour fixer le prix des instruments de mesure", "Pour remplacer les étalons nationaux", "Pour supprimer l’incertitude de mesure", "Pour faciliter la validation, entre partenaires, des mesures des produits échangés"],
         reponse: "D",
@@ -429,7 +438,6 @@ const BONUS = {
       },
       { // Question 14
         chapitre: 3,
-        evaluation: "24",
         question: "Dans le VIM, quel terme désigne la grandeur que l’on veut mesurer ?",
         choix: ["Le mesurande", "Le mesurage", "L’étalon", "L’incertitude de mesure"],
         reponse: "A",
@@ -439,7 +447,6 @@ const BONUS = {
       },
       { // Question 15
         chapitre: 3,
-        evaluation: "27",
         question: "Qui détient les références nationales de mesure et les diffuse vers l’utilisateur ?",
         choix: ["Les laboratoires nationaux de métrologie (LNM)", "Les organismes de normalisation", "Les fabricants d’instruments de mesure", "Les services qualité des entreprises"],
         reponse: "A",
@@ -449,7 +456,6 @@ const BONUS = {
       },
       { // Question 16
         chapitre: 3,
-        evaluation: "25",
         question: "Quel est le domaine d’application du GUM ?",
         choix: ["Le vocabulaire de la métrologie", "L’évaluation et l’expression de l’incertitude de mesure", "La définition des unités du SI", "La classification des instruments de mesure"],
         reponse: "B",
@@ -461,7 +467,6 @@ const BONUS = {
       /* ----- Chapitre 4 · Les organismes de normalisation ----- */
       { // Question 17
         chapitre: 4,
-        evaluation: "12",
         question: "Dans quelle ville se trouve le secrétariat central de l’ISO ?",
         choix: ["Paris", "Berne", "Bruxelles", "Genève"],
         reponse: "D",
@@ -471,7 +476,6 @@ const BONUS = {
       },
       { // Question 18
         chapitre: 4,
-        evaluation: "13",
         question: "Quelle norme donne des lignes directrices pour obtenir des performances durables ?",
         choix: ["ISO 9000", "ISO 9001", "ISO 9002", "ISO 9004"],
         reponse: "D",
@@ -481,7 +485,6 @@ const BONUS = {
       },
       { // Question 19
         chapitre: 4,
-        evaluation: "18",
         question: "Quel organisme est chargé de la normalisation en Suisse ?",
         choix: ["L’AFNOR", "Le DIN", "La SNV", "Le METAS"],
         reponse: "C",
@@ -491,7 +494,6 @@ const BONUS = {
       },
       { // Question 20
         chapitre: 4,
-        evaluation: "19",
         question: "Quel domaine couvre la série de normes ISO 14000 ?",
         choix: ["La santé et la sécurité au travail", "Le management environnemental", "Les dispositifs médicaux", "L’acceptabilité des assemblages électroniques"],
         reponse: "B",
@@ -501,7 +503,6 @@ const BONUS = {
       },
       { // Question 21
         chapitre: 4,
-        evaluation: "21",
         question: "Sur quel principe reposent les dispositions du règlement REACH ?",
         choix: ["Le principe de précaution", "Le principe de Pareto", "Le principe pollueur-payeur", "Le principe d’amélioration continue"],
         reponse: "A",
@@ -513,7 +514,6 @@ const BONUS = {
       /* ----- Chapitre 5 · Le système de management de la qualité ----- */
       { // Question 22
         chapitre: 5,
-        evaluation: "30",
         question: "Quelle action relève du principe « orientation client » ?",
         choix: ["Motiver, encourager et reconnaître la contribution du personnel", "Mesurer et surveiller la satisfaction du client", "Faciliter les discussions ouvertes et le partage des connaissances", "Considérer l’activité comme un ensemble de sous-activités corrélées"],
         reponse: "B",
@@ -523,7 +523,6 @@ const BONUS = {
       },
       { // Question 23
         chapitre: 5,
-        evaluation: "29",
         question: "Quel bénéfice apporte l’implication du personnel ?",
         choix: ["L’augmentation des ventes et des parts de marché", "L’amélioration de l’image de l’organisme", "L’amélioration du développement personnel, des initiatives et de la créativité", "L’élargissement du panel des clients"],
         reponse: "C",
@@ -533,7 +532,6 @@ const BONUS = {
       },
       { // Question 24
         chapitre: 5,
-        evaluation: "28",
         question: "Quel bénéfice apporte le leadership ?",
         choix: ["L’amélioration de la communication entre les niveaux et les fonctions de l’organisme", "L’augmentation de la valeur pour le client", "L’amélioration de la fidélité du client", "L’augmentation des ventes et des parts de marché"],
         reponse: "A",
@@ -543,7 +541,6 @@ const BONUS = {
       },
       { // Question 25
         chapitre: 5,
-        evaluation: "32–33",
         question: "Comment un organisme améliore-t-il ses performances avec ses parties intéressées ?",
         choix: ["En limitant les échanges avec elles", "En leur imposant ses propres procédures", "En choisissant toujours le fournisseur le moins cher", "En communiquant avec elles et en tenant compte de leurs exigences"],
         reponse: "D",
@@ -553,7 +550,6 @@ const BONUS = {
       },
       { // Question 26
         chapitre: 5,
-        evaluation: "31",
         question: "Quel bénéfice du manuel qualité figure dans le cours ?",
         choix: ["La diminution des risques d’interférences", "La fidélisation de la clientèle", "L’amélioration des investissements", "L’optimisation des nouvelles technologies"],
         reponse: "B",
@@ -563,7 +559,6 @@ const BONUS = {
       },
       { // Question 27
         chapitre: 5,
-        evaluation: "36",
         question: "Quelle longueur le cours indique-t-il pour une politique qualité ?",
         choix: ["Une dizaine de pages", "Une page par processus", "La longueur du manuel qualité", "Une page"],
         reponse: "D",
@@ -575,7 +570,6 @@ const BONUS = {
       /* ----- Chapitre 6 · Les coûts de la qualité ----- */
       { // Question 28
         chapitre: 6,
-        evaluation: "39–40",
         question: "Rebuts, ré-usinage et retards : à quelle catégorie de coûts appartiennent-ils ?",
         choix: ["Coûts de la prévention", "Coûts de la détection", "Coûts de défaillances internes", "Coûts de défaillances externes"],
         reponse: "C",
@@ -585,7 +579,6 @@ const BONUS = {
       },
       { // Question 29
         chapitre: 6,
-        evaluation: "43",
         question: "Sur le graphique du COQ, en fonction de quelle grandeur trace-t-on les coûts ?",
         choix: ["Le temps, en mois", "L’indice qualité, en %", "Le nombre de pièces produites", "Le nombre de réclamations"],
         reponse: "B",
@@ -595,7 +588,6 @@ const BONUS = {
       },
       { // Question 30
         chapitre: 6,
-        evaluation: "42",
         question: "Quelles études le cours juge-t-il essentielles d’un point de vue économique et marketing ?",
         choix: ["Les études de marché", "Les enquêtes de satisfaction après-vente", "Les études de recyclage en fin de vie", "Les études de fiabilisation et les méthodes de fabrication"],
         reponse: "D",
@@ -603,7 +595,8 @@ const BONUS = {
         page: "51",
         citation: "Conclusion : Les phases de développement (R&D et Industrialisation) sont cruciales dans le cycle de vie d’un produit. Les études de fiabilisation et les méthodes de fabrication sont essentielles, d’un point de vue économique et marketing pour l’entreprise."
       }
-  ]
+    ]
+  }
 };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
@@ -618,6 +611,7 @@ const BONUS = {
   --ok:#1E7046; --ok-tint:#E4F1EA; --on-accent:#FFFFFF;
   --panel:#1D1D1B; --on-panel:#FFFFFF; --on-panel-soft:#D6D5D2;
   --seg:#E3E2DF; --veil:rgba(29,29,27,.55);
+  --accent:#DA291C; --accent-deep:#A8180F; --accent-tint:#FBE6E3; --star:#C9A227;
   --font:"Archivo",Arial,Helvetica,sans-serif;
   --fs:clamp(16px, 0.55vw + 13.5px, 21px);
   color-scheme:light;
@@ -629,6 +623,7 @@ const BONUS = {
     --ok:#6CC495; --ok-tint:#16301F; --on-accent:#FFFFFF;
     --panel:#2A2927; --on-panel:#FFFFFF; --on-panel-soft:#D6D5D2;
     --seg:#33322F; --veil:rgba(0,0,0,.7);
+    --accent:#EF4A3C; --accent-deep:#C93A2E; --accent-tint:#3B1E1B; --star:#E0B84A;
     color-scheme:dark;
   }
 }
@@ -638,14 +633,21 @@ const BONUS = {
   --ok:#6CC495; --ok-tint:#16301F; --on-accent:#FFFFFF;
   --panel:#2A2927; --on-panel:#FFFFFF; --on-panel-soft:#D6D5D2;
   --seg:#33322F; --veil:rgba(0,0,0,.7);
+  --accent:#EF4A3C; --accent-deep:#C93A2E; --accent-tint:#3B1E1B; --star:#E0B84A;
   color-scheme:dark;
 }
+/* Partie Bonus : bleu marine (les réponses fausses restent en rouge) */
+.accent-bonus{--accent:#1F3A68; --accent-deep:#132645; --accent-tint:#E4EAF4}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .accent-bonus{--accent:#5B87D6; --accent-deep:#3D6BBB; --accent-tint:#1A2436}
+}
+:root[data-theme="dark"] .accent-bonus{--accent:#5B87D6; --accent-deep:#3D6BBB; --accent-tint:#1A2436}
 *{box-sizing:border-box}
 html{font-size:var(--fs);-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);line-height:1.45}
 a{color:inherit}
 .wrap{max-width:46rem;margin:0 auto;padding-inline:1rem}
-:focus-visible{outline:3px solid var(--red);outline-offset:3px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 .vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 h1,h2{text-wrap:balance}
 
@@ -655,34 +657,45 @@ header{padding-block:1.1rem .4rem}
 .course a{text-decoration:none}
 .course a:hover{text-decoration:underline}
 .course b{color:var(--ink);font-weight:600}
-.chain{display:flex;margin:1rem 0 0;padding:0;list-style:none}
+.parts{display:flex;gap:.35rem;margin:1rem 0 0;padding:0;list-style:none}
+.parts a{display:block;text-decoration:none;font-size:.8rem;line-height:1.3;padding:.45rem .9rem .5rem;border:1.5px solid var(--line);border-bottom:0;
+  border-radius:.65rem .65rem 0 0;background:var(--paper);color:var(--grey);position:relative;top:1.5px}
+.parts a:hover{color:var(--ink)}
+.parts a b{color:var(--ink);font-weight:800;margin-right:.15rem}
+.parts a[aria-current]{background:var(--mist);color:var(--ink);z-index:1}
+.part-panel{border:1.5px solid var(--line);border-radius:0 .9rem .9rem .9rem;background:var(--mist);padding:.75rem .75rem .5rem}
+.chain{display:flex;margin:0;padding:0;list-style:none}
 .chain li{flex:1 1 0;min-width:0}
 .chain li+li{margin-left:-.55rem}
 .chain a{display:block;text-align:center;text-decoration:none;font-weight:600;font-size:.74rem;
-  padding:.5rem .2rem;border:2px solid var(--red);border-radius:999px;background:var(--paper);color:var(--red);
+  padding:.5rem .2rem;border:2px solid var(--accent);border-radius:999px;background:var(--paper);color:var(--accent);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
-.chain a:hover{background:var(--red-tint)}
-.chain a[aria-current="page"]{background:var(--red);color:var(--on-accent);z-index:1}
+.chain a:hover{background:var(--accent-tint)}
+.chain a[aria-current="page"]{background:var(--accent);color:var(--on-accent);z-index:1}
 .chain small{display:block;font-weight:400;font-size:.62rem;color:var(--grey);margin-top:.2rem;text-align:center}
-.chain a[aria-current="page"]+small{color:var(--red);font-weight:600}
+.chain a[aria-current="page"]+small{color:var(--accent);font-weight:600}
+.chain .star{width:1em;height:1em;flex:none;vertical-align:-.15em;margin-right:.25rem;color:var(--star)}
+.star{display:inline-block}
+.numeral .star{display:block;width:.9em;height:.9em;color:var(--star)}
+.list .d .star{display:block;width:2.4rem;height:2.4rem;color:var(--star)}
 
 /* titres */
 .hero{display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 1rem;align-items:end;margin:1.8rem 0 1rem}
-.numeral{font-weight:800;font-size:5.6rem;line-height:.78;color:var(--red);letter-spacing:-.04em}
+.numeral{font-weight:800;font-size:5.6rem;line-height:.78;color:var(--accent);letter-spacing:-.04em}
 .hero h1{margin:0;font-size:2rem;line-height:1.05;font-weight:800;letter-spacing:-.01em}
 .hero p{margin:.35rem 0 0;color:var(--grey);font-size:.9rem}
 .tools{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 1.4rem}
-.brief{border-left:4px solid var(--red);padding:.15rem 0 .15rem .8rem;margin:0 0 1.4rem;font-size:.95rem}
+.brief{border-left:4px solid var(--accent);padding:.15rem 0 .15rem .8rem;margin:0 0 1.4rem;font-size:.95rem}
 .brief p{margin:.1rem 0}
 .hint{color:var(--grey);font-size:.8rem;margin:.8rem 0 0}
 
 /* boutons */
-button,.btn{font:inherit;font-weight:600;font-size:.9rem;border-radius:999px;padding:.6rem 1.15rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:2px solid var(--red)}
-.primary{background:var(--red);color:var(--on-accent)}
-.primary:hover{background:var(--red-deep);border-color:var(--red-deep)}
-.outline{background:var(--paper);color:var(--red)}
-.outline:hover{background:var(--red-tint)}
-.outline[aria-pressed="true"]{background:var(--red);color:var(--on-accent)}
+button,.btn{font:inherit;font-weight:600;font-size:.9rem;border-radius:999px;padding:.6rem 1.15rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:2px solid var(--accent)}
+.primary{background:var(--accent);color:var(--on-accent)}
+.primary:hover{background:var(--accent-deep);border-color:var(--accent-deep)}
+.outline{background:var(--paper);color:var(--accent)}
+.outline:hover{background:var(--accent-tint)}
+.outline[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
 .ghost{background:transparent;color:var(--on-panel);border-color:var(--on-panel)}
 .ghost:hover{background:var(--on-panel);color:var(--panel)}
 .link{border:0;background:none;padding:.3rem 0;color:var(--grey);font-weight:600;text-decoration:underline;border-radius:0}
@@ -695,7 +708,7 @@ button,.btn{font:inherit;font-weight:600;font-size:.9rem;border-radius:999px;pad
 .facts{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin:0;padding:0;list-style:none;font-size:.9rem;color:var(--grey)}
 .facts b{color:var(--ink)}
 .check{display:flex;align-items:center;gap:.55rem;font-size:.9rem;cursor:pointer}
-.check input{width:1.15rem;height:1.15rem;accent-color:var(--red)}
+.check input{width:1.15rem;height:1.15rem;accent-color:var(--accent)}
 
 /* question */
 .qhead{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin:1.6rem 0 .5rem;font-size:.85rem;color:var(--grey);font-variant-numeric:tabular-nums}
@@ -706,7 +719,7 @@ button,.btn{font:inherit;font-weight:600;font-size:.9rem;border-radius:999px;pad
 .segs li.ok{background:var(--ok)}
 .segs li.ko{background:var(--red)}
 .qtitle{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.9rem;align-items:start;margin:0 0 1.1rem}
-.qnum{font-weight:800;font-size:3rem;line-height:.85;color:var(--red);font-variant-numeric:tabular-nums}
+.qnum{font-weight:800;font-size:3rem;line-height:.85;color:var(--accent);font-variant-numeric:tabular-nums}
 .qtitle h2{margin:0;font-size:1.3rem;line-height:1.3;font-weight:700}
 .qtitle h2:focus{outline:none}
 .qchap{display:block;font-size:.75rem;font-weight:600;color:var(--grey);margin-bottom:.25rem}
@@ -767,12 +780,12 @@ h3.sec{font-size:1rem;margin:0 0 .6rem}
 .home .lead{color:var(--grey);margin:0 0 1rem}
 .list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
 .list a{display:grid;grid-template-columns:3.2rem minmax(0,1fr) auto;align-items:center;gap:.8rem;padding:.9rem .2rem;border-bottom:1px solid var(--line);text-decoration:none}
-.list a:hover .t{color:var(--red)}
-.list .d{font-size:2.6rem;font-weight:800;color:var(--red);line-height:1}
+.list a:hover .t{color:var(--accent)}
+.list .d{font-size:2.6rem;font-weight:800;color:var(--accent);line-height:1}
 .list .t{font-weight:800;font-size:1.15rem;display:block}
 .list .s{color:var(--grey);font-size:.85rem}
 .list .go{font-size:.78rem;font-weight:600;color:var(--grey);white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
-.list .go b{display:block;color:var(--red);font-size:.95rem}
+.list .go b{display:block;color:var(--accent);font-size:.95rem}
 .list .all .d{font-size:1.6rem}
 .foot-actions{margin:1rem 0 0}
 
@@ -791,7 +804,7 @@ dialog.qr::backdrop{background:var(--veil)}
 .q{margin:0 0 1.6rem}
 .q h2{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:.7rem;margin:0 0 .75rem;font-size:1.05rem;line-height:1.35}
 .q h2 .qchap{margin-bottom:.15rem}
-.q .n{display:grid;place-items:center;width:2rem;height:2rem;border-radius:50%;background:var(--red);color:var(--on-accent);font-weight:800;font-size:.95rem}
+.q .n{display:grid;place-items:center;width:2rem;height:2rem;border-radius:50%;background:var(--accent);color:var(--on-accent);font-weight:800;font-size:.95rem}
 
 footer{color:var(--grey);font-size:.75rem;padding-block:2rem calc(2rem + env(safe-area-inset-bottom, 0px))}
 footer p{margin:.2rem 0}
@@ -802,6 +815,8 @@ footer p{margin:.2rem 0}
   .qnum{font-size:2.3rem}
   .qtitle h2{font-size:1.12rem}
   .chain small{display:none}
+  .parts a{font-size:.74rem;padding:.4rem .7rem .45rem}
+  .part-panel{padding:.6rem .6rem .5rem}
   .chain{flex-wrap:wrap;gap:.4rem}
   .chain li{flex:1 1 30%}
   .chain li+li{margin-left:0}
@@ -820,7 +835,10 @@ footer p{margin:.2rem 0}
 <header>
   <div class="wrap">
     <div class="course"><span><b>Qualité industrielle</b> · MT_322 · hepia</span><a href="https://nicolas-derobert.github.io/appli-qualite/" target="_blank" rel="noopener">QualiTools</a></div>
-    <nav aria-label="Chapitres"><ul class="chain" id="chain"></ul></nav>
+    <nav aria-label="Parties du cours"><ul class="parts" id="parts"></ul></nav>
+    <div class="part-panel">
+      <nav aria-label="Chapitres de la partie"><ul class="chain" id="chain"></ul></nav>
+    </div>
   </div>
 </header>
 <main class="wrap" id="app" tabindex="-1"></main>
@@ -845,9 +863,10 @@ footer p{margin:.2rem 0}
 <script>
 "use strict";
 const L = "ABCD";
-const NB = "\u00a0";
-const STORE_KEY = "mt322-quiz-v5"; // résultats conservés : même clé que la version précédente
+const NB = String.fromCharCode(160); // espace insécable
+const STORE_KEY = "mt322-quiz-v5"; // même clé que les versions précédentes : les résultats sont conservés
 const ICON_QR = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm11-2h2v2h-2v-2zm-3 0h2v3h-2v-3zm5 3h3v2h-3v-2zm-5 2h3v3h-3v-3zm5 2h3v1h-3v-1zm1-7h2v3h-2v-3z"/></svg>';
+const ICON_STAR = '<svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.8l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 17.9l-6.4 3.5L7 14.3l-5.3-5 7.2-.9z"/></svg>';
 
 /* ---------- préparation des données (ne pas modifier) ---------- */
 function typo(s){
@@ -861,23 +880,51 @@ function prep(q, i, ch, where){
 }
 const CHAPS = Object.keys(QUIZ).map(Number);
 for (const ch of CHAPS){
-  const c = QUIZ[ch];
-  c.sujet = typo(c.sujet);
-  c.questions.forEach((q, i) => prep(q, i, ch, "Chapitre " + ch));
+  QUIZ[ch].sujet = typo(QUIZ[ch].sujet);
+  QUIZ[ch].questions.forEach((q, i) => prep(q, i, ch, "Chapitre " + ch));
 }
-const ALL = "tout";
-const BONUS_KEY = "bonus";
-const HAS_BONUS = typeof BONUS === "object" && BONUS.questions && BONUS.questions.length > 0;
-if (HAS_BONUS){
-  BONUS.sujet = typo(BONUS.sujet);
-  BONUS.questions.forEach((q, i) => { prep(q, i, Number(q.chapitre), "Bonus"); q.bonus = true; q.ev = q.evaluation; });
+const PIDS = Object.keys(PARTIES).map(Number).sort((a, b) => a - b);
+for (const pid of PIDS){
+  const P = PARTIES[pid];
+  P.id = pid;
+  P.chaps = P.chapitres.map(Number).filter(ch => QUIZ[ch]);
+  P.all = pid === PIDS[0] ? "tout" : "tout-" + pid;
+  const B = typeof BONUS === "object" ? BONUS[pid] : null;
+  P.bonus = B && B.questions && B.questions.length ? (pid === PIDS[0] ? "bonus" : "bonus-" + pid) : null;
+  if (P.bonus){
+    B.sujet = typo(B.sujet);
+    B.questions.forEach((q, i) => { prep(q, i, Number(q.chapitre), "Bonus partie " + P.numero); q.bonus = true; });
+    B.chaps = [...new Set(B.questions.map(q => q.ch))].sort((a, b) => a - b);
+  }
+  P.sequence = P.bonus ? [...P.chaps, P.bonus] : P.chaps.slice();
 }
-const BONUS_CHAPS = HAS_BONUS ? [...new Set(BONUS.questions.map(q => q.ch))].sort((a, b) => a - b) : [];
-const SEQUENCE = HAS_BONUS ? [...CHAPS, BONUS_KEY] : CHAPS.slice();
-function pool(key){ return key === ALL ? CHAPS.flatMap(ch => QUIZ[ch].questions) : key === BONUS_KEY ? BONUS.questions : QUIZ[key].questions; }
-function title(key){ return key === ALL ? "Tous les chapitres" : key === BONUS_KEY ? BONUS.nom : QUIZ[key].nom; }
-function chapName(q){ return q.bonus ? CHAPITRES[q.ch] : QUIZ[q.ch].nom; }
+CHAPS.filter(ch => !PIDS.some(pid => PARTIES[pid].chaps.includes(ch)))
+  .forEach(ch => console.error("Chapitre " + ch + " : à rattacher à une partie dans PARTIES."));
+
+/* ---------- clés : 3 (chapitre), tout, bonus ; partie suivante : tout-2, bonus-2 ---------- */
+function partOf(key){
+  if (typeof key === "number") return PIDS.find(pid => PARTIES[pid].chaps.includes(key)) || PIDS[0];
+  return PIDS.find(pid => PARTIES[pid].all === key || PARTIES[pid].bonus === key) || PIDS[0];
+}
+function isAll(key){ return PIDS.some(pid => PARTIES[pid].all === key); }
+function isBonus(key){ return key != null && PIDS.some(pid => PARTIES[pid].bonus === key); }
+function parseKey(p){
+  if (p == null || p === "") return null;
+  if (/^\d+$/.test(p)){ const n = Number(p); return PIDS.some(pid => PARTIES[pid].chaps.includes(n)) ? n : null; }
+  return PIDS.flatMap(pid => [PARTIES[pid].all, PARTIES[pid].bonus]).find(k => k && k === p) || null;
+}
+function pool(key){
+  const P = PARTIES[partOf(key)];
+  if (key === P.all) return P.chaps.flatMap(ch => QUIZ[ch].questions);
+  if (key === P.bonus) return BONUS[P.id].questions;
+  return QUIZ[key].questions;
+}
+function title(key){ return isAll(key) ? "Tous les chapitres" : isBonus(key) ? BONUS[partOf(key)].nom : QUIZ[key].nom; }
+function partLabel(pid){ return "Partie" + NB + PARTIES[pid].numero; }
+function chapName(q){ return q.bonus ? (CHAPITRES[q.ch] || "") : QUIZ[q.ch].nom; }
 function chapLabel(q){ return "Chapitre " + q.ch + " · " + chapName(q); }
+function span(list){ return list.length > 1 ? list[0] + "–" + list[list.length - 1] : String(list[0]); }
+function bonusScope(pid){ const c = BONUS[pid].chaps; return c.length > 1 ? "chapitres " + c[0] + " à " + c[c.length - 1] : "chapitre " + c[0]; }
 
 /* ---------- mémoire locale (résultats et quiz en cours) ---------- */
 function load(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {best: {}, progress: {}}; } catch (e) { return {best: {}, progress: {}}; } }
@@ -886,10 +933,11 @@ store.best = store.best || {}; store.progress = store.progress || {};
 function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) {} }
 
 /* ---------- état ---------- */
-const S = {view: "home", key: null, order: [], answers: [], idx: 0, start: 0, shuffle: false, retry: false};
+const S = {view: "home", key: null, part: PIDS[0], order: [], answers: [], idx: 0, start: 0, shuffle: false, retry: false};
 
 /* ---------- outils ---------- */
 const app = document.getElementById("app");
+const parts = document.getElementById("parts");
 const chain = document.getElementById("chain");
 const live = document.getElementById("live");
 const dlg = document.getElementById("qrDialog");
@@ -902,6 +950,7 @@ function el(tag, attrs, ...kids){
   for (const k of kids) if (k != null && k !== false) e.append(k);
   return e;
 }
+function star(){ return el("span", {html: ICON_STAR, style: "display:contents"}); }
 function button(text, cls, onClick, attrs){
   const b = el("button", Object.assign({type: "button", class: cls}, attrs || {}));
   if (text.startsWith("<")) b.innerHTML = text; else b.textContent = text;
@@ -910,8 +959,8 @@ function button(text, cls, onClick, attrs){
 }
 function put(...nodes){ app.replaceChildren(...nodes.filter(Boolean)); }
 function say(t){ live.textContent = ""; setTimeout(() => { live.textContent = t; }, 30); }
-function link(key, corrige){ return key ? "?partie=" + key + (corrige ? "&corrige" : "") : "?"; }
-function quizUrl(key){ return ADRESSE_SITE + (key ? "?partie=" + key : ""); }
+function link(key, corrige){ return key != null ? "?partie=" + key + (corrige ? "&corrige" : "") : "?"; }
+function quizUrl(key){ return ADRESSE_SITE + (key != null ? "?partie=" + key : ""); }
 function shuffled(a){ const r = a.slice(); for (let i = r.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; }
 function duration(sec){ const m = Math.floor(sec / 60), s = sec % 60; return (m ? m + NB + "min" + NB : "") + s + NB + "s"; }
 function today(){ return new Date().toLocaleDateString("fr-CH"); }
@@ -920,6 +969,7 @@ function pct(score, total){ return Math.round(score / total * 100); }
 /* ---------- navigation sans rechargement ---------- */
 function go(view, key){
   S.view = view; S.key = key === undefined ? S.key : key;
+  if (S.key != null) S.part = partOf(S.key);
   const url = view === "home" ? location.pathname : link(S.key, view === "correction");
   try { history.replaceState(null, "", url); } catch (e) {}
   render();
@@ -931,29 +981,42 @@ function navLink(text, view, key, cls){
   a.addEventListener("click", ev => { ev.preventDefault(); go(view, key); });
   return a;
 }
+function renderParts(){
+  parts.replaceChildren(...PIDS.map(pid => {
+    const a = el("a", {href: location.pathname, "aria-current": pid === S.part ? "true" : null},
+      el("b", {text: partLabel(pid)}), " " + PARTIES[pid].titre);
+    a.addEventListener("click", ev => { ev.preventDefault(); S.part = pid; go("home", null); });
+    return el("li", {}, a);
+  }));
+}
 function renderChain(){
-  chain.replaceChildren(...CHAPS.map(ch => {
-    const a = navLink(QUIZ[ch].nom, S.view === "correction" ? "correction" : "intro", ch);
+  const P = PARTIES[S.part];
+  const target = S.view === "correction" ? "correction" : "intro";
+  const items = P.chaps.map(ch => {
+    const a = navLink(QUIZ[ch].nom, target, ch);
     if (ch === S.key) a.setAttribute("aria-current", "page");
     return el("li", {}, a, el("small", {text: "Chapitre " + ch}));
-  }));
-  if (HAS_BONUS){
-    const a = navLink(BONUS.nom, S.view === "correction" ? "correction" : "intro", BONUS_KEY);
-    if (S.key === BONUS_KEY) a.setAttribute("aria-current", "page");
-    chain.append(el("li", {}, a, el("small", {text: "Évaluation 1"})));
+  });
+  if (P.bonus){
+    const a = navLink("", target, P.bonus);
+    a.append(star(), BONUS[P.id].nom);
+    if (S.key === P.bonus) a.setAttribute("aria-current", "page");
+    items.push(el("li", {class: "accent-bonus"}, a, el("small", {text: "Chapitres " + span(BONUS[P.id].chaps)})));
   }
+  chain.replaceChildren(...items);
 }
 function hero(key, h1){
-  const sub = key === ALL ? CHAPS.length + " chapitres · " + pool(ALL).length + " questions"
-    : key === BONUS_KEY ? BONUS.sujet + " · " + pool(key).length + " questions · cours" + NB + "p." + NB + BONUS.pages
+  const pid = partOf(key), n = pool(key).length;
+  const sub = isAll(key) ? partLabel(pid) + " · " + PARTIES[pid].chaps.length + " chapitres · " + n + " questions"
+    : isBonus(key) ? BONUS[pid].sujet + " · " + bonusScope(pid) + " · " + n + " questions · cours" + NB + "p." + NB + BONUS[pid].pages
     : "Chapitre " + key + " · " + QUIZ[key].sujet + " · cours" + NB + "p." + NB + QUIZ[key].pages;
-  return el("section", {class: "hero"},
-    el("span", {class: "numeral", text: key === ALL ? "3–7" : key === BONUS_KEY ? "+" : String(key), "aria-hidden": "true"}),
-    el("div", {}, el("h1", {text: h1}), el("p", {text: sub})));
+  const num = isBonus(key) ? el("span", {class: "numeral", "aria-hidden": "true", html: ICON_STAR})
+    : el("span", {class: "numeral", "aria-hidden": "true", text: isAll(key) ? span(PARTIES[pid].chaps) : String(key)});
+  return el("section", {class: "hero"}, num, el("div", {}, el("h1", {text: h1}), el("p", {text: sub})));
 }
 function tools(key){
   const t = el("div", {class: "tools"}, button(ICON_QR + "<span>Afficher le QR code</span>", "outline", () => openQr(key)));
-  if (key !== ALL){
+  if (!isAll(key)){
     const on = S.view === "correction";
     t.append(button(on ? "Masquer la correction" : "Afficher la correction", "outline", () => go(on ? "intro" : "correction", key), {"aria-pressed": String(on)}));
   }
@@ -981,8 +1044,9 @@ function bestLabel(key){
   return el("span", {class: "go"}, el("b", {text: pool(key).length + " questions"}), "à faire");
 }
 function renderHome(){
-  document.title = "Quiz MT_322";
-  const items = CHAPS.map(ch => {
+  const P = PARTIES[S.part];
+  document.title = "Quiz MT_322 · " + partLabel(P.id);
+  const items = P.chaps.map(ch => {
     const c = QUIZ[ch];
     const a = navLink("", "intro", ch);
     a.append(el("span", {class: "d", text: String(ch), "aria-hidden": "true"}),
@@ -990,17 +1054,20 @@ function renderHome(){
       bestLabel(ch));
     return el("li", {}, a);
   });
-  const all = navLink("", "intro", ALL);
-  all.append(el("span", {class: "d", text: "3–7", "aria-hidden": "true"}),
-    el("span", {}, el("span", {class: "t", text: "Tous les chapitres"}), el("span", {class: "s", text: "Révision complète · " + pool(ALL).length + " questions"})),
-    bestLabel(ALL));
-  items.push(el("li", {class: "all"}, all));
-  if (HAS_BONUS){
-    const bonus = navLink("", "intro", BONUS_KEY);
-    bonus.append(el("span", {class: "d", text: "+", "aria-hidden": "true"}),
-      el("span", {}, el("span", {class: "t", text: BONUS.nom}), el("span", {class: "s", text: BONUS.sujet + " · " + pool(BONUS_KEY).length + " questions"})),
-      bestLabel(BONUS_KEY));
-    items.push(el("li", {class: "bonus"}, bonus));
+  if (P.chaps.length > 1){
+    const all = navLink("", "intro", P.all);
+    all.append(el("span", {class: "d", text: span(P.chaps), "aria-hidden": "true"}),
+      el("span", {}, el("span", {class: "t", text: "Tous les chapitres"}), el("span", {class: "s", text: "Révision complète · " + pool(P.all).length + " questions"})),
+      bestLabel(P.all));
+    items.push(el("li", {class: "all"}, all));
+  }
+  if (P.bonus){
+    const B = BONUS[P.id];
+    const bonus = navLink("", "intro", P.bonus);
+    bonus.append(el("span", {class: "d", html: ICON_STAR, "aria-hidden": "true"}),
+      el("span", {}, el("span", {class: "t", text: B.nom}), el("span", {class: "s", text: B.sujet + " · " + bonusScope(P.id) + " · " + pool(P.bonus).length + " questions"})),
+      bestLabel(P.bonus));
+    items.push(el("li", {class: "bonus accent-bonus"}, bonus));
   }
   const reset = Object.keys(store.best).length || Object.keys(store.progress).length
     ? el("div", {class: "foot-actions"}, button("Effacer mes résultats sur cet appareil", "link", () => { store = {best: {}, progress: {}}; save(); render(); say("Résultats effacés."); }))
@@ -1051,7 +1118,7 @@ function renderIntro(){
         el("li", {}, "Durée" + NB + ": ", el("b", {text: "environ " + Math.max(1, Math.round(n * 0.75)) + NB + "min"})),
         b ? el("li", {}, "Meilleur score" + NB + ": ", el("b", {text: b.score + " / " + b.total})) : null),
       el("div", {class: "brief"},
-        key === BONUS_KEY ? el("p", {text: "Ces questions reprennent les notions de l’évaluation" + NB + "1, chapitres " + BONUS_CHAPS[0] + " à " + BONUS_CHAPS[BONUS_CHAPS.length - 1] + "."}) : null,
+        isBonus(key) ? el("p", {text: "Ces questions complètent les quiz de fin de chapitre. Elles portent sur les " + bonusScope(partOf(key)) + "."}) : null,
         el("p", {text: "Lisez la question et choisissez une réponse."}),
         el("p", {text: "La correction s’affiche aussitôt, avec la citation du cours."}),
         el("p", {text: "Une synthèse termine le quiz."})),
@@ -1149,17 +1216,18 @@ function verdict(score, total){
   return "Relisez le chapitre dans le cours, puis refaites le quiz.";
 }
 function renderSummary(){
-  const key = S.key, total = S.order.length, score = scoreSoFar();
+  const key = S.key, pid = partOf(key), total = S.order.length, score = scoreSoFar();
   const qs = S.order.map(i => pool(key)[i]);
   const missed = S.order.filter((qi, k) => S.answers[k] !== pool(key)[qi].a);
   document.title = "Synthèse · " + title(key);
-  const resultText = "Quiz MT_322 · " + (key === ALL ? "Tous les chapitres" : key === BONUS_KEY ? BONUS.nom + " (" + BONUS.sujet + ")" : "Chapitre " + key + " " + QUIZ[key].nom)
+  const resultText = "Quiz MT_322 · " + partLabel(pid) + " · " + (isAll(key) || isBonus(key) ? title(key) : "Chapitre " + key + " " + QUIZ[key].nom)
     + (S.retry ? " (questions manquées)" : "") + " : " + score + "/" + total + " (" + pct(score, total) + " %) · " + today();
   const actions = el("div", {class: "row"});
   if (missed.length) actions.append(button(missed.length > 1 ? "Refaire les " + missed.length + " questions manquées" : "Refaire la question manquée", "primary", () => startQuiz(key, {order: missed, retry: true})));
   actions.append(button("Recommencer le quiz", "ghost", () => startQuiz(key)));
-  const nextKey = key === ALL ? null : SEQUENCE[SEQUENCE.indexOf(key) + 1];
-  if (nextKey) actions.append(button("Quiz suivant" + NB + ": " + title(nextKey), "ghost", () => go("intro", nextKey)));
+  const seq = PARTIES[pid].sequence;
+  const nextKey = isAll(key) ? null : seq[seq.indexOf(key) + 1];
+  if (nextKey != null) actions.append(button("Quiz suivant" + NB + ": " + title(nextKey), "ghost", () => go("intro", nextKey)));
   actions.append(button("Copier mon résultat", "ghost", ev => copyText(resultText, ev.currentTarget, "Résultat copié")));
   const best = store.best[key];
   const result = el("section", {class: "result", "aria-labelledby": "rt"},
@@ -1171,8 +1239,8 @@ function renderSummary(){
     el("p", {class: "verdict", text: verdict(score, total)}),
     actions);
   let table = null;
-  if (key === ALL || key === BONUS_KEY){
-    const list = key === ALL ? CHAPS : BONUS_CHAPS;
+  if (isAll(key) || isBonus(key)){
+    const list = isAll(key) ? PARTIES[pid].chaps : BONUS[pid].chaps;
     const rows = list.map(ch => {
       const ks = S.order.map((qi, k) => k).filter(k => pool(key)[S.order[k]].ch === ch);
       if (!ks.length) return null;
@@ -1209,7 +1277,7 @@ function renderCorrection(){
   pool(key).forEach((q, i) => {
     const s = el("section", {class: "q"});
     s.append(el("h2", {}, el("span", {class: "n", text: String(i + 1), "aria-hidden": "true"}),
-      el("span", {}, q.bonus ? el("span", {class: "qchap", text: chapLabel(q) + " · évaluation" + NB + "1, question " + q.ev}) : null, q.q)));
+      el("span", {}, q.bonus ? el("span", {class: "qchap", text: chapLabel(q)}) : null, q.q)));
     const opts = el("div", {class: "opts"});
     q.o.forEach((o, j) => opts.append(el("div", {class: "opt" + (j === q.a ? " right" : " dim"), "aria-disabled": "true"},
       el("span", {class: "l", text: L[j]}), el("span", {}, o), el("span", {class: "tag", text: j === q.a ? "Bonne réponse" : ""}))));
@@ -1223,6 +1291,8 @@ function renderCorrection(){
 
 /* ---------- rendu ---------- */
 function render(){
+  app.classList.toggle("accent-bonus", S.view !== "home" && isBonus(S.key));
+  renderParts();
   renderChain();
   if (S.view === "intro") renderIntro();
   else if (S.view === "question") renderQuestion();
@@ -1256,8 +1326,11 @@ function copyText(text, btn, okLabel){
 /* ---------- fenêtre QR code ---------- */
 function openQr(key){
   const url = quizUrl(key);
-  document.getElementById("qrTitle").textContent = key ? "Quiz · " + (key === ALL ? "tous les chapitres" : key === BONUS_KEY ? BONUS.nom + " · " + BONUS.sujet : "chapitre " + key + " · " + QUIZ[key].nom) : "Quiz de fin de chapitre";
+  const name = key == null ? "Quiz de fin de chapitre"
+    : "Quiz · " + (isAll(key) ? partLabel(partOf(key)) + " · tous les chapitres" : isBonus(key) ? partLabel(partOf(key)) + " · bonus" : "chapitre " + key + " · " + QUIZ[key].nom);
+  document.getElementById("qrTitle").textContent = name;
   document.getElementById("qrUrl").textContent = url;
+  dlg.classList.toggle("accent-bonus", isBonus(key));
   const box = document.getElementById("qrCode");
   if (typeof qrcode === "function"){
     const qr = qrcode(0, "M"); qr.addData(url); qr.make();
@@ -1274,16 +1347,18 @@ document.getElementById("qrCopy").addEventListener("click", ev => copyText(docum
 document.addEventListener("fullscreenchange", () => { if (S.view === "intro" || S.view === "correction") render(); });
 
 /* ---------- démarrage ---------- */
-(function init(){
+function route(){
   let p = null, corrige = false;
   try { const u = new URLSearchParams(location.search); p = u.get("partie"); corrige = u.has("corrige"); } catch (e) {}
-  if (!p){ const m = location.hash.match(/\d+|tout|bonus/); if (m) p = m[0]; }
-  const key = p === ALL ? ALL : p === BONUS_KEY && HAS_BONUS ? BONUS_KEY : (CHAPS.includes(Number(p)) ? Number(p) : null);
-  if (!key){ S.view = "home"; render(); return; }
-  S.key = key;
-  S.view = corrige && key !== ALL ? "correction" : "intro";
+  if (!p){ const m = location.hash.match(/tout(?:-\d+)?|bonus(?:-\d+)?|\d+/); if (m) p = m[0]; }
+  const key = parseKey(p);
+  if (key == null){ S.view = "home"; render(); return; }
+  S.key = key; S.part = partOf(key);
+  S.view = corrige && !isAll(key) ? "correction" : "intro";
   render();
-})();
+}
+route();
+window.addEventListener("hashchange", route);
 </script>
 </body>
 </html>
