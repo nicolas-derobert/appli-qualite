@@ -4,20 +4,25 @@
 <title>Quiz MT_322</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Quiz de fin de chapitre du cours Qualité industrielle (MT_322, hepia) : une question à la fois, correction immédiate, synthèse et citations du cours.">
+<meta name="description" content="Quiz de fin de chapitre du cours Qualité industrielle (MT_322, hepia) et partie Bonus de révision de l’évaluation 1 : une question à la fois, correction immédiate, synthèse et citations du cours.">
 <script>
 /* ==========================================================================
    QUIZ MT_322 – QUESTIONS, RÉPONSES ET CITATIONS DU COURS
    Source de toutes les réponses : Qualité_Industrielle_hepia_cours 2026-2027.
-   Une rubrique par chapitre (3 à 7). Pour chaque question :
+   QUIZ  : une rubrique par chapitre (3 à 7), 5 questions chacune.
+   BONUS : 30 questions de révision de l’évaluation 1 (chapitres 1 à 6).
+   Pour chaque question :
+     chapitre     (bonus) numéro du chapitre du cours
+     evaluation   (bonus) question liée de l’évaluation 1, visible dans la correction
      question     texte de la question
-     choix        4 réponses proposées, dans l’ordre A, B, C, D
+     choix        3 ou 4 réponses proposées, dans l’ordre A, B, C, D
      reponse      lettre de la bonne réponse
      explication  texte affiché à la correction
      page         page du cours
      citation     extrait exact du cours ([…] = coupure)
    Pour modifier : changez le texte entre guillemets, enregistrez, rechargez la page.
    Liens : ADRESSE_SITE?partie=3 (quiz) – ADRESSE_SITE?partie=3&corrige (correction)
+           ADRESSE_SITE?partie=bonus – ADRESSE_SITE?partie=bonus&corrige
    ========================================================================== */
 const ADRESSE_SITE = "https://nicolas-derobert.github.io/appli-qualite/MT_322"; // adresse publique utilisée pour les QR codes
 const SUPPORT = "Qualité_Industrielle_hepia_cours 2026-2027"; // cours cité dans les corrections
@@ -269,6 +274,337 @@ const QUIZ = {
     ]
   }
 };
+
+/* ---------- Partie Bonus : révision de l’évaluation 1 ---------- */
+/* Noms des chapitres du cours affichés au-dessus des questions bonus */
+const CHAPITRES = {
+  1: "Les définitions",
+  2: "L’historique de la qualité",
+  3: "La métrologie",
+  4: "Les organismes de normalisation",
+  5: "Le système de management de la qualité",
+  6: "Les coûts de la qualité"
+};
+
+const BONUS = {
+  nom: "Bonus",
+  sujet: "Révision de l’évaluation 1",
+  pages: "8–51",
+  questions: [
+
+      /* ----- Chapitre 1 · Les définitions ----- */
+      { // Question 1
+        chapitre: 1,
+        evaluation: "2",
+        question: "Un produit de qualité fonctionne bien et longtemps. Quel mot le cours associe-t-il à cette propriété ?",
+        choix: ["La fiabilité", "La conformité", "La traçabilité", "La répétabilité"],
+        reponse: "A",
+        explication: "Un produit fiable fonctionne bien et longtemps. La fiabilité est une marque d’un produit de qualité.",
+        page: "12",
+        citation: "Un produit de qualité est un produit qui … Fonctionne bien et longtemps (= fiabilité)"
+      },
+      { // Question 2
+        chapitre: 1,
+        evaluation: "2",
+        question: "Au sens industriel, la qualité est l’aptitude de caractéristiques intrinsèques à satisfaire quoi ?",
+        choix: ["Les objectifs financiers de l’entreprise", "Les besoins exprimés ou potentiels des utilisateurs", "Les exigences de la direction", "Les tolérances fixées par le bureau technique"],
+        reponse: "B",
+        explication: "La qualité se juge à la satisfaction des utilisateurs. Leurs besoins sont exprimés ou potentiels.",
+        page: "8",
+        citation: "Aptitude d’un ensemble de caractéristiques intrinsèques à satisfaire les besoins exprimés ou potentiels des utilisateurs."
+      },
+      { // Question 3
+        chapitre: 1,
+        evaluation: "9",
+        question: "La politique qualité et les objectifs qualité appartiennent à quelle famille de documents ?",
+        choix: ["Documents de suivi / enregistrements / preuves", "Documents liés à l’amélioration continue et la prévention des risques", "Documents « directeurs / stratégiques »", "Documents relatifs à la formation, la communication, la conformité"],
+        reponse: "C",
+        explication: "La politique et les objectifs qualité fixent la direction à suivre. Ce sont des documents directeurs ou stratégiques.",
+        page: "10",
+        citation: "Documents “directeurs / stratégiques” Politique qualité Objectifs qualité (annuels, trimestriels, par processus)"
+      },
+      { // Question 4
+        chapitre: 1,
+        evaluation: "9",
+        question: "Les fiches de non-conformité et les rapports d’audits internes appartiennent à quelle famille de documents ?",
+        choix: ["Documents de suivi / enregistrements / preuves", "Documents « directeurs / stratégiques »", "Documents de structuration / normes / procédures", "Documents relatifs à la formation, la communication, la conformité"],
+        reponse: "A",
+        explication: "Ces documents gardent la trace de ce qui a été constaté. Ils servent de preuves.",
+        page: "11",
+        citation: "Documents de suivi / enregistrements / preuves Fiches ou rapports de non-conformité […] Rapports d’audits internes"
+      },
+
+      /* ----- Chapitre 2 · L’historique de la qualité ----- */
+      { // Question 5
+        chapitre: 2,
+        evaluation: "4",
+        question: "Quels secteurs ont joué un rôle de précurseur dans le développement de la qualité ?",
+        choix: ["Le textile et l’habillement", "Le bâtiment et les travaux publics", "La banque et l’assurance", "L’aéronautique, le spatial et le nucléaire"],
+        reponse: "D",
+        explication: "Dans ces secteurs, un défaut présente un risque pour l’être humain. Ce risque a fait progresser la qualité.",
+        page: "13",
+        citation: "Les secteurs d’activités ont joué un rôle de précurseur dans le développement de la qualité : L’aéronautique Le spatial […] Le nucléaire […] Pourquoi ces secteurs d’activités ? La notion de risque pour l’être humain"
+      },
+      { // Question 6
+        chapitre: 2,
+        evaluation: "3",
+        question: "Sur quelle idée repose la production en série ?",
+        choix: ["Les pièces fabriquées sont identiques.", "Chaque pièce est contrôlée à 100 %.", "Les machines restent parfaitement stables.", "Les tolérances deviennent inutiles."],
+        reponse: "A",
+        explication: "La production en série suppose des pièces identiques. En pratique, chaque procédé produit de la variabilité : le contrôle qualité devient primordial.",
+        page: "17",
+        citation: "La production en série est fondée sur l’idée que les objets ou les pièces fabriquées sont identiques […] En pratique, les procédés de fabrication sont soumis à de multiples facteurs qui induisent de la variabilité dans la production"
+      },
+      { // Question 7
+        chapitre: 2,
+        evaluation: "8",
+        question: "En combien de facteurs regroupe-t-on généralement les causes de variation d’un procédé ?",
+        choix: ["3", "4", "5", "7"],
+        reponse: "C",
+        explication: "Matières premières, méthodes, machines, milieu et main-d’œuvre : ces cinq facteurs forment le diagramme d’Ishikawa.",
+        page: "17",
+        citation: "Parmi les facteurs, on compte les matières premières, les méthodes employées, les machines, leurs conditions d’opération (le milieu), la main d’œuvre, etc. Lorsqu’on étudie un procédé de fabrication en vue de l’améliorer, on groupe généralement les causes de variation sous ces cinq facteurs, et on les présente sous la forme d’un diagramme d’Ishikawa."
+      },
+      { // Question 8
+        chapitre: 2,
+        evaluation: "6",
+        question: "Entre quelles exigences les tolérances établissent-elles un compromis ?",
+        choix: ["Le prix de vente et la marge", "La précision requise pour fonctionner et les contraintes de fabrication", "Le délai de livraison et la quantité", "L’esthétique et le poids du produit"],
+        reponse: "B",
+        explication: "La tolérance concilie le bon fonctionnement du produit et les contraintes techniques et économiques de fabrication.",
+        page: "18",
+        citation: "Les tolérances établissent un compromis entre la précision requise pour un fonctionnement satisfaisant et les contraintes techniques et économiques de la fabrication."
+      },
+      { // Question 9
+        chapitre: 2,
+        evaluation: "11",
+        question: "Dans la gestion systématique de la qualité, comment agit l’entreprise ?",
+        choix: ["Elle réagit après l’apparition du défaut.", "Elle anticipe : elle agit avant l’apparition du défaut.", "Elle cherche le responsable du défaut.", "Elle contrôle uniquement le produit fini."],
+        reponse: "B",
+        explication: "La gestion systématique anticipe le défaut. La gestion ponctuelle réagit après son apparition.",
+        page: "19",
+        citation: "Dans la gestion ponctuelle on réagit […] Dans la gestion systématique on anticipe"
+      },
+      { // Question 10
+        chapitre: 2,
+        evaluation: "11",
+        question: "Le passage du contrôle qualité à l’assurance qualité traduit une « vision du futur ». Quel en est l’objectif ?",
+        choix: ["Déceler les fautes", "Chercher les coupables", "Accuser", "Prévenir les fautes"],
+        reponse: "D",
+        explication: "Le contrôle qualité décèle les fautes : c’est la vision du passé. L’assurance qualité prévient les fautes.",
+        page: "19",
+        citation: "L’évolution du contrôle Qualité à l’Assurance Qualité : […] Vision du futur […] Prévenir les fautes"
+      },
+
+      /* ----- Chapitre 3 · La métrologie ----- */
+      { // Question 11
+        chapitre: 3,
+        evaluation: "22",
+        question: "Quelle métrologie crée, développe et maintient les étalons de référence ?",
+        choix: ["La métrologie fondamentale, ou scientifique", "La métrologie légale", "La métrologie industrielle", "La métrologie commerciale"],
+        reponse: "A",
+        explication: "La métrologie fondamentale, ou scientifique, crée et maintient les étalons de référence reconnus.",
+        page: "21",
+        citation: "La métrologie fondamentale, ou scientifique, qui vise à créer, développer et maintenir des étalons de référence reconnus"
+      },
+      { // Question 12
+        chapitre: 3,
+        evaluation: "22",
+        question: "Quelle métrologie est la plus fréquente ?",
+        choix: ["La métrologie fondamentale, ou scientifique", "La métrologie légale", "La métrologie industrielle"],
+        reponse: "C",
+        explication: "La métrologie industrielle garantit les mesures de fabrication. Elle s’inscrit souvent dans le contrôle qualité d’un SMQ.",
+        page: "21",
+        citation: "La métrologie industrielle, la plus fréquente, qui permet de garantir les mesures, par exemple d’un processus de fabrication, souvent dans le cadre d’un contrôle qualité lié à un système de management de la qualité"
+      },
+      { // Question 13
+        chapitre: 3,
+        evaluation: "23",
+        question: "Pourquoi des organisations internationales ont-elles défini des guides métrologiques ?",
+        choix: ["Pour fixer le prix des instruments de mesure", "Pour remplacer les étalons nationaux", "Pour supprimer l’incertitude de mesure", "Pour faciliter la validation, entre partenaires, des mesures des produits échangés"],
+        reponse: "D",
+        explication: "Les échanges se mondialisent. Des règles communes permettent aux partenaires de reconnaître les mesures des produits échangés.",
+        page: "21",
+        citation: "Devant la mondialisation et la multiplicité des échanges qu’elle engendre, des organisations internationales se sont réunies, depuis quelques décennies, pour définir des guides métrologiques. Ces guides doivent faciliter la validation, entre partenaires, des mesures des caractéristiques des produits échangés."
+      },
+      { // Question 14
+        chapitre: 3,
+        evaluation: "24",
+        question: "Dans le VIM, quel terme désigne la grandeur que l’on veut mesurer ?",
+        choix: ["Le mesurande", "Le mesurage", "L’étalon", "L’incertitude de mesure"],
+        reponse: "A",
+        explication: "Le mesurande est la grandeur que l’on veut mesurer. Le mesurage est le processus qui lui attribue une valeur.",
+        page: "26",
+        citation: "Mesurage, m Processus consistant à obtenir expérimentalement une ou plusieurs valeurs que l’on peut raisonnablement attribuer à une grandeur. […] Mesurande, m Grandeur que l’on veut mesurer."
+      },
+      { // Question 15
+        chapitre: 3,
+        evaluation: "27",
+        question: "Qui détient les références nationales de mesure et les diffuse vers l’utilisateur ?",
+        choix: ["Les laboratoires nationaux de métrologie (LNM)", "Les organismes de normalisation", "Les fabricants d’instruments de mesure", "Les services qualité des entreprises"],
+        reponse: "A",
+        explication: "Les LNM détiennent les références nationales et les diffusent vers l’utilisateur. En Suisse, c’est le METAS.",
+        page: "23",
+        citation: "Les LNM (Laboratoire Nationaux de Métrologie) détiennent les références nationales et les diffusent vers l’utilisateur. En Suisse, il s’appelle le METAS"
+      },
+      { // Question 16
+        chapitre: 3,
+        evaluation: "25",
+        question: "Quel est le domaine d’application du GUM ?",
+        choix: ["Le vocabulaire de la métrologie", "L’évaluation et l’expression de l’incertitude de mesure", "La définition des unités du SI", "La classification des instruments de mesure"],
+        reponse: "B",
+        explication: "Le GUM fixe les règles d’évaluation et d’expression de l’incertitude de mesure. Le VIM fixe le vocabulaire.",
+        page: "27",
+        citation: "Évaluation des données de mesure — Guide pour l’expression de l’incertitude de mesure […] Ce Guide établit les règles générales pour l’évaluation et l’expression de l’incertitude pour les mesurages"
+      },
+
+      /* ----- Chapitre 4 · Les organismes de normalisation ----- */
+      { // Question 17
+        chapitre: 4,
+        evaluation: "12",
+        question: "Dans quelle ville se trouve le secrétariat central de l’ISO ?",
+        choix: ["Paris", "Berne", "Bruxelles", "Genève"],
+        reponse: "D",
+        explication: "Le secrétariat central de l’ISO est à Genève. Il coordonne l’élaboration des normes et les publie.",
+        page: "28",
+        citation: "Le secrétariat central de l’ISO est situé à Genève, en Suisse. Il assure aux membres de l’ISO le soutien administratif et technique, coordonne le programme décentralisé d’élaboration des normes et procède à leur publication."
+      },
+      { // Question 18
+        chapitre: 4,
+        evaluation: "13",
+        question: "Quelle norme donne des lignes directrices pour obtenir des performances durables ?",
+        choix: ["ISO 9000", "ISO 9001", "ISO 9002", "ISO 9004"],
+        reponse: "D",
+        explication: "L’ISO 9004 vise des performances durables. L’ISO 9001 fixe les critères du SMQ.",
+        page: "28",
+        citation: "ISO 9004:2018 fournit des lignes directrices permettant d’améliorer l’aptitude d’un organisme à obtenir des performances durables."
+      },
+      { // Question 19
+        chapitre: 4,
+        evaluation: "18",
+        question: "Quel organisme est chargé de la normalisation en Suisse ?",
+        choix: ["L’AFNOR", "Le DIN", "La SNV", "Le METAS"],
+        reponse: "C",
+        explication: "La SNV est l’organisme suisse de normalisation. L’AFNOR est française, le DIN allemand. Le METAS est le laboratoire national de métrologie.",
+        page: "30",
+        citation: "Chaque pays a son propre organisme de normalisation : Association française de normalisation - AFNOR en France Deutsches Institut für Normung - DIN en Allemagne Association Suisse de Normalisation – SNV en Suisse"
+      },
+      { // Question 20
+        chapitre: 4,
+        evaluation: "19",
+        question: "Quel domaine couvre la série de normes ISO 14000 ?",
+        choix: ["La santé et la sécurité au travail", "Le management environnemental", "Les dispositifs médicaux", "L’acceptabilité des assemblages électroniques"],
+        reponse: "B",
+        explication: "La série ISO 14000 regroupe les normes de management environnemental. L’ISO 14001 en fait partie.",
+        page: "29",
+        citation: "La série des normes ISO 14000 désigne l’ensemble des normes qui concernent le management environnemental."
+      },
+      { // Question 21
+        chapitre: 4,
+        evaluation: "21",
+        question: "Sur quel principe reposent les dispositions du règlement REACH ?",
+        choix: ["Le principe de précaution", "Le principe de Pareto", "Le principe pollueur-payeur", "Le principe d’amélioration continue"],
+        reponse: "A",
+        explication: "REACH oblige les fabricants à analyser l’impact de leurs produits chimiques. Ses dispositions reposent sur le principe de précaution.",
+        page: "31",
+        citation: "Le règlement REACH oblige les fabricants à analyser l’impact de leurs produits chimiques sur l’environnement et la santé […] Ces dispositions reposent sur le principe de précaution."
+      },
+
+      /* ----- Chapitre 5 · Le système de management de la qualité ----- */
+      { // Question 22
+        chapitre: 5,
+        evaluation: "30",
+        question: "Quelle action relève du principe « orientation client » ?",
+        choix: ["Motiver, encourager et reconnaître la contribution du personnel", "Mesurer et surveiller la satisfaction du client", "Faciliter les discussions ouvertes et le partage des connaissances", "Considérer l’activité comme un ensemble de sous-activités corrélées"],
+        reponse: "B",
+        explication: "L’orientation client vise la satisfaction du client. L’entreprise la mesure, la surveille et prend les mesures appropriées.",
+        page: "36",
+        citation: "Orientation client : satisfaire les exigences des clients et aller au-delà de leurs attentes. […] Mesurer et surveiller la satisfaction du client et prendre les mesures appropriées."
+      },
+      { // Question 23
+        chapitre: 5,
+        evaluation: "29",
+        question: "Quel bénéfice apporte l’implication du personnel ?",
+        choix: ["L’augmentation des ventes et des parts de marché", "L’amélioration de l’image de l’organisme", "L’amélioration du développement personnel, des initiatives et de la créativité", "L’élargissement du panel des clients"],
+        reponse: "C",
+        explication: "Un personnel impliqué développe ses compétences, ses initiatives et sa créativité. Les trois autres bénéfices relèvent de l’orientation client.",
+        page: "37",
+        citation: "Implication du personnel : […] Amélioration du développement personnel, des initiatives et de la créativité."
+      },
+      { // Question 24
+        chapitre: 5,
+        evaluation: "28",
+        question: "Quel bénéfice apporte le leadership ?",
+        choix: ["L’amélioration de la communication entre les niveaux et les fonctions de l’organisme", "L’augmentation de la valeur pour le client", "L’amélioration de la fidélité du client", "L’augmentation des ventes et des parts de marché"],
+        reponse: "A",
+        explication: "Les dirigeants créent les conditions de l’implication du personnel. La communication s’améliore entre les niveaux et les fonctions.",
+        page: "36",
+        citation: "Leadership : les dirigeants créent des conditions dans lesquelles le personnel est impliqué à tous les niveaux […] Amélioration de la communication entre les différents niveaux et fonctions de l’organisme."
+      },
+      { // Question 25
+        chapitre: 5,
+        evaluation: "32–33",
+        question: "Comment un organisme améliore-t-il ses performances avec ses parties intéressées ?",
+        choix: ["En limitant les échanges avec elles", "En leur imposant ses propres procédures", "En choisissant toujours le fournisseur le moins cher", "En communiquant avec elles et en tenant compte de leurs exigences"],
+        reponse: "D",
+        explication: "Les parties intéressées influencent l’organisme ou sont influencées par lui. Il communique avec elles et tient compte de leurs exigences.",
+        page: "38",
+        citation: "Les parties intéressées englobent tous les acteurs qui influencent ou sont influencés par les activités de l’organisme. C’est en communiquant avec les parties intéressées et en tenant compte de leurs exigences que l’organisme saura améliorer ses performances."
+      },
+      { // Question 26
+        chapitre: 5,
+        evaluation: "31",
+        question: "Quel bénéfice du manuel qualité figure dans le cours ?",
+        choix: ["La diminution des risques d’interférences", "La fidélisation de la clientèle", "L’amélioration des investissements", "L’optimisation des nouvelles technologies"],
+        reponse: "B",
+        explication: "Le manuel qualité aide à satisfaire et à fidéliser la clientèle. Il favorise aussi la maîtrise des processus clés.",
+        page: "42",
+        citation: "Les bénéfices du manuel qualité : Satisfaction des exigences clients et anticipation de leurs besoins. Fidélisation de la clientèle. Appropriation de la Politique qualité par tout le personnel. Maîtrise des processus clés."
+      },
+      { // Question 27
+        chapitre: 5,
+        evaluation: "36",
+        question: "Quelle longueur le cours indique-t-il pour une politique qualité ?",
+        choix: ["Une dizaine de pages", "Une page par processus", "La longueur du manuel qualité", "Une page"],
+        reponse: "D",
+        explication: "La politique qualité est un document synthétique : une page suffit. Elle situe la démarche qualité dans la stratégie de l’entreprise.",
+        page: "43",
+        citation: "La Politique Qualité est un document synthétique (une page suffit) qui définit de quelle manière votre démarche qualité s’inscrit dans votre stratégie globale d’entreprise."
+      },
+
+      /* ----- Chapitre 6 · Les coûts de la qualité ----- */
+      { // Question 28
+        chapitre: 6,
+        evaluation: "39–40",
+        question: "Rebuts, ré-usinage et retards : à quelle catégorie de coûts appartiennent-ils ?",
+        choix: ["Coûts de la prévention", "Coûts de la détection", "Coûts de défaillances internes", "Coûts de défaillances externes"],
+        reponse: "C",
+        explication: "Rebuts, ré-usinage et retards sont des coûts de défaillances internes. Ils font partie des coûts de la non-qualité (CNQ).",
+        page: "48",
+        citation: "2. Coûts de la Non-Qualité (CNQ), on distingue : Coûts de Défaillances Internes Rebuts, ré-usinage, retards, pannes, pertes de productivité, de profit, etc."
+      },
+      { // Question 29
+        chapitre: 6,
+        evaluation: "43",
+        question: "Sur le graphique du COQ, en fonction de quelle grandeur trace-t-on les coûts ?",
+        choix: ["Le temps, en mois", "L’indice qualité, en %", "Le nombre de pièces produites", "Le nombre de réclamations"],
+        reponse: "B",
+        explication: "L’axe horizontal porte l’indice qualité, en %. Les courbes CIQ, CNQ et COQ donnent les coûts en CHF.",
+        page: "50",
+        citation: "6.3 Le COQ graphiquement […] Indice Qualité [%] […] CIQ [CHF] CNQ [CHF] COQ [CHF]"
+      },
+      { // Question 30
+        chapitre: 6,
+        evaluation: "42",
+        question: "Quelles études le cours juge-t-il essentielles d’un point de vue économique et marketing ?",
+        choix: ["Les études de marché", "Les enquêtes de satisfaction après-vente", "Les études de recyclage en fin de vie", "Les études de fiabilisation et les méthodes de fabrication"],
+        reponse: "D",
+        explication: "Les phases de développement sont cruciales. Les études de fiabilisation et les méthodes de fabrication y jouent un rôle essentiel.",
+        page: "51",
+        citation: "Conclusion : Les phases de développement (R&D et Industrialisation) sont cruciales dans le cycle de vie d’un produit. Les études de fiabilisation et les méthodes de fabrication sont essentielles, d’un point de vue économique et marketing pour l’entreprise."
+      }
+  ]
+};
 </script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -454,6 +790,7 @@ dialog.qr::backdrop{background:var(--veil)}
 /* correction enseignant */
 .q{margin:0 0 1.6rem}
 .q h2{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:.7rem;margin:0 0 .75rem;font-size:1.05rem;line-height:1.35}
+.q h2 .qchap{margin-bottom:.15rem}
 .q .n{display:grid;place-items:center;width:2rem;height:2rem;border-radius:50%;background:var(--red);color:var(--on-accent);font-weight:800;font-size:.95rem}
 
 footer{color:var(--grey);font-size:.75rem;padding-block:2rem calc(2rem + env(safe-area-inset-bottom, 0px))}
@@ -465,8 +802,10 @@ footer p{margin:.2rem 0}
   .qnum{font-size:2.3rem}
   .qtitle h2{font-size:1.12rem}
   .chain small{display:none}
-  .chain li+li{margin-left:-.3rem}
-  .chain a{font-size:.66rem;padding:.5rem .1rem}
+  .chain{flex-wrap:wrap;gap:.4rem}
+  .chain li{flex:1 1 30%}
+  .chain li+li{margin-left:0}
+  .chain a{font-size:.74rem;padding:.45rem .2rem}
   .tools button{font-size:.8rem;padding:.5rem .8rem}
   .hint{display:none}
 }
@@ -507,27 +846,38 @@ footer p{margin:.2rem 0}
 "use strict";
 const L = "ABCD";
 const NB = "\u00a0";
-const STORE_KEY = "mt322-quiz-v5";
+const STORE_KEY = "mt322-quiz-v5"; // résultats conservés : même clé que la version précédente
 const ICON_QR = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm11-2h2v2h-2v-2zm-3 0h2v3h-2v-3zm5 3h3v2h-3v-2zm-5 2h3v3h-3v-3zm5 2h3v1h-3v-1zm1-7h2v3h-2v-3z"/></svg>';
 
 /* ---------- préparation des données (ne pas modifier) ---------- */
 function typo(s){
   return String(s).replace(/ ([:;?!%])/g, NB + "$1").replace(/« /g, "«" + NB).replace(/ »/g, NB + "»").replace(/(\d) (\d{3})\b/g, "$1" + NB + "$2");
 }
+function prep(q, i, ch, where){
+  q.ch = ch; q.i = i;
+  q.q = typo(q.question); q.o = q.choix.map(typo); q.a = L.indexOf(String(q.reponse).trim().toUpperCase());
+  q.e = typo(q.explication); q.p = q.page; q.c = q.citation ? typo(q.citation) : "";
+  if (q.a < 0 || q.a >= q.o.length) console.error(where + ", question " + (i + 1) + " : réponse invalide (" + q.reponse + ").");
+}
 const CHAPS = Object.keys(QUIZ).map(Number);
 for (const ch of CHAPS){
   const c = QUIZ[ch];
   c.sujet = typo(c.sujet);
-  c.questions.forEach((q, i) => {
-    q.ch = ch; q.i = i;
-    q.q = typo(q.question); q.o = q.choix.map(typo); q.a = L.indexOf(String(q.reponse).trim().toUpperCase());
-    q.e = typo(q.explication); q.p = q.page; q.c = q.citation ? typo(q.citation) : "";
-    if (q.a < 0 || q.a >= q.o.length) console.error("Chapitre " + ch + ", question " + (i + 1) + " : réponse invalide (" + q.reponse + ").");
-  });
+  c.questions.forEach((q, i) => prep(q, i, ch, "Chapitre " + ch));
 }
 const ALL = "tout";
-function pool(key){ return key === ALL ? CHAPS.flatMap(ch => QUIZ[ch].questions) : QUIZ[key].questions; }
-function title(key){ return key === ALL ? "Tous les chapitres" : QUIZ[key].nom; }
+const BONUS_KEY = "bonus";
+const HAS_BONUS = typeof BONUS === "object" && BONUS.questions && BONUS.questions.length > 0;
+if (HAS_BONUS){
+  BONUS.sujet = typo(BONUS.sujet);
+  BONUS.questions.forEach((q, i) => { prep(q, i, Number(q.chapitre), "Bonus"); q.bonus = true; q.ev = q.evaluation; });
+}
+const BONUS_CHAPS = HAS_BONUS ? [...new Set(BONUS.questions.map(q => q.ch))].sort((a, b) => a - b) : [];
+const SEQUENCE = HAS_BONUS ? [...CHAPS, BONUS_KEY] : CHAPS.slice();
+function pool(key){ return key === ALL ? CHAPS.flatMap(ch => QUIZ[ch].questions) : key === BONUS_KEY ? BONUS.questions : QUIZ[key].questions; }
+function title(key){ return key === ALL ? "Tous les chapitres" : key === BONUS_KEY ? BONUS.nom : QUIZ[key].nom; }
+function chapName(q){ return q.bonus ? CHAPITRES[q.ch] : QUIZ[q.ch].nom; }
+function chapLabel(q){ return "Chapitre " + q.ch + " · " + chapName(q); }
 
 /* ---------- mémoire locale (résultats et quiz en cours) ---------- */
 function load(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {best: {}, progress: {}}; } catch (e) { return {best: {}, progress: {}}; } }
@@ -587,12 +937,18 @@ function renderChain(){
     if (ch === S.key) a.setAttribute("aria-current", "page");
     return el("li", {}, a, el("small", {text: "Chapitre " + ch}));
   }));
+  if (HAS_BONUS){
+    const a = navLink(BONUS.nom, S.view === "correction" ? "correction" : "intro", BONUS_KEY);
+    if (S.key === BONUS_KEY) a.setAttribute("aria-current", "page");
+    chain.append(el("li", {}, a, el("small", {text: "Évaluation 1"})));
+  }
 }
 function hero(key, h1){
   const sub = key === ALL ? CHAPS.length + " chapitres · " + pool(ALL).length + " questions"
+    : key === BONUS_KEY ? BONUS.sujet + " · " + pool(key).length + " questions · cours" + NB + "p." + NB + BONUS.pages
     : "Chapitre " + key + " · " + QUIZ[key].sujet + " · cours" + NB + "p." + NB + QUIZ[key].pages;
   return el("section", {class: "hero"},
-    el("span", {class: "numeral", text: key === ALL ? "3–7" : String(key), "aria-hidden": "true"}),
+    el("span", {class: "numeral", text: key === ALL ? "3–7" : key === BONUS_KEY ? "+" : String(key), "aria-hidden": "true"}),
     el("div", {}, el("h1", {text: h1}), el("p", {text: sub})));
 }
 function tools(key){
@@ -639,6 +995,13 @@ function renderHome(){
     el("span", {}, el("span", {class: "t", text: "Tous les chapitres"}), el("span", {class: "s", text: "Révision complète · " + pool(ALL).length + " questions"})),
     bestLabel(ALL));
   items.push(el("li", {class: "all"}, all));
+  if (HAS_BONUS){
+    const bonus = navLink("", "intro", BONUS_KEY);
+    bonus.append(el("span", {class: "d", text: "+", "aria-hidden": "true"}),
+      el("span", {}, el("span", {class: "t", text: BONUS.nom}), el("span", {class: "s", text: BONUS.sujet + " · " + pool(BONUS_KEY).length + " questions"})),
+      bestLabel(BONUS_KEY));
+    items.push(el("li", {class: "bonus"}, bonus));
+  }
   const reset = Object.keys(store.best).length || Object.keys(store.progress).length
     ? el("div", {class: "foot-actions"}, button("Effacer mes résultats sur cet appareil", "link", () => { store = {best: {}, progress: {}}; save(); render(); say("Résultats effacés."); }))
     : null;
@@ -688,6 +1051,7 @@ function renderIntro(){
         el("li", {}, "Durée" + NB + ": ", el("b", {text: "environ " + Math.max(1, Math.round(n * 0.75)) + NB + "min"})),
         b ? el("li", {}, "Meilleur score" + NB + ": ", el("b", {text: b.score + " / " + b.total})) : null),
       el("div", {class: "brief"},
+        key === BONUS_KEY ? el("p", {text: "Ces questions reprennent les notions de l’évaluation" + NB + "1, chapitres " + BONUS_CHAPS[0] + " à " + BONUS_CHAPS[BONUS_CHAPS.length - 1] + "."}) : null,
         el("p", {text: "Lisez la question et choisissez une réponse."}),
         el("p", {text: "La correction s’affiche aussitôt, avec la citation du cours."}),
         el("p", {text: "Une synthèse termine le quiz."})),
@@ -729,7 +1093,7 @@ function renderQuestion(){
     el("section", {class: "qtitle"},
       el("span", {class: "qnum", text: String(n), "aria-hidden": "true"}),
       el("h2", {id: "qt", tabindex: "-1"},
-        el("span", {class: "qchap", text: "Chapitre " + q.ch + " · " + QUIZ[q.ch].nom}), q.q)),
+        el("span", {class: "qchap", text: chapLabel(q)}), q.q)),
     opts, fbBox, nextBox);
   if (answered) showFeedback(false); else document.getElementById("qt").focus({preventScroll: true});
 }
@@ -789,13 +1153,13 @@ function renderSummary(){
   const qs = S.order.map(i => pool(key)[i]);
   const missed = S.order.filter((qi, k) => S.answers[k] !== pool(key)[qi].a);
   document.title = "Synthèse · " + title(key);
-  const resultText = "Quiz MT_322 · " + (key === ALL ? "Tous les chapitres" : "Chapitre " + key + " " + QUIZ[key].nom)
+  const resultText = "Quiz MT_322 · " + (key === ALL ? "Tous les chapitres" : key === BONUS_KEY ? BONUS.nom + " (" + BONUS.sujet + ")" : "Chapitre " + key + " " + QUIZ[key].nom)
     + (S.retry ? " (questions manquées)" : "") + " : " + score + "/" + total + " (" + pct(score, total) + " %) · " + today();
   const actions = el("div", {class: "row"});
   if (missed.length) actions.append(button(missed.length > 1 ? "Refaire les " + missed.length + " questions manquées" : "Refaire la question manquée", "primary", () => startQuiz(key, {order: missed, retry: true})));
   actions.append(button("Recommencer le quiz", "ghost", () => startQuiz(key)));
-  const nextCh = key === ALL ? null : CHAPS[CHAPS.indexOf(key) + 1];
-  if (nextCh) actions.append(button("Quiz suivant" + NB + ": " + QUIZ[nextCh].nom, "ghost", () => go("intro", nextCh)));
+  const nextKey = key === ALL ? null : SEQUENCE[SEQUENCE.indexOf(key) + 1];
+  if (nextKey) actions.append(button("Quiz suivant" + NB + ": " + title(nextKey), "ghost", () => go("intro", nextKey)));
   actions.append(button("Copier mon résultat", "ghost", ev => copyText(resultText, ev.currentTarget, "Résultat copié")));
   const best = store.best[key];
   const result = el("section", {class: "result", "aria-labelledby": "rt"},
@@ -807,12 +1171,13 @@ function renderSummary(){
     el("p", {class: "verdict", text: verdict(score, total)}),
     actions);
   let table = null;
-  if (key === ALL){
-    const rows = CHAPS.map(ch => {
-      const ks = S.order.map((qi, k) => k).filter(k => pool(ALL)[S.order[k]].ch === ch);
+  if (key === ALL || key === BONUS_KEY){
+    const list = key === ALL ? CHAPS : BONUS_CHAPS;
+    const rows = list.map(ch => {
+      const ks = S.order.map((qi, k) => k).filter(k => pool(key)[S.order[k]].ch === ch);
       if (!ks.length) return null;
-      const ok = ks.filter(k => S.answers[k] === pool(ALL)[S.order[k]].a).length;
-      return el("tr", {}, el("td", {text: ch + " · " + QUIZ[ch].nom}), el("td", {text: ok + " / " + ks.length}));
+      const ok = ks.filter(k => S.answers[k] === pool(key)[S.order[k]].a).length;
+      return el("tr", {}, el("td", {text: ch + " · " + chapName(pool(key)[S.order[ks[0]]])}), el("td", {text: ok + " / " + ks.length}));
     }).filter(Boolean);
     table = el("table", {class: "bychap"}, el("thead", {}, el("tr", {}, el("th", {text: "Chapitre"}), el("th", {text: "Score"}))), el("tbody", {}, ...rows));
   }
@@ -838,19 +1203,20 @@ function renderSummary(){
 
 /* ---------- correction enseignant ---------- */
 function renderCorrection(){
-  const key = S.key, c = QUIZ[key];
-  document.title = "Correction · " + c.nom;
+  const key = S.key;
+  document.title = "Correction · " + title(key);
   const list = el("div", {});
-  c.questions.forEach((q, i) => {
+  pool(key).forEach((q, i) => {
     const s = el("section", {class: "q"});
-    s.append(el("h2", {}, el("span", {class: "n", text: String(i + 1), "aria-hidden": "true"}), el("span", {}, q.q)));
+    s.append(el("h2", {}, el("span", {class: "n", text: String(i + 1), "aria-hidden": "true"}),
+      el("span", {}, q.bonus ? el("span", {class: "qchap", text: chapLabel(q) + " · évaluation" + NB + "1, question " + q.ev}) : null, q.q)));
     const opts = el("div", {class: "opts"});
     q.o.forEach((o, j) => opts.append(el("div", {class: "opt" + (j === q.a ? " right" : " dim"), "aria-disabled": "true"},
       el("span", {class: "l", text: L[j]}), el("span", {}, o), el("span", {class: "tag", text: j === q.a ? "Bonne réponse" : ""}))));
     s.append(opts, el("div", {class: "fb ok"}, el("strong", {text: "Réponse" + NB + ": " + L[q.a] + "."}), " " + q.e, citation(q)));
     list.append(s);
   });
-  put(hero(key, "Correction" + NB + ": " + c.nom), tools(key),
+  put(hero(key, "Correction" + NB + ": " + title(key)), tools(key),
     el("div", {class: "brief"}, el("p", {text: "Les bonnes réponses sont en vert, avec l’explication et la citation du cours " + SUPPORT + "."})),
     list);
 }
@@ -890,7 +1256,7 @@ function copyText(text, btn, okLabel){
 /* ---------- fenêtre QR code ---------- */
 function openQr(key){
   const url = quizUrl(key);
-  document.getElementById("qrTitle").textContent = key ? "Quiz · " + (key === ALL ? "tous les chapitres" : "chapitre " + key + " · " + QUIZ[key].nom) : "Quiz de fin de chapitre";
+  document.getElementById("qrTitle").textContent = key ? "Quiz · " + (key === ALL ? "tous les chapitres" : key === BONUS_KEY ? BONUS.nom + " · " + BONUS.sujet : "chapitre " + key + " · " + QUIZ[key].nom) : "Quiz de fin de chapitre";
   document.getElementById("qrUrl").textContent = url;
   const box = document.getElementById("qrCode");
   if (typeof qrcode === "function"){
@@ -911,8 +1277,8 @@ document.addEventListener("fullscreenchange", () => { if (S.view === "intro" || 
 (function init(){
   let p = null, corrige = false;
   try { const u = new URLSearchParams(location.search); p = u.get("partie"); corrige = u.has("corrige"); } catch (e) {}
-  if (!p){ const m = location.hash.match(/\d+|tout/); if (m) p = m[0]; }
-  const key = p === ALL ? ALL : (CHAPS.includes(Number(p)) ? Number(p) : null);
+  if (!p){ const m = location.hash.match(/\d+|tout|bonus/); if (m) p = m[0]; }
+  const key = p === ALL ? ALL : p === BONUS_KEY && HAS_BONUS ? BONUS_KEY : (CHAPS.includes(Number(p)) ? Number(p) : null);
   if (!key){ S.view = "home"; render(); return; }
   S.key = key;
   S.view = corrige && key !== ALL ? "correction" : "intro";
