@@ -64,12 +64,12 @@ const QUIZ = {
         citation: "[…] on peut qualifier quantitativement la qualité d’un résultat de mesure grâce à son incertitude. En effet sans incertitude les résultats de mesure ne peuvent plus être comparés"
       },
       { // Question 2
-        question: "Mesurer, c’est attribuer une valeur à une grandeur en prenant pour référence une grandeur de même nature. Comment s’appelle cette référence ?",
-        choix: ["Le mesurande", "L’unité", "L’incertitude", "La tolérance"],
-        reponse: "B",
-        explication: "Mesurer, c’est comparer une grandeur à une unité de même nature.",
-        page: "21",
-        citation: "Mesurer une grandeur physique consiste à lui attribuer une valeur quantitative en prenant pour référence une grandeur de même nature appelée unité."
+        question: "Au niveau international, quel organisme définit les unités de mesure et les compare entre pays ?",
+        choix: ["Le Bureau international des poids et mesures (BIPM)", "L’Organisation internationale de normalisation (ISO)", "La Commission électrotechnique internationale (CEI)", "L’Association suisse de normalisation (SNV)"],
+        reponse: "A",
+        explication: "Le BIPM définit les unités de mesure, réalise les étalons et les compare entre pays. Il est situé à Paris.",
+        page: "24",
+        citation: "Au niveau international, la « métrologie scientifique » est la partie de la métrologie qui est chargée de définir les unités de mesure, de les réaliser (étalons), de les comparer entre pays […] C’est essentiellement le domaine du Bureau international des poids et mesures (BIPM). Le BIPM est situé à Paris depuis sa fondation le 20 mai 1875"
       },
       { // Question 3
         question: "Le contrôle d’une pompe à essence relève de quelle métrologie ?",
@@ -809,6 +809,26 @@ dialog.qr::backdrop{background:var(--veil)}
 footer{color:var(--grey);font-size:.75rem;padding-block:2rem calc(2rem + env(safe-area-inset-bottom, 0px))}
 footer p{margin:.2rem 0}
 
+/* mode quiz : en-tête réduit ; sur ordinateur, question, réponses et correction tiennent à l'écran */
+.quiz-mode .parts-nav,.quiz-mode .part-panel{display:none}
+.quiz-mode .qhead{margin-top:.9rem}
+.quiz-mode .segs{margin-bottom:1rem}
+.side .fb{margin:1rem 0 0}
+.side .await{display:none}
+.side:not(.shown) .fb,.side:not(.shown) .next{display:none}
+@media (min-width:900px){
+  .quiz-mode .wrap{max-width:66rem}
+  .quiz-mode footer{display:none}
+  .quiz-mode .qtitle{margin-bottom:.9rem}
+  .qgrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+  .qgrid .opt{min-height:3rem;padding:.6rem .85rem}
+  .side{position:relative}
+  .side .fb{margin:0}
+  .side:not(.shown) .fb{display:block;visibility:hidden}
+  .side:not(.shown) .next{display:flex;visibility:hidden}
+  .side .await{display:block;position:absolute;top:0;left:0;right:0;margin:0;padding:.9rem 1rem;border:2px dashed var(--line);border-radius:.7rem;color:var(--grey);font-size:.9rem}
+  .side.shown .await{display:none}
+}
 @media (max-width:480px){
   .numeral{font-size:4.2rem}
   .hero h1{font-size:1.6rem}
@@ -826,7 +846,7 @@ footer p{margin:.2rem 0}
 }
 @media (prefers-reduced-motion:no-preference){
   .opt{transition:border-color .15s,background-color .15s,opacity .15s}
-  .fb,.result{animation:rise .3s ease-out}
+  .side.shown .fb,.result{animation:rise .3s ease-out}
   @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 }
 </style>
@@ -835,7 +855,7 @@ footer p{margin:.2rem 0}
 <header>
   <div class="wrap">
     <div class="course"><span><b>Qualité industrielle</b> · MT_322 · hepia</span><a href="https://nicolas-derobert.github.io/appli-qualite/" target="_blank" rel="noopener">QualiTools</a></div>
-    <nav aria-label="Parties du cours"><ul class="parts" id="parts"></ul></nav>
+    <nav class="parts-nav" aria-label="Parties du cours"><ul class="parts" id="parts"></ul></nav>
     <div class="part-panel">
       <nav aria-label="Chapitres de la partie"><ul class="chain" id="chain"></ul></nav>
     </div>
@@ -1084,13 +1104,13 @@ function startQuiz(key, opts){
   const n = pool(key).length;
   let order = opts && opts.order ? opts.order : [...Array(n).keys()];
   if (S.shuffle && !(opts && opts.order)) order = shuffled(order);
-  Object.assign(S, {key, order, answers: [], idx: 0, start: Date.now(), retry: !!(opts && opts.retry)});
+  Object.assign(S, {key, order, answers: [], idx: 0, start: Date.now(), retry: !!(opts && opts.retry), fs: null});
   if (!S.retry){ store.progress[key] = {order, answers: [], start: S.start, shuffle: S.shuffle}; save(); }
   go("question", key);
 }
 function resumeQuiz(key){
   const p = store.progress[key];
-  Object.assign(S, {key, order: p.order, answers: p.answers.slice(), idx: p.answers.length, start: p.start || Date.now(), retry: false, shuffle: !!p.shuffle});
+  Object.assign(S, {key, order: p.order, answers: p.answers.slice(), idx: p.answers.length, start: p.start || Date.now(), retry: false, shuffle: !!p.shuffle, fs: null});
   go("question", key);
 }
 function renderIntro(){
@@ -1150,8 +1170,13 @@ function renderQuestion(){
     b.addEventListener("click", () => choose(j));
     opts.append(b);
   });
-  const fbBox = el("div", {id: "fb"});
-  const nextBox = el("div", {class: "next", id: "nextBox"});
+  const last = S.idx === total - 1;
+  const side = el("div", {class: "side", id: "side"},
+    el("p", {class: "await", text: "Choisissez une réponse. La correction s’affiche ici."}),
+    el("div", {class: "fb ko", id: "fb"}, el("strong", {text: "Faux. Bonne réponse" + NB + ": " + L[q.a] + "."}), " " + q.e, citation(q)),
+    el("div", {class: "next", id: "nextBox"},
+      el("span", {class: "score-live", text: "Score" + NB + ": " + scoreSoFar() + " / " + n}),
+      button(last ? "Voir la synthèse" : "Question suivante", "primary big", next, {id: "nextBtn"})));
   put(
     el("div", {class: "qhead"},
       el("span", {}, "Question ", el("b", {text: n + " / " + total}), S.retry ? " · questions manquées" : ""),
@@ -1161,7 +1186,7 @@ function renderQuestion(){
       el("span", {class: "qnum", text: String(n), "aria-hidden": "true"}),
       el("h2", {id: "qt", tabindex: "-1"},
         el("span", {class: "qchap", text: chapLabel(q)}), q.q)),
-    opts, fbBox, nextBox);
+    el("div", {class: "qgrid"}, opts, side));
   if (answered) showFeedback(false); else document.getElementById("qt").focus({preventScroll: true});
 }
 function choose(j){
@@ -1180,15 +1205,14 @@ function showFeedback(announce){
   });
   document.querySelector(".segs").replaceWith(segs());
   const head = ok ? "Juste." : "Faux. Bonne réponse" + NB + ": " + L[q.a] + ".";
-  document.getElementById("fb").replaceChildren(el("div", {class: "fb " + (ok ? "ok" : "ko")},
-    el("strong", {text: head}), " " + q.e, citation(q)));
-  const last = S.idx === S.order.length - 1;
-  const nb = button(last ? "Voir la synthèse" : "Question suivante", "primary big", next, {id: "nextBtn"});
-  document.getElementById("nextBox").replaceChildren(
-    el("span", {class: "score-live", text: "Score" + NB + ": " + scoreSoFar() + " / " + (S.idx + 1)}), nb);
+  const fb = document.getElementById("fb");
+  fb.className = "fb " + (ok ? "ok" : "ko");
+  fb.querySelector("strong").textContent = head;
+  document.querySelector(".score-live").textContent = "Score" + NB + ": " + scoreSoFar() + " / " + (S.idx + 1);
+  document.getElementById("side").classList.add("shown");
   if (announce) say(head + " " + q.e);
-  nb.focus({preventScroll: true});
-  document.getElementById("fb").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest"});
+  document.getElementById("nextBtn").focus({preventScroll: true});
+  if (!WIDE.matches) fb.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest"});
 }
 function next(){
   if (S.answers[S.idx] === undefined) return;
@@ -1289,8 +1313,22 @@ function renderCorrection(){
     list);
 }
 
+/* ---------- ajustement à l'écran : sur ordinateur, la question entière reste visible sans défilement ---------- */
+const WIDE = matchMedia("(min-width: 900px)");
+function fit(){
+  const r = document.documentElement;
+  if (S.view !== "question" || !WIDE.matches){ r.style.fontSize = ""; S.fs = null; return; }
+  r.style.fontSize = S.fs ? S.fs + "px" : "";
+  let fs = parseFloat(getComputedStyle(r).fontSize);
+  while (app.offsetTop + app.offsetHeight > innerHeight - 12 && fs > 13){ fs -= 0.5; r.style.fontSize = fs + "px"; }
+  S.fs = fs; // taille conservée pour les questions suivantes du même quiz
+}
+let resizeTimer = 0;
+addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { S.fs = null; fit(); }, 120); });
+
 /* ---------- rendu ---------- */
 function render(){
+  document.body.classList.toggle("quiz-mode", S.view === "question");
   app.classList.toggle("accent-bonus", S.view !== "home" && isBonus(S.key));
   renderParts();
   renderChain();
@@ -1299,6 +1337,7 @@ function render(){
   else if (S.view === "summary") renderSummary();
   else if (S.view === "correction") renderCorrection();
   else renderHome();
+  fit();
 }
 
 /* ---------- clavier ---------- */
