@@ -1,0 +1,2669 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<title>Quiz MT_322</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Quiz du cours Qualité industrielle (MT_322, hepia) : fins de chapitre 1 à 7 et questions de révision (QCM, questions ouvertes, schémas à compléter), avec correction et citations du cours.">
+<script>
+/* ==========================================================================
+   QUIZ MT_322 – QUESTIONS, RÉPONSES ET CITATIONS DU COURS
+   Source de toutes les réponses : Qualité_Industrielle_hepia_cours 2026-2027.
+   PARTIES    : parties du cours (onglets du haut) et leurs chapitres.
+   QUIZ       : quiz de fin de chapitre, 5 questions par chapitre (QCM).
+   CHAPITRES  : noms des chapitres affichés au-dessus des questions de révision.
+   REVISION   : questions de révision, une rubrique par partie, en trois formats :
+     qcm       question, choix (A à D), reponse (lettre), explication, page, figure (si citée), citation
+     ouvertes  question, reponse (réponse attendue), motsCles, page, citation
+               motsCles : « libellé|racine1|racine2 » ; une racine est cherchée en début de mot,
+               sans accents ni majuscules, dans la réponse de l’élève (aide à l’autoévaluation).
+     schemas   modele (smq, liste, ishikawa, flux, tracabilite, normes, docsmq, coq, graphe_coq), titre,
+               cases (bonne étiquette de chaque case, dans l’ordre {0}, {1}…),
+               etiquettes (liste proposée, ou listes par groupe avec « groupes »),
+               libre: true si l’ordre des cases est indifférent, noms (nom des cases dans la synthèse),
+               explication, page, figure, citation. Chaque modèle reprend la mise en page d’une figure du cours.
+               Dans les textes du schéma, « {n} » marque la case n à compléter ; « \n » est un retour à la ligne.
+   Points : QCM juste = 1 ; question ouverte : juste 1, en partie 0,5, à revoir 0 (autoévaluation) ;
+            schéma : toutes les cases justes 1, au moins la moitié 0,5, sinon 0.
+   Liens : ADRESSE_SITE?partie=3 (quiz du chapitre 3) – ajouter &corrige pour la correction
+           ?partie=tout (tous les chapitres) – ?partie=revision (choix de la série de révision)
+           ?partie=revision-qcm, revision-ouvertes, revision-schemas (l’ancien lien revision-tout ouvre le choix de la série)
+   Schémas à compléter : ordinateur ou tablette uniquement. Sur smartphone, la série ne démarre pas
+            et la correction donne la liste des réponses à la place du schéma.
+   Présentation théorique : déposer le fichier PDF dans le même dossier que cette page, sous le nom PRESENTATION.
+            Tant que le fichier manque, le bouton affiche un message au clic (vérification en ligne seulement).
+   Ajouter la partie II : rubrique 2 dans PARTIES, ses chapitres dans QUIZ, et si besoin REVISION[2].
+   ========================================================================== */
+const ADRESSE_SITE = "https://nicolas-derobert.github.io/appli-qualite/MT_322"; // adresse publique utilisée pour les QR codes
+const SUPPORT = "Qualité_Industrielle_hepia_cours 2026-2027"; // cours cité dans les corrections
+const PRESENTATION = "presentation.pdf"; // présentation théorique (PDF), dans le même dossier que cette page ; "" masque le bouton
+
+/* ---------- Parties du cours : un onglet par partie ---------- */
+const PARTIES = {
+  1: {
+    numero: "I",
+    titre: "Le système de management de la Qualité",
+    chapitres: [1, 2, 3, 4, 5, 6, 7]
+  },
+  // 2: {
+  //   numero: "II",
+  //   titre: "La démarche Qualité en entreprise",
+  //   chapitres: [8, 9, 10]
+  // }
+};
+
+/* ---------- Quiz de fin de chapitre ---------- */
+const QUIZ = {
+
+  /* ---------- Chapitre 1 · Définir ---------- */
+  1: {
+    nom: "Définir",
+    sujet: "Les définitions",
+    pages: "7–12",
+    questions: [
+      { // Question 1
+        question: "De quel mot latin vient le mot « qualité » ?",
+        choix: ["Quantitas", "Qualitas", "Aequalitas", "Valor"],
+        reponse: "B",
+        explication: "Le mot vient du latin qualitas. Étymologiquement, la qualité est l’état de ce qui est « comme ça ».",
+        page: "7",
+        citation: "Étymologie : Du latin qualitas, étymologiquement la qualité est l’état de ce qui est « comme ça »."
+      },
+      { // Question 2
+        question: "Quels antonymes du mot « qualité » le cours donne-t-il ?",
+        choix: ["Le défaut et la non-conformité", "Le coût et le délai", "La fiabilité et la durabilité", "La norme et le contrôle"],
+        reponse: "A",
+        explication: "Le cours cite deux antonymes de la qualité : le défaut et la non-conformité.",
+        page: "8",
+        citation: "Antonymes · Défaut · Non conformité"
+      },
+      { // Question 3
+        question: "Quel est l’objectif de la qualimétrie ?",
+        choix: ["Certifier une entreprise selon l’ISO 9001", "Calculer le prix de revient d’un produit", "Transformer des données qualitatives en valeurs chiffrées", "Contrôler uniquement les longueurs"],
+        reponse: "C",
+        explication: "Qualimétrie vient de « qualité » et du grec metron, « mesure ». Elle chiffre des données qualitatives pour les analyser, les comparer et les améliorer.",
+        page: "8",
+        citation: "Qualimétrie : origine du mot : Le terme vient de la fusion du mot « qualité » et du grec ancien metron qui signifie « mesure ». Objectif : Transformer des données qualitatives (une appréciation, un ressenti, un défaut) en valeurs chiffrées ou en échelles graduées pour pouvoir les analyser, les comparer et les améliorer."
+      },
+      { // Question 4
+        question: "Selon le cours, qu’est-ce que la gestion de la qualité ?",
+        choix: ["Le travail du seul service contrôle", "Une obligation légale pour toutes les entreprises", "Un logiciel de suivi des défauts", "Une discipline de management visant l’obtention de la qualité"],
+        reponse: "D",
+        explication: "La gestion de la qualité est une discipline de management. Elle s’applique à la production de biens comme de services.",
+        page: "8",
+        citation: "La gestion de la qualité est une discipline de management visant l’obtention de la qualité dans un contexte de production de services ou de biens."
+      },
+      { // Question 5
+        question: "Pour une entreprise, la qualité est aussi une stratégie qui la démarque de ses concurrents. Comment s’appelle-t-elle ?",
+        choix: ["Le manuel qualité", "La politique qualité", "Le plan d’assurance qualité", "La cartographie des processus"],
+        reponse: "B",
+        explication: "La politique qualité est une stratégie : elle permet à l’entreprise de se démarquer de ses concurrents aux yeux des clients.",
+        page: "12",
+        citation: "Pour une entreprise, la qualité, est aussi une stratégie corporative qui lui permet de se démarquer de ses compétiteurs aux yeux de la clientèle, c’est ce qu’on appelle la Politique Qualité"
+      }
+    ]
+  },
+
+  /* ---------- Chapitre 2 · Retracer ---------- */
+  2: {
+    nom: "Retracer",
+    sujet: "L’historique de la qualité",
+    pages: "13–20",
+    questions: [
+      { // Question 1
+        question: "Quel texte ancien fait état des premières préoccupations de qualité dans la construction ?",
+        choix: ["Le code d’Hammurabi", "La Magna Carta", "Le Code civil de Napoléon", "La Convention du Mètre"],
+        reponse: "A",
+        explication: "Vers 1750 avant J.-C., le code d’Hammurabi, roi de Babylone, traite déjà de la qualité des constructions.",
+        page: "13",
+        citation: "Dès 1750 avant Jésus-Christ, le code d’Hammurabi, célèbre roi de Babylone […] fait état des premières préoccupations de qualité en matière de construction"
+      },
+      { // Question 2
+        question: "Dans quelle entreprise Shewhart, Juran et Deming se sont-ils rencontrés dans les années 1930 ?",
+        choix: ["Ford", "Toyota", "Bell Telephone Laboratories", "Motorola"],
+        reponse: "C",
+        explication: "Dans les années 1930, Bell Telephone Laboratories réunit trois figures fondatrices de la qualité : Shewhart, Juran et Deming.",
+        page: "13",
+        citation: "Dans les années 1930, la société Bell Telephone Laboratories (USA) est un centre de recherche et d’innovation dans le management et la production. […] des théories de la qualité se sont rencontrées dans cette entreprise : le statisticien W. Shewhart, J. Juran et le professeur E. Deming."
+      },
+      { // Question 3
+        question: "Selon le principe de Pareto, quelle part des problèmes s’explique par 20 % des causes ?",
+        choix: ["20 %", "50 %", "80 %", "100 %"],
+        reponse: "C",
+        explication: "Principe de Pareto : 80 % des problèmes viennent de 20 % des causes. On concentre donc les efforts d’amélioration sur ces causes.",
+        page: "14",
+        citation: "Joseph Juran fait connaître le principe de Pareto – 1941 […] ce principe aide notamment à comprendre que 80 % des problèmes s’expliquent par 20 % des causes possibles. Très utile pour concentrer les efforts d’amélioration."
+      },
+      { // Question 4
+        question: "Quelle entreprise a mis au point la méthode Six Sigma, en 1986 ?",
+        choix: ["Toyota", "Motorola", "IBM", "General Electric"],
+        reponse: "B",
+        explication: "Motorola crée Six Sigma en 1986. Son but : réduire la variabilité des processus.",
+        page: "15",
+        citation: "Développement de l’outil Six sigma – 1986 La société Motorola met au point la méthode Six sigma, devenue célèbre par la suite. Elle a pour but de réduire la variabilité des processus."
+      },
+      { // Question 5
+        question: "Pour garantir le bon fonctionnement d’un produit, quelle analyse le cours juge-t-il primordiale ?",
+        choix: ["L’analyse financière", "L’analyse de marché", "L’analyse des ventes", "L’analyse fonctionnelle du produit"],
+        reponse: "D",
+        explication: "L’analyse fonctionnelle garantit le bon fonctionnement du produit. Elle conduit à la cotation fonctionnelle, qui fixe les tolérances.",
+        page: "18",
+        citation: "D’une manière plus large, pour garantir le bon fonctionnement d’un produit, l’analyse fonctionnelle du produit est primordiale. De cette analyse fonctionnelle du produit en découle la notion de cotation fonctionnelle."
+      }
+    ]
+  },
+
+  /* ---------- Chapitre 3 · Mesurer ---------- */
+  3: {
+    nom: "Mesurer",
+    sujet: "La métrologie",
+    pages: "21–27",
+    questions: [
+      { // Question 1
+        question: "Grâce à quoi peut-on qualifier quantitativement la qualité d’un résultat de mesure ?",
+        choix: ["Son unité", "Son incertitude", "L’instrument utilisé", "La tolérance du dessin"],
+        reponse: "B",
+        explication: "L’incertitude qualifie la qualité d’un résultat de mesure. Elle permet de comparer des résultats entre eux ou à une spécification.",
+        page: "22",
+        citation: "[…] on peut qualifier quantitativement la qualité d’un résultat de mesure grâce à son incertitude. En effet sans incertitude les résultats de mesure ne peuvent plus être comparés"
+      },
+      { // Question 2
+        question: "Au niveau international, quel organisme définit les unités de mesure et les compare entre pays ?",
+        choix: ["Le Bureau international des poids et mesures (BIPM)", "L’Organisation internationale de normalisation (ISO)", "La Commission électrotechnique internationale (CEI)", "L’Association suisse de normalisation (SNV)"],
+        reponse: "A",
+        explication: "Le BIPM définit les unités de mesure, réalise les étalons et les compare entre pays. Il gère le Système international d’unités (SI).",
+        page: "24",
+        citation: "Au niveau international, la « métrologie scientifique » est la partie de la métrologie qui est chargée de définir les unités de mesure, de les réaliser (étalons), de les comparer entre pays […] C’est essentiellement le domaine du Bureau international des poids et mesures (BIPM). […] Le BIPM et les laboratoires nationaux de métrologie associés ont la charge du Système International d’unités (SI)"
+      },
+      { // Question 3
+        question: "Le contrôle d’une pompe à essence relève de quelle métrologie ?",
+        choix: ["Scientifique", "Industrielle", "Légale", "Fondamentale"],
+        reponse: "C",
+        explication: "La métrologie légale s’applique aux mesures soumises à des exigences réglementaires, comme la vente de carburant.",
+        page: "21–22",
+        citation: "La métrologie légale, liée aux mesures sur lesquelles s’appliquent des exigences réglementaires […] Métrologie légale, exemple d’une pompe à essence"
+      },
+      { // Question 4
+        question: "Quel ouvrage est la référence du vocabulaire métrologique ?",
+        choix: ["Le GUM", "Le VIM", "L’ISO 9001", "Le Système international d’unités (SI)"],
+        reponse: "B",
+        explication: "Le VIM est le Vocabulaire international de métrologie. Le GUM traite de l’expression de l’incertitude de mesure.",
+        page: "26",
+        citation: "La référence du vocabulaire métrologique est : Vocabulaire international de métrologie – Concepts fondamentaux et généraux et termes associés (VIM)"
+      },
+      { // Question 5
+        question: "Un pied à coulisse est étalonné avec des cales étalons raccordées à METAS. Comment s’appelle cette chaîne de comparaisons ?",
+        choix: ["La répétabilité", "La traçabilité métrologique", "La reproductibilité", "L’exactitude de mesure"],
+        reponse: "B",
+        explication: "La traçabilité relie un résultat à une référence nationale par une chaîne ininterrompue de comparaisons, chacune avec une incertitude connue.",
+        page: "23",
+        citation: "La traçabilité est la propriété du résultat d’un mesurage tel qu’il puisse être relié à des références déterminées, généralement des étalons nationaux ou internationaux, par l’intermédiaire d’une chaîne ininterrompue de comparaisons ayant toutes des incertitudes déterminées."
+      }
+    ]
+  },
+
+  /* ---------- Chapitre 4 · Normaliser ---------- */
+  4: {
+    nom: "Normaliser",
+    sujet: "La normalisation",
+    pages: "28–34",
+    questions: [
+      { // Question 1
+        question: "Le nom ISO vient du grec isos. Que signifie ce mot ?",
+        choix: ["Norme", "Égal", "Qualité", "Monde"],
+        reponse: "B",
+        explication: "Isos signifie « égal ». Le nom ISO reste identique dans toutes les langues.",
+        page: "28",
+        citation: "Ce nom est également dérivé du grec isos, signifiant « égal »."
+      },
+      { // Question 2
+        question: "Quelle norme définit les critères d’un système de management de la qualité (SMQ) ?",
+        choix: ["ISO 9000", "ISO 9001", "ISO 9004", "ISO 14001"],
+        reponse: "B",
+        explication: "L’ISO 9001 définit les critères du SMQ. L’ISO 9000 donne le cadre général, l’ISO 9004 des lignes directrices pour des performances durables.",
+        page: "28",
+        citation: "ISO 9001:2015 définit les critères d’un système de management de la qualité (SMQ)"
+      },
+      { // Question 3
+        question: "L’ISO 9001 exige de mesurer la satisfaction des clients. Qui choisit la méthode de mesure ?",
+        choix: ["L’ISO", "L’organisme de certification", "L’entreprise", "Le client"],
+        reponse: "C",
+        explication: "La norme dit quoi faire, pas comment le faire. L’entreprise choisit sa méthode : enquête, notes des clients, analyse des réclamations.",
+        page: "30",
+        citation: "La norme donne des exigences sur le « Quoi faire ? », et pas sur le « Comment faire ? ». Exemple : ISO 9001 vous demande de mesurer la satisfaction de vos clients. Elle ne vous dit pas comment le faire, elle vous laisse libre de choisir avec quelle(s) méthode(s)"
+      },
+      { // Question 4
+        question: "Quelle norme traite de la santé et de la sécurité au travail ?",
+        choix: ["ISO 14001", "ISO 13485", "ISO 45001", "ISO 9004"],
+        reponse: "C",
+        explication: "L’ISO 45001 remplace l’OHSAS 18001. L’ISO 14001 traite du management environnemental.",
+        page: "29",
+        citation: "Anciennement la norme OHSAS 18001, la norme 45001:2018 indique la méthode de mise en place d’un management de la santé et de la sécurité au travail."
+      },
+      { // Question 5
+        question: "Un horloger importe des bracelets en cuir de crocodile. Quel texte encadre ce commerce ?",
+        choix: ["REACH", "RoHS", "La CITES", "Le Processus de Kimberley"],
+        reponse: "C",
+        explication: "La CITES, ou Convention de Washington, encadre le commerce international des espèces de faune et de flore menacées.",
+        page: "32",
+        citation: "CITES : Convention sur le commerce international des espèces de faune et de flore sauvages menacées d’extinction […] L’industrie du luxe et l’horlogerie sont très friandes de peaux de serpent ou de crocodile, notamment pour les bracelets de montres."
+      }
+    ]
+  },
+
+  /* ---------- Chapitre 5 · Organiser ---------- */
+  5: {
+    nom: "Organiser",
+    sujet: "Le système de management de la qualité",
+    pages: "35–47",
+    questions: [
+      { // Question 1
+        question: "Sur combien de principes repose le système de management de la qualité (SMQ) ?",
+        choix: ["5", "7", "9", "12"],
+        reponse: "B",
+        explication: "Le SMQ repose sur sept principes, de l’orientation client au management des relations avec les parties intéressées.",
+        page: "35",
+        citation: "Ceci repose sur sept principes : 1. Orientation client 2. Leadership 3. Implication du personnel 4. Approche processus 5. Amélioration continue 6. Prise de décision fondée sur des preuves 7. Management des relations avec les parties intéressées"
+      },
+      { // Question 2
+        question: "« Établir une culture de confiance et d’intégrité » : à quel principe appartient cette action ?",
+        choix: ["Orientation client", "Leadership", "Approche processus", "Prise de décision fondée sur des preuves"],
+        reponse: "B",
+        explication: "Les dirigeants créent les conditions de l’implication du personnel. Cette action relève du leadership.",
+        page: "36",
+        citation: "Leadership : les dirigeants créent des conditions dans lesquelles le personnel est impliqué à tous les niveaux […] Actions possibles : […] Établir une culture de confiance et d’intégrité."
+      },
+      { // Question 3
+        question: "Dans l’approche processus, que devient la sortie d’un processus ?",
+        choix: ["Un enregistrement archivé", "L’entrée du processus suivant", "Une non-conformité", "Un indicateur de la direction"],
+        reponse: "B",
+        explication: "Chaque processus reçoit des données d’entrée et produit des données de sortie. Ces données passent d’un processus à un autre.",
+        page: "37",
+        citation: "Dans ce modèle chaque processus prend en compte des données d’entrée et produit des données de sortie. Ces données pouvant aller d’un processus vers un autre."
+      },
+      { // Question 4
+        question: "Que comporte toujours une procédure documentée ?",
+        choix: ["Le plan de détail du produit", "La définition des rôles et responsabilités", "La liste des fournisseurs", "Le prix de revient du produit"],
+        reponse: "B",
+        explication: "Une procédure documentée définit toujours les rôles et responsabilités. Elle comporte aussi un titre, un but, la méthodologie, les enregistrements et l’historique des modifications.",
+        page: "42",
+        citation: "Une procédure documentée comporte toujours : Un titre, un but et le domaine d’application. La définition des rôles et responsabilités. La méthodologie (description de l’activité). Les enregistrements nécessaires à la documentation des résultats. L’historique des modifications."
+      },
+      { // Question 5
+        question: "Qui signe la politique qualité d’une entreprise ?",
+        choix: ["Le responsable qualité", "Le président de l’entreprise ou son équivalent", "L’auditeur de certification", "Le client principal"],
+        reponse: "B",
+        explication: "La politique qualité exprime l’engagement de la direction. Le président ou son équivalent la signe.",
+        page: "43",
+        citation: "Elle est signée par le Président (ou équivalent) de votre société."
+      }
+    ]
+  },
+
+  /* ---------- Chapitre 6 · Chiffrer ---------- */
+  6: {
+    nom: "Chiffrer",
+    sujet: "Les coûts de la qualité",
+    pages: "48–52",
+    questions: [
+      { // Question 1
+        question: "Le coût d’obtention de la qualité (COQ) est la somme de quels coûts ?",
+        choix: ["Prévention + détection", "Défaillances internes + défaillances externes", "Coûts d’investissement (CIQ) + coûts de non-qualité (CNQ)", "Achats + production"],
+        reponse: "C",
+        explication: "Le CIQ regroupe la prévention et la détection. Le CNQ regroupe les défaillances internes et externes.",
+        page: "48",
+        citation: "Le COQ est composé des : 1. Coûts d’Investissement de la Qualité (CIQ) […] 2. Coûts de la Non-Qualité (CNQ)"
+      },
+      { // Question 2
+        question: "La formation du personnel est un coût de quelle catégorie ?",
+        choix: ["Prévention", "Détection", "Défaillance interne", "Défaillance externe"],
+        reponse: "A",
+        explication: "La formation évite les défauts avant leur apparition : c’est un coût de prévention.",
+        page: "48",
+        citation: "[Coûts de la prévention] Conception et évaluation de produits améliorés ; conception des méthodes de production et de contrôle ; tests fiabilité ; formation de personnel ; acquisition et analyse de données, etc."
+      },
+      { // Question 3
+        question: "L’entretien des appareils de mesure est un coût de quelle catégorie ?",
+        choix: ["Prévention", "Détection", "Défaillance interne", "Défaillance externe"],
+        reponse: "B",
+        explication: "Les coûts de la détection regroupent l’inspection, les tests et l’entretien des appareils de mesure.",
+        page: "48",
+        citation: "[Coûts de la détection] Temps et matériaux nécessaires à l’inspection et au test des matières premières, des pièces, des assemblages, des machines ; entretien des appareils de mesure, personnel requis, etc."
+      },
+      { // Question 4
+        question: "Les garanties et le service après-vente (SAV) font partie de quels coûts ?",
+        choix: ["Coûts de prévention", "Coûts de détection", "Coûts de défaillances internes", "Coûts de défaillances externes"],
+        reponse: "D",
+        explication: "Les défaillances externes apparaissent chez le client : garanties, SAV, plaintes, remboursements.",
+        page: "48",
+        citation: "[Coûts de défaillances externes] Garanties, service après-vente (SAV), traitement des plaintes, remboursements, risques de poursuites, pertes d’opportunités d’affaires, etc."
+      },
+      { // Question 5
+        question: "Quelles phases du cycle de vie d’un produit le cours désigne-t-il comme cruciales ?",
+        choix: ["La fabrication et le contrôle final", "Le développement : R&D et industrialisation", "La distribution et le service après-vente", "La fin de vie et le recyclage"],
+        reponse: "B",
+        explication: "Un défaut évité pendant le développement coûte beaucoup moins cher qu’un défaut découvert en fabrication ou chez le client.",
+        page: "51",
+        citation: "Conclusion : Les phases de développement (R&D et Industrialisation) sont cruciales dans le cycle de vie d’un produit."
+      }
+    ]
+  },
+
+  /* ---------- Chapitre 7 · Partager ---------- */
+  7: {
+    nom: "Partager",
+    sujet: "Le fournisseur, un partenaire",
+    pages: "53–64",
+    questions: [
+      { // Question 1
+        question: "Que décrit le plan d’assurance qualité (PAQ) ?",
+        choix: ["Les résultats des audits internes", "Les dispositions qualité prévues pour répondre aux exigences contractuelles", "Le classement annuel des fournisseurs", "Les prix négociés avec le fournisseur"],
+        reponse: "B",
+        explication: "Le PAQ décrit les dispositions particulières d’une prestation. Client et fournisseur le valident ensemble.",
+        page: "53",
+        citation: "Un plan qualité, ou plan d’assurance qualité (PAQ), est un document qui décrit les dispositions particulières mises en œuvre pour la réalisation d’un produit ou d’un service afin de répondre aux exigences contractuelles en matière de qualité."
+      },
+      { // Question 2
+        question: "À quel moment a lieu l’appréciation d’un fournisseur ?",
+        choix: ["Avant la commande", "À la signature de la commande", "Au fil des livraisons", "À la fin du contrat"],
+        reponse: "A",
+        explication: "L’appréciation a lieu avant la commande. L’évaluation suit, après la commande.",
+        page: "55",
+        citation: "Avant la commande à une : Appréciation du fournisseur puis après la commande à une : Evaluation du fournisseur"
+      },
+      { // Question 3
+        question: "Comment calcule-t-on l’indice fournisseur le plus simple ?",
+        choix: ["Lots refusés ÷ lots acceptés", "Lots acceptés ÷ ensemble des livraisons", "Nombre de réclamations ÷ nombre de commandes", "Prix payé ÷ prix convenu"],
+        reponse: "B",
+        explication: "L’indice simple est le rapport entre les lots acceptés et l’ensemble des livraisons. Il donne la proportion de lots acceptés, en %.",
+        page: "59",
+        citation: "L’indice fournisseur le plus simple à calculer est sans conteste le rapport entre le nombre de lots acceptés et l’ensemble des livraisons. Cet indice fournisseur correspond en même temps à la proportion de lots acceptés en %."
+      },
+      { // Question 4
+        question: "Indice fournisseur global : en dessous de combien de points une nouvelle appréciation du fournisseur est-elle nécessaire ?",
+        choix: ["100 points", "150 points", "180 points", "240 points"],
+        reponse: "C",
+        explication: "De 100 à 179 points, le fournisseur est classé C. Une nouvelle appréciation est alors nécessaire.",
+        page: "63",
+        citation: "Fournisseur C 100 – 179 […] Une nouvelle appréciation du fournisseur est nécessaire en dessous de 180 points"
+      },
+      { // Question 5
+        question: "Un agrément qualité est signé avec un fournisseur. Comment évolue le contrôle de réception chez le client ?",
+        choix: ["Il devient plus étendu.", "Il devient moins étendu.", "Il reste identique.", "Il passe à l’auditeur externe."],
+        reponse: "B",
+        explication: "Le client délègue une partie du contrôle au fournisseur. Le fournisseur reste entièrement responsable de la qualité de ses produits.",
+        page: "64",
+        citation: "[Chez le client] Un contrôle moins étendu […] La délégation de l’obligation de contrôler chez le fournisseur […] Le fournisseur est entièrement responsable du respect des exigences de qualité de ses produits."
+      }
+    ]
+  }
+};
+
+/* ---------- Noms des chapitres du cours (questions de révision) ---------- */
+const CHAPITRES = {
+  1: "Les définitions",
+  2: "L’historique de la qualité",
+  3: "La métrologie",
+  4: "Les organismes de normalisation",
+  5: "Le système de management de la qualité",
+  6: "Les coûts de la qualité",
+  7: "Le fournisseur, un partenaire commercial"
+};
+
+/* ---------- Questions de révision : une rubrique par partie (1 = partie I) ---------- */
+const REVISION = {
+  1: {
+    nom: "Questions de révision 1–6",
+    court: "Révision 1–6", // libellé court de l’onglet sur téléphone
+    pages: "7–52",
+
+    /* ----- QCM ----- */
+    qcm: [
+      { // Question 1
+        chapitre: 1,
+        question: "Un produit de qualité fonctionne bien et longtemps. Quel mot le cours associe-t-il à cette propriété ?",
+        choix: ["La fiabilité", "La conformité", "La traçabilité", "La répétabilité"],
+        reponse: "A",
+        explication: "Un produit fiable fonctionne bien et longtemps. La fiabilité est une marque d’un produit de qualité.",
+        page: "12",
+        citation: "Un produit de qualité est un produit qui … Fonctionne bien et longtemps (= fiabilité)"
+      },
+      { // Question 2
+        chapitre: 1,
+        question: "Au sens industriel, la qualité est l’aptitude de caractéristiques intrinsèques à satisfaire quoi ?",
+        choix: ["Les objectifs financiers de l’entreprise", "Les besoins exprimés ou potentiels des utilisateurs", "Les exigences de la direction", "Les tolérances fixées par le bureau technique"],
+        reponse: "B",
+        explication: "La qualité se juge à la satisfaction des utilisateurs. Leurs besoins sont exprimés ou potentiels.",
+        page: "8",
+        citation: "Aptitude d’un ensemble de caractéristiques intrinsèques à satisfaire les besoins exprimés ou potentiels des utilisateurs."
+      },
+      { // Question 3
+        chapitre: 1,
+        question: "La politique qualité et les objectifs qualité appartiennent à quelle famille de documents ?",
+        choix: ["Documents de suivi / enregistrements / preuves", "Documents liés à l’amélioration continue et la prévention des risques", "Documents « directeurs / stratégiques »", "Documents relatifs à la formation, la communication, la conformité"],
+        reponse: "C",
+        explication: "La politique et les objectifs qualité fixent la direction à suivre. Ce sont des documents directeurs ou stratégiques.",
+        page: "10",
+        citation: "Documents “directeurs / stratégiques” · Politique qualité · Objectifs qualité (annuels, trimestriels, par processus)"
+      },
+      { // Question 4
+        chapitre: 1,
+        question: "Les fiches de non-conformité et les rapports d’audits internes appartiennent à quelle famille de documents ?",
+        choix: ["Documents de suivi / enregistrements / preuves", "Documents « directeurs / stratégiques »", "Documents de structuration / normes / procédures", "Documents relatifs à la formation, la communication, la conformité"],
+        reponse: "A",
+        explication: "Ces documents gardent la trace de ce qui a été constaté. Ils servent de preuves.",
+        page: "11",
+        citation: "Documents de suivi / enregistrements / preuves · Fiches ou rapports de non-conformité […] Rapports d’audits internes"
+      },
+      { // Question 5
+        chapitre: 2,
+        question: "Quels secteurs ont joué un rôle de précurseur dans le développement de la qualité ?",
+        choix: ["Le textile et l’habillement", "Le bâtiment et les travaux publics", "La banque et l’assurance", "L’aéronautique, le spatial et le nucléaire"],
+        reponse: "D",
+        explication: "Dans ces secteurs, un défaut présente un risque pour l’être humain. Ce risque a fait progresser la qualité.",
+        page: "13",
+        citation: "Les secteurs d’activités ont joué un rôle de précurseur dans le développement de la qualité : L’aéronautique · Le spatial […] Le nucléaire […] Pourquoi ces secteurs d’activités ? La notion de risque pour l’être humain"
+      },
+      { // Question 6
+        chapitre: 2,
+        question: "Sur quelle idée repose la production en série ?",
+        choix: ["Les pièces fabriquées sont identiques.", "Chaque pièce est contrôlée à 100 %.", "Les machines restent parfaitement stables.", "Les tolérances deviennent inutiles."],
+        reponse: "A",
+        explication: "La production en série suppose des pièces identiques. En pratique, chaque procédé produit de la variabilité : le contrôle qualité devient primordial.",
+        page: "17",
+        citation: "La production en série est fondée sur l’idée que les objets ou les pièces fabriquées sont identiques […] En pratique, les procédés de fabrication sont soumis à de multiples facteurs qui induisent de la variabilité dans la production"
+      },
+      { // Question 7
+        chapitre: 2,
+        question: "En combien de facteurs regroupe-t-on généralement les causes de variation d’un procédé ?",
+        choix: ["3", "4", "5", "7"],
+        reponse: "C",
+        explication: "Matières premières, méthodes, machines, milieu et main-d’œuvre : ces cinq facteurs forment le diagramme d’Ishikawa.",
+        page: "17",
+        citation: "Parmi les facteurs, on compte les matières premières, les méthodes employées, les machines, leurs conditions d’opération (le milieu), la main d’œuvre, etc. Lorsqu’on étudie un procédé de fabrication en vue de l’améliorer, on groupe généralement les causes de variation sous ces cinq facteurs, et on les présente sous la forme d’un diagramme d’Ishikawa."
+      },
+      { // Question 8
+        chapitre: 2,
+        question: "Entre quelles exigences les tolérances établissent-elles un compromis ?",
+        choix: ["Le prix de vente et la marge", "La précision requise pour fonctionner et les contraintes de fabrication", "Le délai de livraison et la quantité", "L’esthétique et le poids du produit"],
+        reponse: "B",
+        explication: "La tolérance concilie le bon fonctionnement du produit et les contraintes techniques et économiques de fabrication.",
+        page: "18",
+        citation: "Les tolérances établissent un compromis entre la précision requise pour un fonctionnement satisfaisant et les contraintes techniques et économiques de la fabrication."
+      },
+      { // Question 9
+        chapitre: 2,
+        question: "Dans la gestion systématique de la qualité, comment agit l’entreprise ?",
+        choix: ["Elle réagit après l’apparition du défaut.", "Elle anticipe : elle agit avant l’apparition du défaut.", "Elle cherche le responsable du défaut.", "Elle contrôle uniquement le produit fini."],
+        reponse: "B",
+        explication: "La gestion systématique anticipe le défaut. La gestion ponctuelle réagit après son apparition.",
+        page: "19",
+        citation: "Dans la gestion ponctuelle on réagit […] Dans la gestion systématique on anticipe"
+      },
+      { // Question 10
+        chapitre: 2,
+        question: "Le passage du contrôle qualité à l’assurance qualité traduit une « vision du futur ». Quel en est l’objectif ?",
+        choix: ["Déceler les fautes", "Chercher les coupables", "Accuser", "Prévenir les fautes"],
+        reponse: "D",
+        explication: "Le contrôle qualité décèle les fautes : c’est la vision du passé. L’assurance qualité prévient les fautes.",
+        page: "19",
+        citation: "L’évolution du contrôle Qualité à l’Assurance Qualité : […] Vision du futur […] Prévenir les fautes"
+      },
+      { // Question 11
+        chapitre: 3,
+        question: "Quelle métrologie crée, développe et maintient les étalons de référence ?",
+        choix: ["La métrologie fondamentale, ou scientifique", "La métrologie légale", "La métrologie industrielle", "La métrologie commerciale"],
+        reponse: "A",
+        explication: "La métrologie fondamentale, ou scientifique, crée et maintient les étalons de référence reconnus.",
+        page: "21",
+        citation: "La métrologie fondamentale, ou scientifique, qui vise à créer, développer et maintenir des étalons de référence reconnus"
+      },
+      { // Question 12
+        chapitre: 3,
+        question: "Quelle métrologie est la plus fréquente ?",
+        choix: ["La métrologie fondamentale, ou scientifique", "La métrologie légale", "La métrologie industrielle"],
+        reponse: "C",
+        explication: "La métrologie industrielle garantit les mesures de fabrication. Elle s’inscrit souvent dans le contrôle qualité d’un SMQ.",
+        page: "21",
+        citation: "La métrologie industrielle, la plus fréquente, qui permet de garantir les mesures, par exemple d’un processus de fabrication, souvent dans le cadre d’un contrôle qualité lié à un système de management de la qualité"
+      },
+      { // Question 13
+        chapitre: 3,
+        question: "Pourquoi des organisations internationales ont-elles défini des guides métrologiques ?",
+        choix: ["Pour fixer le prix des instruments de mesure", "Pour remplacer les étalons nationaux", "Pour supprimer l’incertitude de mesure", "Pour faciliter la validation, entre partenaires, des mesures des produits échangés"],
+        reponse: "D",
+        explication: "Les échanges se mondialisent. Des règles communes permettent aux partenaires de reconnaître les mesures des produits échangés.",
+        page: "21",
+        citation: "Devant la mondialisation et la multiplicité des échanges qu’elle engendre, des organisations internationales se sont réunies, depuis quelques décennies, pour définir des guides métrologiques. Ces guides doivent faciliter la validation, entre partenaires, des mesures des caractéristiques des produits échangés."
+      },
+      { // Question 14
+        chapitre: 3,
+        question: "Dans le VIM, quel terme désigne la grandeur que l’on veut mesurer ?",
+        choix: ["Le mesurande", "Le mesurage", "L’étalon", "L’incertitude de mesure"],
+        reponse: "A",
+        explication: "Le mesurande est la grandeur que l’on veut mesurer. Le mesurage est le processus qui lui attribue une valeur.",
+        page: "26",
+        citation: "Mesurage, m Processus consistant à obtenir expérimentalement une ou plusieurs valeurs que l’on peut raisonnablement attribuer à une grandeur. […] Mesurande, m Grandeur que l’on veut mesurer."
+      },
+      { // Question 15
+        chapitre: 3,
+        question: "Qui détient les références nationales de mesure et les diffuse vers l’utilisateur ?",
+        choix: ["Les laboratoires nationaux de métrologie (LNM)", "Les organismes de normalisation", "Les fabricants d’instruments de mesure", "Les services qualité des entreprises"],
+        reponse: "A",
+        explication: "Les LNM détiennent les références nationales et les diffusent vers l’utilisateur. En Suisse, c’est le METAS.",
+        page: "23",
+        citation: "Les LNM (Laboratoire Nationaux de Métrologie) détiennent les références nationales et les diffusent vers l’utilisateur. En Suisse, il s’appelle le METAS"
+      },
+      { // Question 16
+        chapitre: 3,
+        question: "Quel est le domaine d’application du GUM ?",
+        choix: ["Le vocabulaire de la métrologie", "L’évaluation et l’expression de l’incertitude de mesure", "La définition des unités du SI", "La classification des instruments de mesure"],
+        reponse: "B",
+        explication: "Le GUM fixe les règles d’évaluation et d’expression de l’incertitude de mesure. Le VIM fixe le vocabulaire.",
+        page: "27",
+        citation: "Évaluation des données de mesure — Guide pour l’expression de l’incertitude de mesure […] Ce Guide établit les règles générales pour l’évaluation et l’expression de l’incertitude pour les mesurages"
+      },
+      { // Question 17
+        chapitre: 4,
+        question: "Dans quelle ville se trouve le secrétariat central de l’ISO ?",
+        choix: ["Paris", "Berne", "Bruxelles", "Genève"],
+        reponse: "D",
+        explication: "Le secrétariat central de l’ISO est à Genève. Il coordonne l’élaboration des normes et les publie.",
+        page: "28",
+        citation: "Le secrétariat central de l’ISO est situé à Genève, en Suisse. Il assure aux membres de l’ISO le soutien administratif et technique, coordonne le programme décentralisé d’élaboration des normes et procède à leur publication."
+      },
+      { // Question 18
+        chapitre: 4,
+        question: "Quelle norme donne des lignes directrices pour obtenir des performances durables ?",
+        choix: ["ISO 9000", "ISO 9001", "ISO 9002", "ISO 9004"],
+        reponse: "D",
+        explication: "L’ISO 9004 vise des performances durables. L’ISO 9001 fixe les critères du SMQ.",
+        page: "28",
+        citation: "ISO 9004:2018 fournit des lignes directrices permettant d’améliorer l’aptitude d’un organisme à obtenir des performances durables."
+      },
+      { // Question 19
+        chapitre: 4,
+        question: "Quel organisme est chargé de la normalisation en Suisse ?",
+        choix: ["L’AFNOR", "Le DIN", "La SNV", "Le METAS"],
+        reponse: "C",
+        explication: "La SNV est l’organisme suisse de normalisation. L’AFNOR est française, le DIN allemand. Le METAS est le laboratoire national de métrologie.",
+        page: "30",
+        citation: "Chaque pays a son propre organisme de normalisation : Association française de normalisation - AFNOR en France Deutsches Institut für Normung - DIN en Allemagne Association Suisse de Normalisation – SNV en Suisse"
+      },
+      { // Question 20
+        chapitre: 4,
+        question: "Quel domaine couvre la série de normes ISO 14000 ?",
+        choix: ["La santé et la sécurité au travail", "Le management environnemental", "Les dispositifs médicaux", "L’acceptabilité des assemblages électroniques"],
+        reponse: "B",
+        explication: "La série ISO 14000 regroupe les normes de management environnemental. L’ISO 14001 en fait partie.",
+        page: "29",
+        citation: "La série des normes ISO 14000 désigne l’ensemble des normes qui concernent le management environnemental."
+      },
+      { // Question 21
+        chapitre: 4,
+        question: "Sur quel principe reposent les dispositions du règlement REACH ?",
+        choix: ["Le principe de précaution", "Le principe de Pareto", "Le principe pollueur-payeur", "Le principe d’amélioration continue"],
+        reponse: "A",
+        explication: "REACH oblige les fabricants à analyser l’impact de leurs produits chimiques. Ses dispositions reposent sur le principe de précaution.",
+        page: "31",
+        citation: "Le règlement REACH oblige les fabricants à analyser l’impact de leurs produits chimiques sur l’environnement et la santé […] Ces dispositions reposent sur le principe de précaution."
+      },
+      { // Question 22
+        chapitre: 5,
+        question: "Quelle action relève du principe « orientation client » ?",
+        choix: ["Motiver, encourager et reconnaître la contribution du personnel", "Mesurer et surveiller la satisfaction du client", "Faciliter les discussions ouvertes et le partage des connaissances", "Considérer l’activité comme un ensemble de sous-activités corrélées"],
+        reponse: "B",
+        explication: "L’orientation client vise la satisfaction du client. L’entreprise la mesure, la surveille et prend les mesures appropriées.",
+        page: "36",
+        citation: "Orientation client : satisfaire les exigences des clients et aller au-delà de leurs attentes. […] Mesurer et surveiller la satisfaction du client et prendre les mesures appropriées."
+      },
+      { // Question 23
+        chapitre: 5,
+        question: "Quel bénéfice apporte l’implication du personnel ?",
+        choix: ["L’augmentation des ventes et des parts de marché", "L’amélioration de l’image de l’organisme", "L’amélioration du développement personnel, des initiatives et de la créativité", "L’élargissement du panel des clients"],
+        reponse: "C",
+        explication: "Un personnel impliqué développe ses compétences, ses initiatives et sa créativité. Les trois autres bénéfices relèvent de l’orientation client.",
+        page: "37",
+        citation: "Implication du personnel : […] Amélioration du développement personnel, des initiatives et de la créativité."
+      },
+      { // Question 24
+        chapitre: 5,
+        question: "Quel bénéfice apporte le leadership ?",
+        choix: ["L’amélioration de la communication entre les niveaux et les fonctions de l’organisme", "L’augmentation de la valeur pour le client", "L’amélioration de la fidélité du client", "L’augmentation des ventes et des parts de marché"],
+        reponse: "A",
+        explication: "Les dirigeants créent les conditions de l’implication du personnel. La communication s’améliore entre les niveaux et les fonctions.",
+        page: "36",
+        citation: "Leadership : les dirigeants créent des conditions dans lesquelles le personnel est impliqué à tous les niveaux […] Amélioration de la communication entre les différents niveaux et fonctions de l’organisme."
+      },
+      { // Question 25
+        chapitre: 5,
+        question: "Comment un organisme améliore-t-il ses performances avec ses parties intéressées ?",
+        choix: ["En limitant les échanges avec elles", "En leur imposant ses propres procédures", "En choisissant toujours le fournisseur le moins cher", "En communiquant avec elles et en tenant compte de leurs exigences"],
+        reponse: "D",
+        explication: "Les parties intéressées influencent l’organisme ou sont influencées par lui. Il communique avec elles et tient compte de leurs exigences.",
+        page: "38",
+        citation: "Les parties intéressées englobent tous les acteurs qui influencent ou sont influencés par les activités de l’organisme. C’est en communiquant avec les parties intéressées et en tenant compte de leurs exigences que l’organisme saura améliorer ses performances."
+      },
+      { // Question 26
+        chapitre: 5,
+        question: "Quel bénéfice du manuel qualité figure dans le cours ?",
+        choix: ["La diminution des risques d’interférences", "La fidélisation de la clientèle", "L’amélioration des investissements", "L’optimisation des nouvelles technologies"],
+        reponse: "B",
+        explication: "Le manuel qualité aide à satisfaire et à fidéliser la clientèle. Il favorise aussi la maîtrise des processus clés.",
+        page: "42",
+        citation: "Les bénéfices du manuel qualité : Satisfaction des exigences clients et anticipation de leurs besoins. Fidélisation de la clientèle. Appropriation de la Politique qualité par tout le personnel. Maîtrise des processus clés."
+      },
+      { // Question 27
+        chapitre: 5,
+        question: "Quelle longueur le cours indique-t-il pour une politique qualité ?",
+        choix: ["Une dizaine de pages", "Une page par processus", "La longueur du manuel qualité", "Une page"],
+        reponse: "D",
+        explication: "La politique qualité est un document synthétique : une page suffit. Elle situe la démarche qualité dans la stratégie de l’entreprise.",
+        page: "43",
+        citation: "La Politique Qualité est un document synthétique (une page suffit) qui définit de quelle manière votre démarche qualité s’inscrit dans votre stratégie globale d’entreprise."
+      },
+      { // Question 28
+        chapitre: 6,
+        question: "Rebuts, ré-usinage et retards : à quelle catégorie de coûts appartiennent-ils ?",
+        choix: ["Coûts de la prévention", "Coûts de la détection", "Coûts de défaillances internes", "Coûts de défaillances externes"],
+        reponse: "C",
+        explication: "Rebuts, ré-usinage et retards sont des coûts de défaillances internes. Ils font partie des coûts de la non-qualité (CNQ).",
+        page: "48",
+        citation: "2. Coûts de la Non-Qualité (CNQ), on distingue : Coûts de Défaillances Internes Rebuts, ré-usinage, retards, pannes, pertes de productivité, de profit, etc."
+      },
+      { // Question 29
+        chapitre: 6,
+        question: "Sur le graphique du COQ, en fonction de quelle grandeur trace-t-on les coûts ?",
+        choix: ["Le temps, en mois", "L’indice qualité, en %", "Le nombre de pièces produites", "Le nombre de réclamations"],
+        reponse: "B",
+        explication: "L’axe horizontal porte l’indice qualité, en %. Les courbes CIQ, CNQ et COQ donnent les coûts en CHF.",
+        page: "50",
+        citation: "6.3 Le COQ graphiquement […] Indice Qualité [%] […] CIQ [CHF] CNQ [CHF] COQ [CHF]"
+      },
+      { // Question 30
+        chapitre: 6,
+        question: "Sur le schéma du COQ, quel coût de non-qualité externe est un coût indirect ?",
+        choix: ["Les réclamations", "Les pénalités", "La perte d’image", "La garantie"],
+        reponse: "C",
+        explication: "Le schéma classe la non-qualité externe en deux groupes. Coûts directs : réclamations, remises, pénalités, garantie. Coûts indirects : perte de clients, perte d’image, plaintes et procès.",
+        page: "49",
+        figure: "Le COQ schématiquement",
+        citation: "CNQ - Externe […] Indirects · Perte clients · Perte image · Plaintes, procès · Directs · Réclamations · Remises · Pénalités · Garantie"
+      }
+    ],
+
+    /* ----- Questions ouvertes ----- */
+    ouvertes: [
+      { // Question ouverte 1
+        chapitre: 1,
+        question: "Citez trois éléments auxquels la qualité peut faire référence.",
+        reponse: "Le rendement, la fiabilité et les caractéristiques du produit. Le respect des normes. Le caractère esthétique. La réputation de la marque. Le service client et le SAV.",
+        motsCles: ["rendement, fiabilité, caractéristiques|rendement|fiabil|caracteristi", "normes|norme", "esthétique|esthet", "réputation de la marque|reputation|marque", "service client, SAV|service|sav|apres vente"],
+        page: "12",
+        citation: "La qualité, ça peut faire référence … · Au rendement, à la fiabilité et aux caractéristiques du produit · Au respect des normes · Au caractère esthétique · A la réputation de la marque · Au Service Client - SAV"
+      },
+      { // Question ouverte 2
+        chapitre: 1,
+        question: "Complétez avec deux idées du cours : « Un produit de qualité est un produit qui… »",
+        reponse: "Il fonctionne bien et longtemps : c’est la fiabilité. Il est exempt de défaut de fabrication, apparent ou caché. Il répond aux attentes des consommateurs. Il respecte les spécifications et les normes établies.",
+        motsCles: ["fonctionne bien et longtemps|longtemps|fiabil", "sans défaut de fabrication|defaut", "attentes des consommateurs|attente|consommateur", "spécifications et normes|specification|norme"],
+        page: "12",
+        citation: "Un produit de qualité est un produit qui … · Fonctionne bien et longtemps (= fiabilité) · N’a aucun défaut (apparent ou caché) de fabrication · Répond aux attentes des consommateurs · Rencontre les spécifications et les normes établies"
+      },
+      { // Question ouverte 3
+        chapitre: 2,
+        question: "L’aéronautique, le spatial et le nucléaire ont joué un rôle de précurseur dans la qualité. Pourquoi ?",
+        reponse: "Dans ces secteurs, une défaillance met des vies en danger. La notion de risque pour l’être humain a fait progresser la qualité.",
+        motsCles: ["risque|risque", "être humain|humain|vie|homme|personne"],
+        page: "13",
+        citation: "Les secteurs d’activités ont joué un rôle de précurseur dans le développement de la qualité : […] Pourquoi ces secteurs d’activités ? La notion de risque pour l’être humain"
+      },
+      { // Question ouverte 4
+        chapitre: 2,
+        question: "Qu’est-ce qu’une tolérance ? Pourquoi les ingénieurs l’ont-ils inventée ?",
+        reponse: "Une tolérance est une valeur choisie pour que le produit, ou l’assemblage des pièces, fonctionne. Les ingénieurs l’ont inventée pour contrôler la variabilité de la production.",
+        motsCles: ["valeur choisie|valeur", "fonctionnement du produit|fonctionn", "variabilité|variabil|variation"],
+        page: "18",
+        citation: "Pour contrôler la variabilité, les ingénieurs ont inventé ce que l’on appelle la notion de tolérance. […] La tolérance est une valeur choisie pour que le produit (ou l’assemblage des pièces) fonctionne."
+      },
+      { // Question ouverte 5
+        chapitre: 3,
+        question: "Citez les trois aspects de la métrologie. Donnez un exemple de métrologie légale.",
+        reponse: "La métrologie fondamentale, ou scientifique ; la métrologie industrielle ; la métrologie légale. Exemple de métrologie légale : le contrôle d’une pompe à essence.",
+        motsCles: ["fondamentale ou scientifique|fondamental|scientifi", "industrielle|industri", "légale|legal", "pompe à essence|pompe|essence|carburant"],
+        page: "21–22",
+        citation: "La métrologie fondamentale, ou scientifique, qui vise à créer, développer et maintenir des étalons de référence reconnus […] La métrologie industrielle, la plus fréquente […] La métrologie légale, liée aux mesures sur lesquelles s’appliquent des exigences réglementaires […] Métrologie légale, exemple d’une pompe à essence"
+      },
+      { // Question ouverte 6
+        chapitre: 3,
+        question: "Définissez la traçabilité métrologique avec vos mots.",
+        reponse: "C’est la propriété d’un résultat de mesure relié à des références, en général des étalons nationaux ou internationaux. Le lien passe par une chaîne ininterrompue de comparaisons, chacune avec une incertitude déterminée.",
+        motsCles: ["chaîne ininterrompue|chaine|ininterromp", "étalons, références|etalon|reference", "comparaisons|compar", "incertitude|incertitud"],
+        page: "23",
+        citation: "La traçabilité est la propriété du résultat d’un mesurage tel qu’il puisse être relié à des références déterminées, généralement des étalons nationaux ou internationaux, par l’intermédiaire d’une chaîne ininterrompue de comparaisons ayant toutes des incertitudes déterminées."
+      },
+      { // Question ouverte 7
+        chapitre: 4,
+        question: "Pourquoi l’Organisation internationale de normalisation a-t-elle choisi le nom court ISO ?",
+        reponse: "Le nom ISO est identique dans toutes les langues. Il dérive du grec isos, qui signifie « égal ».",
+        motsCles: ["identique dans toutes les langues|langue|identique", "grec isos|isos|grec", "égal|egal"],
+        page: "28",
+        citation: "L’Organisation internationale de normalisation (dont le nom court, ISO, a été choisi pour être identique dans toutes les langues — un exemple de normalisation) […] Ce nom est également dérivé du grec isos, signifiant « égal »."
+      },
+      { // Question ouverte 8
+        chapitre: 4,
+        question: "L’ISO 9001 demande de mesurer la satisfaction des clients. Que fixe la norme ? Que choisit l’entreprise ? Donnez un exemple.",
+        reponse: "La norme fixe le « quoi faire » : mesurer la satisfaction des clients. L’entreprise choisit le « comment faire », par exemple une enquête de satisfaction ou les notations de ses clients.",
+        motsCles: ["quoi faire|quoi", "comment faire|comment|methode|choisi", "enquête ou notation|enquete|notation|note|reclamation"],
+        page: "30",
+        citation: "La norme donne des exigences sur le « Quoi faire ? », et pas sur le « Comment faire ? ». […] elle vous laisse libre de choisir avec quelle(s) méthode(s) : Mener des enquêtes de satisfaction · Recueillir les propres notations de vos clients"
+      },
+      { // Question ouverte 9
+        chapitre: 5,
+        question: "Citez quatre des sept principes du système de management de la qualité.",
+        reponse: "Orientation client. Leadership. Implication du personnel. Approche processus. Amélioration continue. Prise de décision fondée sur des preuves. Management des relations avec les parties intéressées.",
+        motsCles: ["orientation client|client", "leadership|leader", "implication du personnel|personnel|implication", "approche processus|processus", "amélioration continue|amelior", "décision fondée sur des preuves|preuve|decision", "parties intéressées|partie|interess"],
+        page: "35",
+        citation: "Ceci repose sur sept principes : 1. Orientation client 2. Leadership 3. Implication du personnel 4. Approche processus 5. Amélioration continue 6. Prise de décision fondée sur des preuves 7. Management des relations avec les parties intéressées"
+      },
+      { // Question ouverte 10
+        chapitre: 5,
+        question: "Que contient toujours une politique qualité ? Qui la signe ?",
+        reponse: "Elle contient toujours une orientation pour la satisfaction des clients et l’amélioration continue. Le président de la société, ou son équivalent, la signe.",
+        motsCles: ["satisfaction des clients|satisfaction", "amélioration continue|amelior", "président ou direction|president|direction|directeur|pdg|patron"],
+        page: "43",
+        citation: "Elle contient toujours une orientation pour la satisfaction des clients et l’amélioration continue […] Elle est signée par le Président (ou équivalent) de votre société."
+      },
+      { // Question ouverte 11
+        chapitre: 6,
+        question: "Que signifient COQ, CIQ et CNQ ? Quelle relation les relie ?",
+        reponse: "COQ : coût d’obtention de la qualité. CIQ : coûts d’investissement de la qualité, soit la prévention et la détection. CNQ : coûts de la non-qualité, soit les défaillances internes et externes. COQ = CIQ + CNQ.",
+        motsCles: ["coût d’obtention|obtention", "investissement|investiss", "non-qualité|non qualite|nonqualite", "COQ = CIQ + CNQ|ciq cnq|somme|compose"],
+        page: "48",
+        citation: "Les coûts de la Qualité sont déterminés par les Coûts d’Obtention de la Qualité, plus communément appelé : le COQ. […] Le COQ est composé des : 1. Coûts d’Investissement de la Qualité (CIQ) […] 2. Coûts de la Non-Qualité (CNQ)"
+      },
+      { // Question ouverte 12
+        chapitre: 6,
+        question: "Pourquoi un défaut découvert chez le client coûte-t-il beaucoup plus cher qu’un défaut évité en développement ?",
+        reponse: "Le coût d’un défaut est multiplié à chaque étape. × 1 en développement, × 10 en planification de la fabrication. × 100 en fabrication, × 1000 chez le client. Les phases de développement sont donc cruciales.",
+        motsCles: ["× 1000 chez le client|1000|mille", "développement|developpement|conception|r d", "coût multiplié à chaque étape|multipli|augment|tard|etape|phase"],
+        page: "51",
+        figure: "facteur de coût selon le moment où le défaut a été découvert",
+        citation: "Conclusion : Les phases de développement (R&D et Industrialisation) sont cruciales dans le cycle de vie d’un produit."
+      }
+    ],
+
+    /* ----- Schémas à compléter ----- */
+    schemas: [
+      { // Schéma 1
+        chapitre: 1,
+        modele: "smq",
+        titre: "Modèle d’un système de management de la qualité basé sur des processus",
+        zones: {"haut": "{0}", "clients": "Clients", "entree": "{1}", "direction": "Responsabilité\nde la direction", "ressources": "Management\ndes ressources", "realisation": "{2}", "mesures": "Mesures, analyse\net amélioration", "produit": "Produit", "sortie": "{3}", "el_entree": "Éléments\nd’entrée", "el_sortie": "Éléments\nde sortie", "legende": "Légende", "valeur": "activités ajoutant de la valeur", "infos": "flux d’informations"},
+        cases: ["Amélioration continue du système de management de la qualité", "Exigences", "Réalisation du produit", "Satisfaction"],
+        etiquettes: ["Amélioration continue du système de management de la qualité", "Exigences", "Réalisation du produit", "Satisfaction", "Réclamations", "Contrôle final", "Fournisseurs"],
+        explication: "Le client exprime des exigences en entrée. Le système réalise le produit. En sortie, on mesure la satisfaction du client. L’amélioration continue fait progresser l’ensemble du système.",
+        page: "10",
+        figure: "Modèle d’un système de management de la qualité basé sur des processus",
+        citation: "Selon la norme ISO 10005, voici la représentation de l’amélioration du système de management de la qualité."
+      },
+      { // Schéma 2
+        chapitre: 1,
+        modele: "liste",
+        titre: "Donnez le titre de chaque famille de documents.",
+        blocs: [{"titre": "{0}", "puces": ["Politique qualité", "Objectifs qualité (annuels, trimestriels, par processus)", "Manuel qualité ou document équivalent"]}, {"titre": "{1}", "puces": ["Procédures qualité", "Instructions de travail ou modes opératoires opérationnels", "Instructions de contrôle ou fiches de contrôle"]}, {"titre": "{2}", "puces": ["Fiches ou rapports de non-conformité", "Enregistrements de contrôle qualité", "Rapports d’audits internes"]}, {"titre": "{3}", "puces": ["Plan d’actions correctives et préventives / méthode CAPA", "Analyses de causes racines (5 pourquoi, Ishikawa, etc.)", "Études de risques qualité (AMDEC)"]}, {"titre": "{4}", "puces": ["Registres de formation / compétences qualité", "Documentation liée aux exigences réglementaires ou normes externes", "Enregistrements des revues documentaires"]}],
+        cases: ["Documents directeurs / stratégiques", "Documents de structuration / normes / procédures", "Documents de suivi / enregistrements / preuves", "Documents liés à l’amélioration continue et la prévention des risques", "Documents relatifs à la formation, la communication, la conformité"],
+        etiquettes: ["Documents directeurs / stratégiques", "Documents de structuration / normes / procédures", "Documents de suivi / enregistrements / preuves", "Documents liés à l’amélioration continue et la prévention des risques", "Documents relatifs à la formation, la communication, la conformité"],
+        noms: ["Liste 1", "Liste 2", "Liste 3", "Liste 4", "Liste 5"],
+        explication: "Le cours classe les documents qualité en cinq familles : direction, structuration, preuves, amélioration continue, formation.",
+        page: "10–11",
+        citation: "Voici quelques exemples de documents que l’on retrouve dans les entreprises industrielles"
+      },
+      { // Schéma 3
+        chapitre: 2,
+        modele: "ishikawa",
+        titre: "Diagramme d’Ishikawa : les cinq facteurs de variation d’un procédé",
+        effet: "Effet",
+        branches: ["{0}", "{1}", "{2}", "{3}", "{4}"],
+        libre: true,
+        cases: ["Matières", "Matériel", "Méthodes", "Milieu", "Main d’œuvre"],
+        etiquettes: ["Matières", "Matériel", "Méthodes", "Milieu", "Main d’œuvre", "Prix de vente", "Clients", "Concurrence"],
+        explication: "Les cinq facteurs du diagramme : matières, matériel, méthodes, milieu et main d’œuvre. Le texte du cours parle aussi de matières premières et de machines. L’ordre des branches est libre.",
+        page: "17",
+        figure: "Diagramme d’Ishikawa",
+        citation: "Parmi les facteurs, on compte les matières premières, les méthodes employées, les machines, leurs conditions d’opération (le milieu), la main d’œuvre, etc. Lorsqu’on étudie un procédé de fabrication en vue de l’améliorer, on groupe généralement les causes de variation sous ces cinq facteurs, et on les présente sous la forme d’un diagramme d’Ishikawa."
+      },
+      { // Schéma 4
+        chapitre: 2,
+        modele: "flux",
+        titre: "Flux industriel : placez les activités assurées par le département qualité.",
+        etapes: [{"t": "Bureau technique\n-\nIndustrialisation"}, {"t": "Fabrication\n-\nPré-montage", "gauche": "{0}", "droite": "{1}"}, {"t": "Assemblage", "gauche": "{2}", "droite": "{3}", "bas": "{4}"}, {"t": "Vente\n\nDistribution", "gauche": "{5}"}],
+        fournisseurs: "Fournisseurs",
+        sous_traitance: "Sous-traitance",
+        client: "Client",
+        boucle: "{6}",
+        cadre: "Entreprise en tant qu’entité (ex : SA, Sàrl)",
+        cases: ["Contrôle à réception", "Autocontrôle", "Contrôle à réception", "Autocontrôle", "Contrôle final", "Contrôle à réception", "Boucle d’amélioration continue"],
+        etiquettes: ["Contrôle à réception", "Autocontrôle", "Contrôle final", "Boucle d’amélioration continue", "Audit de certification", "Service après-vente"],
+        explication: "Le département qualité intervient à chaque étape. Contrôle à réception de ce qui arrive des fournisseurs et de la sous-traitance. Autocontrôle en fabrication et en assemblage. Contrôle final avant la vente. La boucle d’amélioration continue part du client.",
+        page: "20",
+        figure: "Comment s’articule la Qualité aujourd’hui ? Exemple du processus industriel",
+        citation: "La Qualité est devenue une discipline à part entière. Le champ des activités de la Qualité en entreprise est immense. Plusieurs activités sont en lien avec ce département, prenons l’exemple du processus industriel d’aujourd’hui"
+      },
+      { // Schéma 5
+        chapitre: 3,
+        modele: "tracabilite",
+        titre: "Organisation pyramidale de la traçabilité",
+        sommet: "{0}",
+        bandes: [{"g": "{1}", "t": "Étalons\nprocédures\nde transferts"}, {"g": "{2}", "t": "Étalons\nde référence\nÉtalons\nprocédures\nde transferts"}, {"g": "{3}", "t": "Étalons de référence\nÉtalons de travail\n↓\nMoyens de mesure\nMESURES"}],
+        cases: ["Étalon national", "LNM : laboratoire national de métrologie", "Services accrédités", "Utilisateurs : commerces, industries"],
+        etiquettes: ["Étalon national", "LNM : laboratoire national de métrologie", "Services accrédités", "Utilisateurs : commerces, industries", "Organismes de normalisation", "Étalon de travail"],
+        explication: "La traçabilité descend de l’étalon national, détenu par le LNM, vers les services accrédités, puis vers les utilisateurs. En Suisse, le LNM est METAS.",
+        page: "23",
+        figure: "Organisation pyramidale de la traçabilité",
+        citation: "Son organisation est pyramidale, c’est-à-dire de la référence nationale (et donc internationale) vers l’utilisateur. Les LNM (Laboratoire Nationaux de Métrologie) détiennent les références nationales et les diffusent vers l’utilisateur. En Suisse, il s’appelle le METAS"
+      },
+      { // Schéma 6
+        chapitre: 4,
+        modele: "normes",
+        titre: "Associez chaque norme à son domaine.",
+        lignes: [["ISO 9001:2015", "{0}"], ["ISO 14001:2015", "{1}"], ["ISO 45001:2018", "{2}"], ["ISO 13485:2016", "{3}"], ["IPC-A-610", "{4}"]],
+        cases: ["Critères d’un système de management de la qualité (SMQ)", "Management environnemental", "Management de la santé et de la sécurité au travail", "Système de management de la qualité pour les dispositifs médicaux", "Acceptabilité des assemblages électroniques"],
+        etiquettes: ["Critères d’un système de management de la qualité (SMQ)", "Management environnemental", "Management de la santé et de la sécurité au travail", "Système de management de la qualité pour les dispositifs médicaux", "Acceptabilité des assemblages électroniques", "Application de la gestion des risques aux dispositifs médicaux", "Acceptabilité des faisceaux de fils et de câbles"],
+        explication: "Chaque norme couvre un domaine : SMQ, environnement, santé et sécurité au travail, dispositifs médicaux, assemblages électroniques.",
+        page: "28–30",
+        citation: "ISO 9001:2015 définit les critères d’un système de management de la qualité (SMQ) […] La série des normes ISO 14000 désigne l’ensemble des normes qui concernent le management environnemental. […] la norme 45001:2018 indique la méthode de mise en place d’un management de la santé et de la sécurité au travail. […] ISO 13485:2016 – Système de management de la qualité pour les dispositifs médicaux […] IPC-A-610 : Cette norme fixe les critères d’acceptabilité des assemblages électroniques"
+      },
+      { // Schéma 7
+        chapitre: 5,
+        modele: "docsmq",
+        titre: "Structure de la documentation du SMQ",
+        niveaux: [{"c": "{0}", "d": "{4}"}, {"c": "{1}", "d": "{5}", "g": "QUOI\nfaire ?"}, {"c": "{2}", "d": "{6}", "g": "COMMENT le\nfaire ?"}, {"c": "{3}", "d": "{7}"}],
+        base: {"c": "Enregistrements", "d": "Apportent la preuve du fonctionnement du SMQ"},
+        droite: ["Processus", "Activités", "Tâches"],
+        groupes: ["doc", "doc", "doc", "doc", "role", "role", "role", "role"],
+        cases: ["Manuel qualité", "Procédures", "Instructions", "Formulaires", "Décrit les processus du SMQ", "Décrivent les activités des processus", "Décrivent les tâches des processus", "Servent de supports aux enregistrements"],
+        etiquettes: {"doc": ["Manuel qualité", "Procédures", "Instructions", "Formulaires"], "role": ["Décrit les processus du SMQ", "Décrivent les activités des processus", "Décrivent les tâches des processus", "Servent de supports aux enregistrements"]},
+        explication: "Du sommet à la base : le manuel décrit les processus du SMQ. Les procédures décrivent les activités, les instructions décrivent les tâches. Les formulaires servent de supports aux enregistrements.",
+        page: "42",
+        figure: "Structure de la documentation du SMQ",
+        citation: ""
+      },
+      { // Schéma 8
+        chapitre: 6,
+        modele: "coq",
+        titre: "Le COQ schématiquement",
+        centre: "Coût d’obtention\nde la Qualité\nCOQ",
+        haut: {"titre": "{0}", "gauche": "{2}", "droite": "{3}", "liste_g": ["Les contrôles en fabrication", "Les charges salariales (ctrl)", "La durée des contrôles", "Le rallongement des délais", "Les contrôles destructifs", "Les équipements de mesure", "Les locaux d’entreposage"], "liste_d": ["Le système qualité", "Le conseil, la formation", "La sensibilisation", "Les charges salariales (labo)", "La recherche de défaillance", "Les tests fiabilités", "La maintenance"]},
+        bas: {"titre": "{1}", "gauche": "{4}", "droite": "{5}", "listes_g": [["Directs", ["Rebuts", "Retouches", "Réparations"]], ["Indirects", ["Désorganisation", "Sur-stockage", "Changement de procédé de fabrication"]]], "listes_d": [["Indirects", ["Perte clients", "Perte image", "Plaintes, procès"]], ["Directs", ["Réclamations", "Remises", "Pénalités", "Garantie"]]]},
+        groupes: ["famille", "famille", "type", "type", "type", "type"],
+        cases: ["Coûts d’investissement (CIQ)", "Coûts de non-qualité (CNQ)", "Coûts de détection", "Coûts de prévention", "Coûts de non-qualité interne", "Coûts de non-qualité externe"],
+        etiquettes: {"famille": ["Coûts d’investissement (CIQ)", "Coûts de non-qualité (CNQ)"], "type": ["Coûts de détection", "Coûts de prévention", "Coûts de non-qualité interne", "Coûts de non-qualité externe"]},
+        explication: "Le COQ regroupe deux familles de coûts. Coûts d’investissement (CIQ) : détection et prévention. Coûts de non-qualité (CNQ) : interne et externe, en coûts directs et indirects.",
+        page: "48–49",
+        figure: "Le COQ schématiquement",
+        citation: "Le COQ est composé des : 1. Coûts d’Investissement de la Qualité (CIQ), on distingue : Les Coûts de la prévention […] Les Coûts de la détection […] 2. Coûts de la Non-Qualité (CNQ), on distingue : Coûts de Défaillances Internes […] Coûts de Défaillances Externes"
+      },
+      { // Schéma 9
+        chapitre: 6,
+        modele: "graphe_coq",
+        titre: "Le COQ graphiquement",
+        titre_graphique: "COQ",
+        axes: {"x": "{0}", "y": "{1}"},
+        courbes: ["{2}", "{3}", "{4}"],
+        cases: ["Indice Qualité [%]", "Coûts", "CIQ [CHF]", "CNQ [CHF]", "COQ [CHF]"],
+        etiquettes: ["Indice Qualité [%]", "Coûts", "CIQ [CHF]", "CNQ [CHF]", "COQ [CHF]", "Temps", "Taux de défaillances"],
+        noms: ["Titre de l’axe horizontal", "Titre de l’axe vertical", "Courbe bleue", "Courbe orange", "Courbe grise"],
+        explication: "Quand l’indice qualité augmente, le CIQ monte et le CNQ descend. Leur somme, le COQ, passe par un minimum.",
+        page: "50",
+        figure: "Le COQ graphiquement",
+        citation: "6.3 Le COQ graphiquement […] Coûts […] Indice Qualité [%] […] CIQ [CHF] CNQ [CHF] COQ [CHF]"
+      }
+    ]
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* Une colonne ; la chaîne des 5 chapitres en tête ; une question par écran, couleurs du support de présentation */
+:root{
+  --red:#DA291C; --red-deep:#A8180F; --red-tint:#FBE6E3;
+  --ink:#1D1D1B; --grey:#5F5E5A; --mist:#F4F3F3; --line:#D9D7D7; --paper:#FFFFFF;
+  --ok:#1E7046; --ok-tint:#E4F1EA; --on-accent:#FFFFFF;
+  --panel:#1D1D1B; --on-panel:#FFFFFF; --on-panel-soft:#D6D5D2;
+  --seg:#E3E2DF; --veil:rgba(29,29,27,.55);
+  --accent:#DA291C; --accent-deep:#A8180F; --accent-tint:#FBE6E3; --star:#C9A227;
+  --mid:#C08A0A; --mid-deep:#835A00; --mid-tint:#FBF1D9;
+  --fig-blue:#2F6DB5; --fig-green:#1E9E4A; --lime:#7DB83A; --lime-tint:#EEF7E1; --violet:#6B3FA0; --orange:#E07B2E; --orange-tint:#FCE7D4; --brown:#A87B4F; --gold:#E8B100; --xl-blue:#4472C4; --xl-orange:#ED7D31; --xl-grey:#A5A5A5;
+  --font:"Archivo",Arial,Helvetica,sans-serif;
+  --fs:clamp(16px, 0.55vw + 13.5px, 21px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --red:#EF4A3C; --red-deep:#FF9B90; --red-tint:#3B1E1B;
+    --ink:#F2F1EF; --grey:#B8B6B1; --mist:#232220; --line:#3B3A37; --paper:#151514;
+    --ok:#6CC495; --ok-tint:#16301F; --on-accent:#FFFFFF;
+    --panel:#2A2927; --on-panel:#FFFFFF; --on-panel-soft:#D6D5D2;
+    --seg:#33322F; --veil:rgba(0,0,0,.7);
+    --accent:#EF4A3C; --accent-deep:#C93A2E; --accent-tint:#3B1E1B; --star:#E0B84A;
+    --mid:#E0B84A; --mid-deep:#F0CB6B; --mid-tint:#3A2F14;
+    --fig-blue:#78A6E8; --fig-green:#4CC774; --lime:#8CC657; --lime-tint:#22301A; --violet:#B497E6; --orange:#F0A060; --orange-tint:#3A2818; --brown:#C9A27A; --gold:#E0B84A; --xl-blue:#6F95DA; --xl-orange:#F29A5C; --xl-grey:#B8B8B8;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --red:#EF4A3C; --red-deep:#FF9B90; --red-tint:#3B1E1B;
+  --ink:#F2F1EF; --grey:#B8B6B1; --mist:#232220; --line:#3B3A37; --paper:#151514;
+  --ok:#6CC495; --ok-tint:#16301F; --on-accent:#FFFFFF;
+  --panel:#2A2927; --on-panel:#FFFFFF; --on-panel-soft:#D6D5D2;
+  --seg:#33322F; --veil:rgba(0,0,0,.7);
+  --accent:#EF4A3C; --accent-deep:#C93A2E; --accent-tint:#3B1E1B; --star:#E0B84A;
+  --mid:#E0B84A; --mid-deep:#F0CB6B; --mid-tint:#3A2F14;
+  --fig-blue:#78A6E8; --fig-green:#4CC774; --lime:#8CC657; --lime-tint:#22301A; --violet:#B497E6; --orange:#F0A060; --orange-tint:#3A2818; --brown:#C9A27A; --gold:#E0B84A; --xl-blue:#6F95DA; --xl-orange:#F29A5C; --xl-grey:#B8B8B8;
+  color-scheme:dark;
+}
+/* Partie Bonus : bleu marine (les réponses fausses restent en rouge) */
+.accent-rev{--accent:#1F3A68; --accent-deep:#132645; --accent-tint:#E4EAF4}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .accent-rev{--accent:#5B87D6; --accent-deep:#3D6BBB; --accent-tint:#1A2436}
+}
+:root[data-theme="dark"] .accent-rev{--accent:#5B87D6; --accent-deep:#3D6BBB; --accent-tint:#1A2436}
+*{box-sizing:border-box}
+html{font-size:var(--fs);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);line-height:1.45}
+a{color:inherit}
+.wrap{max-width:46rem;margin:0 auto;padding-inline:1rem}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+h1,h2{text-wrap:balance}
+
+/* en-tête et chaîne des chapitres */
+header{padding-block:1.1rem .4rem}
+.course{display:flex;justify-content:space-between;gap:1rem;font-size:.78rem;color:var(--grey)}
+.course a{text-decoration:none}
+.course a:hover{text-decoration:underline}
+.course b{color:var(--ink);font-weight:600}
+.parts{display:flex;gap:.35rem;margin:1rem 0 0;padding:0;list-style:none}
+.parts a{display:block;text-decoration:none;font-size:.8rem;line-height:1.3;padding:.45rem .9rem .5rem;border:1.5px solid var(--line);border-bottom:0;
+  border-radius:.65rem .65rem 0 0;background:var(--paper);color:var(--grey);position:relative;top:1.5px}
+.parts a:hover{color:var(--ink)}
+.parts a b{color:var(--ink);font-weight:800;margin-right:.15rem}
+.parts a[aria-current]{background:var(--mist);color:var(--ink);z-index:1}
+.part-panel{border:1.5px solid var(--line);border-radius:0 .9rem .9rem .9rem;background:var(--mist);padding:.75rem .75rem .5rem}
+.chain{display:flex;margin:0;padding:0;list-style:none}
+.chain li{flex:1 1 0;min-width:0}
+.chain li+li{margin-left:-.55rem}
+.chain a{display:block;text-align:center;text-decoration:none;font-weight:600;font-size:.74rem;
+  padding:.5rem .2rem;border:2px solid var(--accent);border-radius:999px;background:var(--paper);color:var(--accent);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
+.chain a:hover{background:var(--accent-tint)}
+.chain a[aria-current="page"]{background:var(--accent);color:var(--on-accent);z-index:1}
+.chain small{display:block;font-weight:400;font-size:.62rem;color:var(--grey);margin-top:.2rem;text-align:center}
+.chain a[aria-current="page"]+small{color:var(--accent);font-weight:600}
+.chain .star{width:1em;height:1em;flex:none;vertical-align:-.15em;margin-right:.25rem;color:var(--star)}
+.star{display:inline-block}
+.numeral .star{display:block;width:.9em;height:.9em;color:var(--star)}
+.list .d .star{display:block;width:2.4rem;height:2.4rem;color:var(--star)}
+
+/* titres */
+.hero{display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 1rem;align-items:end;margin:1.8rem 0 1rem}
+.numeral{font-weight:800;font-size:5.6rem;line-height:.78;color:var(--accent);letter-spacing:-.04em}
+.hero h1{margin:0;font-size:2rem;line-height:1.05;font-weight:800;letter-spacing:-.01em}
+.hero p{margin:.35rem 0 0;color:var(--grey);font-size:.9rem}
+.tools{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 1.4rem}
+.brief{border-left:4px solid var(--accent);padding:.15rem 0 .15rem .8rem;margin:0 0 1.4rem;font-size:.95rem}
+.brief p{margin:.1rem 0}
+.hint{color:var(--grey);font-size:.8rem;margin:.8rem 0 0}
+
+/* boutons */
+button,.btn{font:inherit;font-weight:600;font-size:.9rem;border-radius:999px;padding:.6rem 1.15rem;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:2px solid var(--accent)}
+.primary{background:var(--accent);color:var(--on-accent)}
+.primary:hover{background:var(--accent-deep);border-color:var(--accent-deep)}
+.outline{background:var(--paper);color:var(--accent)}
+.outline:hover{background:var(--accent-tint)}
+.outline[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.ghost{background:transparent;color:var(--on-panel);border-color:var(--on-panel)}
+.ghost:hover{background:var(--on-panel);color:var(--panel)}
+.link{border:0;background:none;padding:.3rem 0;color:var(--grey);font-weight:600;text-decoration:underline;border-radius:0}
+.big{font-size:1rem;padding:.8rem 1.6rem}
+.ico{width:1.05em;height:1.05em;flex:none}
+.row{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+
+/* écran d'introduction */
+.start{display:grid;gap:1rem;margin:0 0 1.5rem}
+.facts{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin:0;padding:0;list-style:none;font-size:.9rem;color:var(--grey)}
+.facts b{color:var(--ink)}
+.check{display:flex;align-items:center;gap:.55rem;font-size:.9rem;cursor:pointer}
+.check input{width:1.15rem;height:1.15rem;accent-color:var(--accent)}
+
+/* question */
+.qhead{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin:1.6rem 0 .5rem;font-size:.85rem;color:var(--grey);font-variant-numeric:tabular-nums}
+.qhead b{color:var(--ink)}
+.segs{display:flex;gap:.3rem;margin:0 0 1.4rem;padding:0;list-style:none}
+.segs li{flex:1;height:.45rem;border-radius:999px;background:var(--seg)}
+.segs li.now{background:var(--ink)}
+.segs li.ok{background:var(--ok)}
+.segs li.ko{background:var(--red)}
+.qtitle{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.9rem;align-items:start;margin:0 0 1.1rem}
+.qnum{font-weight:800;font-size:3rem;line-height:.85;color:var(--accent);font-variant-numeric:tabular-nums}
+.qtitle h2{margin:0;font-size:1.3rem;line-height:1.3;font-weight:700}
+.qtitle h2:focus{outline:none}
+.qchap{display:block;font-size:.75rem;font-weight:600;color:var(--grey);margin-bottom:.25rem}
+.opts{display:grid;gap:.55rem}
+.opt{display:grid;grid-template-columns:2.1rem minmax(0,1fr) auto;gap:.75rem;align-items:center;text-align:left;width:100%;
+  background:var(--mist);color:var(--ink);border:2px solid transparent;border-radius:.7rem;padding:.75rem .85rem;min-height:3.4rem;font-weight:400;font-size:1rem}
+.opt:hover{border-color:var(--line);background:var(--mist)}
+.opt .l{display:grid;place-items:center;width:2.1rem;height:2.1rem;border-radius:.4rem;background:var(--paper);border:1.5px solid var(--line);font-weight:800;font-size:.9rem}
+.opt .tag{font-size:.75rem;font-weight:700;white-space:nowrap}
+.opt[aria-disabled="true"]{cursor:default}
+.opt[aria-disabled="true"]:hover{border-color:transparent}
+.opt.right{border-color:var(--ok);background:var(--ok-tint)}
+.opt.right .l{background:var(--ok);border-color:var(--ok);color:var(--paper)}
+.opt.right .tag{color:var(--ok)}
+.opt.wrong{border-color:var(--red);background:var(--red-tint)}
+.opt.wrong .l{background:var(--red);border-color:var(--red);color:var(--on-accent)}
+.opt.wrong .tag{color:var(--red-deep)}
+.opt.dim{opacity:.55}
+
+/* correction et citation */
+.fb{margin:1rem 0 0;padding:.9rem 1rem;border-radius:.7rem;background:var(--mist);font-size:.95rem}
+.fb strong{font-weight:800}
+.fb.ok strong{color:var(--ok)}
+.fb.ko strong{color:var(--red-deep)}
+.cite{margin:.7rem 0 0;padding:.1rem 0 .1rem .75rem;border-left:3px solid var(--line)}
+.cite figcaption{font-size:.74rem;font-weight:600;color:var(--grey);margin-bottom:.15rem}
+.cite blockquote{margin:0;font-size:.86rem;font-style:italic}
+.next{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin:1.2rem 0 0}
+.score-live{font-size:.85rem;color:var(--grey);font-variant-numeric:tabular-nums}
+
+/* synthèse */
+.result{margin:1.6rem 0 1.4rem;padding:1.2rem 1.25rem;border-radius:.9rem;background:var(--panel);color:var(--on-panel)}
+.result h2{margin:0;font-size:1rem;font-weight:600}
+.result .score{font-size:3.4rem;font-weight:800;line-height:1;margin:.35rem 0 .2rem;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.result .score span{font-size:1.4rem;font-weight:600;color:var(--on-panel-soft)}
+.result .meta{margin:0 0 .8rem;color:var(--on-panel-soft);font-size:.85rem;font-variant-numeric:tabular-nums}
+.result .verdict{margin:0 0 1rem;font-size:.95rem}
+.result .segs li{background:#5F5F5C}
+.result .segs li.ok{background:#6CC495}
+.result .segs li.ko{background:var(--red)}
+.result .row button,.result .row .btn{font-size:.85rem}
+.bychap{width:100%;border-collapse:collapse;margin:0 0 1.4rem;font-size:.9rem;font-variant-numeric:tabular-nums}
+.bychap th,.bychap td{text-align:left;padding:.45rem .3rem;border-bottom:1px solid var(--line)}
+.bychap td:last-child,.bychap th:last-child{text-align:right}
+.recap{display:grid;gap:.5rem;margin:0 0 1.4rem;padding:0;list-style:none}
+.recap details{background:var(--mist);border-radius:.7rem;padding:.7rem .9rem}
+.recap summary{cursor:pointer;display:grid;grid-template-columns:1.6rem minmax(0,1fr);gap:.6rem;align-items:start;font-weight:600;font-size:.92rem}
+.recap summary::-webkit-details-marker{display:none}
+.mark{display:grid;place-items:center;width:1.6rem;height:1.6rem;border-radius:50%;font-size:.8rem;font-weight:800;color:var(--on-accent)}
+.mark.ok{background:var(--ok);color:var(--paper)}
+.mark.ko{background:var(--red)}
+.recap .body{margin:.6rem 0 0 2.2rem;font-size:.9rem}
+.recap .body p{margin:.2rem 0}
+h3.sec{font-size:1rem;margin:0 0 .6rem}
+
+/* accueil */
+.home h1{font-size:2.2rem;line-height:1.05;margin:1.6rem 0 .4rem;font-weight:800}
+.home .lead{color:var(--grey);margin:0 0 1rem}
+.list{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.list a{display:grid;grid-template-columns:3.2rem minmax(0,1fr) auto;align-items:center;gap:.8rem;padding:.9rem .2rem;border-bottom:1px solid var(--line);text-decoration:none}
+.list a:hover .t{color:var(--accent)}
+.list .d{font-size:2.6rem;font-weight:800;color:var(--accent);line-height:1}
+.list .t{font-weight:800;font-size:1.15rem;display:block}
+.list .s{color:var(--grey);font-size:.85rem}
+.list .go{font-size:.78rem;font-weight:600;color:var(--grey);white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.list .go b{display:block;color:var(--accent);font-size:.95rem}
+.list .all .d{font-size:1.6rem}
+.foot-actions{margin:1rem 0 0}
+
+/* fenêtre QR code */
+dialog.qr{border:0;border-radius:1rem;padding:0;width:min(34rem,calc(100vw - 2rem));max-height:calc(100dvh - 2rem);background:var(--paper);color:var(--ink)}
+dialog.qr::backdrop{background:var(--veil)}
+.qr-in{display:grid;gap:.9rem;padding:1.2rem;text-align:center}
+.qr-in h2{margin:0;font-size:1.25rem;font-weight:800}
+.qr-in p{margin:0;color:var(--grey);font-size:.9rem}
+.qr-code{background:#FFFFFF;border-radius:.6rem;padding:.6rem;width:min(100%,62vmin);width:min(100%,62vmin,calc(100dvh - 17rem));margin:0 auto}
+.qr-long .qr-code{width:min(100%,62vmin,calc(100dvh - 20rem))}
+.qr-code svg{display:block;width:100%;height:auto}
+.qr-url{font-size:.85rem;font-weight:600;word-break:break-all;user-select:all}
+.qr-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:.5rem}
+
+/* correction enseignant */
+.q{margin:0 0 1.6rem}
+.q h2{display:grid;grid-template-columns:2rem minmax(0,1fr);gap:.7rem;margin:0 0 .75rem;font-size:1.05rem;line-height:1.35}
+.q h2 .qchap{margin-bottom:.15rem}
+.q .n{display:grid;place-items:center;width:2rem;height:2rem;border-radius:50%;background:var(--accent);color:var(--on-accent);font-weight:800;font-size:.95rem}
+
+footer{color:var(--grey);font-size:.75rem;padding-block:2rem calc(2rem + env(safe-area-inset-bottom, 0px))}
+footer p{margin:.2rem 0}
+
+/* mode quiz : en-tête réduit ; sur ordinateur, question, réponses et correction tiennent à l'écran */
+.quiz-mode .parts-nav,.quiz-mode .part-panel{display:none}
+.quiz-mode .qhead{margin-top:.9rem}
+.quiz-mode .segs{margin-bottom:1rem}
+.side .fb{margin:1rem 0 0}
+.side .await{display:none}
+.side:not(.revealed) .fb,.side:not(.revealed) .selfeval,.side:not(.shown) .next{display:none}
+.side.t-schema:not(.shown) .next{display:flex}
+.side.t-schema:not(.shown) #nextBtn,.side.t-schema.shown #validateBtn{display:none}
+.side.t-schema:not(.shown) .score-live{visibility:hidden}
+@media (min-width:900px){
+  .quiz-mode .wrap{max-width:66rem}
+  .quiz-mode footer{display:none}
+  .quiz-mode .qtitle{margin-bottom:.9rem}
+  .qgrid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+  .qgrid.t-schema{grid-template-columns:minmax(0,1.85fr) minmax(0,1fr)}
+  /* question ouverte : autoévaluation et bouton suivant sous la réponse écrite, correction à droite */
+  .qgrid.t-ouverte{grid-template-areas:"main fb" "eval fb" "next fb";grid-template-rows:auto auto 1fr;row-gap:1rem}
+  .qgrid.t-ouverte>.open{grid-area:main}
+  .qgrid.t-ouverte>.side{display:contents}
+  .qgrid.t-ouverte .side .fb{grid-area:fb}
+  .qgrid.t-ouverte .side .await{grid-area:fb;position:static;align-self:start}
+  .qgrid.t-ouverte .selfeval{grid-area:eval;margin:0}
+  .qgrid.t-ouverte .next{grid-area:next;align-self:start;margin:0}
+  .qgrid .opt{min-height:3rem;padding:.6rem .85rem}
+  .side{position:relative}
+  .side .fb{margin:0}
+  .side:not(.revealed) .fb,.side:not(.revealed) .selfeval{display:block;visibility:hidden}
+  .side:not(.shown) .next{display:flex;visibility:hidden}
+  .side.t-schema:not(.shown) .next{visibility:visible}
+  .side .await{display:block;position:absolute;top:0;left:0;right:0;margin:0;padding:.9rem 1rem;border:2px dashed var(--line);border-radius:.7rem;color:var(--grey);font-size:.9rem}
+  .side.revealed .await{display:none}
+}
+
+/* états « en partie » */
+.segs li.mid{background:var(--mid)}
+.result .segs li.mid{background:#E0B84A}
+.mark.mid{background:var(--mid);color:#1D1D1B}
+.fb.mid strong{color:var(--mid-deep)}
+.fb.model strong{color:var(--ink)}
+.fb.model.ok strong{color:var(--ok)}
+.fb.model.mid strong{color:var(--mid-deep)}
+.fb.model.ko strong{color:var(--red-deep)}
+
+/* bouton « Présentation théorique » : en haut de page, ouvre le PDF dans un nouvel onglet */
+.course{align-items:center;flex-wrap:wrap;gap:.45rem 1rem}
+.course .c-name{margin-right:auto}
+.course a.doc-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .55rem .3rem .75rem;border:2px solid var(--accent);border-radius:999px;color:var(--accent);font-weight:700;font-size:.8rem;line-height:1.2;text-decoration:none}
+.course a.doc-btn:hover{background:var(--accent);color:var(--on-accent);text-decoration:none}
+.course a.doc-btn[hidden]{display:none}
+.doc-btn .ico{flex:none;width:1.05rem;height:1.05rem}
+.doc-btn .dt-s{font-size:.66rem;font-weight:800;color:var(--on-accent);background:var(--accent);border-radius:.3rem;padding:.08rem .3rem}
+.doc-btn:hover .dt-s{color:var(--accent);background:var(--on-accent)}
+.doc-msg{margin:.4rem 0 0;font-size:.8rem;font-weight:600;color:var(--accent);text-align:right}
+.quiz-mode .course a.doc-btn,.quiz-mode .doc-msg{display:none}
+@media (max-width:480px){
+  .course a.doc-btn{order:-1;width:100%;justify-content:center;padding:.5rem .8rem;font-size:.85rem}
+  .doc-msg{text-align:center}
+}
+
+/* onglet « Questions de révision » */
+.chain li.rev{flex:2.6 1 0}
+.chain a{font-size:.72rem}
+.chain .sm{display:none}
+.list.series .d{font-size:2rem;color:var(--accent)}
+h3.part-sec{margin:1.6rem 0 .9rem;padding-top:.6rem;border-top:2px solid var(--accent);color:var(--accent)}
+
+/* question ouverte */
+.open textarea{display:block;width:100%;min-height:9rem;font:inherit;font-size:1rem;line-height:1.45;padding:.75rem .85rem;border:2px solid var(--line);border-radius:.7rem;background:var(--paper);color:var(--ink);resize:vertical}
+.open textarea:focus{outline:none;border-color:var(--accent)}
+.open textarea[readonly]{background:var(--mist)}
+.open .row{margin-top:.7rem}
+.hint-inline{font-size:.78rem;color:var(--grey)}
+.chips{margin:.7rem 0 0}
+.chips-t{margin:0 0 .35rem;font-size:.8rem;font-weight:600;color:var(--grey)}
+.chips ul{display:flex;flex-wrap:wrap;gap:.35rem;margin:0;padding:0;list-style:none}
+.chip{font-size:.8rem;padding:.2rem .6rem;border-radius:999px;border:1.5px solid var(--line);background:var(--paper)}
+.chip.ok{border-color:var(--ok);background:var(--ok-tint);color:var(--ok);font-weight:600}
+.selfeval{margin:.9rem 0 0}
+.selfeval p{margin:0 0 .4rem;font-weight:600;font-size:.9rem}
+.selfeval .row{gap:.45rem}
+.lvl:disabled{cursor:default}
+.lvl:disabled:not([aria-pressed="true"]){opacity:.45}
+.lvl-1[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--paper)}
+.lvl-0-5[aria-pressed="true"]{background:var(--mid);border-color:var(--mid);color:#1D1D1B}
+.lvl-0[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:var(--on-accent)}
+
+/* schémas à compléter */
+.consigne{margin:0 0 .7rem;font-size:.88rem;color:var(--grey)}
+.schema{font-size:.86rem;line-height:1.3}
+.schema-wrap .row{margin-top:.8rem}
+.slot{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:.15rem .3rem;width:100%;min-width:0}
+.slot .num{display:inline-grid;place-items:center;min-width:1.3rem;height:1.3rem;border-radius:50%;background:var(--accent);color:var(--on-accent);font-size:.66rem;font-weight:800;flex:none}
+.slot select{font:inherit;font-size:.78rem;min-width:0;width:100%;padding:.26rem .3rem;border:2px solid var(--line);border-radius:.45rem;background:var(--paper);color:var(--ink)}
+.slot select:focus{outline:none;border-color:var(--accent)}
+.slot.ok select{border-color:var(--ok);background:var(--ok-tint)}
+.slot.ko select{border-color:var(--red);background:var(--red-tint)}
+.slot select:disabled{opacity:1;color:var(--ink)}
+/* libellé du choix par-dessus la liste : retour à la ligne, deux lignes au plus */
+.pick{position:relative;display:grid;min-width:0}
+.pick>select,.pick>.pick-lab{grid-area:1/1;min-width:0}
+.slot .pick>select{-webkit-appearance:none;appearance:none;align-self:stretch;height:auto;color:transparent;cursor:pointer;padding-right:1.5rem}
+.slot .pick>select:disabled{color:transparent;cursor:default}
+.slot .pick>select option{color:var(--ink);background:var(--paper)}
+.pick-lab{position:relative;z-index:1;pointer-events:none;align-self:center;color:var(--ink);font-size:.78rem;line-height:1.22;padding:0;border:solid transparent;border-width:calc(.26rem + 2px) 1.5rem calc(.26rem + 2px) calc(.3rem + 2px);overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:break-word;text-align:left}
+.pick-lab.empty{color:var(--grey);font-weight:400}
+.pick::after{content:"";position:absolute;z-index:1;right:.6rem;top:50%;width:.36rem;height:.36rem;border-right:2px solid var(--grey);border-bottom:2px solid var(--grey);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.slot.ok .pick::after,.slot.ko .pick::after{display:none}
+.slot.ok .pick-lab,.slot.ko .pick-lab{border-right-width:calc(.3rem + 2px)}
+@media (forced-colors:active){.pick-lab,.pick::after{display:none}.slot .pick>select,.slot .pick>select:disabled{color:CanvasText;-webkit-appearance:auto;appearance:auto}}
+.slot .fix{grid-column:1/-1;font-size:.74rem;font-weight:700;color:var(--ok);text-align:left}
+.pick-fix{display:none}
+.slot.ok .pick>select{border-color:var(--ok);background:var(--ok-tint)}
+.slot.ko .pick>select{border-color:var(--red);background:var(--red-tint)}
+.slot.sol .lab{min-width:0;font-weight:700;color:var(--ok);background:var(--ok-tint);border:2px solid var(--ok);border-radius:.45rem;padding:.15rem .4rem}
+.primary:disabled,.outline:disabled{opacity:.4;cursor:default}
+.lvl:disabled[aria-pressed="true"]{opacity:1}
+.q .schema{margin:0 0 .75rem}
+/* ---------- schémas : listes de documents et normes (mise en page des pages du cours) ---------- */
+.fam-l{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem 1rem}
+.lst-b{min-width:0}
+.lst-h{margin:0 0 .3rem}
+.lst-h .pick-lab{font-weight:700}
+.fam-l ul{margin:0;padding:0 0 0 1.1rem;font-size:.82rem;line-height:1.3}
+.fam-l li{margin:.12rem 0}
+.nor-l{list-style:none;margin:0;padding:0;display:grid;gap:.55rem}
+.nor-l li{display:grid;grid-template-columns:7.2rem auto minmax(0,1fr);align-items:center;gap:.5rem}
+.nor-l .nm{font-weight:800;white-space:nowrap}
+.nor-l .tiret{color:var(--grey)}
+.nor-l .pick-lab{color:var(--fig-blue);font-weight:700}
+.puces{margin:0;padding:0;list-style:none}
+.puces li::before{content:"- "}
+
+/* sur ordinateur, la consigne figure déjà dans le panneau de droite */
+@media (min-width:900px){.schema-wrap .consigne{display:none}}
+
+/* schémas : ordinateur ou tablette uniquement (menu, présentation de la série, correction, fenêtre QR) */
+.dev-note{margin:0 0 1rem;padding:.7rem .9rem;border:2px solid var(--accent);border-radius:.7rem;background:var(--accent-tint);font-size:.95rem}
+.start .dev-note{margin:0}
+.dev-note p{margin:0}
+.dev-note p:first-child{font-weight:700}
+.list .s.dev{display:block;margin-top:.15rem;font-weight:700;color:var(--accent)}
+.sol-l{margin:0 0 .75rem;padding:0;list-style:none;font-size:.92rem}
+.sol-l li{padding:.3rem 0;border-bottom:1px solid var(--line)}
+.sol-l .sol-n{color:var(--grey)}
+.sol-l b{color:var(--ok)}
+.qr-in p .ln{display:block}
+
+/* ---------- figures : canevas (ordinateur et tablette) ---------- */
+.schema{container-type:inline-size}
+.cyc-ic,.spine-m{display:none}
+@media (min-width:561px){
+  .fig{--u:calc(min(100cqw, var(--maxw)) / var(--W));position:relative;width:calc(var(--W) * var(--u));height:calc(var(--H) * var(--u));margin:0 auto;line-height:1.16}
+  .fig-svg{position:absolute;inset:0;pointer-events:none}
+  .fig-svg svg{display:block;width:100%;height:100%;overflow:visible}
+  .fx{position:absolute;left:calc(var(--x) * var(--u));top:calc(var(--y) * var(--u));width:calc(var(--w) * var(--u));height:calc(var(--h) * var(--u));font-size:calc(var(--fs, 12) * var(--u));display:flex;align-items:center;justify-content:center;text-align:center;min-width:0;color:var(--ink)}
+  .grp{display:contents}
+  .fx.t{font-weight:500}
+  .fx.cap{align-items:flex-end;justify-content:flex-start;text-align:left;padding-bottom:calc(3 * var(--u))}
+  .fx.chart{display:block}
+  .chart-svg,.chart-svg svg{display:block;width:100%;height:100%}
+  .fx.lt{align-items:flex-start;justify-content:flex-start;text-align:left;line-height:1.25}
+  .fx.lt b{display:block}
+  /* cases placées dans la figure */
+  .fig .slot{position:relative;display:block;width:100%;height:100%}
+  .fig .slot .num{position:absolute;z-index:3;left:calc(-7 * var(--u));top:calc(-7 * var(--u));min-width:0;width:calc(16 * var(--u));height:calc(16 * var(--u));font-size:calc(9 * var(--u))}
+  .fig .pick{height:100%}
+  .fig .slot .pick>select{border-radius:calc(7 * var(--u));padding:0}
+  .fig .pick-lab{font-size:inherit;text-align:center;font-weight:600;border-width:calc(3 * var(--u)) calc(12 * var(--u)) calc(3 * var(--u)) calc(5 * var(--u))}
+  .fig .pick::after{right:calc(5 * var(--u));width:calc(4.5 * var(--u));height:calc(4.5 * var(--u));border-width:0 1.5px 1.5px 0}
+  .fig .slot .fix{display:none}
+  /* case fausse : choix barré, bonne étiquette dessous, dans la case */
+  .fig .slot.ko .pick{grid-template-rows:1fr auto auto 1fr}
+  .fig .slot.ko .pick>select{grid-row:1/5}
+  .fig .slot.ko .pick-lab{grid-row:2;-webkit-line-clamp:1;font-size:.74em;font-weight:500;text-decoration:line-through;color:var(--red-deep);border-width:calc(2 * var(--u)) calc(5 * var(--u)) 0}
+  .fig .slot.ko .pick-fix{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;grid-row:3;grid-column:1;position:relative;z-index:1;pointer-events:none;font-size:.86em;font-weight:800;line-height:1.08;text-align:center;color:var(--ok);border:solid transparent;border-width:0 calc(5 * var(--u)) calc(2 * var(--u))}
+  .fig .slot.sol .lab{display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:0 calc(5 * var(--u));border-radius:calc(7 * var(--u));text-align:center;font-size:inherit}
+  /* habillages des cases */
+  .lime .pick>select{background:var(--lime-tint);border-color:var(--lime)}
+  .shape .pick>select{background:transparent;border-color:transparent}
+  .shape .pick>select:hover,.shape .pick>select:focus{border-color:var(--accent)}
+  .lvl .pick>select{background:linear-gradient(var(--paper),var(--accent-tint));border-color:var(--line)}
+  .fx.sl.top .pick>select{border-width:1.5px;border-color:var(--ink);box-shadow:calc(5 * var(--u)) calc(5 * var(--u)) 0 var(--line)}
+  .fam .pick-lab{font-weight:800}
+  .fam-b .pick-lab{color:var(--fig-blue)}
+  .fam-r .pick-lab{color:var(--red)}
+  .slot.ok .pick-lab,.slot.ko .pick-lab{color:var(--ink)}
+  /* traits communs */
+  .fig-svg .bx{fill:var(--paper);stroke:var(--ink);stroke-width:1.3}
+  .fig-svg .fl,.fig-svg .dash{stroke:var(--ink);stroke-width:1.3}
+  .fig-svg .dash{stroke-dasharray:6 4}
+  .fig-svg .fl-h,.fig-svg .dash-h{fill:var(--ink)}
+  .fig-svg .sh-r{fill:var(--line)}
+  .fig-svg .bx-in{fill:var(--paper);stroke:var(--grey);stroke-width:1}
+  /* case verticale : texte écrit de bas en haut, comme dans le cours */
+  .fx.rot>.slot{position:absolute;left:50%;top:50%;width:calc(var(--h) * var(--u));height:calc(var(--w) * var(--u));transform:translate(-50%,-50%) rotate(-90deg)}
+  .fx.rot .slot .num{left:auto;right:calc(-7 * var(--u));transform:rotate(90deg)}
+  /* 1. SMQ */
+  .fig-svg .ring{fill:var(--paper);stroke:var(--ink);stroke-width:1.6}
+  .fig-svg .sh{fill:var(--line)}
+  .fig-svg .cy{fill:var(--line);stroke:var(--ink);stroke-width:1.1;stroke-linejoin:round}
+  .fig-svg .cy-s{fill:var(--grey);opacity:.45}
+  .fig-svg .big-f{fill:var(--paper);stroke:var(--ink);stroke-width:1.3;stroke-linejoin:round}
+  .fig-svg .big-s{fill:var(--mist);stroke:var(--ink);stroke-width:1.3;stroke-linejoin:round}
+  .fig-smq .fx.cl{font-size:calc(13 * var(--u))}
+  .fig-smq .fx.leg{justify-content:flex-start;text-align:left;font-weight:400}
+  .fig-smq .fx.leg.b{font-weight:700}
+  /* 3. Ishikawa */
+  .fig-svg .sp{stroke:var(--ink);stroke-width:3}
+  .fig-svg .bone{stroke:var(--ink);stroke-width:2.6}
+  .fig-svg .eff-b{stroke-width:2.4}
+  .fig-svg .bone-h{fill:var(--ink)}
+  .fig-fish .fx.eff{font-weight:600}
+  /* 4. flux industriel */
+  .fig-svg .frame{fill:none;stroke:var(--gold);stroke-width:3.5}
+  .fig-svg .thick{fill:none;stroke:var(--ink);stroke-width:6}
+  .fig-svg .thick-h{fill:var(--ink)}
+  .fig-svg .loop{fill:var(--fig-blue);stroke:var(--fig-blue);stroke-width:.8;stroke-linejoin:round}
+  .fig-flux .fx.t{font-family:"Times New Roman",Times,Georgia,serif;font-weight:400;font-size:calc(var(--fs, 12) * 1.08 * var(--u))}
+  .fig-flux .fx.cadre{border:2px solid var(--gold);background:var(--paper);font-family:inherit;font-size:calc(10 * var(--u))}
+  /* 5. traçabilité */
+  /* dégradé du noir (sommet) au blanc (base), comme dans le cours */
+  .fig-svg .tg0{stop-color:var(--ink)}
+  .fig-svg .tg1{stop-color:var(--ink);stop-opacity:.6}
+  .fig-svg .tg2{stop-color:var(--ink);stop-opacity:.04}
+  .fig-svg .band,.fig-svg .dim,.fig-svg .tra{stroke:var(--ink);stroke-width:1.1}
+  .fig-svg .dim-h,.fig-svg .tra-h{fill:var(--ink)}
+  .fig-svg .tra{stroke:var(--paper)}
+  .fig-svg .tra-h{fill:var(--paper)}
+  .fig-svg .trb{stroke:var(--ink);stroke-width:1.1}
+  .fig-svg .trb-h{fill:var(--ink)}
+  .fig-trac .fx.tb{font-family:"Times New Roman",Times,Georgia,serif;font-weight:400}
+  .fig-trac .fx.tb1,.fig-trac .fx.tb2{color:var(--paper);font-weight:700}
+  .fig-trac .fx.tb1{line-height:calc(20 * var(--u))}
+  .fig-trac .fx.tb2{line-height:calc(22.6 * var(--u))}
+  .fig-trac .fx.tb3{line-height:calc(27.5 * var(--u))}
+  .fig-trac .ar-l{font:400 2.1em/0 Arial,Helvetica,sans-serif}
+  /* 7. documentation du SMQ */
+  .fig-svg .dg0{stop-color:var(--fig-blue)}
+  .fig-svg .dg1{stop-color:var(--accent)}
+  .fig-svg .dia{fill:var(--orange-tint);stroke:var(--orange);stroke-width:1.4}
+  .fig-svg .chev{fill:var(--paper);stroke:var(--lime);stroke-width:1.8}
+  .fig-svg .chev.vio-o{stroke:var(--violet)}
+  .fig-svg .pr{fill:var(--lime)}
+  .fig-svg .pra{stroke:var(--lime);stroke-width:5}
+  .fig-svg .pra-h{fill:var(--lime)}
+  .fig-svg .vio{fill:var(--violet)}
+  .fig-doc .fx.dia-t{font-weight:700;font-size:calc(9 * var(--u))}
+  .fig-doc .fx.vio-t{color:#fff;font-weight:600}
+  .fig-doc .fx.pr-t{color:#fff;font-weight:700}
+  .fig-doc .lvl .pick-lab{font-weight:500}
+  .fig-doc .role .pick-lab{font-weight:500}
+  /* 8. COQ schématiquement */
+  .fig-svg .fr-b{fill:none;stroke:var(--fig-blue);stroke-width:2}
+  .fig-svg .fr-r{fill:none;stroke:var(--red);stroke-width:2}
+  .fig-svg .hx-b{fill:var(--paper);stroke:var(--accent);stroke-width:1.6}
+  .fig-svg .hx-g{fill:var(--paper);stroke:var(--fig-green);stroke-width:2.2}
+  .fig-svg .ab-b{fill:var(--fig-blue);stroke:var(--fig-blue);stroke-width:1;stroke-linejoin:round}
+  .fig-svg .ab-r{fill:var(--red);stroke:var(--red);stroke-width:1;stroke-linejoin:round}
+  .fig-coq .fx.coq-c{color:var(--fig-green);font-weight:700;line-height:1.55}
+  .fig-coq .fx.lt{color:var(--ink)}
+  .fig-coq .fx.lt-h{line-height:1.5}
+  .fig-coq .fx.lt-b{line-height:1.58}
+  /* 9. graphique du COQ */
+  .fig-svg .frame-l{fill:none;stroke:var(--line);stroke-width:1.2}
+  .fx.lgi{justify-content:flex-start;gap:calc(5 * var(--u))}
+  .fx.lgi .slot{flex:1;width:auto}
+  .lg{display:inline-block;flex:none;width:calc(22 * var(--u));height:3px;border-radius:2px}
+}
+.lg-b{background:var(--xl-blue)}
+.lg-o{background:var(--xl-orange)}
+.lg-g{background:var(--xl-grey)}
+.chart-svg .ch-title{font:400 16px var(--font);fill:var(--grey);text-anchor:middle}
+.chart-svg .grid{stroke:var(--line);stroke-width:.8}
+.chart-svg .axis{stroke:var(--ink);stroke-width:1.3}
+.chart-svg .tick{font:400 10px var(--font);fill:var(--grey)}
+.chart-svg .end{text-anchor:end}
+.chart-svg .mid{text-anchor:middle}
+.chart-svg .cv{fill:none;stroke-width:2.6;stroke-linecap:round}
+.chart-svg .cv-b{stroke:var(--xl-blue)}
+.chart-svg .cv-o{stroke:var(--xl-orange)}
+.chart-svg .cv-g{stroke:var(--xl-grey)}
+
+/* ---------- figures sur téléphone : éléments empilés ---------- */
+@media (max-width:560px){
+  .fig{display:flex;flex-direction:column;gap:.55rem;font-size:.9rem;line-height:1.3}
+  .fig-svg{display:none}
+  .fx{display:block;min-width:0}
+  .fx br{display:none}
+  .fx.tb br,.fx.coq-c br{display:inline}
+  .fx[data-cap]::before{content:attr(data-cap);display:block;margin:0 0 .2rem;font-size:.78rem;font-weight:600;color:var(--grey)}
+  .grp{display:flex;flex-direction:column;gap:.45rem}
+  .slot .pick>select{min-height:2.6rem}
+  .pick-lab{font-size:.88rem}
+  .slot .num{min-width:1.45rem;height:1.45rem;font-size:.72rem}
+  .slot .fix{font-size:.8rem}
+  .fam-l{grid-template-columns:minmax(0,1fr)}
+  .nor-l li{grid-template-columns:auto minmax(0,1fr);row-gap:.25rem}
+  .nor-l .tiret{display:none}
+  .nor-l .dom{grid-column:1/-1}
+  .chart-svg svg{display:block;width:100%;height:auto}
+  .fx.lt{font-size:.8rem;color:var(--grey)}
+  .fx.lt b{display:block;color:var(--ink)}
+  /* 1. SMQ */
+  .fig-smq .g-in,.fig-smq .g-out{border:2px solid var(--line);border-radius:.5rem;padding:.55rem;text-align:center}
+  .fig-smq .fx.cl{font-weight:700}
+  .fig-smq .fx.cap{font-size:.8rem;color:var(--grey)}
+  .fig-smq .fx.ce::after{content:" ↓";font-weight:800;color:var(--accent)}
+  .fig-smq .fx.cs{order:-1}
+  .fig-smq .fx.cs::before{content:"↓ ";font-weight:800;color:var(--accent)}
+  .fig-smq .g-cyc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"a a a" "b m c" "d d e";gap:.4rem;align-items:center;border:2px solid var(--line);border-radius:1.6rem;padding:.6rem .5rem;text-align:center}
+  .fig-smq .g-cyc .fx.t{font-size:.8rem;font-weight:600}
+  .fig-smq .c1{grid-area:a}.fig-smq .c2{grid-area:b}.fig-smq .c3{grid-area:c}.fig-smq .c4{grid-area:d}.fig-smq .c5{grid-area:e}
+  .fig-smq .cyc-ic{display:block;grid-area:m;font-size:1.5rem;color:var(--grey);text-align:center}
+  .fig-smq .g-leg{display:none}
+  /* 3. Ishikawa vertical : arête au centre, effet en bas */
+  .fig-fish{display:grid;grid-template-columns:minmax(0,1fr) 1.3rem minmax(0,1fr);grid-template-areas:"top sp bot" "eff eff eff";gap:0}
+  .fig-fish .g-top{grid-area:top}
+  .fig-fish .g-bot{grid-area:bot}
+  .fig-fish .grp{gap:.6rem}
+  .fig-fish .fx.sl{position:relative;border:1.5px solid var(--line);border-radius:.45rem;padding:.3rem}
+  .fig-fish .fx.sl::after{content:"";position:absolute;top:50%;width:.65rem;height:2px;background:var(--grey)}
+  .fig-fish .g-top .fx.sl::after{left:100%}
+  .fig-fish .g-bot .fx.sl::after{right:100%}
+  .fig-fish .spine-m{display:block;grid-area:sp;justify-self:center;width:3px;background:var(--grey);margin-bottom:10px;position:relative}
+  .fig-fish .spine-m::after{content:"";position:absolute;left:-5px;top:100%;border-left:6.5px solid transparent;border-right:6.5px solid transparent;border-top:9px solid var(--grey)}
+  .fig-fish .fx.eff{grid-area:eff;justify-self:center;margin-top:.5rem;padding:.3rem 1.4rem;border:2px solid var(--ink);font-weight:700}
+  /* 4. flux : étapes en colonne, contrôles qualité en retrait sous leur étape */
+  .fig-flux .grp{display:grid;gap:.35rem}
+  .fig-flux .grp::before,.fig-flux .fx.cli::before{content:"↓";text-align:center;color:var(--grey);font-weight:700}
+  .fig-flux .g-e0::before{display:none}
+  .fig-flux .fx.st{order:-1;border:2px solid var(--ink);border-radius:.6rem;padding:.35rem;text-align:center;font-weight:700}
+  .fig-flux .grp::before{order:-2}
+  .fig-flux .fx.fo,.fig-flux .fx.so{font-size:.8rem;font-weight:600;color:var(--grey);padding-left:1.5rem}
+  .fig-flux .fx.fo::after{content:" →"}
+  .fig-flux .fx.sl{position:relative;padding-left:1.5rem}
+  .fig-flux .fx.sl::before{content:"";position:absolute;left:.55rem;top:-.25rem;width:.6rem;height:1.25rem;border-left:2px solid var(--line);border-bottom:2px solid var(--line)}
+  .fig-flux .lime .pick>select{background:var(--lime-tint);border-color:var(--lime)}
+  .fig-flux .fx.cli{display:grid;text-align:center}
+  .fig-flux .fx.cli{font-weight:700}
+  .fig-flux .fx.loop-s{padding:.45rem;border:2px dashed var(--fig-blue);border-radius:.6rem}
+  .fig-flux .fx.loop-s::before{content:"↻ Du client vers chaque étape :";position:static;display:block;width:auto;height:auto;border:0;margin:0 0 .3rem;font-size:.8rem;font-weight:700;color:var(--fig-blue)}
+  .fig-flux .fx.cadre{display:none}
+  /* 5. traçabilité : chaque niveau est un trapèze */
+  .fig-trac .fx.apex{width:62%;margin:0 auto}
+  .fig-trac .g-b{position:relative;display:grid;gap:.35rem;margin:0 auto;padding:.5rem 10% .55rem;text-align:center}
+  .fig-trac .g1{width:82%}.fig-trac .g2{width:91%}.fig-trac .g3{width:100%}
+  .fig-trac .g-b::before{content:"";position:absolute;inset:0;background:var(--ink);clip-path:polygon(9% 0,91% 0,100% 100%,0 100%);z-index:0}
+  .fig-trac .g1::before{opacity:.95}.fig-trac .g2::before{opacity:.55}.fig-trac .g3::before{opacity:.14}
+  .fig-trac .g-b>*{position:relative}
+  .fig-trac .fx.tb{font-size:.8rem;font-weight:600}
+  .fig-trac .g1 .fx.tb,.fig-trac .g2 .fx.tb{color:var(--paper)}
+  .fig-trac .g-b .pick>select{background:var(--paper)}
+  .fig-trac .g-b .fix{justify-self:center;padding:.1rem .4rem;border-radius:.3rem;background:var(--paper)}
+  /* 7. documentation : une carte par niveau */
+  .fig-doc .g-r{display:grid;gap:.35rem;padding:.45rem .5rem;border-left:5px solid var(--fig-blue);border-radius:.4rem;background:var(--mist)}
+  .fig-doc .fx.dia-t{justify-self:start;padding:.1rem .6rem;border:1.5px solid var(--orange);border-radius:.3rem;background:var(--orange-tint);font-size:.72rem;font-weight:800}
+  .fig-doc .role .pick>select{border-color:var(--lime)}
+  .fig-doc .g-base{display:grid;gap:.3rem;padding:.5rem;border-radius:.4rem;background:var(--violet);color:#fff;text-align:center}
+  .fig-doc .g-base .fx{color:#fff}
+  .fig-doc .fx.vio-t{font-weight:800}
+  .fig-doc .g-pr{display:none}
+  /* 8. COQ : cadre bleu (investissement), centre, cadre rouge (non-qualité) */
+  .fig-coq .g-ciq,.fig-coq .g-cnq{padding:.55rem;border:2px solid var(--fig-blue);border-radius:.5rem}
+  .fig-coq .g-cnq{border-color:var(--red)}
+  .fig-coq .g-k{padding:.45rem;border:1.5px solid var(--line);border-radius:.45rem;gap:.3rem}
+  .fig-coq .fx.coq-c{align-self:center;padding:.35rem 1.2rem;border:2px solid var(--fig-green);border-radius:.6rem;color:var(--fig-green);font-weight:800;text-align:center}
+  .fig-coq .fam-b .pick-lab{color:var(--fig-blue)}
+  .fig-coq .fam-r .pick-lab{color:var(--red)}
+  /* 9. graphique du COQ : courbe en pleine largeur, cases dessous */
+  .fx.lgi{display:flex;align-items:center;gap:.5rem}
+  .fx.lgi .slot{flex:1;min-width:0}
+  .lg{display:inline-block;flex:none;width:1.6rem;height:4px;border-radius:2px}
+  .fig-gcoq .g-lg{gap:.45rem}
+  .chart-svg .tick{font-size:13px}
+  .chart-svg .tick.odd{display:none}
+  .chart-svg .ch-title{font-size:22px}
+}
+/* écran tactile : texte de la liste à 16 px, sinon iOS zoome au toucher (ce texte reste invisible sous le libellé) */
+@media (max-width:899px),(pointer:coarse){.slot .pick>select{font-size:16px}}
+/* l'état juste / faux l'emporte sur l'habillage des cases */
+.fig .slot.ok .pick>select{border-color:var(--ok);background:var(--ok-tint)}
+.fig .slot.ko .pick>select{border-color:var(--red);background:var(--red-tint)}
+
+@media (max-width:480px){
+  .numeral{font-size:4.2rem}
+  .hero h1{font-size:1.6rem}
+  .qnum{font-size:2.3rem}
+  .qtitle h2{font-size:1.12rem}
+  .chain small{display:none}
+  .parts a{font-size:.74rem;padding:.4rem .7rem .45rem}
+  .part-panel{padding:.6rem .6rem .5rem}
+  .chain{flex-wrap:wrap;gap:.4rem}
+  .chain li{flex:1 1 30%}
+  .chain li+li{margin-left:0}
+  .chain a{font-size:.74rem;padding:.45rem .2rem}
+  .chain .lg{display:none}
+  .chain .sm{display:inline}
+  .chain li.rev{flex:1 1 30%}
+
+  .tools button{font-size:.8rem;padding:.5rem .8rem}
+  .hint{display:none}
+}
+@media (prefers-reduced-motion:no-preference){
+  .opt{transition:border-color .15s,background-color .15s,opacity .15s}
+  .side.revealed .fb,.result{animation:rise .3s ease-out}
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="course"><span class="c-name"><b>Qualité industrielle</b> · MT_322 · hepia</span><a class="doc-btn" id="docBtn" href="presentation.pdf" target="_blank" rel="noopener" aria-label="Présentation théorique, fichier PDF, dans un nouvel onglet"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M6 2.5h8.5L19 7v14.5H6zM14 2.5V7.5h5M9 12h7M9 15.5h7M9 19h4"/></svg>Présentation théorique<span class="dt-s" aria-hidden="true">PDF</span></a><a href="https://nicolas-derobert.github.io/appli-qualite/" target="_blank" rel="noopener">QualiTools</a></div>
+    <p class="doc-msg" id="docMsg" hidden>Présentation théorique : fichier en préparation.</p>
+    <nav class="parts-nav" aria-label="Parties du cours"><ul class="parts" id="parts"></ul></nav>
+    <div class="part-panel">
+      <nav aria-label="Chapitres de la partie"><ul class="chain" id="chain"></ul></nav>
+    </div>
+  </div>
+</header>
+<main class="wrap" id="app" tabindex="-1"></main>
+<div class="vh" id="live" aria-live="polite"></div>
+<footer class="wrap">
+  <p>Les citations et les numéros de page renvoient au support de cours Qualité_Industrielle_hepia_cours 2026-2027 (version VII).</p>
+</footer>
+
+<dialog class="qr" id="qrDialog" aria-labelledby="qrTitle">
+  <div class="qr-in">
+    <h2 id="qrTitle"></h2>
+    <p id="qrText">Scannez le code avec votre smartphone pour ouvrir le quiz.</p>
+    <div class="qr-code" id="qrCode"></div>
+    <div class="qr-url" id="qrUrl"></div>
+    <div class="qr-actions">
+      <button type="button" class="outline" id="qrCopy">Copier le lien</button>
+      <button type="button" class="primary" id="qrClose">Fermer</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+const L = "ABCD";
+const NB = String.fromCharCode(160); // espace insécable
+const COMB = new RegExp("[" + String.fromCharCode(0x300) + "-" + String.fromCharCode(0x36f) + "]", "g");
+const STORE_KEY = "mt322-quiz-v5"; // même clé que les versions précédentes : les résultats sont conservés
+const ICON_QR = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm11-2h2v2h-2v-2zm-3 0h2v3h-2v-3zm5 3h3v2h-3v-2zm-5 2h3v3h-3v-3zm5 2h3v1h-3v-1zm1-7h2v3h-2v-3z"/></svg>';
+const ICON_STAR = '<svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.8l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 17.9l-6.4 3.5L7 14.3l-5.3-5 7.2-.9z"/></svg>';
+const LEVELS = [{s: 1, label: "Juste"}, {s: 0.5, label: "En partie"}, {s: 0, label: "À revoir"}];
+/* Smartphone : écran tactile dont le petit côté mesure moins de 600 px. Les schémas demandent un ordinateur ou une tablette. */
+const PHONE = matchMedia("(pointer: coarse)").matches && Math.min(screen.width, screen.height) < 600;
+const SCHEMA_REASON = "Le rendu des schémas sur smartphone est insuffisant.";
+const SCHEMA_INTRO = ["Utilisez un ordinateur ou une tablette pour cette série.", SCHEMA_REASON];
+const SCHEMA_CORR = ["Ouvrez cette page sur un ordinateur ou une tablette pour afficher les schémas.", SCHEMA_REASON];
+const SCHEMA_QR = ["Scannez le code avec une tablette pour ouvrir la série.", "Sur ordinateur, ouvrez le lien ci-dessous.", SCHEMA_REASON];
+const QR_TEXT = "Scannez le code avec votre smartphone pour ouvrir le quiz.";
+function devNote(lines){ return el("div", {class: "dev-note"}, ...lines.map(t => el("p", {text: t}))); }
+
+/* ---------- préparation des données (ne pas modifier) ---------- */
+function typo(s){
+  return String(s).replace(/ ([:;?!%])/g, NB + "$1").replace(/« /g, "«" + NB).replace(/ »/g, NB + "»").replace(/(\d) (\d{3})\b/g, "$1" + NB + "$2");
+}
+function norm(s){
+  return " " + String(s).toLowerCase().normalize("NFD").replace(COMB, "").replace(/œ/g, "oe").replace(/æ/g, "ae").replace(/[^a-z0-9]+/g, " ").trim() + " ";
+}
+function seeded(arr, seed){
+  const r = arr.slice();
+  let x = (seed * 9301 + 49297) % 233280;
+  for (let i = r.length - 1; i > 0; i--){ x = (x * 9301 + 49297) % 233280; const j = Math.floor(x / 233280 * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; }
+  return r;
+}
+function common(q){ q.p = q.page; q.c = q.citation ? typo(q.citation) : ""; q.fig = q.figure ? typo(q.figure) : ""; }
+function prepQcm(q, i, ch, where){
+  q.type = "qcm"; q.ch = ch; q.i = i; common(q);
+  q.q = typo(q.question); q.o = q.choix.map(typo); q.a = L.indexOf(String(q.reponse).trim().toUpperCase()); q.e = typo(q.explication);
+  if (q.a < 0 || q.a >= q.o.length) console.error(where + ", question " + (i + 1) + " : réponse invalide (" + q.reponse + ").");
+}
+function prepOuverte(q, i, where){
+  q.type = "ouverte"; q.ch = Number(q.chapitre); q.i = i; common(q);
+  q.q = typo(q.question); q.m = typo(q.reponse || "");
+  q.k = (q.motsCles || []).map(s => {
+    const parts = String(s).split("|");
+    return {label: typo(parts[0]), keys: (parts.length > 1 ? parts.slice(1) : parts).map(x => norm(x).trim()).filter(Boolean)};
+  });
+  if (!q.m) console.error(where + ", question ouverte " + (i + 1) + " : réponse attendue manquante.");
+}
+function prepSchema(q, i, where){
+  q.type = "schema"; q.ch = Number(q.chapitre); q.i = i; common(q);
+  q.q = typo(q.titre); q.consigne = typo(q.consigne || "Choisissez l’étiquette de chaque case, puis validez.");
+  q.e = typo(q.explication); q.libre = !!q.libre;
+  q.sol = q.cases.map(typo);
+  const shared = Array.isArray(q.etiquettes), lists = {};
+  const groups = shared ? [] : Object.keys(q.etiquettes);
+  q.opts = q.sol.map((s, k) => {
+    const g = shared ? "_" : q.groupes[k];
+    if (!lists[g]) lists[g] = seeded((shared ? q.etiquettes : q.etiquettes[g]).map(typo), i * 7 + 3 + groups.indexOf(g));
+    return lists[g];
+  });
+  q.sol.forEach((s, k) => { if (!q.opts[k].includes(s)) console.error(where + ", schéma " + (i + 1) + ", case " + (k + 1) + " : étiquette absente (" + s + ")."); });
+  const ref = t => { const m = /^\{(\d+)\}$/.exec(String(t == null ? "" : t).trim()); return m ? Number(m[1]) : -1; };
+  q.names = q.noms ? q.noms.map(typo) : q.sol.map((s, k) => "Case " + (k + 1));
+  if (!q.noms && q.lignes) q.lignes.forEach(r => r.forEach((c, j) => { const k = ref(c); if (k >= 0 && j > 0) q.names[k] = typo(r[0]); }));
+}
+
+const CHAPS = Object.keys(QUIZ).map(Number).sort((a, b) => a - b);
+for (const ch of CHAPS){
+  QUIZ[ch].sujet = typo(QUIZ[ch].sujet);
+  QUIZ[ch].questions.forEach((q, i) => prepQcm(q, i, ch, "Chapitre " + ch));
+}
+const PIDS = Object.keys(PARTIES).map(Number).sort((a, b) => a - b);
+const SERIES = {};
+const REV_TYPES = [
+  {type: "qcm", titre: "QCM", desc: "Une réponse juste parmi trois ou quatre propositions."},
+  {type: "ouvertes", titre: "Questions ouvertes", desc: "Réponse écrite, correction du cours, puis autoévaluation."},
+  {type: "schemas", titre: "Schémas à compléter", desc: "Une étiquette à choisir pour chaque case du schéma.", note: "Sur ordinateur ou tablette uniquement."}
+];
+for (const pid of PIDS){
+  const P = PARTIES[pid];
+  P.id = pid;
+  P.chaps = P.chapitres.map(Number).filter(ch => QUIZ[ch]);
+  P.all = pid === PIDS[0] ? "tout" : "tout-" + pid;
+  P.rev = null;
+  const R = typeof REVISION === "object" && REVISION ? REVISION[pid] : null;
+  if (R){
+    P.rev = pid === PIDS[0] ? "revision" : "revision-" + pid;
+    const where = "Révision, partie " + P.numero;
+    R.nom = typo(R.nom); R.court = typo(R.court || R.nom);
+    R.qcm = R.qcm || []; R.ouvertes = R.ouvertes || []; R.schemas = R.schemas || [];
+    R.qcm.forEach((q, i) => { prepQcm(q, i, Number(q.chapitre), where + ", QCM"); q.rev = true; });
+    R.ouvertes.forEach((q, i) => { prepOuverte(q, i, where); q.rev = true; });
+    R.schemas.forEach((q, i) => { prepSchema(q, i, where); q.rev = true; });
+    const all = [...R.qcm, ...R.ouvertes, ...R.schemas];
+    R.chaps = [...new Set(all.map(q => q.ch))].sort((a, b) => a - b);
+    R.tout = R.chaps.flatMap(ch => all.filter(q => q.ch === ch));
+    const items = {qcm: R.qcm, ouvertes: R.ouvertes, schemas: R.schemas};
+    R.series = REV_TYPES.filter(t => items[t.type].length).map(t => Object.assign({}, t, {key: P.rev + "-" + t.type, pid, items: items[t.type]}));
+    R.series.forEach(s => { SERIES[s.key] = s; });
+  }
+  P.sequence = P.rev ? [...P.chaps, P.rev] : P.chaps.slice();
+}
+CHAPS.filter(ch => !PIDS.some(pid => PARTIES[pid].chaps.includes(ch)))
+  .forEach(ch => console.error("Chapitre " + ch + " : à rattacher à une partie dans PARTIES."));
+
+/* ---------- clés : 3 (chapitre), tout, revision, revision-qcm, revision-ouvertes, revision-schemas ---------- */
+function isAll(k){ return PIDS.some(pid => PARTIES[pid].all === k); }
+function isMenu(k){ return k != null && PIDS.some(pid => PARTIES[pid].rev === k); }
+function isSeries(k){ return k != null && Object.prototype.hasOwnProperty.call(SERIES, k); }
+function isRev(k){ return isMenu(k) || isSeries(k); }
+function partOf(k){
+  if (typeof k === "number") return PIDS.find(pid => PARTIES[pid].chaps.includes(k)) || PIDS[0];
+  if (isSeries(k)) return SERIES[k].pid;
+  return PIDS.find(pid => PARTIES[pid].all === k || PARTIES[pid].rev === k) || PIDS[0];
+}
+function parseKey(p){
+  if (p == null || p === "") return null;
+  if (/^\d+$/.test(p)){ const n = Number(p); return PIDS.some(pid => PARTIES[pid].chaps.includes(n)) ? n : null; }
+  if (p === "bonus") p = PARTIES[PIDS[0]].rev;                       // ancien lien « Bonus »
+  const m = /^bonus-(\d+)$/.exec(p || ""); if (m) p = "revision-" + m[1];
+  const t = /^(revision(?:-\d+)?)-tout$/.exec(p || ""); if (t) p = t[1];   // ancienne « série complète » : choix de la série
+  return p && (isAll(p) || isMenu(p) || isSeries(p)) ? p : null;
+}
+function rev(k){ return REVISION[partOf(k)]; }
+function pool(k){
+  if (isSeries(k)) return SERIES[k].items;
+  if (isMenu(k)) return rev(k).tout;
+  const P = PARTIES[partOf(k)];
+  if (k === P.all) return P.chaps.flatMap(ch => QUIZ[ch].questions);
+  return QUIZ[k].questions;
+}
+function title(k){ return isAll(k) ? "Tous les chapitres" : isMenu(k) ? rev(k).nom : isSeries(k) ? SERIES[k].titre : QUIZ[k].nom; }
+function fullTitle(k){ return isSeries(k) ? rev(k).court + " · " + SERIES[k].titre : title(k); }
+function partLabel(pid){ return "Partie" + NB + PARTIES[pid].numero; }
+function chapName(q){ return q.rev ? (CHAPITRES[q.ch] || "") : QUIZ[q.ch].nom; }
+function chapLabel(q){ return "Chapitre " + q.ch + " · " + chapName(q); }
+function span(list){ return list.length > 1 ? list[0] + "–" + list[list.length - 1] : String(list[0]); }
+function scope(list){ return list.length > 1 ? "chapitres " + list[0] + " à " + list[list.length - 1] : "chapitre " + list[0]; }
+function unitOf(items){ return items.every(q => q.type === "schema") ? (items.length > 1 ? "schémas" : "schéma") : (items.length > 1 ? "questions" : "question"); }
+
+/* ---------- points : 1 (juste), 0,5 (en partie), 0 (à revoir) ---------- */
+function pts(q, a){ if (a === undefined || a === null) return 0; return q.type === "qcm" ? (a === q.a ? 1 : 0) : Number(a.s) || 0; }
+function stat(q, a){ const p = pts(q, a); return p >= 1 ? "ok" : p > 0 ? "mid" : "ko"; }
+function fmt(x){ const r = Math.round(x * 10) / 10; return Number.isInteger(r) ? String(r) : String(r).replace(".", ","); }
+function grade(q, v){
+  const lab = q.sol.map((s, k) => (v && v[k] >= 0 && q.opts[k][v[k]] !== undefined) ? q.opts[k][v[k]] : null);
+  let ok, rest = null;
+  if (q.libre){ rest = q.sol.slice(); ok = lab.map(l => { const j = l == null ? -1 : rest.indexOf(l); if (j < 0) return false; rest.splice(j, 1); return true; }); }
+  else ok = lab.map((l, k) => l === q.sol[k]);
+  const n = ok.filter(Boolean).length, tot = q.sol.length;
+  return {ok, lab, n, tot, rest, s: n === tot ? 1 : n * 2 >= tot ? 0.5 : 0};
+}
+
+/* ---------- mémoire locale (résultats et quiz en cours) ---------- */
+function load(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {best: {}, progress: {}}; } catch (e) { return {best: {}, progress: {}}; } }
+let store = load();
+store.best = store.best || {}; store.progress = store.progress || {};
+function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch (e) {} }
+function validProgress(key){
+  const p = store.progress[key], n = pool(key).length;
+  if (!p || !Array.isArray(p.order) || !Array.isArray(p.answers)) return null;
+  if (p.order.some(i => !(i >= 0 && i < n)) || (p.n !== undefined ? p.n !== n : p.order.length !== n)) return null;
+  return p;
+}
+
+/* ---------- état ---------- */
+const S = {view: "home", key: null, part: PIDS[0], order: [], answers: [], idx: 0, start: 0, shuffle: false, retry: false, pending: null};
+
+/* ---------- outils ---------- */
+const app = document.getElementById("app");
+const parts = document.getElementById("parts");
+const chain = document.getElementById("chain");
+const live = document.getElementById("live");
+const dlg = document.getElementById("qrDialog");
+function el(tag, attrs, ...kids){
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})){
+    if (v === null || v === undefined || v === false) continue;
+    if (k === "class") e.className = v; else if (k === "text") e.textContent = v; else if (k === "html") e.innerHTML = v; else e.setAttribute(k, v);
+  }
+  for (const k of kids) if (k != null && k !== false) e.append(k);
+  return e;
+}
+function star(){ return el("span", {html: ICON_STAR, style: "display:contents"}); }
+function button(text, cls, onClick, attrs){
+  const b = el("button", Object.assign({type: "button", class: cls}, attrs || {}));
+  if (text.startsWith("<")) b.innerHTML = text; else b.textContent = text;
+  b.addEventListener("click", onClick);
+  return b;
+}
+function put(...nodes){ app.replaceChildren(...nodes.filter(Boolean)); }
+function say(t){ live.textContent = ""; setTimeout(() => { live.textContent = t; }, 30); }
+function link(key, corrige){ return key != null ? "?partie=" + key + (corrige ? "&corrige" : "") : "?"; }
+function quizUrl(key){ return ADRESSE_SITE + (key != null ? "?partie=" + key : ""); }
+function shuffled(a){ const r = a.slice(); for (let i = r.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; }
+function duration(sec){ const m = Math.floor(sec / 60), s = sec % 60; return (m ? m + NB + "min" + NB : "") + s + NB + "s"; }
+function today(){ return new Date().toLocaleDateString("fr-CH"); }
+function pct(score, total){ return Math.round(score / total * 100); }
+function minutes(items){ return Math.max(1, Math.round(items.reduce((t, q) => t + (q.type === "qcm" ? 0.75 : 2), 0))); }
+
+/* ---------- navigation sans rechargement ---------- */
+function go(view, key){
+  S.view = view; S.key = key === undefined ? S.key : key;
+  if (S.key != null) S.part = partOf(S.key);
+  const url = view === "home" ? location.pathname : link(S.key, view === "correction");
+  try { history.replaceState(null, "", url); } catch (e) {}
+  render();
+  window.scrollTo(0, 0);
+}
+function navLink(text, view, key, cls){
+  const a = el("a", {href: link(key, view === "correction"), class: cls});
+  if (text) a.textContent = text;
+  a.addEventListener("click", ev => { ev.preventDefault(); go(view, key); });
+  return a;
+}
+function renderParts(){
+  parts.replaceChildren(...PIDS.map(pid => {
+    const a = el("a", {href: location.pathname, "aria-current": pid === S.part ? "true" : null},
+      el("b", {text: partLabel(pid)}), " " + PARTIES[pid].titre);
+    a.addEventListener("click", ev => { ev.preventDefault(); S.part = pid; go("home", null); });
+    return el("li", {}, a);
+  }));
+}
+function renderChain(){
+  const P = PARTIES[S.part];
+  const target = S.view === "correction" ? "correction" : "intro";
+  const items = P.chaps.map(ch => {
+    const a = navLink(QUIZ[ch].nom, target, ch);
+    if (ch === S.key) a.setAttribute("aria-current", "page");
+    return el("li", {}, a, el("small", {text: "Chapitre " + ch}));
+  });
+  if (P.rev){
+    const R = REVISION[P.id];
+    const a = navLink("", target, P.rev);
+    a.append(star(), el("span", {class: "lg", text: R.nom}), el("span", {class: "sm", text: R.court}));
+    if (isRev(S.key) && partOf(S.key) === P.id) a.setAttribute("aria-current", "page");
+    items.push(el("li", {class: "accent-rev rev"}, a, el("small", {text: "QCM · ouvertes · schémas"})));
+  }
+  chain.replaceChildren(...items);
+}
+function hero(key, h1){
+  const pid = partOf(key), list = pool(key), n = list.length;
+  let sub, num;
+  if (isAll(key)){ sub = partLabel(pid) + " · " + PARTIES[pid].chaps.length + " chapitres · " + n + " questions"; num = span(PARTIES[pid].chaps); }
+  else if (isMenu(key)){ const R = rev(key); sub = "Partie " + PARTIES[pid].numero + " · " + scope(R.chaps) + " · QCM, questions ouvertes, schémas · " + n + " questions"; }
+  else if (isSeries(key)){ const R = rev(key); sub = R.nom + " · " + n + " " + unitOf(list) + " · " + scope([...new Set(list.map(q => q.ch))].sort((a, b) => a - b)); }
+  else { sub = "Chapitre " + key + " · " + QUIZ[key].sujet + " · cours" + NB + "p." + NB + QUIZ[key].pages; num = String(key); }
+  const numeral = isRev(key) ? el("span", {class: "numeral", "aria-hidden": "true", html: ICON_STAR}) : el("span", {class: "numeral", "aria-hidden": "true", text: num});
+  return el("section", {class: "hero"}, numeral, el("div", {}, el("h1", {text: h1}), el("p", {text: sub})));
+}
+function tools(key){
+  const t = el("div", {class: "tools"}, button(ICON_QR + "<span>Afficher le QR code</span>", "outline", () => openQr(key)));
+  if (!isAll(key)){
+    const on = S.view === "correction";
+    t.append(button(on ? "Masquer la correction" : "Afficher la correction", "outline", () => go(on ? "intro" : "correction", key), {"aria-pressed": String(on)}));
+  }
+  if (document.fullscreenEnabled){
+    t.append(button(document.fullscreenElement ? "Quitter le plein écran" : "Plein écran", "outline", () => {
+      const p = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+      Promise.resolve(p).catch(() => {}).then(() => render());
+    }));
+  }
+  return t;
+}
+function citation(q){
+  if (!q.c && !q.fig) return null;
+  const cap = "Source : " + SUPPORT + ", p." + NB + q.p + (q.fig ? " · figure «" + NB + q.fig + NB + "»" : "");
+  return el("figure", {class: "cite"}, el("figcaption", {text: cap}), q.c ? el("blockquote", {text: "«" + NB + q.c + NB + "»"}) : null);
+}
+
+/* ---------- accueil ---------- */
+function bestLabel(key){
+  const b = store.best[key];
+  const p = validProgress(key);
+  if (p && p.answers.length && p.answers.length < p.order.length) return el("span", {class: "go"}, el("b", {text: "En cours"}), "question " + (p.answers.length + 1) + " / " + p.order.length);
+  if (b) return el("span", {class: "go"}, el("b", {text: fmt(b.score) + " / " + b.total}), "meilleur score");
+  const list = pool(key);
+  return el("span", {class: "go"}, el("b", {text: list.length + " " + unitOf(list)}), "à faire");
+}
+function renderHome(){
+  const P = PARTIES[S.part];
+  document.title = "Quiz MT_322 · " + partLabel(P.id);
+  const items = P.chaps.map(ch => {
+    const c = QUIZ[ch];
+    const a = navLink("", "intro", ch);
+    a.append(el("span", {class: "d", text: String(ch), "aria-hidden": "true"}),
+      el("span", {}, el("span", {class: "t", text: c.nom}), el("span", {class: "s", text: c.sujet + " · cours" + NB + "p." + NB + c.pages})),
+      bestLabel(ch));
+    return el("li", {}, a);
+  });
+  if (P.chaps.length > 1){
+    const all = navLink("", "intro", P.all);
+    all.append(el("span", {class: "d", text: span(P.chaps), "aria-hidden": "true"}),
+      el("span", {}, el("span", {class: "t", text: "Tous les chapitres"}), el("span", {class: "s", text: "Révision complète · " + pool(P.all).length + " questions"})),
+      bestLabel(P.all));
+    items.push(el("li", {class: "all"}, all));
+  }
+  if (P.rev){
+    const R = REVISION[P.id];
+    const a = navLink("", "intro", P.rev);
+    a.append(el("span", {class: "d", html: ICON_STAR, "aria-hidden": "true"}),
+      el("span", {}, el("span", {class: "t", text: R.nom}), el("span", {class: "s", text: "QCM, questions ouvertes, schémas à compléter · " + scope(R.chaps)})),
+      el("span", {class: "go"}, el("b", {text: R.tout.length + " questions"}), R.series.length + " séries"));
+    items.push(el("li", {class: "bonus accent-rev"}, a));
+  }
+  const reset = Object.keys(store.best).length || Object.keys(store.progress).length
+    ? el("div", {class: "foot-actions"}, button("Effacer mes résultats sur cet appareil", "link", () => { store = {best: {}, progress: {}}; save(); render(); say("Résultats effacés."); }))
+    : null;
+  put(el("section", {class: "home"},
+    el("h1", {text: "Quiz de fin de chapitre"}),
+    el("p", {class: "lead", text: "Choisissez le chapitre indiqué par votre enseignant. Une question s’affiche à la fois, avec sa correction."}),
+    el("div", {class: "tools"}, button(ICON_QR + "<span>Afficher le QR code</span>", "outline", () => openQr(null))),
+    el("ul", {class: "list"}, ...items), reset));
+}
+
+/* ---------- révision : choix de la série ---------- */
+function renderMenu(){
+  const key = S.key, R = rev(key);
+  document.title = R.nom;
+  const items = R.series.map(s => {
+    const a = navLink("", "intro", s.key);
+    a.append(el("span", {class: "d", text: String(s.items.length), "aria-hidden": "true"}),
+      el("span", {}, el("span", {class: "t", text: s.titre}), el("span", {class: "s", text: s.desc}), s.note ? el("span", {class: "s dev", text: s.note}) : null),
+      store.best[s.key] || validProgress(s.key) ? bestLabel(s.key) : el("span", {class: "go"}, el("b", {text: "À faire"})));
+    return el("li", {}, a);
+  });
+  put(hero(key, R.nom), tools(key),
+    el("div", {class: "brief"},
+      el("p", {text: "Choisissez un format de révision."}),
+      el("p", {text: "Chaque correction cite le cours " + SUPPORT + "."})),
+    el("ul", {class: "list series"}, ...items));
+}
+
+/* ---------- introduction d'un quiz ---------- */
+function startQuiz(key, opts){
+  const n = pool(key).length;
+  let order = opts && opts.order ? opts.order : [...Array(n).keys()];
+  if (S.shuffle && !(opts && opts.order)) order = shuffled(order);
+  Object.assign(S, {key, order, answers: [], idx: 0, start: Date.now(), retry: !!(opts && opts.retry), pending: null});
+  if (!S.retry){ store.progress[key] = {order, answers: [], start: S.start, shuffle: S.shuffle, n}; save(); }
+  go("question", key);
+}
+function resumeQuiz(key){
+  const p = validProgress(key);
+  if (!p){ startQuiz(key); return; }
+  Object.assign(S, {key, order: p.order, answers: p.answers.slice(), idx: p.answers.length, start: p.start || Date.now(), retry: false, shuffle: !!p.shuffle, pending: null});
+  go("question", key);
+}
+function persist(){ if (!S.retry){ store.progress[S.key] = {order: S.order, answers: S.answers.slice(), start: S.start, shuffle: S.shuffle, n: pool(S.key).length}; save(); } }
+function renderIntro(){
+  if (isMenu(S.key)){ renderMenu(); return; }
+  const key = S.key, list = pool(key), n = list.length;
+  document.title = "Quiz · " + fullTitle(key);
+  const p = validProgress(key);
+  const inProgress = p && p.answers.length > 0 && p.answers.length < p.order.length;
+  const b = store.best[key];
+  const shuffle = el("input", {type: "checkbox", id: "shuffle"});
+  shuffle.checked = S.shuffle;
+  shuffle.addEventListener("change", () => { S.shuffle = shuffle.checked; });
+  const types = new Set(list.map(q => q.type));
+  const blocked = PHONE && types.has("schema");   // série de schémas sur smartphone : pas de démarrage
+  const actions = el("div", {class: "row"});
+  if (blocked){
+    actions.append(navLink("Retour à la révision", "intro", PARTIES[partOf(key)].rev, "btn outline big"));
+  } else if (inProgress){
+    actions.append(button("Reprendre à la question " + (p.answers.length + 1), "primary big", () => resumeQuiz(key)),
+      button("Recommencer", "outline big", () => startQuiz(key)));
+  } else {
+    actions.append(button(isSeries(key) ? "Commencer la série" : "Commencer le quiz", "primary big", () => startQuiz(key)));
+  }
+  const brief = types.size === 1 && types.has("qcm")
+    ? [el("p", {text: "Lisez la question et choisissez une réponse."}), el("p", {text: "La correction s’affiche aussitôt, avec la citation du cours."}), el("p", {text: "Une synthèse termine le quiz."})]
+    : [types.has("qcm") ? el("p", {text: "QCM : choisissez une réponse. La correction s’affiche aussitôt."}) : null,
+       types.has("ouverte") ? el("p", {text: "Question ouverte : écrivez votre réponse, affichez la correction, puis évaluez-vous."}) : null,
+       types.has("schema") ? el("p", {text: "Schéma : choisissez l’étiquette de chaque case, puis validez."}) : null,
+       el("p", {text: "Chaque correction cite le cours. Une synthèse termine la série."})];
+  put(
+    hero(key, title(key)),
+    tools(key),
+    el("section", {class: "start"},
+      el("ul", {class: "facts"},
+        el("li", {}, el("b", {text: String(n)}), " " + unitOf(list)),
+        el("li", {}, "Durée" + NB + ": ", el("b", {text: "environ " + minutes(list) + NB + "min"})),
+        b ? el("li", {}, "Meilleur score" + NB + ": ", el("b", {text: fmt(b.score) + " / " + b.total})) : null),
+      types.has("schema") ? devNote(SCHEMA_INTRO) : null,
+      blocked ? null : el("div", {class: "brief"}, ...brief.filter(Boolean)),
+      blocked ? null : el("label", {class: "check", for: "shuffle"}, shuffle, "Mélanger l’ordre des questions"),
+      actions,
+      types.has("qcm") ? el("p", {class: "hint", text: "Clavier" + NB + ": touches A, B, C, D pour répondre, Entrée pour continuer."}) : null));
+}
+
+/* ---------- schémas à compléter ---------- */
+function cellOf(txt, slot){
+  const m = /^\{(\d+)\}$/.exec(String(txt == null ? "" : txt).trim());
+  return m ? slot(Number(m[1])) : lines(txt);
+}
+/* Liste déroulante native, recouverte d'un libellé qui passe à la ligne (le choix reste lisible en entier, sur deux lignes au plus). */
+const CHOOSE = "Choisir…";
+function syncPick(s){
+  const lab = s.parentNode.querySelector(".pick-lab");
+  if (!lab) return;
+  lab.textContent = s.value === "" ? CHOOSE : s.options[s.selectedIndex].text;
+  lab.classList.toggle("empty", s.value === "");
+}
+function slotFactory(q, mode){
+  return k => {
+    if (mode === "solution") return el("span", {class: "slot sol"}, el("span", {class: "num", text: String(k + 1), "aria-hidden": "true"}), el("span", {class: "lab", text: q.sol[k]}));
+    const s = el("select", {"aria-label": "Case " + (k + 1), "data-k": String(k)});
+    s.append(el("option", {value: "", text: CHOOSE}));
+    q.opts[k].forEach((o, j) => s.append(el("option", {value: String(j), text: o})));
+    s.addEventListener("change", () => { syncPick(s); shrink(); });
+    return el("span", {class: "slot"}, el("span", {class: "num", text: String(k + 1), "aria-hidden": "true"}),
+      el("span", {class: "pick"}, s, el("span", {class: "pick-lab empty", "aria-hidden": "true", text: CHOOSE}), el("span", {class: "pick-fix", "aria-hidden": "true"})));
+  };
+}
+/* ---------- figures : chaque schéma reprend la mise en page de la figure du cours ----------
+   Ordinateur et tablette : canevas de W × H unités (--u = largeur d'une unité). Textes et cases sont placés
+   en unités [x, y, largeur, hauteur, taille du texte] ; traits, cadres et formes sont dessinés en SVG.
+   Téléphone (≤ 560 px) : le SVG est masqué et les mêmes éléments s'empilent dans l'ordre du document. */
+/* une ligne réduite à « ↓ » devient une flèche (agrandie sur ordinateur) ; le tout reste un seul bloc de texte */
+function lines(t){
+  const ps = typo(String(t == null ? "" : t)).split("\n");
+  const f = ps.includes("↓") ? el("span", {class: "lns"}) : document.createDocumentFragment();
+  ps.forEach((p, i) => { if (i) f.append(" ", el("br")); f.append(p === "↓" ? el("span", {class: "ar-l", text: p}) : p); });
+  return f;
+}
+function fx(cls, g, kids, attrs){
+  const st = "--x:" + g[0] + ";--y:" + g[1] + ";--w:" + g[2] + ";--h:" + g[3] + (g[4] ? ";--fs:" + g[4] : "");
+  return el("div", Object.assign({class: "fx " + cls, style: st}, attrs || {}), ...[].concat(kids));
+}
+function grp(cls, ...kids){ return el("div", {class: "grp " + cls}, ...kids); }
+/* front : dessin placé devant les cases (ex. flèche qui passe devant un cadre, comme dans le cours) */
+function figure(model, W, H, maxw, svg, items, front){
+  const layer = (s, cls) => el("div", {class: "fig-svg" + cls, "aria-hidden": "true", html: '<svg viewBox="0 0 ' + W + " " + H + '">' + s + "</svg>"});
+  return el("div", {class: "fig fig-" + model, style: "--W:" + W + ";--H:" + H + ";--maxw:" + maxw}, layer(svg, ""), ...items, front ? layer(front, " fig-front") : null);
+}
+let FIG_ID = 0;
+const r1 = v => Math.round(v * 10) / 10, pt = p => r1(p[0]) + "," + r1(p[1]);
+function sLine(x1, y1, x2, y2, cls){ return '<line class="' + cls + '" x1="' + r1(x1) + '" y1="' + r1(y1) + '" x2="' + r1(x2) + '" y2="' + r1(y2) + '"/>'; }
+function sRect(x, y, w, h, cls, rx){ return '<rect class="' + cls + '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '"' + (rx ? ' rx="' + rx + '"' : "") + "/>"; }
+function sPoly(pts, cls){ return '<polygon class="' + cls + '" points="' + pts.map(pt).join(" ") + '"/>'; }
+function sPolyline(pts, cls){ return '<polyline class="' + cls + '" points="' + pts.map(pt).join(" ") + '"/>'; }
+function sPath(d, cls){ return '<path class="' + cls + '" d="' + d + '"/>'; }
+function sText(x, y, t, cls, rot){ return '<text class="' + cls + '" x="' + x + '" y="' + y + '"' + (rot ? ' transform="rotate(' + rot + " " + x + " " + y + ')"' : "") + ">" + t + "</text>"; }
+/* pointe de flèche en (x, y), orientée selon l'angle a */
+function sHead(x, y, a, s, cls){ return sPoly([[x, y], [x - s * Math.cos(a - .45), y - s * Math.sin(a - .45)], [x - s * Math.cos(a + .45), y - s * Math.sin(a + .45)]], cls); }
+function sArrow(x1, y1, x2, y2, cls, s, both){
+  const a = Math.atan2(y2 - y1, x2 - x1), k = s * .75;
+  return sLine(both ? x1 + k * Math.cos(a) : x1, both ? y1 + k * Math.sin(a) : y1, x2 - k * Math.cos(a), y2 - k * Math.sin(a), cls)
+    + sHead(x2, y2, a, s, cls + "-h") + (both ? sHead(x1, y1, a + Math.PI, s, cls + "-h") : "");
+}
+/* flèche pleine en arc de cercle, de l'angle a1 à l'angle a2 (degrés) : bande de largeur w, pointe de largeur hw et de longueur hl */
+function sArcArrow(cx, cy, R, a1, a2, w, hw, hl, cls){
+  const rad = d => d * Math.PI / 180, ab = a2 - Math.sign(a2 - a1) * hl / R * 180 / Math.PI;
+  const P = (a, r) => [cx + r * Math.cos(rad(a)), cy + r * Math.sin(rad(a))], out = [], inn = [];
+  for (let i = 0; i <= 12; i++){ const a = a1 + (ab - a1) * i / 12; out.push(P(a, R + w / 2)); inn.unshift(P(a, R - w / 2)); }
+  return sPoly(out.concat([P(ab, R + hw / 2), P(a2, R), P(ab, R - hw / 2)], inn), cls);
+}
+/* flèche pleine effilée le long d'une courbe de Bézier : largeur w0 au départ, w1 avant la pointe (hw = 0 : sans pointe) */
+function sSwoosh(p0, c1, c2, p3, w0, w1, hw, hl, cls){
+  const N = 40, P = [], L = [0];
+  for (let i = 0; i <= N; i++){
+    const t = i / N, u = 1 - t;
+    P.push([0, 1].map(k => u * u * u * p0[k] + 3 * u * u * t * c1[k] + 3 * u * t * t * c2[k] + t * t * t * p3[k]));
+    if (i) L.push(L[i - 1] + Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]));
+  }
+  let m = N;
+  while (hw && m > 1 && L[N] - L[m] < hl) m--;
+  const nrm = i => { const a = P[Math.max(0, i - 1)], b = P[Math.min(N, i + 1)], d = Math.hypot(b[0] - a[0], b[1] - a[1]); return [-(b[1] - a[1]) / d, (b[0] - a[0]) / d]; };
+  const off = (i, d) => { const n = nrm(i); return [P[i][0] + n[0] * d, P[i][1] + n[1] * d]; }, left = [], right = [];
+  for (let i = 0; i <= m; i++){ const w = (w0 + (w1 - w0) * i / m) / 2; left.push(off(i, w)); right.unshift(off(i, -w)); }
+  return sPoly(left.concat(hw ? [off(m, hw / 2), p3, off(m, -hw / 2)] : [], right), cls);
+}
+/* flèche « bloc » droite : de (x1, y1) à la pointe (x2, y2), corps de largeur w, pointe de largeur hw et de longueur hl */
+function sBlock(x1, y1, x2, y2, w, hw, hl, cls){
+  const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L, bx = x2 - ux * hl, by = y2 - uy * hl;
+  const Q = (x, y, d) => [x - uy * d, y + ux * d];
+  return sPoly([Q(x1, y1, w / 2), Q(bx, by, w / 2), Q(bx, by, hw / 2), [x2, y2], Q(bx, by, -hw / 2), Q(bx, by, -w / 2), Q(x1, y1, -w / 2)], cls);
+}
+function hexa(cx, cy, w, h, k){ k = k == null ? h * .42 : k; return [[cx - w / 2, cy], [cx - w / 2 + k, cy - h / 2], [cx + w / 2 - k, cy - h / 2], [cx + w / 2, cy], [cx + w / 2 - k, cy + h / 2], [cx - w / 2 + k, cy + h / 2]]; }
+function chevron(x, y, w, h, tip){ return [[x, y], [x + w - tip, y], [x + w, y + h / 2], [x + w - tip, y + h], [x, y + h]]; }
+function puces(items, cls){ return el("ul", {class: "puces " + (cls || "")}, ...items.map(t => el("li", {text: typo(t)}))); }
+/* Les positions [x, y, largeur, hauteur] reprennent celles des figures du cours, mesurées sur le PDF et ramenées à 640 unités de large. */
+
+/* 1. Modèle du SMQ basé sur des processus (cours p. 10, figure 1) */
+function figSmq(q, c){
+  const z = q.zones;
+  const s = sRect(7, 99, 96, 307, "sh-r") + sRect(1, 93, 96, 307, "bx") + sRect(543, 99, 93, 307, "sh-r") + sRect(537, 93, 93, 307, "bx")
+    + sRect(12, 316, 78, 62, "bx-in") + sRect(545, 207, 78, 70, "bx-in")
+    + '<circle class="sh" cx="321" cy="255" r="157"/><circle class="ring" cx="313" cy="247" r="157"/>'
+    + sRect(268, 110, 102, 41, "sh-r", 7) + sRect(265, 107, 102, 41, "bx", 7) + sRect(188, 220, 101, 41, "sh-r", 7) + sRect(185, 217, 101, 41, "bx", 7)
+    + sRect(343, 220, 101, 41, "sh-r", 7) + sRect(340, 217, 101, 41, "bx", 7) + sRect(411, 328, 75, 42, "sh-r", 7) + sRect(408, 325, 75, 42, "bx", 7)
+    + sRect(269, 328, 101, 41, "sh-r", 7)
+    + [[110, -125, -157], [111, -21, -54], [105, 164, 131], [100, 50, 15]].map(([R, a1, a2]) => sArcArrow(316, 250, R, a1, a2, 12, 28, 15, "cy-s") + sArcArrow(313, 247, R, a1, a2, 12, 28, 15, "cy")).join("")
+    + sArrow(90, 346, 266, 346, "fl", 9) + sLine(367, 346, 408, 346, "fl") + sArrow(483, 346, 537, 346, "fl", 9)
+    + sArrow(97, 128, 265, 128, "dash", 8, true) + sArrow(441, 237, 545, 237, "dash", 8, true)
+    + sArrow(112, 487, 165, 487, "fl", 8) + sArrow(112, 506, 165, 506, "dash", 8);
+  /* grande flèche en relief (face avant et côtés), devant le cadre du haut comme dans le cours */
+  const big = sPoly([[452, 50], [462, 60], [447, 73], [456, 105], [463, 140], [467, 175], [459, 187], [449, 182], [449, 155], [446, 125], [440, 95], [434, 67]], "big-s")
+    + sPoly([[388, 97], [397, 103], [416, 96], [410, 82]], "big-s")
+    + sPoly([[396, 50], [452, 50], [434, 67], [440, 95], [446, 125], [449, 155], [449, 182], [436, 193], [437, 170], [433, 145], [426, 122], [418, 100], [410, 82], [388, 97]], "big-f");
+  return figure("smq", 640, 514, "46rem", s, [
+    fx("sl top", [80, 2, 466, 52, 14.5], c(z.haut)),
+    grp("g-in", fx("t cl", [1, 222, 96, 26, 13], lines(z.clients)), fx("sl", [12, 316, 78, 62, 11.5], c(z.entree)), fx("cap ce", [117, 312, 82, 32, 10], lines(z.el_entree))),
+    grp("g-cyc",
+      fx("t c1", [265, 107, 102, 41, 10.5], lines(z.direction)), fx("t c2", [185, 217, 101, 41, 10.5], lines(z.ressources)),
+      fx("t c3", [340, 217, 101, 41, 10.5], lines(z.mesures)), fx("sl c4", [266, 325, 101, 41, 11], c(z.realisation)),
+      fx("t c5", [408, 325, 75, 42, 11], lines(z.produit)), el("div", {class: "cyc-ic", "aria-hidden": "true", text: "↻"})),
+    grp("g-out", fx("cap cs", [487, 312, 52, 32, 10], lines(z.el_sortie)), fx("t cl", [537, 184, 93, 22, 13], lines(z.clients)), fx("sl", [545, 207, 78, 70, 11.5], c(z.sortie))),
+    grp("g-leg", fx("leg b", [107, 452, 120, 18, 10], lines(z.legende)), fx("leg", [174, 478, 240, 18, 10], lines(z.valeur)), fx("leg", [174, 497, 240, 18, 10], lines(z.infos)))], big);
+}
+
+/* 2. Familles de documents (cours p. 10-11) : titre de chaque liste à retrouver */
+function figListe(q, c){
+  return el("div", {class: "fam-l"}, ...q.blocs.map(b => el("section", {class: "lst-b"}, el("div", {class: "lst-h"}, c(b.titre)), puces(b.puces))));
+}
+
+/* 3. Diagramme d'Ishikawa (cours p. 17) : deux arêtes en haut, trois en bas, « Effet » à droite */
+function figFish(q, c){
+  const b = q.branches;
+  let s = sLine(8, 140.5, 478, 140.5, "sp") + sRect(478, 121, 158, 39, "bx eff-b");
+  [[130.4, 31, 208, 139], [265.4, 31, 343, 139], [52, 257.6, 142, 142], [185.6, 257.6, 275.6, 142], [318.6, 257.6, 410, 142]].forEach(([x0, y0, x1, y1]) => { s += sArrow(x0, y0, x1, y1, "bone", 14); });
+  return figure("fish", 640, 293, "44rem", s, [
+    grp("g-top", fx("sl", [70, 0, 120, 30, 13], c(b[0])), fx("sl", [205, 0, 120, 30, 13], c(b[1]))),
+    el("div", {class: "spine-m", "aria-hidden": "true"}),
+    grp("g-bot", fx("sl", [0, 262.5, 104, 30, 13], c(b[2])), fx("sl", [125, 262.5, 120, 30, 13], c(b[3])), fx("sl", [258.6, 262.5, 120, 30, 13], c(b[4]))),
+    fx("t eff", [478, 121, 158, 39, 17], lines(q.effet))]);
+}
+
+/* 4. Flux industriel (cours p. 20) */
+function figFlux(q, c){
+  const e = q.etapes, F = q.fournisseurs;
+  const loop = (p3, c1, c2, hw, hl) => sSwoosh([500, 503], c1, c2, p3, 5, 8, hw, hl, "loop");
+  const s = sRect(219, 2, 418, 471, "frame")
+    + sRect(297, 23, 151, 87, "bx", 14) + sRect(297, 138, 190, 88, "bx", 14) + sRect(297, 253, 189, 89, "bx", 14) + sRect(292, 369, 151, 88, "bx", 14)
+    + '<ellipse class="bx" cx="368" cy="512" rx="81" ry="29"/>'
+    + sRect(4, 140, 132, 55, "bx", 10) + sRect(2, 296, 132, 55, "bx", 10) + sRect(1, 385, 133, 56, "bx", 10) + sRect(94, 221, 120, 55, "bx", 10)
+    + sArrow(368, 110, 368, 138, "thick", 14) + sArrow(368, 226, 368, 253, "thick", 14) + sArrow(368, 346, 368, 369, "thick", 14) + sArrow(368, 457, 368, 483, "thick", 14)
+    + sArrow(136, 167, 238, 167, "thick", 14) + sArrow(134, 324, 238, 324, "thick", 14) + sArrow(134, 413, 238, 413, "thick", 14)
+    + sPolyline([[297, 197], [157, 197], [157, 208]], "thick") + sHead(157, 221, Math.PI / 2, 14, "thick-h")
+    + sPolyline([[157, 276], [157, 293], [226, 293]], "thick") + sHead(238, 293, 0, 14, "thick-h")
+    + loop([500, 402], [554, 483], [546, 423], 20, 13) + loop([497, 298], [577, 482], [568, 319], 24, 16) + loop([497, 175], [585, 493], [575, 196], 24, 16)
+    + loop([500, 70], [587, 497], [596, 92], 25, 16) + sSwoosh([497, 505], [523, 501], [542, 471], [552, 432], 15, 7, 0, 0, "loop");
+  return figure("flux", 640, 576, "44rem", s, [
+    grp("g-e0", fx("t st", [297, 23, 151, 87, 12.5], lines(e[0].t))),
+    grp("g-e1", fx("t fo", [4, 140, 132, 55, 13], lines(F)), fx("sl lime l0", [238, 145, 76, 37, 10.5], c(e[1].gauche)),
+      fx("t st", [314, 138, 112, 88, 12.5], lines(e[1].t)), fx("sl lime rot r0", [426, 138, 61, 88, 11], c(e[1].droite)),
+      fx("t so", [94, 221, 120, 55, 13], lines(q.sous_traitance))),
+    grp("g-e2", fx("t fo", [2, 296, 132, 55, 13], lines(F)), fx("sl lime l1", [238, 270, 76, 72, 10.5], c(e[2].gauche)),
+      fx("t st", [314, 253, 110, 56, 12.5], lines(e[2].t)), fx("sl lime rot r1", [424, 253, 62, 89, 11], c(e[2].droite)),
+      fx("sl lime b1", [335, 309, 70, 37, 10.5], c(e[2].bas))),
+    grp("g-e3", fx("t fo", [1, 385, 133, 56, 13], lines(F)), fx("sl lime l2", [238, 393, 76, 37, 10.5], c(e[3].gauche)),
+      fx("t st", [314, 369, 129, 88, 12.5], lines(e[3].t))),
+    fx("t cli", [287, 483, 162, 58, 13.5], lines(q.client)),
+    fx("sl rot loop-s", [584, 158, 42, 262, 12], c(q.boucle)),
+    fx("t cadre", [386, 546, 246, 26, 10.5], lines(q.cadre))]);
+}
+
+/* 5. Organisation pyramidale de la traçabilité (cours p. 23) */
+function figTrac(q, c){
+  const id = "trg" + (++FIG_ID), b = q.bandes;
+  const s = '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="tg0"/><stop offset=".42" class="tg1"/><stop offset="1" class="tg2"/></linearGradient></defs>'
+    + '<polygon class="tri" fill="url(#' + id + ')" points="402,40 163,508 640,508"/>'
+    + sLine(116, 206, 594, 206, "band") + sLine(116, 348, 594, 348, "band")
+    + sArrow(141, 40, 141, 206, "dim", 8, true) + sArrow(141, 206, 141, 348, "dim", 8, true) + sArrow(141, 348, 141, 506, "dim", 8, true)
+    + sArrow(401, 190, 401, 216, "tra", 7) + sArrow(401, 343, 401, 368, "trb", 7);
+  return figure("trac", 640, 510, "42rem", s, [
+    fx("sl apex", [326, 0, 152, 34, 13], c(q.sommet)),
+    grp("g-b g1", fx("sl", [6, 90.5, 128, 44, 12], c(b[0].g)), fx("t tb tb1", [341, 124, 120, 60, 16.5], lines(b[0].t))),
+    grp("g-b g2", fx("sl", [6, 257, 128, 44, 12], c(b[1].g)), fx("t tb tb2", [321, 219, 160, 113, 16.5], lines(b[1].t))),
+    grp("g-b g3", fx("sl", [6, 403, 128, 50, 12], c(b[2].g)), fx("t tb tb3", [281, 363, 240, 138, 16.5], lines(b[2].t)))]);
+}
+
+/* 6. Normes et domaines (cours p. 28-30) : « norme – domaine », comme les titres du cours */
+function figNormes(q, c){
+  return el("ul", {class: "nor-l"}, ...q.lignes.map(r => el("li", {}, el("b", {class: "nm", text: typo(r[0])}), el("span", {class: "tiret", "aria-hidden": "true", text: "–"}), el("div", {class: "dom"}, c(r[1])))));
+}
+
+/* 7. Structure de la documentation du SMQ (cours p. 42) */
+function figDoc(q, c){
+  const id = "dcg" + (++FIG_ID), N = q.niveaux, YL = [33, 97, 161, 225], YC = [35, 98, 162, 226], DIA = {1: 124.5, 2: 191.5};
+  let s = '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" class="dg0"/><stop offset="1" class="dg1"/></linearGradient></defs>'
+    + '<polygon class="tri" fill="url(#' + id + ')" points="140,0 21,300 268,300"/>';
+  N.forEach((l, i) => {
+    if (l.g) s += sPoly([[1, DIA[i]], [80.5, DIA[i] - 28], [160, DIA[i]], [80.5, DIA[i] + 28]], "dia");
+    s += sPoly(chevron(310, YC[i], 222, 57, 22), "chev");
+  });
+  s += sRect(543, 44, 77, 38, "pr", 7) + sRect(543, 108, 77, 38, "pr", 7) + sRect(543, 171, 77, 38, "pr", 7)
+    + sArrow(581, 84, 581, 106, "pra", 9) + sArrow(581, 148, 581, 169, "pra", 9)
+    + sRect(6, 304, 265, 40, "vio", 7) + sPoly(chevron(275, 300, 364, 47, 24), "chev vio-o");
+  return figure("doc", 640, 348, "46rem", s, [
+    ...N.map((l, i) => grp("g-r", l.g ? fx("t dia-t", [30, DIA[i] - 18, 100, 36, 8.5], lines(l.g)) : null,
+      fx("sl lvl", [144, YL[i], 158, 57, 15], c(l.c)), fx("sl shape role", [314, YC[i] + 5, 196, 47, 12], c(l.d)))),
+    grp("g-base", fx("t vio-t", [6, 304, 265, 40, 14], lines(q.base.c)), fx("t base-d", [285, 300, 330, 47, 13], lines(q.base.d))),
+    grp("g-pr", fx("t pr-t", [543, 44, 77, 38, 12], lines(q.droite[0])), fx("t pr-t", [543, 108, 77, 38, 12], lines(q.droite[1])), fx("t pr-t", [543, 171, 77, 38, 12], lines(q.droite[2])))]);
+}
+
+/* 8. Le COQ schématiquement (cours p. 49) */
+function figCoq(q, c){
+  const H = q.haut, B = q.bas, lst = (title, items) => el("div", {class: "lst"}, el("b", {text: typo(title)}), puces(items));
+  const s = sRect(32, 3, 575, 77.5, "fr-b") + sPoly(hexa(123.5, 46.5, 161, 65, 31), "hx-b") + sPoly(hexa(508, 45.5, 166, 61, 31), "hx-b")
+    + sRect(0.5, 87, 171.5, 127, "bx") + sRect(456, 87, 183, 124, "bx")
+    + sBlock(197, 69, 219, 87, 14, 31, 15, "ab-b") + sBlock(435, 69, 413, 87, 14, 31, 15, "ab-b")
+    + sPoly([[211, 132.5], [247, 87], [389, 87], [432, 132.5], [389, 178], [247, 178]], "hx-g")
+    + sBlock(199.5, 225, 236, 190, 13.5, 29, 15, "ab-r") + sBlock(437.5, 225, 401, 190, 13.5, 29, 15, "ab-r")
+    + sRect(13, 225, 621, 208, "fr-r") + sPoly(hexa(132, 277, 218, 90, 42), "hx-b") + sPoly(hexa(511.5, 277, 217, 90, 42), "hx-b")
+    + sRect(30, 329, 96, 77, "bx") + sRect(139, 328, 169, 97, "bx") + sRect(395, 329, 108, 80, "bx") + sRect(519, 329, 95, 96, "bx");
+  return figure("coq", 640, 436, "44rem", s, [
+    grp("g-ciq", fx("sl fam fam-b", [222, 19, 196, 36, 12], c(H.titre)),
+      grp("g-k", fx("sl shape hx", [70, 27, 107, 39, 12], c(H.gauche)), fx("t lt lt-h", [10, 92, 160, 118, 11], puces(H.liste_g))),
+      grp("g-k", fx("sl shape hx", [455, 26, 106, 39, 12], c(H.droite)), fx("t lt lt-h", [463, 91.5, 173, 118, 11], puces(H.liste_d)))),
+    fx("t coq-c", [255, 95, 134, 76, 14], lines(q.centre)),
+    grp("g-cnq", fx("sl fam fam-r", [244, 268, 152, 36, 12], c(B.titre)),
+      grp("g-k", fx("sl shape hx", [72, 257, 120, 40, 12], c(B.gauche)),
+        fx("t lt lt-b", [36, 333, 88, 72, 10.6], lst(B.listes_g[0][0], B.listes_g[0][1])), fx("t lt lt-b", [145, 333, 161, 90, 10.6], lst(B.listes_g[1][0], B.listes_g[1][1]))),
+      grp("g-k", fx("sl shape hx", [452, 257, 120, 40, 12], c(B.droite)),
+        fx("t lt lt-b", [399, 333, 102, 74, 10.6], lst(B.listes_d[0][0], B.listes_d[0][1])), fx("t lt lt-b", [523, 335, 89, 88, 10.6], lst(B.listes_d[1][0], B.listes_d[1][1]))))]);
+}
+
+/* 9. Le COQ graphiquement (cours p. 50) : graphique de tableur, titres d'axes et légende aux places du cours */
+function chartCoq(title){
+  const X = v => 69 + (v - 60) / 40 * 536, Y = v => 367 - v / 2e6 * 316;
+  const xs = [70, 75, 80, 85, 90, 95], ciq = [1e5, 1.5e5, 2.5e5, 5e5, 9e5, 1.5e6], cnq = [1.8e6, 1.1e6, 5.5e5, 3e5, 2e5, 1.5e5];
+  const coq = ciq.map((v, i) => v + cnq[i]), path = arr => svgSmooth(xs.map((x, i) => [X(x), Y(arr[i])]));
+  let s = sText(315, 29, title, "ch-title");
+  for (let k = 0; k <= 10; k++){ s += sLine(69, Y(k * 2e5), 605, Y(k * 2e5), k ? "grid" : "axis") + sText(57, Y(k * 2e5) + 3.5, (k * 2e5).toLocaleString("fr-CH").replace(/\s/g, "’"), "tick end" + (k % 2 ? " odd" : "")); }
+  for (let v = 60; v <= 100; v += 5){ s += sLine(X(v), Y(2e6), X(v), Y(0), "grid") + sText(X(v), 386, String(v), "tick mid"); }
+  s += sPath(path(ciq), "cv cv-b") + sPath(path(cnq), "cv cv-o") + sPath(path(coq), "cv cv-g");
+  return '<svg viewBox="0 0 628 395" role="img" aria-label="Graphique : trois courbes de coûts en fonction d’un indice, de 60 à 100">' + s + "</svg>";
+}
+function svgSmooth(pts){
+  let d = "M" + pt(pts[0]);
+  for (let i = 0; i < pts.length - 1; i++){
+    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+    d += " C" + pt([p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6]) + " " + pt([p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6]) + " " + pt(p2);
+  }
+  return d;
+}
+function figGrapheCoq(q, c){
+  const lg = (cls, k, g) => fx("sl lgi", g, [el("span", {class: "lg " + cls, "aria-hidden": "true"}), c(q.courbes[k])]);
+  return figure("gcoq", 640, 518, "44rem", sRect(0.5, 35, 628, 429, "frame-l"), [
+    fx("sl ax-y", [0, 0, 150, 32, 12], c(q.axes.y), {"data-cap": "Titre de l’axe vertical"}),
+    fx("chart", [0, 35, 628, 395], el("div", {class: "chart-svg", html: chartCoq(typo(q.titre_graphique))})),
+    grp("g-lg", lg("lg-b", 0, [125, 432, 125, 28, 11.5]), lg("lg-o", 1, [257, 432, 125, 28, 11.5]), lg("lg-g", 2, [389, 432, 125, 28, 11.5])),
+    fx("sl ax-x", [490, 486, 150, 32, 12], c(q.axes.x), {"data-cap": "Titre de l’axe horizontal"})]);
+}
+
+const FIGS = {smq: figSmq, liste: figListe, ishikawa: figFish, flux: figFlux, tracabilite: figTrac, normes: figNormes, docsmq: figDoc, coq: figCoq, graphe_coq: figGrapheCoq};
+function buildSchema(q, mode){
+  const slot = slotFactory(q, mode), c = t => cellOf(t, slot), f = FIGS[q.modele];
+  return el("div", {class: "schema sch-" + q.modele}, f ? f(q, c) : el("p", {text: "Modèle de schéma inconnu : " + q.modele}));
+}
+/* étiquette juste à afficher pour chaque case fausse ; ordre libre : les étiquettes manquantes vont aux cases fausses, dans l'ordre */
+function fixes(q, res){
+  const rest = q.libre ? res.rest.slice() : null;
+  return res.ok.map((ok, k) => ok ? null : q.libre ? rest.shift() : q.sol[k]);
+}
+function markSchema(root, q, a){
+  const res = grade(q, a.v), fx = fixes(q, res);
+  root.querySelectorAll("select").forEach(s => {
+    const k = Number(s.dataset.k), w = s.closest(".slot");
+    s.value = a.v[k] >= 0 ? String(a.v[k]) : ""; s.disabled = true; syncPick(s);
+    w.classList.remove("ok", "ko"); w.classList.add(res.ok[k] ? "ok" : "ko");
+    w.querySelectorAll(".fix").forEach(f => f.remove());
+    if (fx[k]) w.append(el("span", {class: "fix", text: "→ " + fx[k]}));
+    const pf = w.querySelector(".pick-fix");
+    if (pf) pf.textContent = fx[k] ? "→ " + fx[k] : "";
+  });
+  return res;
+}
+
+/* ---------- question ---------- */
+function current(){ return pool(S.key)[S.order[S.idx]]; }
+function segs(){
+  return el("ol", {class: "segs", "aria-hidden": "true"}, ...S.order.map((qi, k) => {
+    const a = S.answers[k];
+    return el("li", {class: a === undefined ? (k === S.idx ? "now" : "") : stat(pool(S.key)[qi], a)});
+  }));
+}
+function scoreSoFar(){ return S.answers.reduce((t, a, k) => t + pts(pool(S.key)[S.order[k]], a), 0); }
+function nextRow(validate){
+  const last = S.idx === S.order.length - 1;
+  return el("div", {class: "next", id: "nextBox"},
+    el("span", {class: "score-live", text: "Score" + NB + ": " + fmt(scoreSoFar()) + " / " + (S.idx + 1)}),
+    validate ? button("Valider", "primary big", validateSchema, {id: "validateBtn"}) : null,
+    button(last ? "Voir la synthèse" : "Question suivante", "primary big", next, {id: "nextBtn"}));
+}
+/* worst : état le plus encombrant (tous les mots-clés trouvés), pour réserver la place avant la correction */
+function chips(q, text, worst){
+  const t = norm(text || ""), written = worst || t.trim().length > 0;
+  const found = q.k.map(k => worst || k.keys.some(x => x.length <= 3 ? t.includes(" " + x + " ") : t.includes(" " + x)));
+  const n = found.filter(Boolean).length;
+  return el("div", {class: "chips"},
+    el("p", {class: "chips-t", text: written ? "Mots-clés présents dans votre réponse" + NB + ": " + n + " / " + q.k.length : "Mots-clés de la réponse" + NB + ":"}),
+    el("ul", {}, ...q.k.map((k, i) => el("li", {class: "chip" + (written && found[i] ? " ok" : "")}, (written && found[i] ? "✓ " : "") + k.label))));
+}
+function renderQuestion(){
+  const q = current(), total = S.order.length, n = S.idx + 1;
+  document.title = "Question " + n + " / " + total + " · " + fullTitle(S.key);
+  let main, side;
+  if (q.type === "ouverte"){
+    const ta = el("textarea", {id: "rep", rows: "5", placeholder: "Écrivez votre réponse ici.", "aria-labelledby": "qt"});
+    main = el("div", {class: "open"}, ta,
+      el("div", {class: "row"}, button("Afficher la correction", "primary big", reveal, {id: "revealBtn"}),
+        el("span", {class: "hint-inline", text: "Ctrl" + NB + "+" + NB + "Entrée"})));
+    side = el("div", {class: "side", id: "side"},
+      el("p", {class: "await", text: "Écrivez votre réponse, puis affichez la correction."}),
+      el("div", {class: "fb model", id: "fb"}, el("strong", {text: "Réponse attendue" + NB + ":"}), " " + q.m, el("div", {id: "chips"}, chips(q, "", true)), citation(q)),
+      el("div", {class: "selfeval", id: "selfeval"}, el("p", {text: "Évaluez votre réponse" + NB + ":"}),
+        el("div", {class: "row"}, ...LEVELS.map(l => button(l.label, "outline lvl lvl-" + String(l.s).replace(".", "-"), () => assess(l.s), {"data-s": String(l.s)})))),
+      nextRow());
+  } else if (q.type === "schema"){
+    main = el("div", {class: "schema-wrap"}, el("p", {class: "consigne", text: q.consigne}), el("div", {id: "schema"}, buildSchema(q, "play")));
+    side = el("div", {class: "side t-schema", id: "side"},
+      el("p", {class: "await", text: "Complétez le schéma, puis validez. La correction s’affiche ici."}),
+      el("div", {class: "fb ko", id: "fb"}, el("strong", {text: "0 / " + q.sol.length + " cases justes."}), " " + q.e, citation(q)),
+      nextRow(true));
+  } else {
+    main = el("div", {class: "opts", role: "group", "aria-labelledby": "qt"});
+    q.o.forEach((o, j) => {
+      const b = el("button", {type: "button", class: "opt", "data-j": String(j)},
+        el("span", {class: "l", text: L[j], "aria-hidden": "true"}),
+        el("span", {}, el("span", {class: "vh", text: "Réponse " + L[j] + " : "}), o),
+        el("span", {class: "tag"}));
+      b.addEventListener("click", () => choose(j));
+      main.append(b);
+    });
+    side = el("div", {class: "side", id: "side"},
+      el("p", {class: "await", text: "Choisissez une réponse. La correction s’affiche ici."}),
+      el("div", {class: "fb ko", id: "fb"}, el("strong", {text: "Faux. Bonne réponse" + NB + ": " + L[q.a] + "."}), " " + q.e, citation(q)),
+      nextRow());
+  }
+  put(
+    el("div", {class: "qhead"},
+      el("span", {}, "Question ", el("b", {text: n + " / " + total}), S.retry ? " · questions à revoir" : ""),
+      button("Quitter", "link", () => go("intro", S.key))),
+    segs(),
+    el("section", {class: "qtitle"},
+      el("span", {class: "qnum", text: String(n), "aria-hidden": "true"}),
+      el("h2", {id: "qt", tabindex: "-1"}, el("span", {class: "qchap", text: chapLabel(q) + (q.type === "ouverte" ? " · question ouverte" : q.type === "schema" ? " · schéma à compléter" : "")}), q.q)),
+    el("div", {class: "qgrid t-" + q.type}, main, side));
+  if (S.answers[S.idx] !== undefined) showFeedback(false);
+  else if (q.type === "ouverte" && S.pending != null){ document.getElementById("rep").value = S.pending; reveal(); }
+  else document.getElementById(q.type === "ouverte" ? "rep" : "qt").focus({preventScroll: true});
+}
+function choose(j){
+  if (S.view !== "question" || S.answers[S.idx] !== undefined) return;
+  S.answers[S.idx] = j;
+  persist();
+  showFeedback(true);
+}
+function reveal(){
+  if (S.view !== "question" || S.answers[S.idx] !== undefined) return;
+  const q = current(), ta = document.getElementById("rep");
+  S.pending = ta.value.trim();
+  ta.readOnly = true;
+  document.getElementById("revealBtn").disabled = true;
+  document.getElementById("chips").replaceChildren(chips(q, S.pending));
+  const side = document.getElementById("side");
+  side.classList.add("revealed");
+  shrink();
+  say("Réponse attendue : " + q.m);
+  side.querySelector(".lvl").focus({preventScroll: true});
+  if (!WIDE.matches) side.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest"});
+}
+function assess(s){
+  if (S.view !== "question" || S.answers[S.idx] !== undefined) return;
+  const ta = document.getElementById("rep");
+  S.answers[S.idx] = {t: S.pending != null ? S.pending : (ta ? ta.value.trim() : ""), s};
+  S.pending = null;
+  persist();
+  showFeedback(true);
+}
+function validateSchema(){
+  if (S.view !== "question" || S.answers[S.idx] !== undefined) return;
+  const q = current();
+  const v = q.sol.map((x, k) => { const s = document.querySelector('#schema select[data-k="' + k + '"]'); return s && s.value !== "" ? Number(s.value) : -1; });
+  S.answers[S.idx] = {v, s: grade(q, v).s};
+  persist();
+  showFeedback(true);
+}
+function showFeedback(announce){
+  const q = current(), a = S.answers[S.idx], st = stat(q, a);
+  const fb = document.getElementById("fb");
+  let head, say1;
+  if (q.type === "qcm"){
+    document.querySelectorAll(".opt").forEach((b, k) => {
+      b.setAttribute("aria-disabled", "true");
+      if (k === q.a){ b.classList.add("right"); b.querySelector(".tag").textContent = "Bonne réponse"; }
+      else if (k === a){ b.classList.add("wrong"); b.querySelector(".tag").textContent = "Votre réponse"; }
+      else b.classList.add("dim");
+    });
+    head = st === "ok" ? "Juste." : "Faux. Bonne réponse" + NB + ": " + L[q.a] + ".";
+    fb.className = "fb " + st; fb.querySelector("strong").textContent = head;
+    say1 = head + " " + q.e;
+  } else if (q.type === "ouverte"){
+    const ta = document.getElementById("rep");
+    ta.value = a.t || ""; ta.readOnly = true;
+    document.getElementById("revealBtn").disabled = true;
+    document.getElementById("chips").replaceChildren(chips(q, a.t));
+    document.querySelectorAll("#selfeval .lvl").forEach(b => { b.disabled = true; b.setAttribute("aria-pressed", String(Number(b.dataset.s) === a.s)); });
+    fb.className = "fb model " + st;
+    say1 = "Autoévaluation : " + LEVELS.find(l => l.s === a.s).label + ".";
+  } else {
+    const res = markSchema(document.getElementById("schema"), q, a);
+    head = res.n + " / " + res.tot + (res.tot > 1 ? " cases justes." : " case juste.");
+    fb.className = "fb " + st; fb.querySelector("strong").textContent = head;
+    say1 = head + " " + q.e;
+  }
+  document.querySelector(".segs").replaceWith(segs());
+  document.querySelector(".score-live").textContent = "Score" + NB + ": " + fmt(scoreSoFar()) + " / " + (S.idx + 1);
+  const side = document.getElementById("side");
+  side.classList.add("revealed", "shown");
+  shrink();
+  if (announce) say(say1);
+  const nb = document.getElementById("nextBtn");
+  nb.focus({preventScroll: true});
+  if (!WIDE.matches) side.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest"});
+}
+function next(){
+  if (S.answers[S.idx] === undefined) return;
+  if (S.idx < S.order.length - 1){ S.idx++; S.pending = null; render(); window.scrollTo(0, 0); }
+  else finish();
+}
+
+/* ---------- synthèse ---------- */
+function finish(){
+  const total = S.order.length, score = scoreSoFar();
+  S.seconds = Math.round((Date.now() - S.start) / 1000);
+  if (!S.retry){
+    const b = store.best[S.key];
+    if (!b || score > b.score) store.best[S.key] = {score, total, date: today()};
+    delete store.progress[S.key];
+    save();
+  }
+  go("summary", S.key);
+}
+function verdict(score, total){
+  const r = score / total;
+  if (r === 1) return "Toutes vos réponses sont justes.";
+  if (r >= 0.8) return "Très bon résultat. Relisez la correction des questions à revoir.";
+  if (r >= 0.6) return "Résultat correct. Relisez les passages du cours cités ci-dessous.";
+  return "Relisez le chapitre dans le cours, puis refaites le quiz.";
+}
+function recapBody(q, a){
+  if (q.type === "qcm") return [
+    el("p", {}, el("strong", {text: "Votre réponse" + NB + ": "}), L[a] + ". " + q.o[a]),
+    a === q.a ? null : el("p", {}, el("strong", {text: "Bonne réponse" + NB + ": "}), L[q.a] + ". " + q.o[q.a]),
+    el("p", {text: q.e}), citation(q)];
+  if (q.type === "ouverte") return [
+    el("p", {}, el("strong", {text: "Votre réponse" + NB + ": "}), a.t ? a.t : "(réponse vide)"),
+    el("p", {}, el("strong", {text: "Réponse attendue" + NB + ": "}), q.m),
+    el("p", {}, el("strong", {text: "Autoévaluation" + NB + ": "}), LEVELS.find(l => l.s === a.s).label),
+    citation(q)];
+  const res = grade(q, a.v), fx = fixes(q, res);
+  const wrong = res.ok.map((ok, k) => ok ? null : k).filter(k => k !== null);
+  return [
+    el("p", {}, el("strong", {text: res.n + " / " + res.tot + (res.tot > 1 ? " cases justes." : " case juste.")})),
+    wrong.length ? el("ul", {class: "fixes"}, ...wrong.map(k => el("li", {text: q.names[k] + NB + ": " + fx[k] + (res.lab[k] ? " (votre choix" + NB + ": " + res.lab[k] + ")" : " (case vide)")}))) : null,
+    el("p", {text: q.e}), citation(q)];
+}
+function renderSummary(){
+  const key = S.key, pid = partOf(key), total = S.order.length, score = scoreSoFar();
+  const list = pool(key), qs = S.order.map(i => list[i]);
+  const missed = S.order.filter((qi, k) => stat(list[qi], S.answers[k]) !== "ok");
+  document.title = "Synthèse · " + fullTitle(key);
+  const resultText = "Quiz MT_322 · " + partLabel(pid) + " · " + (typeof key === "number" ? "Chapitre " + key + " " + QUIZ[key].nom : fullTitle(key))
+    + (S.retry ? " (questions à revoir)" : "") + " : " + fmt(score) + "/" + total + " (" + pct(score, total) + " %) · " + today();
+  const actions = el("div", {class: "row"});
+  if (missed.length) actions.append(button(missed.length > 1 ? "Refaire les " + missed.length + " questions à revoir" : "Refaire la question à revoir", "primary", () => startQuiz(key, {order: missed, retry: true})));
+  actions.append(button(isSeries(key) ? "Recommencer la série" : "Recommencer le quiz", "ghost", () => startQuiz(key)));
+  let nextKey = null;
+  if (isSeries(key)){
+    const ss = rev(key).series, i = ss.findIndex(s => s.key === key);
+    nextKey = i >= 0 && i < ss.length - 1 ? ss[i + 1].key : null;
+  } else if (!isAll(key)){
+    const seq = PARTIES[pid].sequence;
+    nextKey = seq[seq.indexOf(key) + 1];
+  }
+  if (nextKey != null) actions.append(button((isSeries(key) ? "Série suivante" : "Quiz suivant") + NB + ": " + title(nextKey), "ghost", () => go("intro", nextKey)));
+  actions.append(button("Copier mon résultat", "ghost", ev => copyText(resultText, ev.currentTarget, "Résultat copié")));
+  const best = store.best[key];
+  const result = el("section", {class: "result", "aria-labelledby": "rt"},
+    el("h2", {id: "rt", text: S.retry ? "Synthèse des questions à revoir" : "Synthèse"}),
+    el("p", {class: "score"}, fmt(score), el("span", {text: " / " + total})),
+    el("p", {class: "meta", text: pct(score, total) + NB + "% de réussite · durée" + NB + ": " + duration(S.seconds || 0)
+      + (best && !S.retry ? " · meilleur score" + NB + ": " + fmt(best.score) + " / " + best.total : "")}),
+    el("ol", {class: "segs", "aria-hidden": "true"}, ...S.order.map((qi, k) => el("li", {class: stat(list[qi], S.answers[k])}))),
+    el("p", {class: "verdict", text: verdict(score, total)}),
+    actions);
+  let table = null;
+  if (isAll(key) || isSeries(key)){
+    const chs = [...new Set(qs.map(q => q.ch))].sort((a, b) => a - b);
+    const rows = chs.map(ch => {
+      const ks = S.order.map((qi, k) => k).filter(k => list[S.order[k]].ch === ch);
+      const p = ks.reduce((t, k) => t + pts(list[S.order[k]], S.answers[k]), 0);
+      return el("tr", {}, el("td", {text: ch + " · " + chapName(list[S.order[ks[0]]])}), el("td", {text: fmt(p) + " / " + ks.length}));
+    });
+    table = el("table", {class: "bychap"}, el("thead", {}, el("tr", {}, el("th", {text: "Chapitre"}), el("th", {text: "Score"}))), el("tbody", {}, ...rows));
+  }
+  const MARK = {ok: "✓", mid: "½", ko: "✗"}, ARIA = {ok: "Juste", mid: "En partie", ko: "À revoir"};
+  const recap = el("ol", {class: "recap"}, ...qs.map((q, k) => {
+    const a = S.answers[k], st = stat(q, a);
+    const d = el("details", {open: st === "ok" ? null : ""},
+      el("summary", {}, el("span", {class: "mark " + st, text: MARK[st], "aria-label": ARIA[st]}), el("span", {text: (k + 1) + ". " + q.q})),
+      el("div", {class: "body"}, ...recapBody(q, a).filter(Boolean)));
+    return el("li", {}, d);
+  }));
+  put(
+    hero(key, title(key)),
+    result,
+    table ? el("h3", {class: "sec", text: "Résultat par chapitre"}) : null, table,
+    el("h3", {class: "sec", text: "Détail des réponses"}), recap,
+    el("div", {class: "row"}, isSeries(key) ? navLink("Retour à la révision", "intro", PARTIES[pid].rev, "btn outline") : null,
+      navLink("Retour aux chapitres", "home", null, "btn outline")));
+  say("Synthèse : " + fmt(score) + " sur " + total + ". " + verdict(score, total));
+}
+
+/* ---------- correction enseignant ---------- */
+function corrItem(q, i){
+  const s = el("section", {class: "q c-" + q.type});
+  s.append(el("h2", {}, el("span", {class: "n", text: String(i + 1), "aria-hidden": "true"}),
+    el("span", {}, q.rev ? el("span", {class: "qchap", text: chapLabel(q) + (q.type === "ouverte" ? " · question ouverte" : q.type === "schema" ? " · schéma à compléter" : "")}) : null, q.q)));
+  if (q.type === "qcm"){
+    const opts = el("div", {class: "opts"});
+    q.o.forEach((o, j) => opts.append(el("div", {class: "opt" + (j === q.a ? " right" : " dim"), "aria-disabled": "true"},
+      el("span", {class: "l", text: L[j]}), el("span", {}, o), el("span", {class: "tag", text: j === q.a ? "Bonne réponse" : ""}))));
+    s.append(opts, el("div", {class: "fb ok"}, el("strong", {text: "Réponse" + NB + ": " + L[q.a] + "."}), " " + q.e, citation(q)));
+  } else if (q.type === "ouverte"){
+    s.append(el("div", {class: "fb ok"}, el("strong", {text: "Réponse attendue" + NB + ":"}), " " + q.m, chips(q, ""), citation(q)));
+  } else {
+    const sol = PHONE ? el("ul", {class: "sol-l"}, ...q.sol.map((t, k) => el("li", {}, el("span", {class: "sol-n", text: q.names[k] + NB + ":"}), " ", el("b", {text: t}))))
+      : buildSchema(q, "solution");
+    s.append(sol, el("div", {class: "fb ok"}, el("strong", {text: "Corrigé."}), " " + q.e, citation(q)));
+  }
+  return s;
+}
+function renderCorrection(){
+  const key = S.key, list = pool(key);
+  document.title = "Correction · " + fullTitle(key);
+  const box = el("div", {});
+  if (isMenu(key)){
+    let i = 0;
+    for (const sr of rev(key).series){
+      box.append(el("h3", {class: "sec part-sec", text: sr.titre + " · " + sr.items.length + " " + unitOf(sr.items)}));
+      if (PHONE && sr.type === "schemas") box.append(devNote(SCHEMA_CORR));
+      sr.items.forEach(q => box.append(corrItem(q, i++)));
+    }
+  } else {
+    if (PHONE && list.some(q => q.type === "schema")) box.append(devNote(SCHEMA_CORR));
+    list.forEach((q, i) => box.append(corrItem(q, i)));
+  }
+  put(hero(key, "Correction" + NB + ": " + title(key)), tools(key),
+    el("div", {class: "brief"}, el("p", {text: "Les bonnes réponses sont en vert, avec l’explication et la citation du cours " + SUPPORT + "."})),
+    box);
+}
+
+/* ---------- ajustement à l'écran : sur ordinateur, la question entière reste visible sans défilement ---------- */
+const WIDE = matchMedia("(min-width: 900px)");
+/* La taille est calculée sur l'état le plus encombrant (schéma : toutes les cases corrigées), pour que la page ne bouge pas à la validation. */
+function fit(){
+  document.documentElement.style.fontSize = "";
+  if (S.view !== "question" || !WIDE.matches) return;
+  const q = current(), probe = [];
+  if (q.type === "schema" && S.answers[S.idx] === undefined){
+    const longest = arr => arr.reduce((m, x) => x.length > m.length ? x : m, "");
+    document.querySelectorAll("#schema select").forEach(s => {
+      const k = Number(s.dataset.k), lab = s.parentNode.querySelector(".pick-lab");
+      probe.push([lab, lab.textContent]); lab.textContent = longest(q.opts[k]);
+      const f = el("span", {class: "fix", text: "→ " + (q.libre ? longest(q.sol) : q.sol[k])});
+      s.closest(".slot").append(f); probe.push([f]);
+    });
+    /* après validation, « Question suivante » remplace « Valider » : mesurer avec ce bouton */
+    const side = document.getElementById("side");
+    if (side && !side.classList.contains("shown")){ side.classList.add("shown"); probe.push([side, null]); }
+  }
+  shrink();
+  probe.forEach(([n, t]) => { if (t === null) n.classList.remove("shown"); else if (t === undefined) n.remove(); else n.textContent = t; });
+}
+/* réduit la police (jamais l'inverse) tant que la page dépasse la hauteur de l'écran */
+function shrink(){
+  if (S.view !== "question" || !WIDE.matches) return;
+  const r = document.documentElement;
+  let fs = parseFloat(getComputedStyle(r).fontSize);
+  while (app.offsetTop + app.offsetHeight > innerHeight - 12 && fs > 13){ fs -= 0.5; r.style.fontSize = fs + "px"; }
+}
+let resizeTimer = 0;
+addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(fit, 120); });
+
+/* ---------- rendu ---------- */
+function render(){
+  document.body.classList.toggle("quiz-mode", S.view === "question");
+  app.classList.toggle("accent-rev", S.view !== "home" && isRev(S.key));
+  renderParts();
+  renderChain();
+  if (S.view === "intro") renderIntro();
+  else if (S.view === "question") renderQuestion();
+  else if (S.view === "summary") renderSummary();
+  else if (S.view === "correction") renderCorrection();
+  else renderHome();
+  fit();
+}
+
+/* ---------- clavier ---------- */
+document.addEventListener("keydown", ev => {
+  if (dlg.open) return;
+  if (S.view === "question" && ev.key === "Enter" && (ev.ctrlKey || ev.metaKey) && document.activeElement && document.activeElement.id === "rep"){ ev.preventDefault(); reveal(); return; }
+  if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+  if (S.view !== "question") return;
+  const q = current(), k = ev.key.toUpperCase();
+  const map = {A: 0, B: 1, C: 2, D: 3, "1": 0, "2": 1, "3": 2, "4": 3};
+  if (q.type === "qcm" && k in map && S.answers[S.idx] === undefined && map[k] < q.o.length){ ev.preventDefault(); choose(map[k]); }
+  else if ((ev.key === "Enter" || ev.key === "ArrowRight") && S.answers[S.idx] !== undefined && document.activeElement.tagName !== "BUTTON"){ ev.preventDefault(); next(); }
+});
+
+/* ---------- copie dans le presse-papiers ---------- */
+function copyText(text, btn, okLabel){
+  const label = btn.textContent;
+  const done = () => { btn.textContent = okLabel; setTimeout(() => { btn.textContent = label; }, 2000); };
+  const fallback = () => {
+    const t = el("textarea", {class: "vh"}); t.value = text; document.body.append(t); t.select();
+    try { document.execCommand("copy"); done(); } catch (e) {} t.remove();
+  };
+  try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+}
+
+/* ---------- fenêtre QR code ---------- */
+function openQr(key){
+  const url = quizUrl(key);
+  const name = key == null ? "Quiz de fin de chapitre"
+    : "Quiz · " + (isAll(key) ? partLabel(partOf(key)) + " · tous les chapitres" : isMenu(key) ? rev(key).nom : isSeries(key) ? fullTitle(key) : "chapitre " + key + " · " + QUIZ[key].nom);
+  document.getElementById("qrTitle").textContent = name;
+  const sch = isSeries(key) && SERIES[key].type === "schemas";
+  dlg.classList.toggle("qr-long", sch);
+  document.getElementById("qrText").replaceChildren(...(sch ? SCHEMA_QR : [QR_TEXT]).map(t => el("span", {class: "ln", text: t})));
+  document.getElementById("qrUrl").textContent = url;
+  dlg.classList.toggle("accent-rev", isRev(key));
+  const box = document.getElementById("qrCode");
+  if (typeof qrcode === "function"){
+    const qr = qrcode(0, "M"); qr.addData(url); qr.make();
+    box.innerHTML = qr.createSvgTag({cellSize: 8, margin: 16, scalable: true, title: "QR code : " + url});
+  } else {
+    box.textContent = "QR code indisponible sans connexion internet. Utilisez le lien ci-dessous.";
+  }
+  if (typeof dlg.showModal === "function") dlg.showModal(); else dlg.setAttribute("open", "");
+}
+function closeQr(){ if (typeof dlg.close === "function") dlg.close(); else dlg.removeAttribute("open"); }
+document.getElementById("qrClose").addEventListener("click", closeQr);
+dlg.addEventListener("click", ev => { if (ev.target === dlg) closeQr(); });
+document.getElementById("qrCopy").addEventListener("click", ev => copyText(document.getElementById("qrUrl").textContent, ev.currentTarget, "Lien copié"));
+document.addEventListener("fullscreenchange", () => { if (S.view === "intro" || S.view === "correction") render(); });
+
+/* ---------- présentation théorique : PDF dans le même dossier que la page ---------- */
+const docBtn = document.getElementById("docBtn"), docMsg = document.getElementById("docMsg");
+let docMissing = false, docTimer = 0;
+function initDoc(){
+  if (typeof PRESENTATION !== "string" || !PRESENTATION){ docBtn.hidden = true; return; }
+  docBtn.setAttribute("href", PRESENTATION);
+  /* en ligne : si le fichier n'est pas encore déposé, le bouton affiche un message au lieu d'ouvrir une page d'erreur */
+  if (/^https?:$/.test(location.protocol)) fetch(PRESENTATION, {method: "HEAD", cache: "no-store"}).then(r => { docMissing = r.status === 404; }).catch(() => {});
+  docBtn.addEventListener("click", ev => {
+    if (!docMissing) return;
+    ev.preventDefault();
+    docMsg.hidden = false; say(docMsg.textContent);
+    clearTimeout(docTimer); docTimer = setTimeout(() => { docMsg.hidden = true; }, 4000);
+  });
+}
+initDoc();
+
+/* ---------- démarrage ---------- */
+function route(){
+  let p = null, corrige = false;
+  try { const u = new URLSearchParams(location.search); p = u.get("partie"); corrige = u.has("corrige"); } catch (e) {}
+  if (!p){ const m = location.hash.match(/(?:tout|bonus|revision)(?:-[a-z0-9]+)*|\d+/); if (m) p = m[0]; }
+  const key = parseKey(p);
+  if (key == null){ S.view = "home"; render(); return; }
+  S.key = key; S.part = partOf(key);
+  S.view = corrige && !isAll(key) ? "correction" : "intro";
+  render();
+}
+route();
+window.addEventListener("hashchange", route);
+</script>
+</body>
+</html>
+
+</body></html>
