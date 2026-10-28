@@ -4,7 +4,7 @@
 <title>Quiz MT_322</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Quiz du cours Qualité industrielle (MT_322, hepia) : fins de chapitre 1 à 7 et questions de révision (QCM, questions ouvertes, schémas à compléter), avec correction et citations du cours.">
+<meta name="description" content="Quiz du cours Qualité industrielle (MT_322, hepia) : fins de chapitre 1 à 10 et questions de révision (QCM, questions ouvertes, schémas à compléter), avec correction et citations du cours.">
 <script>
 /* ==========================================================================
    QUIZ MT_322 – QUESTIONS, RÉPONSES ET CITATIONS DU COURS
@@ -17,7 +17,7 @@
      ouvertes  question, reponse (réponse attendue), motsCles, page, citation
                motsCles : « libellé|racine1|racine2 » ; une racine est cherchée en début de mot,
                sans accents ni majuscules, dans la réponse de l’élève (aide à l’autoévaluation).
-     schemas   modele (smq, liste, ishikawa, flux, tracabilite, normes, docsmq, coq, graphe_coq), titre,
+     schemas   modele (smq, liste, ishikawa, flux, tracabilite, normes, docsmq, coq, graphe_coq, pdca, pareto, correlation, symboles), titre,
                cases (bonne étiquette de chaque case, dans l’ordre {0}, {1}…),
                etiquettes (liste proposée, ou listes par groupe avec « groupes »),
                libre: true si l’ordre des cases est indifférent, noms (nom des cases dans la synthèse),
@@ -38,11 +38,12 @@
             Le PDF s’affiche dans une fenêtre de la page : lecteur PDF du navigateur sur ordinateur ;
             PDF.js (chargé au premier clic depuis jsDelivr) sur smartphone et iPad. Échec : lien pour ouvrir le PDF dans un onglet.
             Page ouverte en local (file://) : le PDF s’ouvre dans un onglet.
-   Ajouter la partie II : rubrique 2 dans PARTIES, ses chapitres dans QUIZ, et si besoin REVISION[2].
+   Partie II : rubrique 2 dans PARTIES (chapitres 8 à 10) et REVISION[2]. Liens : ?partie=tout-2, ?partie=revision-2,
+           ?partie=revision-2-qcm, revision-2-ouvertes, revision-2-schemas ; ?partie=8 (page du chapitre 8), 8-ouvertes, 8-schemas, 8-tout.
    ========================================================================== */
 const ADRESSE_SITE = "https://nicolas-derobert.github.io/appli-qualite/MT_322"; // adresse publique utilisée pour les QR codes
 const SUPPORT = "Qualité_Industrielle_hepia_cours 2026-2027"; // cours cité dans les corrections
-const PRESENTATION = "presentation.pdf"; // présentation théorique (PDF), dans le même dossier que cette page ; "" masque le bouton
+const PRESENTATION = "presentation1.pdf"; // présentation théorique (PDF), dans le même dossier que cette page ; "" masque le bouton
 
 /* ---------- Parties du cours : un onglet par partie ---------- */
 const PARTIES = {
@@ -51,11 +52,11 @@ const PARTIES = {
     titre: "Le système de management de la Qualité",
     chapitres: [1, 2, 3, 4, 5, 6, 7]
   },
-  // 2: {
-  //   numero: "II",
-  //   titre: "La démarche Qualité en entreprise",
-  //   chapitres: [8, 9, 10]
-  // }
+  2: {
+    numero: "II",
+    titre: "La démarche Qualité en entreprise",
+    chapitres: [8, 9, 10]
+  }
 };
 
 /* ---------- Quiz de fin de chapitre ---------- */
@@ -402,6 +403,156 @@ const QUIZ = {
         citation: "[Chez le client] Un contrôle moins étendu […] La délégation de l’obligation de contrôler chez le fournisseur […] Le fournisseur est entièrement responsable du respect des exigences de qualité de ses produits."
       }
     ]
+  },
+
+  /* ---------- Chapitre 8 · Améliorer ---------- */
+  8: {
+    nom: "Améliorer",
+    sujet: "Le processus d’amélioration continue",
+    pages: "66–68",
+    questions: [
+      { // Question 1
+        question: "Qui a introduit le processus d’amélioration continue, connu sous le nom de « roue » ?",
+        choix: ["Walter Shewhart", "W. Edwards Deming", "Joseph Juran", "Kaoru Ishikawa"],
+        reponse: "B",
+        explication: "Le cours attribue le processus d’amélioration continue (PAC) à Deming. On l’appelle la roue de Deming.",
+        page: "66",
+        citation: "Le Processus d’Amélioration Continue (PAC) a été introduit par E. Deming, connu aujourd’hui sous le nom de roue de Deming, qui reste le fondement de toute démarche qualité."
+      },
+      { // Question 2
+        question: "Dans quel ordre se succèdent les 4 phases de la roue de Deming ?",
+        choix: ["Plan, Do, Check, Act", "Plan, Check, Do, Act", "Do, Plan, Act, Check", "Check, Plan, Do, Act"],
+        reponse: "A",
+        explication: "On prépare (Plan), on fait (Do), on vérifie (Check), puis on réagit (Act). Ensuite, la roue repart.",
+        page: "66",
+        figure: "Roue de Deming",
+        citation: "Les 4 phases : PDCA · Plan […] (= Préparer) · Do […] (= Faire) · Check […] (= Vérifier) · Act […] (= Réagir)"
+      },
+      { // Question 3
+        question: "Quelle phase confirme que le plan d’amélioration donne les résultats escomptés ?",
+        choix: ["Plan", "Do", "Check", "Act"],
+        reponse: "C",
+        explication: "La phase Check vérifie le résultat. Elle seule montre si l’action a servi.",
+        page: "66",
+        citation: "Check : Cette troisième phase est importante car elle permet de confirmer si le nouveau plan d’amélioration donne les résultats escomptés ( = Vérifier)."
+      },
+      { // Question 4
+        question: "Que fait-on pendant la phase Act ?",
+        choix: ["On définit le problème.", "On ajuste si nécessaire, puis on généralise la méthode.", "On recueille les premières données.", "On constitue le groupe de travail."],
+        reponse: "B",
+        explication: "Act est l’ultime étape : on ajuste, puis on généralise ce qui marche.",
+        page: "66",
+        citation: "Act : L’ultime étape à ajuster (= Réagir), si nécessaire, puis enfin à généraliser la méthode."
+      },
+      { // Question 5
+        question: "Dans le tableau « cycle PDCA et outils qualité », à quelle phase appartient l’étape « Analyser les causes possibles » ?",
+        choix: ["Préparer (Plan)", "Développer (Do)", "Comprendre (Check)", "Agir (Act)"],
+        reponse: "A",
+        explication: "On analyse les causes avant d’agir : c’est la préparation. Pareto, Ishikawa et le diagramme de corrélation servent à cette étape.",
+        page: "67",
+        figure: "Le cycle PDCA vs les outils Qualité",
+        citation: "Préparer (Plan) · Identifier et formuler le problème […] Analyser les causes possibles · Vérifier les causes du problème · Diagramme de Pareto · Diagramme Ishikawa · Diagramme de corrélation"
+      }
+    ]
+  },
+
+  /* ---------- Chapitre 9 · Résoudre ---------- */
+  9: {
+    nom: "Résoudre",
+    sujet: "Les outils de la qualité",
+    pages: "69–91",
+    questions: [
+      { // Question 1
+        question: "Quel outil représente les limites d’un processus au-delà desquelles une action est nécessaire ?",
+        choix: ["L’histogramme", "La carte de contrôle", "Le diagramme de Pareto", "Le logigramme"],
+        reponse: "B",
+        explication: "La carte de contrôle suit le processus dans le temps. Elle montre les limites au-delà desquelles on intervient.",
+        page: "73",
+        citation: "La carte de contrôle permet de suivre l’évolution dans le temps d’un processus de fabrication et de le maîtriser. Cette carte représente graphiquement les limites du processus au-delà desquelles une action sera nécessaire."
+      },
+      { // Question 2
+        question: "Sur un diagramme de Pareto, qu’indique l’axe de droite ?",
+        choix: ["Le total absolu des effets", "Le pourcentage cumulé", "Le coût de chaque défaut", "Le temps"],
+        reponse: "B",
+        explication: "À gauche, le total absolu des effets. À droite, le pourcentage cumulé.",
+        page: "76",
+        citation: "Le total absolu des effets est toujours indiqué sur le côté gauche et le pourcentage cumulé sur le côté droit."
+      },
+      { // Question 3
+        question: "En combien de familles le diagramme d’Ishikawa regroupe-t-il les causes ?",
+        choix: ["3", "5", "7", "8"],
+        reponse: "B",
+        explication: "Les 5M : la Méthode, le Milieu, le Matériel, la Main-d’œuvre, la Matière.",
+        page: "77",
+        citation: "A partir d’un effet, représenté à droite de la flèche principale, les causes sont réparties entre les différentes familles couramment désignées par les 5M : La Méthode · Le Milieu · Le Matériel / Moyen / Machine · La Main-d’œuvre · La Matière"
+      },
+      { // Question 4
+        question: "Pendant la phase de recherche d’un brainstorming, que fait-on des idées émises ?",
+        choix: ["On les critique une par une.", "On les exprime toutes, sans censure ni critique.", "On garde seulement les meilleures.", "On les classe par coût."],
+        reponse: "B",
+        explication: "Pendant la recherche, chaque idée compte. Le tri vient plus tard, à la phase de conclusion.",
+        page: "80",
+        citation: "Les participants exprimeront les uns après les autres toutes les idées leur venant à l’esprit sans restriction. […] Pas de censure ni de critique. Il faut exprimer le maximum d’idées"
+      },
+      { // Question 5
+        question: "Que permet de visualiser le logigramme ?",
+        choix: ["La dispersion d’une série de mesures", "Les actions à mener et les décisions à prendre, dans l’ordre", "La relation entre deux variables", "Les causes classées par familles"],
+        reponse: "B",
+        explication: "Le logigramme montre un procédé étape par étape : actions, décisions, sens du flux.",
+        page: "87",
+        citation: "Le logigramme permet de visualiser de façon séquentielle et logique les actions à mener et les décisions à prendre pour atteindre un objectif."
+      }
+    ]
+  },
+
+  /* ---------- Chapitre 10 · Prévenir ---------- */
+  10: {
+    nom: "Prévenir",
+    sujet: "Les autres outils de la qualité",
+    pages: "92–94",
+    questions: [
+      { // Question 1
+        question: "Que signifie le sigle AMDEC ?",
+        choix: ["Analyse des modes de défaillance, de leurs effets et de leur criticité", "Amélioration des méthodes de contrôle", "Audit de maîtrise des écarts constatés", "Analyse des mesures et des défauts en contrôle"],
+        reponse: "A",
+        explication: "L’AMDEC analyse les défaillances possibles, leurs effets et leur criticité. C’est un outil de sûreté de fonctionnement.",
+        page: "92",
+        citation: "L’Analyse des modes de défaillance, de leurs effets et de leur criticité (AMDEC) est un outil de sûreté de fonctionnement (SdF) et de gestion de la qualité."
+      },
+      { // Question 2
+        question: "Dans l’AMDEC machine du cours, comment obtient-on la criticité C ?",
+        choix: ["C = F + G + N", "C = F × G × N", "C = G − F", "C = F × G ÷ N"],
+        reponse: "B",
+        explication: "La criticité est le produit de la fréquence (F), de la gravité (G) et de la non-détection (N). Exemple du tableau : 1 × 4 × 4 = 16.",
+        page: "92",
+        figure: "Exemple : AMDEC Machine",
+        citation: "Criticité · F · G · N · C […] 1 · 2 · 4 · 8 […] 1 · 4 · 4 · 16"
+      },
+      { // Question 3
+        question: "Quel S de la méthode 5S consiste à débarrasser et à trier ?",
+        choix: ["Seiri", "Seiton", "Seiso", "Shitsuke"],
+        reponse: "A",
+        explication: "Seiri : débarrasser, trier. Finalité : éloigner l’inutile, rapprocher l’utile.",
+        page: "93",
+        citation: "Seiri · Débarrasser / Trier · Éloigner l’inutile, rapprocher l’utile"
+      },
+      { // Question 4
+        question: "Où la méthode 5S a-t-elle été formalisée ?",
+        choix: ["Dans les ateliers de Toyota", "Chez Motorola", "Au secrétariat de l’ISO, à Genève", "Aux Bell Telephone Laboratories"],
+        reponse: "A",
+        explication: "Les 5S viennent des ateliers de Toyota. La méthode s’applique aussi aux bureaux, garages, magasins et hôpitaux.",
+        page: "93",
+        citation: "La méthode 5S (où la méthode des 5S) a été formalisée dans les ateliers industriels de Toyota"
+      },
+      { // Question 5
+        question: "Quelle est la finalité d’un bon système détrompeur (poka-yoke) ?",
+        choix: ["Former les opérateurs au contrôle", "Atteindre le zéro défaut et supprimer les contrôles de détection", "Réduire le prix des pièces", "Accélérer les livraisons"],
+        reponse: "B",
+        explication: "Le détrompeur empêche l’erreur de se produire. Les contrôles destinés à déceler les défauts deviennent inutiles.",
+        page: "94",
+        citation: "Un bon système détrompeur doit permettre d’atteindre le « zéro défaut » et doit avoir pour finalité l’élimination des contrôles qualité qui sont présents afin de déceler les défauts de production."
+      }
+    ]
   }
 };
 
@@ -413,15 +564,18 @@ const CHAPITRES = {
   4: "Les organismes de normalisation",
   5: "Le système de management de la qualité",
   6: "Les coûts de la qualité",
-  7: "Le fournisseur, un partenaire commercial"
+  7: "Le fournisseur, un partenaire commercial",
+  8: "Le processus d’amélioration continue",
+  9: "Les outils de la qualité",
+  10: "Les autres outils de la qualité"
 };
 
 /* ---------- Questions de révision : une rubrique par partie (1 = partie I) ---------- */
 const REVISION = {
   1: {
-    nom: "Questions de révision 1–6",
-    court: "Révision 1–6", // libellé court de l’onglet sur téléphone
-    pages: "7–52",
+    nom: "Questions de révision 1–7",
+    court: "Révision 1–7", // libellé court de l’onglet sur téléphone
+    pages: "7–64",
 
     /* ----- QCM ----- */
     qcm: [
@@ -695,6 +849,42 @@ const REVISION = {
         page: "49",
         figure: "Le COQ schématiquement",
         citation: "CNQ - Externe […] Indirects · Perte clients · Perte image · Plaintes, procès · Directs · Réclamations · Remises · Pénalités · Garantie"
+      },
+      { // Question 31
+        chapitre: 7,
+        question: "Dans l’indice fournisseur pondéré, quelle pondération reçoit un lot accepté par dérogation avec retouches ?",
+        choix: ["100", "60", "40", "0"],
+        reponse: "C",
+        explication: "Un lot accepté vaut 100, accepté par dérogation sans retouche 60, avec retouches 40, refusé 0.",
+        page: "59",
+        citation: "1. Lots acceptés LA 100 · 2. Lots acceptés par dérogation – Sans retouches LAsr 60 · 3. Lots acceptés par dérogation – Avec retouches LAar 40 · 4. Lots refusés LR 0"
+      },
+      { // Question 32
+        chapitre: 7,
+        question: "Un fournisseur obtient 210 points à l’indice fournisseur global. Dans quelle catégorie le classe-t-on ?",
+        choix: ["Fournisseur A", "Fournisseur B", "Fournisseur C", "Hors classement"],
+        reponse: "B",
+        explication: "La catégorie B va de 180 à 239 points. En dessous de 180 points, une nouvelle appréciation est nécessaire.",
+        page: "63",
+        citation: "Classification : Fournisseur A 240 – 300 · Fournisseur B 180 – 239 · Fournisseur C 100 – 179"
+      },
+      { // Question 33
+        chapitre: 7,
+        question: "Qui participe à l’audit fournisseur, en plus du service qualité ?",
+        choix: ["L’acheteur, la production, le bureau des méthodes et la direction", "Seulement un auditeur externe", "Le client final", "Les fournisseurs concurrents"],
+        reponse: "A",
+        explication: "L’audit fournisseur concerne aussi d’autres services que la qualité. L’équipe réunit plusieurs fonctions de l’entreprise.",
+        page: "57",
+        citation: "La réalisation de l’audit fournisseur ne concerne pas que le service qualité. D’autres acteurs doivent également y participer, parmi lesquels : L’acheteur · Le responsable de production · Le bureau technique – le bureau des Méthodes (industrialisation) · La direction"
+      },
+      { // Question 34
+        chapitre: 7,
+        question: "Quels critères entrent dans l’indice fournisseur global ?",
+        choix: ["La qualité, les délais, le prix et le service", "La qualité seulement", "Le prix et la proximité", "Le chiffre d’affaires et le nombre d’employés"],
+        reponse: "A",
+        explication: "La qualité des lots est un critère parmi d’autres. L’indice global ajoute les délais, le prix et le service, chacun avec un poids.",
+        page: "60",
+        citation: "D’autres critères comme le respect des délais, le prix et le service sont encore à prendre en considération."
       }
     ],
 
@@ -796,6 +986,30 @@ const REVISION = {
         page: "51",
         figure: "facteur de coût selon le moment où le défaut a été découvert",
         citation: "Conclusion : Les phases de développement (R&D et Industrialisation) sont cruciales dans le cycle de vie d’un produit."
+      },
+      { // Question ouverte 13
+        chapitre: 7,
+        question: "Expliquez la différence entre l’appréciation et l’évaluation d’un fournisseur.",
+        reponse: "L’appréciation a lieu avant la commande, le plus souvent chez le fournisseur, sous forme d’audit. L’évaluation a lieu après la signature de la commande, au fil des livraisons. Elle utilise des indices calculés sur les contrôles d’entrée.",
+        motsCles: ["appréciation : avant la commande|avant", "audit, chez le fournisseur|audit|chez le fournisseur|sur place", "évaluation : après la commande|apres", "au fil des livraisons, indices|livraison|indice|controle d entree"],
+        page: "55–56",
+        citation: "Avant la commande à une : Appréciation du fournisseur puis après la commande à une : Evaluation du fournisseur […] Evaluation fournisseur : Après la signature de la commande, et au fil des livraisons. L’appréciation des fournisseurs se fait généralement sous forme d’audits"
+      },
+      { // Question ouverte 14
+        chapitre: 7,
+        question: "Un fournisseur livre 10 lots : 7 acceptés, 2 acceptés par dérogation sans retouche, 1 refusé. Calculez son indice fournisseur pondéré. Écrivez le calcul.",
+        reponse: "IF pondéré = (7 × 100 + 2 × 60 + 1 × 0) ÷ 10 = 820 ÷ 10 = 82 %.",
+        motsCles: ["pondérations 100 et 60|100|60", "division par 10 lots|10", "résultat : 82 %|82"],
+        page: "59",
+        citation: "IQF pondéré = (LA x 100 + LAsr x 60 + LAar x 40 + LR x 0) / Nombre total de lots livrés"
+      },
+      { // Question ouverte 15
+        chapitre: 7,
+        question: "Citez deux effets d’un agrément qualité chez le fournisseur, puis deux effets chez le client.",
+        reponse: "Chez le fournisseur : responsabilité accrue, prise de conscience accrue, contrôle plus étendu, collaboration plus étroite avec le client. Chez le client : contrôle moins étendu, délégation de l’obligation de contrôler, collaboration plus étroite avec le fournisseur, confiance accrue.",
+        motsCles: ["responsabilité ou prise de conscience accrue|responsab|conscience", "fournisseur : contrôle plus étendu|plus etendu", "client : contrôle moins étendu|moins etendu", "délégation du contrôle|delegu|delegat", "collaboration, confiance|collabor|confian"],
+        page: "64",
+        citation: "Chez le fournisseur ? Une responsabilité accrue (renforcée) · Une prise de conscience accrue · Un contrôle plus étendu · Une collaboration plus étroite avec le client · Chez le client ? Un contrôle moins étendu · La délégation de l’obligation de contrôler chez le fournisseur · Une collaboration plus étroite avec le fournisseur · Une confiance accrue en son fournisseur"
       }
     ],
 
@@ -924,6 +1138,448 @@ const REVISION = {
         page: "50",
         figure: "Le COQ graphiquement",
         citation: "6.3 Le COQ graphiquement […] Coûts […] Indice Qualité [%] […] CIQ [CHF] CNQ [CHF] COQ [CHF]"
+      },
+      { // Schéma 10
+        chapitre: 7,
+        modele: "liste",
+        titre: "Choix des fournisseurs : donnez le titre de chaque étape.",
+        blocs: [{"titre": "{0}", "puces": ["Avant de passer commande", "Le plus souvent sous forme d’audit", "Manuel qualité, SMQ, moyens de production, documents de fabrication"]}, {"titre": "{1}", "puces": ["Après la signature de la commande", "Au fil des livraisons", "Indices calculés sur les résultats des contrôles d’entrée"]}],
+        cases: ["Appréciation du fournisseur", "Évaluation du fournisseur"],
+        etiquettes: ["Appréciation du fournisseur", "Évaluation du fournisseur", "Agrément sur le plan de la qualité", "Plan d’assurance qualité (PAQ)"],
+        noms: ["Étape 1", "Étape 2"],
+        explication: "Avant la commande, on apprécie le fournisseur, souvent par un audit. Après la commande, on l’évalue au fil des livraisons, avec des indices.",
+        page: "55–56",
+        figure: "Choix des fournisseurs",
+        citation: "Appréciation fournisseur · Avant de passer commande · Evaluation fournisseur · Après la signature de la commande, et au fil des livraisons · L’appréciation des fournisseurs se fait généralement sous forme d’audits"
+      },
+      { // Schéma 11
+        chapitre: 7,
+        modele: "normes",
+        titre: "Indice fournisseur global : associez chaque catégorie à ses points.",
+        lignes: [["Fournisseur A", "{0}"], ["Fournisseur B", "{1}"], ["Fournisseur C", "{2}"]],
+        cases: ["240 à 300 points", "180 à 239 points", "100 à 179 points"],
+        etiquettes: ["240 à 300 points", "180 à 239 points", "100 à 179 points", "0 à 99 points", "300 à 400 points"],
+        explication: "Avec 3 classes, l’indice global va de 100 à 300 points. En dessous de 180 points, une nouvelle appréciation du fournisseur est nécessaire.",
+        page: "62–63",
+        citation: "Avec trois classes, le nombre de points se situe entre : Maximum : 300 · Minimum : 100 […] Fournisseur A 240 – 300 · Fournisseur B 180 – 239 · Fournisseur C 100 – 179"
+      }
+    ]
+  },
+  2: {
+    nom: "Questions de révision 8–10",
+    court: "Révision 8–10", // libellé court de l’onglet sur téléphone
+    pages: "66–94",
+
+    /* ----- QCM ----- */
+    qcm: [
+      { // Question 1
+        chapitre: 8,
+        question: "Sur la figure de la roue de Deming, que représente la cale « ISO 9000 » placée sous la roue ?",
+        choix: ["Le système qualité, qui empêche la roue de redescendre la pente", "Le coût de la non-qualité", "Le client final", "La phase Check"],
+        reponse: "A",
+        explication: "La roue monte la pente de l’amélioration continue. La cale du système qualité fixe les acquis : la roue reste au niveau atteint.",
+        page: "66",
+        figure: "Roue de Deming",
+        citation: "La roue de Deming est représentée par 4 phases bien distinctes […] Amélioration continue · Qualité plus haute · ISO 9000"
+      },
+      { // Question 2
+        chapitre: 8,
+        question: "À quelle phase du PDCA le tableau du cours associe-t-il les outils Gantt et PERT ?",
+        choix: ["Préparer (Plan)", "Développer (Do)", "Comprendre (Check)", "Agir (Act)"],
+        reponse: "B",
+        explication: "Gantt et PERT servent à planifier et implémenter les solutions : phase Développer (Do).",
+        page: "67",
+        figure: "Le cycle PDCA vs les outils Qualité",
+        citation: "Développer (Do) · Proposer des solutions et en choisir une · Carte de contrôle · Diagramme en flèche · Planifier et implémenter les solutions · Gantt et Pert"
+      },
+      { // Question 3
+        chapitre: 8,
+        question: "Quelle méthode suit les étapes Définir, Mesurer, Analyser, Améliorer, Contrôler ?",
+        choix: ["A3", "8D", "DMAIC", "5S"],
+        reponse: "C",
+        explication: "DMAIC : Define, Measure, Analyze, Improve, Control. Elle suit la même logique que le PDCA.",
+        page: "68",
+        figure: "Les autres méthodes de résolution de problème vs PDCA",
+        citation: "Define · Measure · Analyze · Improve · Control · Définir · Mesurer · Analyser · Améliorer · Contrôler"
+      },
+      { // Question 4
+        chapitre: 8,
+        question: "Dans la méthode DMAIC, quelle question correspond à l’étape Mesurer ?",
+        choix: ["Quel est le problème ?", "Quelle est la capabilité du processus considéré ?", "Quelles sont les solutions d’amélioration ?", "Comment piloter les variables clés ?"],
+        reponse: "B",
+        explication: "Mesurer, c’est établir la capabilité du processus avant d’en analyser les défauts.",
+        page: "68",
+        figure: "Les autres méthodes de résolution de problème vs PDCA",
+        citation: "Mesurer · Quelle est la capabilité du processus considéré ?"
+      },
+      { // Question 5
+        chapitre: 9,
+        question: "Combien de caractéristiques un graphe radar permet-il de lire, en règle générale ?",
+        choix: ["2 à 3", "4 à 20", "20 à 50", "Une seule"],
+        reponse: "B",
+        explication: "Le radar permet une lecture rapide de 4 à 20 données, même avec des unités différentes.",
+        page: "71",
+        citation: "Un graphe particulièrement intéressant est le graphe radar ou radial. Il permet une lecture rapide de plusieurs données (4 à 20 en règle générale)."
+      },
+      { // Question 6
+        chapitre: 9,
+        question: "Que permet d’analyser un histogramme ?",
+        choix: ["La dispersion des données et sa cause", "L’ordre chronologique des actions", "Le coût de la non-qualité", "La relation entre deux variables"],
+        reponse: "A",
+        explication: "L’histogramme représente la dispersion d’une série de données. Il aide à trouver la cause de cette dispersion.",
+        page: "72",
+        citation: "Un histogramme est un graphe qui permet la représentation de la dispersion de ces données. A partir de ce graphe, on peut analyser les caractéristiques des données et, très important, la cause de la dispersion."
+      },
+      { // Question 7
+        chapitre: 9,
+        question: "Que signale un point au-delà de la limite de contrôle (LC) ?",
+        choix: ["Une dérive du processus, qui demande une intervention immédiate", "Une pièce à rebuter, sans autre action", "Une erreur du contrôleur", "La fin de la série"],
+        reponse: "A",
+        explication: "La limite de contrôle signale une dérive. On intervient tout de suite sur le processus lui-même.",
+        page: "73",
+        citation: "La limite la plus importante est la limite de contrôle LC, supérieure ou inférieure, qui signale une dérive du processus requérant une intervention immédiate sur le processus lui-même."
+      },
+      { // Question 8
+        chapitre: 9,
+        question: "Quel critère le cours retient-il pour choisir les caractéristiques à suivre par carte de contrôle ?",
+        choix: ["L’historique de non-qualité de la caractéristique", "La facilité de mesure de la caractéristique", "Le nombre de pièces produites par jour", "L’ordre des cotes sur le dessin"],
+        reponse: "A",
+        explication: "Trois critères : l’importance pour le client, l’historique de non-qualité, la corrélation entre caractéristiques.",
+        page: "74",
+        citation: "En règle générale, on retient trois critères de sélection de ces caractéristiques candidates : 1. L’importance de la caractéristique pour la satisfaction du client […] 2. L’historique de non-qualité sur cette caractéristique. […] 3. La corrélation existante entre plusieurs caractéristiques."
+      },
+      { // Question 9
+        chapitre: 9,
+        question: "Que mesure l’indice Cpk, en plus de la dispersion ?",
+        choix: ["Le centrage de la production", "Le coût de production", "La vitesse de la machine", "Le nombre de rebuts"],
+        reponse: "A",
+        explication: "Cpk utilise l’écart entre la moyenne et la limite de tolérance la plus proche : il tient compte du centrage.",
+        page: "75",
+        citation: "L’indice de centrage se calcul comme suit : Cpk = Différence critique / 3 σ […] Différence critique = Différence entre la moyenne de l’échantillon et la limite de tolérance la plus proche."
+      },
+      { // Question 10
+        chapitre: 9,
+        question: "Quelle valeur minimale le cours fixe-t-il pour l’acceptation d’une machine ?",
+        choix: ["1", "1,33", "1,66", "2"],
+        reponse: "C",
+        explication: "Acceptation machine : 1,66 ou plus. En fabrication, le cours demande 1,33 ou plus.",
+        page: "75",
+        citation: "En pratique, Cp et Cpk doivent être plus grand ou égal à 1.66 (acceptation machine)"
+      },
+      { // Question 11
+        chapitre: 9,
+        question: "La tolérance vaut 0,06 mm (Ts − Ti). L’écart type vaut 0,005 mm. Que vaut Cp ?",
+        choix: ["1", "1,33", "2", "6"],
+        reponse: "C",
+        explication: "Cp = (Ts − Ti) ÷ 6σ = 0,06 ÷ (6 × 0,005) = 0,06 ÷ 0,03 = 2.",
+        page: "75",
+        citation: "Cp = Ts - Ti / 6 σ"
+      },
+      { // Question 12
+        chapitre: 9,
+        question: "Sur un diagramme de Pareto, dans quel ordre range-t-on les causes ?",
+        choix: ["Par ordre alphabétique", "Par ordre décroissant d’importance", "Par ordre chronologique", "Au hasard"],
+        reponse: "B",
+        explication: "On classe les problèmes par ordre d’importance pour traiter d’abord les plus significatifs.",
+        page: "76",
+        citation: "Il n’est pas réaliste de s’attaquer à tous en même temps. On doit donc les disposer par ordre d’importance et prendre les problèmes les plus significatifs."
+      },
+      { // Question 13
+        chapitre: 9,
+        question: "Quel principe résume le diagramme de Pareto ?",
+        choix: ["20 % des causes produisent 80 % des effets.", "80 % des causes produisent 20 % des effets.", "Chaque cause produit le même effet.", "20 % des effets produisent 80 % des causes."],
+        reponse: "A",
+        explication: "Une petite partie des causes produit l’essentiel des effets. On commence par ces causes.",
+        page: "76",
+        citation: "Ce que nous traduisons en production par 80 % des effets sont le produit de 20 % des causes."
+      },
+      { // Question 14
+        chapitre: 9,
+        question: "Laquelle de ces familles fait partie des 5M du diagramme d’Ishikawa ?",
+        choix: ["Le Milieu", "Le Management", "La Mesure", "La Maintenance"],
+        reponse: "A",
+        explication: "Les 5M du cours : Méthode, Milieu, Matériel, Main-d’œuvre, Matière.",
+        page: "77",
+        citation: "les causes sont réparties entre les différentes familles couramment désignées par les 5M : La Méthode · Le Milieu · Le Matériel / Moyen / Machine · La Main-d’œuvre · La Matière"
+      },
+      { // Question 15
+        chapitre: 9,
+        question: "Deux variables mesurables augmentent ensemble. Que peut-on conclure ?",
+        choix: ["L’une est forcément la cause de l’autre.", "Elles sont corrélées : elles peuvent aussi subir une même cause.", "Elles sont indépendantes.", "Le nombre de mesures est forcément suffisant."],
+        reponse: "B",
+        explication: "Une corrélation montre une relation. Elle peut venir d’une cause commune, pas forcément d’un lien de cause à effet.",
+        page: "78",
+        citation: "Ces variables peuvent être : Une relation de cause à effet entre x et y · Une relation existante entre variables soumises indépendamment aux mêmes causes"
+      },
+      { // Question 16
+        chapitre: 9,
+        question: "Selon le cours, combien de personnes compte un groupe de brainstorming ?",
+        choix: ["2 à 4 personnes", "8 à 15 personnes et un animateur", "20 à 30 personnes", "Une seule personne"],
+        reponse: "B",
+        explication: "Le brainstorming réunit un groupe interdisciplinaire de 8 à 15 personnes, avec un animateur.",
+        page: "80",
+        citation: "C’est un travail de groupes interdisciplinaires composés de 8 à 15 personnes et un animateur."
+      },
+      { // Question 17
+        chapitre: 9,
+        question: "Vote pondéré multicritère : comment calcule-t-on les points d’une solution pour un critère ?",
+        choix: ["On additionne les votes, puis on multiplie par le poids du critère.", "On garde le vote le plus haut.", "On divise les votes par le nombre de critères.", "On compte le nombre de votants."],
+        reponse: "A",
+        explication: "Exemple du cours : coûts × 5, votes 2 + 2 + 1 = 5, soit 5 × 5 = 25 points.",
+        page: "83",
+        figure: "Vote pondéré multicritères",
+        citation: "Coûts → x5 · 2+2+1 => 25 […] Efficacité → x4 · 3+4+4 => 44 […] Délai de mise en place → x3 · 3+4+3 => 30 · TOTAL 99"
+      },
+      { // Question 18
+        chapitre: 9,
+        question: "Que signifie la lettre P du sigle QQOQCCP ?",
+        choix: ["Pourquoi ?", "Prix ?", "Processus ?", "Priorité ?"],
+        reponse: "A",
+        explication: "QQOQCCP : Qui ? Quoi ? Où ? Quand ? Comment ? Combien ? Pourquoi ?",
+        page: "84",
+        citation: "Q = QUI ? · Q = QUOI ? · O = OÙ ? · Q = QUAND ? · C = COMMENT ? · C = COMBIEN ? · P = POURQUOI ?"
+      },
+      { // Question 19
+        chapitre: 9,
+        question: "Que cherche-t-on avec la méthode des 5 pourquoi ?",
+        choix: ["La cause principale, ou cause racine, de la défaillance", "Le coût du défaut", "La personne responsable du défaut", "Le nombre de défauts"],
+        reponse: "A",
+        explication: "On pose 5 fois « pourquoi ? » pour remonter la chaîne des causes jusqu’à la cause principale.",
+        page: "86",
+        citation: "Il s’agit de poser la question pertinente commençant par un pourquoi afin de trouver la source, la cause principale de la défaillance."
+      },
+      { // Question 20
+        chapitre: 9,
+        question: "Dans un logigramme, que représente le losange ?",
+        choix: ["Un début ou une fin", "Une action", "Un choix, une décision", "Une connexion à un autre procédé"],
+        reponse: "C",
+        explication: "Le losange est un point clé du procédé : une question avec plusieurs sorties, par exemple Oui et Non.",
+        page: "88",
+        citation: "Le losange représente un point clé du procédé, un choix, une décision"
+      },
+      { // Question 21
+        chapitre: 10,
+        question: "De quelle méthode américaine l’AMDEC est-elle la traduction ?",
+        choix: ["FMECA", "DMAIC", "SPC", "PDCA"],
+        reponse: "A",
+        explication: "FMECA : Failure Modes, Effects and Criticality Analysis, élaborée par l’armée américaine dans les années 1940.",
+        page: "92",
+        citation: "AMDEC est la traduction de l’anglais FMECA (Failure Modes, Effects and Criticality Analysis), désignation d’une méthode élaborée par l’armée américaine dans les années 1940."
+      },
+      { // Question 22
+        chapitre: 10,
+        question: "Quel S de la méthode 5S consiste à maintenir et à conserver l’ordre ?",
+        choix: ["Seiri", "Seiton", "Seiketsu", "Shitsuke"],
+        reponse: "C",
+        explication: "Seiketsu : maintenir. Finalité : conserver l’ordre.",
+        page: "93",
+        citation: "Seiketsu · Maintenir · Conserver l’ordre"
+      },
+      { // Question 23
+        chapitre: 10,
+        question: "Qui a inventé le système détrompeur poka-yoke ?",
+        choix: ["Shigeo Shingō", "Taiichi Ohno", "Kaoru Ishikawa", "W. Edwards Deming"],
+        reponse: "A",
+        explication: "Shigeo Shingō (1909-1990) a conçu le poka-yoke dans sa recherche du zéro défaut.",
+        page: "94",
+        citation: "Le système détrompeur poka-yoke est l’invention d’un ingénieur, Shigeo Shingō (1909-1990)"
+      },
+      { // Question 24
+        chapitre: 10,
+        question: "Pourquoi intègre-t-on un détrompeur dès l’élaboration du processus ?",
+        choix: ["Son implantation dans un processus existant est complexe.", "La loi impose de le prévoir à l’avance.", "Il coûte moins cher après le démarrage de la production.", "La norme ISO 9001 l’exige pour chaque poste."],
+        reponse: "A",
+        explication: "Ajouter un détrompeur sur un processus en place est complexe. Le cours conseille de l’incorporer dès la conception.",
+        page: "94",
+        citation: "L’implantation d’un système détrompeur dans un processus déjà mis en place est complexe. Pour cette raison, il est intéressant d’incorporer lors de l’élaboration du processus un système anti-erreur."
+      }
+    ],
+
+    /* ----- Questions ouvertes ----- */
+    ouvertes: [
+      { // Question ouverte 1
+        chapitre: 8,
+        question: "Décrivez les 4 phases de la roue de Deming, dans l’ordre.",
+        reponse: "Plan (préparer) : définir le problème après l’analyse des données. Do (faire) : mettre en œuvre le plan d’amélioration. Check (vérifier) : confirmer que le plan donne les résultats escomptés. Act (réagir) : ajuster si nécessaire, puis généraliser la méthode.",
+        motsCles: ["Plan : préparer, définir le problème|plan|prepar|defini", "Do : faire, mettre en œuvre|do|faire|mettre en oeuvre|realis", "Check : vérifier les résultats|check|verifi|resultat", "Act : réagir, ajuster, généraliser|act|reagi|ajust|generalis"],
+        page: "66",
+        figure: "Roue de Deming",
+        citation: "Plan : Première phase de l’amélioration continue, la préparation consiste à définir le problème après l’analyse des données (= Préparer). Do : Cette deuxième phase consiste réfléchir aux diverses solutions et à en choisir une afin de mettre en œuvre un le plan d’amélioration (= Faire). Check : Cette troisième phase est importante car elle permet de confirmer si le nouveau plan d’amélioration donne les résultats escomptés ( = Vérifier). Act : L’ultime étape à ajuster (= Réagir), si nécessaire, puis enfin à généraliser la méthode."
+      },
+      { // Question ouverte 2
+        chapitre: 9,
+        question: "Expliquez la différence entre les indices Cp et Cpk.",
+        reponse: "Cp compare la tolérance (Ts − Ti) à la dispersion (6σ) : il indique si la dispersion tient dans la tolérance. Cpk divise la différence critique par 3σ. La différence critique est l’écart entre la moyenne et la limite de tolérance la plus proche. Cpk tient donc compte du centrage.",
+        motsCles: ["Cp : dispersion|dispers|6", "tolérance Ts − Ti|toleran|ts", "Cpk : centrage|centr", "limite la plus proche, différence critique|proche|difference critique|3"],
+        page: "75",
+        citation: "Cp = Ts - Ti / 6 σ · L’indice de centrage se calcul comme suit : Cpk = Différence critique / 3 σ […] Différence critique = Différence entre la moyenne de l’échantillon et la limite de tolérance la plus proche."
+      },
+      { // Question ouverte 3
+        chapitre: 9,
+        question: "Expliquez comment lire un diagramme de Pareto. Indiquez quelles causes traiter en priorité.",
+        reponse: "Les causes sont classées par ordre décroissant. L’axe de gauche donne le total absolu des effets, l’axe de droite le pourcentage cumulé. On traite d’abord les causes qui produisent environ 80 % des effets : 20 % des causes produisent 80 % des effets.",
+        motsCles: ["ordre décroissant d’importance|decroiss|ordre d importance|importance", "axe de gauche : total des effets|gauche|total|absolu", "axe de droite : pourcentage cumulé|cumul|droite", "causes avant 80 % (règle 20-80)|80"],
+        page: "76",
+        figure: "Diagramme 20-80",
+        citation: "On doit donc les disposer par ordre d’importance et prendre les problèmes les plus significatifs. […] 80 % des effets sont le produit de 20 % des causes. […] Le total absolu des effets est toujours indiqué sur le côté gauche et le pourcentage cumulé sur le côté droit."
+      },
+      { // Question ouverte 4
+        chapitre: 9,
+        question: "Citez les 5 familles de causes (5M) du diagramme d’Ishikawa.",
+        reponse: "La Méthode, le Milieu, le Matériel (moyen, machine), la Main-d’œuvre, la Matière.",
+        motsCles: ["Méthode|methode", "Milieu|milieu", "Matériel, moyen, machine|materiel|moyen|machine", "Main-d’œuvre|main", "Matière|matiere"],
+        page: "77",
+        citation: "les causes sont réparties entre les différentes familles couramment désignées par les 5M : La Méthode · Le Milieu · Le Matériel / Moyen / Machine · La Main-d’œuvre · La Matière"
+      },
+      { // Question ouverte 5
+        chapitre: 9,
+        question: "Décrivez les 3 phases d’un brainstorming.",
+        reponse: "1. Recherche : chacun exprime toutes ses idées, sans censure ni critique. 2. Regroupement : on exploite, améliore et regroupe les idées ; on critique l’idée, jamais son auteur. 3. Conclusion : on sépare le réalisable de l’utopique, on confronte aux exigences de l’entreprise et on retient la meilleure solution.",
+        motsCles: ["recherche sans critique|recherch|critique|censure", "regroupement des idées|regroup|amelior|exploit", "conclusion : réalisable, meilleure solution|conclu|realisa|utopi|meilleur"],
+        page: "80–81",
+        citation: "Le déroulement du Brainstorming peut être décrit en 3 phases : La phase de recherche · La phase de regroupement des idées · La phase de conclusion"
+      },
+      { // Question ouverte 6
+        chapitre: 9,
+        question: "Expliquez la différence entre le QQOQCCP et la méthode des 5 pourquoi.",
+        reponse: "Le QQOQCCP décrit le problème dans son ensemble avec 7 questions : qui, quoi, où, quand, comment, combien, pourquoi. Les 5 pourquoi, méthode complémentaire, remontent la chaîne des causes jusqu’à la cause principale, la cause racine.",
+        motsCles: ["QQOQCCP : 7 questions, décrire le problème|7|sept|ensemble|decri|identifi", "5 pourquoi : cause principale, cause racine|racine|principal|source", "méthodes complémentaires|compl"],
+        page: "84–86",
+        citation: "Le QQOQCCP sert à identifier le problème dans son ensemble à partir de 7 questions. […] [Les 5 pourquoi] C’est une méthode complémentaire au QQOQCCP. Il s’agit de poser la question pertinente commençant par un pourquoi afin de trouver la source, la cause principale de la défaillance."
+      },
+      { // Question ouverte 7
+        chapitre: 9,
+        question: "Nommez les 4 symboles standards du logigramme. Donnez la signification de chaque symbole.",
+        reponse: "L’ellipse : le début et la fin. Le rectangle : une action. Le losange : un choix, une décision. Le cercle : une connexion à un autre procédé.",
+        motsCles: ["ellipse : début et fin|ellipse|debut|fin", "rectangle : action|rectangle|action", "losange : décision|losange|decision|choix", "cercle : autre procédé|cercle|connect|autre procede"],
+        page: "88",
+        citation: "L’ellipse représente un événement qui intervient automatiquement dans le procédé : Début et Fin · Le rectangle représente un événement qui intervient, une action · Le losange représente un point clé du procédé, un choix, une décision · Le cercle représente un point du logigramme qui connecte à un autre procédé"
+      },
+      { // Question ouverte 8
+        chapitre: 10,
+        question: "Citez les 5S et l’action associée à chacun.",
+        reponse: "Seiri : débarrasser, trier. Seiton : ranger, classer, ordonner. Seiso : nettoyer. Seiketsu : maintenir. Shitsuke : formaliser, impliquer.",
+        motsCles: ["Seiri : débarrasser, trier|seiri|debarras|tri", "Seiton : ranger, classer|seiton|range|class|ordonn", "Seiso : nettoyer|seiso|nettoy", "Seiketsu : maintenir|seiketsu|maint", "Shitsuke : formaliser, impliquer|shitsuke|formalis|impliqu"],
+        page: "93",
+        citation: "Seiri · Débarrasser / Trier · Seiton · Ranger / Classer / Ordonner · Seiso · Nettoyer · Seiketsu · Maintenir · Shitsuke · Formaliser / Impliquer"
+      },
+      { // Question ouverte 9
+        chapitre: 10,
+        question: "Expliquez le but d’un système poka-yoke. Donnez un exemple.",
+        reponse: "Un poka-yoke, ou détrompeur, empêche l’erreur de se produire, qu’elle soit humaine ou mécanique. Il vise le zéro défaut et la suppression des contrôles de détection. Exemples du cours : le connecteur RJ45, le connecteur XT-90.",
+        motsCles: ["empêcher l’erreur|empech|erreur", "zéro défaut|zero", "exemple (connecteur, fiche…)|rj45|xt|connect|exemple|prise|fiche|cadran"],
+        page: "94",
+        citation: "Un détrompeur est un système qui, lorsqu’il est bien conçu et proprement utilisé, ne peut laisser se produire aucune erreur, qu’elle soit humaine ou mécanique. […] Exemples : Connecteur éthernet type RJ45 · Connecteur XT-90"
+      }
+    ],
+
+    /* ----- Schémas à compléter ----- */
+    schemas: [
+      { // Schéma 1
+        chapitre: 8,
+        modele: "pdca",
+        titre: "La roue de Deming",
+        phases: ["{0}", "{1}", "{2}", "{3}"],
+        cale: "{4}",
+        fleche: "{5}",
+        qualite: "Qualité plus\nhaute",
+        cases: ["Plan (Préparer)", "Do (Faire)", "Check (Vérifier)", "Act (Réagir)", "ISO 9000", "Amélioration continue"],
+        etiquettes: ["Plan (Préparer)", "Do (Faire)", "Check (Vérifier)", "Act (Réagir)", "ISO 9000", "Amélioration continue", "Mesurer (Measure)", "Contrôle final"],
+        noms: ["Quart P", "Quart D", "Quart C", "Quart A", "Cale sous la roue", "Flèche de la pente"],
+        explication: "La roue tourne : Plan, Do, Check, Act. Elle monte la pente de l’amélioration continue. La cale ISO 9000, le système qualité, l’empêche de redescendre.",
+        page: "66",
+        figure: "Roue de Deming",
+        citation: "La roue de Deming est représentée par 4 phases bien distinctes […] Les 4 phases : PDCA"
+      },
+      { // Schéma 2
+        chapitre: 8,
+        modele: "liste",
+        titre: "Cycle PDCA et outils qualité : donnez la phase de chaque liste d’outils.",
+        blocs: [{"titre": "{0}", "puces": ["Brainstorming, QQOQCCP, feuille de recueil de données", "Diagramme de Pareto, diagramme d’Ishikawa, diagramme de corrélation"]}, {"titre": "{1}", "puces": ["Carte de contrôle, diagramme en flèche", "Gantt et PERT"]}, {"titre": "{2}", "puces": ["Carte de contrôle, diagramme de Pareto", "QQOQCCP, diagramme de décision"]}, {"titre": "{3}", "puces": ["QQOQCCP, logigramme, manuel qualité", "Le PDCA : recommencer"]}],
+        cases: ["Préparer (Plan)", "Développer (Do)", "Comprendre (Check)", "Agir (Act)"],
+        etiquettes: ["Préparer (Plan)", "Développer (Do)", "Comprendre (Check)", "Agir (Act)", "Mesurer (Measure)", "Contrôler (Control)"],
+        noms: ["Liste 1", "Liste 2", "Liste 3", "Liste 4"],
+        explication: "Préparer : recueillir et analyser. Développer : choisir et planifier. Comprendre : évaluer les résultats. Agir : fixer les règles de travail, puis recommencer.",
+        page: "67",
+        figure: "Le cycle PDCA vs les outils Qualité",
+        citation: ""
+      },
+      { // Schéma 3
+        chapitre: 9,
+        modele: "pareto",
+        titre: "Diagramme de Pareto des non-conformités",
+        axes: {"g": "{0}", "d": "{1}"},
+        zone: "{2}",
+        seuil: "{3}",
+        cases: ["Nombre d’événements", "Pourcentage cumulé [%]", "Causes à traiter en priorité", "80 % des effets"],
+        etiquettes: ["Nombre d’événements", "Pourcentage cumulé [%]", "Causes à traiter en priorité", "80 % des effets", "Indice qualité [%]", "Temps", "20 % des effets"],
+        noms: ["Titre de l’axe de gauche", "Titre de l’axe de droite", "Repère des 2 premières barres", "Repère du trait pointillé"],
+        explication: "À gauche, le total absolu des effets ; à droite, le pourcentage cumulé. Les causes avant le seuil de 80 % se traitent en priorité : retard transporteur et colis perdu.",
+        page: "76",
+        figure: "Diagramme 20-80",
+        citation: "Le total absolu des effets est toujours indiqué sur le côté gauche et le pourcentage cumulé sur le côté droit."
+      },
+      { // Schéma 4
+        chapitre: 9,
+        modele: "ishikawa",
+        titre: "Diagramme d’Ishikawa : les 5M",
+        effet: "Effets",
+        branches: ["{0}", "{1}", "{2}", "{3}", "{4}"],
+        libre: true,
+        cases: ["Méthode", "Milieu", "Matériel", "Main-d’œuvre", "Matière"],
+        etiquettes: ["Méthode", "Milieu", "Matériel", "Main-d’œuvre", "Matière", "Management", "Mesure", "Maintenance"],
+        explication: "Les 5M du cours : Méthode, Milieu, Matériel (moyen, machine), Main-d’œuvre, Matière. Management, Mesure et Maintenance sont hors des 5M du cours. L’ordre des arêtes est libre.",
+        page: "77",
+        figure: "Diagramme d’Ishikawa",
+        citation: "les causes sont réparties entre les différentes familles couramment désignées par les 5M : La Méthode · Le Milieu · Le Matériel / Moyen / Machine · La Main-d’œuvre · La Matière"
+      },
+      { // Schéma 5
+        chapitre: 9,
+        modele: "correlation",
+        titre: "Diagramme de corrélation : nommez chaque cas de figure.",
+        cases: ["Absence de corrélation", "Corrélation positive", "Corrélation positive forte", "Corrélation négative forte", "Corrélation négative"],
+        etiquettes: ["Absence de corrélation", "Corrélation positive", "Corrélation positive forte", "Corrélation négative forte", "Corrélation négative"],
+        noms: ["Nuage 1", "Nuage 2", "Nuage 3", "Nuage 4", "Nuage 5"],
+        explication: "Points dispersés : absence de corrélation. Points qui montent : corrélation positive. Points qui descendent : corrélation négative. Plus les points s’alignent, plus la corrélation est forte.",
+        page: "78",
+        figure: "Les différents cas de figure",
+        citation: "Les différents cas de figure : Absence de corrélation · Corrélation positive · Corrélation positive forte · Corrélation négative forte · Corrélation négative"
+      },
+      { // Schéma 6
+        chapitre: 9,
+        modele: "symboles",
+        titre: "Logigramme : donnez la signification de chaque symbole.",
+        formes: ["ellipse", "rectangle", "losange", "cercle"],
+        noms_formes: ["Ellipse", "Rectangle", "Losange", "Cercle"],
+        cases: ["Début et fin", "Une action", "Un choix, une décision", "Une connexion à un autre procédé"],
+        etiquettes: ["Début et fin", "Une action", "Un choix, une décision", "Une connexion à un autre procédé", "Un contrôle final", "Un document"],
+        noms: ["Ellipse", "Rectangle", "Losange", "Cercle"],
+        explication: "Ellipse : début et fin. Rectangle : une action. Losange : un choix, une décision. Cercle : une connexion à un autre procédé, dont le nom figure dans le cercle.",
+        page: "88",
+        figure: "Symboles standards utilisés",
+        citation: "L’ellipse représente un événement qui intervient automatiquement dans le procédé : Début et Fin · Le rectangle représente un événement qui intervient, une action · Le losange représente un point clé du procédé, un choix, une décision · Le cercle représente un point du logigramme qui connecte à un autre procédé"
+      },
+      { // Schéma 7
+        chapitre: 9,
+        modele: "normes",
+        titre: "Associez chaque méthode à son but.",
+        lignes: [["Brainstorming", "{0}"], ["Vote pondéré", "{1}"], ["QQOQCCP", "{2}"], ["5 pourquoi", "{3}"], ["Logigramme", "{4}"]],
+        cases: ["Produire un maximum d’idées en un minimum de temps", "Choisir selon des critères et leur importance", "Structurer un sujet avec 7 questions", "Trouver la cause principale de la défaillance", "Visualiser les actions et les décisions, dans l’ordre"],
+        etiquettes: ["Produire un maximum d’idées en un minimum de temps", "Choisir selon des critères et leur importance", "Structurer un sujet avec 7 questions", "Trouver la cause principale de la défaillance", "Visualiser les actions et les décisions, dans l’ordre", "Suivre un processus dans le temps"],
+        explication: "Chaque méthode a son but : produire des idées, choisir, décrire, remonter à la cause racine, visualiser un procédé.",
+        page: "79",
+        citation: "Le brainstorming : méthode permettant de produire un maximum d’idées en un minimum de temps. Le vote pondéré : permet de traiter les problèmes en fonction de différents critères et de leur importance. […] Le QQOQCCP : technique de structuration d’un sujet sur la base des questions […] Les 5 Pourquoi ? […] on essaie de trouver les raisons les plus importantes ayant provoqué la défaillance. Le logigramme : permet de visualiser de façon séquentielle et logique les actions à mener et les décisions à prendre pour atteindre un objectif."
+      },
+      { // Schéma 8
+        chapitre: 10,
+        modele: "normes",
+        titre: "Méthode 5S : associez chaque mot japonais à son action.",
+        lignes: [["Seiri", "{0}"], ["Seiton", "{1}"], ["Seiso", "{2}"], ["Seiketsu", "{3}"], ["Shitsuke", "{4}"]],
+        cases: ["Débarrasser, trier", "Ranger, classer, ordonner", "Nettoyer", "Maintenir", "Formaliser, impliquer"],
+        etiquettes: ["Débarrasser, trier", "Ranger, classer, ordonner", "Nettoyer", "Maintenir", "Formaliser, impliquer", "Contrôler, mesurer"],
+        explication: "Seiri : trier. Seiton : ranger. Seiso : nettoyer. Seiketsu : maintenir. Shitsuke : formaliser et impliquer, pour que l’ordre dure.",
+        page: "93",
+        citation: "Seiri · Débarrasser / Trier · Seiton · Ranger / Classer / Ordonner · Seiso · Nettoyer · Seiketsu · Maintenir · Shitsuke · Formaliser / Impliquer"
       }
     ]
   }
@@ -1018,6 +1674,7 @@ header{padding-block:1.1rem .4rem}
 /* titres */
 .hero{display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 1rem;align-items:end;margin:1.8rem 0 1rem}
 .numeral{font-weight:800;font-size:5.6rem;line-height:.78;color:var(--accent);letter-spacing:-.04em}
+.numeral.n-long{font-size:3.6rem;white-space:nowrap}
 .hero h1{margin:0;font-size:2rem;line-height:1.05;font-weight:800;letter-spacing:-.01em}
 .hero p{margin:.35rem 0 0;color:var(--grey);font-size:.9rem}
 .tools{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 1.4rem}
@@ -1118,6 +1775,7 @@ h3.sec{font-size:1rem;margin:0 0 .6rem}
 .list a{display:grid;grid-template-columns:3.2rem minmax(0,1fr) auto;align-items:center;gap:.8rem;padding:.9rem .2rem;border-bottom:1px solid var(--line);text-decoration:none}
 .list a:hover .t{color:var(--accent)}
 .list .d{font-size:2.6rem;font-weight:800;color:var(--accent);line-height:1}
+.list .d.d-long{font-size:1.45rem;white-space:nowrap;letter-spacing:-.02em}
 .list .t{font-weight:800;font-size:1.15rem;display:block}
 .list .s{color:var(--grey);font-size:.85rem}
 .list .go{font-size:.78rem;font-weight:600;color:var(--grey);white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
@@ -1506,6 +2164,34 @@ body.dragging{user-select:none;-webkit-user-select:none}
   .fx.lgi{justify-content:flex-start;gap:calc(5 * var(--u))}
   .fx.lgi .slot{flex:1;width:auto}
   .lg{display:inline-block;flex:none;width:calc(22 * var(--u));height:3px;border-radius:2px}
+  /* 10. roue de Deming */
+  .fig-svg .slope{fill:var(--mist);stroke:var(--ink);stroke-width:1}
+  .fig-svg .wheel{fill:var(--paper);stroke:var(--ink);stroke-width:1.6}
+  .fig-svg .wl{stroke:var(--ink);stroke-width:1.2}
+  .fig-svg .rot{fill:var(--ink)}
+  .fig-svg .cale{fill:var(--paper);stroke:var(--ink);stroke-width:1.2;stroke-linejoin:round}
+  .fig-svg .up{fill:var(--paper);stroke:var(--ink);stroke-width:1.2;stroke-linejoin:round}
+  .fig-svg .up2{fill:var(--line);stroke:var(--ink);stroke-width:1;stroke-linejoin:round}
+  .fig-pdca .fx.let{font-weight:800}
+  .fig-pdca .fx.qh{font-weight:700;justify-content:flex-start;text-align:left}
+  /* 11. Pareto */
+  .fig-svg .p-grid{stroke:var(--line);stroke-width:.8}
+  .fig-svg .p-axis{stroke:var(--ink);stroke-width:1.2}
+  .fig-svg .p-tick{font:400 10px var(--font);fill:var(--grey)}
+  .fig-svg .p-tick.end{text-anchor:end}
+  .fig-svg .p-name{font:400 10px var(--font);fill:var(--ink);text-anchor:end}
+  .fig-svg .p-bar{fill:var(--fig-blue)}
+  .fig-svg .p-cum{fill:none;stroke:var(--red);stroke-width:2.2;stroke-linejoin:round}
+  .fig-svg .p-pt{fill:var(--red)}
+  .fig-svg .p-thr{stroke:var(--orange);stroke-width:1.5;stroke-dasharray:6 4}
+  .fig-svg .p-zone{fill:none;stroke:var(--red);stroke-width:1.5;stroke-dasharray:5 4}
+  /* 12. corrélation */
+  .fig-svg .ax{stroke:var(--ink);stroke-width:1.3}
+  .fig-svg .ax-h{fill:var(--ink)}
+  .fig-svg .pt{fill:none;stroke:var(--ink);stroke-width:1.3}
+  /* 13. symboles du logigramme */
+  .fig-svg .shp{fill:var(--paper);stroke:var(--ink);stroke-width:1.6}
+  .fig-symb .fx.shp-n{font-weight:700;justify-content:flex-start;text-align:left}
 }
 .lg-b{background:var(--xl-blue)}
 .lg-o{background:var(--xl-orange)}
@@ -1614,6 +2300,12 @@ body.dragging{user-select:none;-webkit-user-select:none}
   .chart-svg .tick{font-size:13px}
   .chart-svg .tick.odd{display:none}
   .chart-svg .ch-title{font-size:22px}
+  /* 10 et 13. roue de Deming, symboles du logigramme */
+  .fig-pdca .g-q{display:grid;grid-template-columns:2rem minmax(0,1fr);align-items:center;gap:.5rem}
+  .fig-pdca .fx.let{font-size:1.5rem;font-weight:800;text-align:center}
+  .fig-pdca .fx.qh{display:none}
+  .fig-symb .g-s{display:grid;grid-template-columns:5.5rem minmax(0,1fr);align-items:center;gap:.5rem}
+  .fig-symb .fx.shp-n{font-weight:700}
 }
 /* l'état juste / faux l'emporte sur l'habillage des cases */
 .fig .slot.ok .pick{border-style:solid;border-color:var(--ok);background:var(--ok-tint)}
@@ -1648,7 +2340,7 @@ body.dragging{user-select:none;-webkit-user-select:none}
 <body>
 <header>
   <div class="wrap">
-    <div class="course"><span class="c-name"><b>Qualité industrielle</b> · MT_322 · hepia</span><a class="doc-btn" id="docBtn" href="presentation.pdf" target="_blank" rel="noopener" aria-label="Afficher la présentation théorique (PDF)" aria-haspopup="dialog"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M6 2.5h8.5L19 7v14.5H6zM14 2.5V7.5h5M9 12h7M9 15.5h7M9 19h4"/></svg>Présentation théorique<span class="dt-s" aria-hidden="true">PDF</span></a><a href="https://nicolas-derobert.github.io/appli-qualite/" target="_blank" rel="noopener">QualiTools</a></div>
+    <div class="course"><span class="c-name"><b>Qualité industrielle</b> · MT_322 · hepia</span><a class="doc-btn" id="docBtn" href="presentation1.pdf" target="_blank" rel="noopener" aria-label="Afficher la présentation théorique (PDF)" aria-haspopup="dialog"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M6 2.5h8.5L19 7v14.5H6zM14 2.5V7.5h5M9 12h7M9 15.5h7M9 19h4"/></svg>Présentation théorique<span class="dt-s" aria-hidden="true">PDF</span></a><a href="https://nicolas-derobert.github.io/appli-qualite/" target="_blank" rel="noopener">QualiTools</a></div>
     <p class="doc-msg" id="docMsg" hidden>Présentation théorique : fichier en préparation.</p>
     <nav class="parts-nav" aria-label="Parties du cours"><ul class="parts" id="parts"></ul></nav>
     <div class="part-panel">
@@ -1688,7 +2380,7 @@ body.dragging{user-select:none;-webkit-user-select:none}
       <button type="button" class="pdf-z" id="pdfZoom">100 %</button>
       <button type="button" class="pdf-b" id="pdfIn" aria-label="Zoom avant"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg></button>
     </div>
-    <a class="pdf-b" id="pdfDl" href="presentation.pdf" download aria-label="Télécharger le PDF"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></a>
+    <a class="pdf-b" id="pdfDl" href="presentation1.pdf" download aria-label="Télécharger le PDF"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></a>
     <button type="button" class="pdf-b pdf-x" id="pdfClose" aria-label="Fermer la présentation"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
   <div class="pdf-body" id="pdfBody" tabindex="0">
@@ -1975,7 +2667,7 @@ function hero(key, h1){
   else if (isRevSeries(key)){ const R = rev(key); sub = R.nom + " · " + n + " " + unitOf(list) + " · " + scope([...new Set(list.map(q => q.ch))].sort((a, b) => a - b)); }
   else if (isChapSeries(key)){ const ch = SERIES[key].ch; sub = "Chapitre " + ch + " · " + QUIZ[ch].sujet + " · " + n + " " + unitOf(list) + " · cours" + NB + "p." + NB + QUIZ[ch].pages; num = String(ch); }
   else { sub = "Chapitre " + key + " · " + QUIZ[key].sujet + " · cours" + NB + "p." + NB + QUIZ[key].pages; num = String(key); }
-  const numeral = isRev(key) ? el("span", {class: "numeral", "aria-hidden": "true", html: ICON_STAR}) : el("span", {class: "numeral", "aria-hidden": "true", text: num});
+  const numeral = isRev(key) ? el("span", {class: "numeral", "aria-hidden": "true", html: ICON_STAR}) : el("span", {class: "numeral" + (num && num.length > 3 ? " n-long" : ""), "aria-hidden": "true", text: num});
   return el("section", {class: "hero"}, numeral, el("div", {}, el("h1", {text: h1}), el("p", {text: sub})));
 }
 function tools(key){
@@ -2015,7 +2707,7 @@ function renderHome(){
   });
   if (P.chaps.length > 1){
     const all = navLink("", "intro", P.all);
-    all.append(el("span", {class: "d", text: span(P.chaps), "aria-hidden": "true"}),
+    all.append(el("span", {class: "d" + (span(P.chaps).length > 3 ? " d-long" : ""), text: span(P.chaps), "aria-hidden": "true"}),
       el("span", {}, el("span", {class: "t", text: "Tous les chapitres"}), el("span", {class: "s", text: "Révision complète · " + pool(P.all).length + " questions"})),
       bestLabel(P.all));
     items.push(el("li", {class: "all"}, all));
@@ -2378,7 +3070,95 @@ function figGrapheCoq(q, c){
     fx("sl ax-x", [490, 486, 150, 32, 12], c(q.axes.x), {"data-cap": "Titre de l’axe horizontal"})]);
 }
 
-const FIGS = {smq: figSmq, liste: figListe, ishikawa: figFish, flux: figFlux, tracabilite: figTrac, normes: figNormes, docsmq: figDoc, coq: figCoq, graphe_coq: figGrapheCoq};
+/* 10. Roue de Deming (cours p. 66) : quatre quarts sur la pente, cale « ISO 9000 », flèches d'amélioration */
+function figPdca(q, c){
+  const cx = 175, cy = 180, R = 132, ph = q.phases;
+  const s = sPoly([[0, 342], [470, 262], [470, 342]], "slope")
+    + '<circle class="wheel" cx="' + cx + '" cy="' + cy + '" r="' + R + '"/>'
+    + sLine(cx, cy - R, cx, cy + R, "wl") + sLine(cx - R, cy, cx + R, cy, "wl")
+    + sArcArrow(cx, cy, R + 17, 150, 292, 6, 17, 14, "rot")
+    + sPoly([[4, 252], [170, 304], [4, 344]], "cale")
+    + sBlock(318, 230, 470, 172, 15, 34, 22, "up")
+    + sBlock(536, 340, 536, 212, 22, 46, 26, "up2");
+  const quart = (cls, L, gl, gs, k) => grp("g-q " + cls, fx("t let", gl, L), fx("sl q", gs, c(ph[k]), {"data-cap": "Phase " + L}));
+  return figure("pdca", 640, 346, "42rem", s, [
+    quart("qp", "P", [97, 70, 50, 46, 30], [72, 124, 100, 34, 11], 0),
+    quart("qd", "D", [203, 70, 50, 46, 30], [178, 124, 100, 34, 11], 1),
+    quart("qa", "A", [97, 184, 50, 40, 30], [72, 226, 100, 34, 11], 3),
+    quart("qc", "C", [203, 184, 50, 40, 30], [178, 226, 100, 34, 11], 2),
+    grp("g-cale", fx("sl cale-s", [8, 296, 96, 28, 10.5], c(q.cale), {"data-cap": "Cale sous la roue"})),
+    grp("g-fl", fx("sl fl-s", [318, 132, 190, 36, 12], c(q.fleche), {"data-cap": "Flèche le long de la pente"}),
+      fx("t qh", [560, 238, 80, 52, 13], lines(q.qualite)))]);
+}
+
+/* 11. Diagramme de Pareto (cours p. 76) : barres décroissantes, courbe des pourcentages cumulés, seuil de 80 % */
+function figPareto(q, c){
+  const v = [175, 132, 35, 15, 12, 11, 8, 7, 4], tot = v.reduce((a, b) => a + b, 0), n = v.length;
+  const names = ["Retard transporteur", "Colis perdu", "Retard fournisseur", "Erreur d’étiquetage", "Client absent", "Erreur de saisie", "Problème qualité", "Erreur de stock", "Compte client bloqué"];
+  const x0 = 80, x1 = 560, y0 = 42, y1 = 300, sw = (x1 - x0) / n;
+  const Y = val => y1 - val / 200 * (y1 - y0), Yp = p => y1 - p / 100 * (y1 - y0);
+  let s = "";
+  for (let k = 0; k <= 5; k++){
+    const yy = r1(Y(k * 40));
+    s += sLine(x0, yy, x1, yy, k ? "p-grid" : "p-axis") + sText(x0 - 8, r1(yy + 3.5), String(k * 40), "p-tick end") + sText(x1 + 8, r1(yy + 3.5), (k * 20) + " %", "p-tick");
+  }
+  s += sLine(x0, y0, x0, y1, "p-axis") + sLine(x1, y0, x1, y1, "p-axis");
+  let cum = 0;
+  const pts = [];
+  v.forEach((val, k) => {
+    const xc = x0 + sw * (k + 0.5);
+    s += sRect(r1(xc - sw * 0.32), r1(Y(val)), r1(sw * 0.64), r1(y1 - Y(val)), "p-bar");
+    cum += val;
+    pts.push([xc, Yp(cum / tot * 100)]);
+    s += sText(r1(xc + 4), y1 + 12, names[k], "p-name", -40);
+  });
+  s += sRect(x0 + 3, y0 - 6, r1(sw * 2 - 6), y1 - y0 + 6, "p-zone");
+  s += sLine(x0, r1(Yp(80)), x1, r1(Yp(80)), "p-thr") + sPolyline(pts, "p-cum") + pts.map(p => '<circle class="p-pt" cx="' + r1(p[0]) + '" cy="' + r1(p[1]) + '" r="4"/>').join("");
+  s += sArrow(x0 + sw * 2 + 12, 169, x0 + sw * 2 - 1, 169, "fl", 8);
+  return figure("pareto", 640, 400, "44rem", s, [
+    fx("sl ax-g", [0, 0, 175, 30, 11.5], c(q.axes.g), {"data-cap": "Titre de l’axe de gauche"}),
+    fx("sl ax-d", [465, 0, 175, 30, 11.5], c(q.axes.d), {"data-cap": "Titre de l’axe de droite"}),
+    fx("sl zone-s", [x0 + sw * 2 + 14, 150, 172, 38, 11.5], c(q.zone), {"data-cap": "Repère des deux premières barres (cadre rouge)"}),
+    fx("sl seuil-s", [x1 - 178, 100, 172, 30, 11.5], c(q.seuil), {"data-cap": "Repère du trait pointillé orange"})]);
+}
+
+/* 12. Diagramme de corrélation (cours p. 78) : cinq nuages de points, un nom sous chaque nuage */
+function figCorr(q, c){
+  const sets = [
+    [[.15, .8], [.42, .76], [.66, .74], [.2, .55], [.47, .6], [.78, .52], [.3, .35], [.56, .4], [.86, .36], [.12, .18], [.62, .15], [.84, .66]],
+    [[.08, .1], [.2, .3], [.3, .16], [.36, .44], [.5, .34], [.52, .62], [.64, .5], [.72, .74], [.82, .6], [.9, .86], [.62, .82], [.26, .06]],
+    [[.08, .08], [.18, .16], [.26, .28], [.36, .35], [.45, .47], [.55, .55], [.63, .66], [.72, .73], [.82, .83], [.9, .92]],
+    [[.08, .92], [.18, .84], [.26, .72], [.36, .65], [.45, .53], [.55, .45], [.63, .34], [.72, .27], [.82, .17], [.9, .08]],
+    [[.08, .9], [.2, .7], [.3, .84], [.36, .56], [.5, .66], [.52, .38], [.64, .5], [.72, .26], [.82, .4], [.9, .14], [.62, .18], [.26, .94]]];
+  let s = "";
+  const items = [];
+  sets.forEach((pts, k) => {
+    const px = 4 + k * 127.5;
+    s += sArrow(px + 10, 150, px + 10, 10, "ax", 7) + sArrow(px + 10, 150, px + 120, 150, "ax", 7);
+    s += pts.map(([u, v]) => '<circle class="pt" cx="' + r1(px + 22 + u * 88) + '" cy="' + r1(138 - v * 118) + '" r="4.5"/>').join("");
+    items.push(grp("g-n", fx("sl", [px, 162, 122, 64, 11], c("{" + k + "}"), {"data-cap": "Nuage " + (k + 1)})));
+  });
+  return figure("corr", 640, 230, "44rem", s, items);
+}
+
+/* 13. Symboles du logigramme (cours p. 88) : ellipse, rectangle, losange, cercle */
+function figSymb(q, c){
+  let s = "";
+  const items = [];
+  q.formes.forEach((f, k) => {
+    const y = 6 + k * 74, m = y + 31;
+    if (f === "ellipse") s += '<ellipse class="shp" cx="105" cy="' + m + '" rx="80" ry="24"/>';
+    else if (f === "rectangle") s += sRect(30, y + 8, 150, 46, "shp");
+    else if (f === "losange") s += sPoly([[105, y + 1], [188, m], [105, y + 61], [22, m]], "shp");
+    else s += '<circle class="shp" cx="105" cy="' + m + '" r="28"/>';
+    s += sArrow(296, m, 322, m, "fl", 8);
+    items.push(grp("g-s", fx("t shp-n", [200, y + 16, 92, 30, 13], typo(q.noms_formes[k])), fx("sl", [328, y + 10, 308, 42, 12.5], c("{" + k + "}"))));
+  });
+  return figure("symb", 640, 300, "40rem", s, items);
+}
+
+const FIGS = {smq: figSmq, liste: figListe, ishikawa: figFish, flux: figFlux, tracabilite: figTrac, normes: figNormes, docsmq: figDoc, coq: figCoq, graphe_coq: figGrapheCoq,
+  pdca: figPdca, pareto: figPareto, correlation: figCorr, symboles: figSymb};
 function buildSchema(q, mode){
   const slot = slotFactory(q, mode), c = t => cellOf(t, slot), f = FIGS[q.modele];
   return el("div", {class: "schema sch-" + q.modele}, f ? f(q, c) : el("p", {text: "Modèle de schéma inconnu : " + q.modele}));
