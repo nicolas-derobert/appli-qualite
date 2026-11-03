@@ -381,6 +381,14 @@ details.organes ul { list-style: none; margin-top: 6px; display: flex; flex-dire
 .v-saisie label { font-family: var(--ehg-font-titre); font-size: var(--ehg-fs-sm); font-weight: 500; }
 .verniers .retour { margin: 14px 0 0; }
 .v-score { font-size: var(--ehg-fs-sm); color: var(--ehg-graphite); margin-top: 10px; font-variant-numeric: tabular-nums; }
+.v-reel { margin-top: 18px; padding-top: 14px; border-top: var(--ehg-filet); }
+.v-reel > .surtitre { color: var(--ehg-or-fonce); }
+.v-reel__fig { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); grid-template-rows: auto 1fr; grid-template-areas: "vue loupe" "legende loupe"; gap: 14px 24px; margin-top: 10px; }
+.v-reel__vue { grid-area: vue; min-width: 0; }
+.v-reel__loupe { grid-area: loupe; align-self: center; min-width: 0; }
+.v-reel__fig svg { width: 100%; height: auto; }
+.v-reel__loupe svg { max-width: 376px; margin-inline: auto; }
+.v-reel__legende { grid-area: legende; font-size: var(--ehg-fs-sm); color: var(--ehg-graphite); gap: 4px; }
 
 /* ---------- Quiz ---------- */
 .quiz { max-width: 760px; }
@@ -431,6 +439,7 @@ body.hors-ligne .imprimer { display: inline-flex; }
 }
 @media (max-width: 40rem) {
   .bases, .verniers { grid-template-columns: minmax(0, 1fr); }
+  .v-reel__fig { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "vue" "loupe" "legende"; }
   .types { grid-template-columns: minmax(0, 1fr); }
   .chiffres { grid-template-columns: minmax(0, 1fr); }
   .chiffres > div + div { border-left: 0; border-top: var(--ehg-filet); }
@@ -492,7 +501,7 @@ body.hors-ligne .imprimer { display: inline-flex; }
 </div></div></nav>
 <main id="app" class="wrap"><noscript><p>Activez JavaScript pour afficher les fiches.</p></noscript></main>
 <footer class="pied"><div class="wrap pied__in">
-  <div><p>École d’Horlogerie de Genève — CFPT · PO+TH Qualité et métrologie · v1.7.2 · novembre 2026</p>
+  <div><p>École d’Horlogerie de Genève — CFPT · PO+TH Qualité et métrologie · v1.8 · novembre 2026</p>
   <p class="ia">Document élaboré avec l’assistance d’outils d’intelligence artificielle.</p></div>
   <span class="millesime" aria-hidden="true">1824</span>
 </div></footer>
@@ -505,7 +514,7 @@ body.hors-ligne .imprimer { display: inline-flex; }
    support CP, normes et documents fabricants cités dans « sources ».
    ===================================================================== */
 const DONNEES = {
-  version: 'v1.7.2 · novembre 2026',
+  version: 'v1.8 · novembre 2026',
   quizParSerie: 12,
 
   familles: [
@@ -796,6 +805,16 @@ const DONNEES = {
       position: 'Position du coulisseau',
       loupe: 'Position de la loupe',
       reponse: 'Votre lecture',
+      /* Vue réaliste : règle et coulisseau chromés, loupe ; même position que la loupe du schéma */
+      reel: {
+        titre: 'Sur l’instrument',
+        cercle: 'Cercle doré : zone vue à la loupe.',
+        aligne: 'Triangles dorés : le trait {j} du vernier prolonge le trait {m} mm de la règle.',
+        zero: 'Triangles dorés : le zéro du vernier prolonge le trait {m} mm de la règle.',
+        chercher: 'Repérez le trait du vernier qui prolonge un trait de la règle.',
+        voisins: 'De part et d’autre du trait aligné, les traits du vernier sont décalés en sens opposés. L’écart avec la règle augmente de {r} à chaque trait.',
+        chiffres: 'Sur cette règle, les chiffres indiquent les centimètres : {c} signifie {mm} mm.',
+      },
     },
     retours: {
       mm: 'Relisez les millimètres entiers : prenez le dernier trait de la règle avant le zéro du vernier.',
@@ -3525,6 +3544,107 @@ const ILLUS = (() => {
     return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${o.label || 'Vernier'}" xmlns="http://www.w3.org/2000/svg" font-family="${FONT}">${s}</svg>`;
   }
 
+  /* ------------------------------------------------------------------
+     Vue réaliste du vernier (simulateur, bloc « Sur l'instrument ») : règle et coulisseau
+     en acier chromé mat, traits gravés noircis, chiffres de la règle en centimètres (comme C8, fig. 8-6-10).
+     Proportions de dessin en mm (choix de représentation, non normatives) : traits de 0,1 mm de large.
+     Repère : y = 0 au chant inférieur de la règle (bord haut de la plaquette du vernier), y vers le bas.
+     o : { n, L, u, res, largeur, montrer, c : centre de la loupe (mm), vue : 'ensemble' | 'loupe', label }
+     ------------------------------------------------------------------ */
+  const VR = { tl: 0.1, m: [1.2, 1.7, 2.3], mCh: 1.6, mY: -2.75, v: [1.2, 1.9], vCh: 1.4, vY: 3.75,
+    haut: -5.6, bas: 5.4, plaque: [-2.2, 8.2, 4.5], corps: [-3.4, 9.6], bec: 15.4, champ: 8.6 };
+  const GRAV = '#1E1F21', FONT_GRAV = "'Arial Narrow', 'Helvetica Neue', Arial, sans-serif";
+  function vernierReel(o) {
+    const n = o.n, Lv = o.L, v = o.u / n, pas = Lv / n, j0 = ((o.u % n) + n) % n;
+    const pasCh = n === 10 ? 5 : n / 10;                       /* un chiffre par dixième de mm ; au 1/10 : 0, 5 et 10 */
+    const id = uid('vr'), F = VR.champ, loupe = o.vue === 'loupe';
+    let W, H, k, X, Y, de, a, cx = 0, cy = 0, Rl = 0;
+    if (loupe) {                                                /* champ de F mm centré sur o.c, au niveau du chant */
+      const D = Math.max(200, Math.min(360, Math.round(o.largeur || 0) - 14));
+      Rl = D / 2; W = H = D + 16; cx = cy = W / 2; k = D / F;
+      de = o.c - F / 2 - 0.5; a = o.c + F / 2 + 0.5;
+      X = m => cx + (m - o.c) * k; Y = y => cy + y * k;
+    } else {                                                    /* centimètre avant le zéro et coulisseau entier */
+      W = Math.max(260, Math.round(o.largeur || 0));
+      const b = 10 * Math.floor(v / 10), Wn = Lv + 23.6;
+      k = Math.min(13, W / Wn);
+      de = b - 3.9 - (W / k - Wn) / 2; a = de + W / k;
+      H = Math.round((VR.bas - VR.haut) * k);
+      X = m => (m - de) * k; Y = y => (y - VR.haut) * k;
+    }
+    const yH = loupe ? cy - Rl - 2 : 0, yB = loupe ? cy + Rl + 2 : H, y0 = Y(0);
+    const tw = Math.max(0.9, VR.tl * k), reflet = tw >= 3;
+    const rect = (x, y, w, h, f, extra = {}) => `<rect ${at({ x, y, width: w, height: h, fill: f, ...extra })}/>`;
+    const brosse = (x, y, w, h) => rect(x, y, w, h, `url(#${id}b)`);
+    const trait = (x, ya, yb) => rect(x - tw / 2, ya, tw, yb - ya, GRAV)
+      + (reflet ? rect(x + tw * 0.32, ya, tw * 0.18, yb - ya, '#FFFFFF', { 'fill-opacity': 0.35 }) : '');
+    const chiffre = (x, y, txt, cap, f = GRAV, ancre = 'middle') => `<text ${at({ x, y, 'font-size': cap / 0.716 * k, fill: f, 'text-anchor': ancre })}>${txt}</text>`;
+    const defs = `<defs>
+      <linearGradient id="${id}r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B7BBBF"/><stop offset=".55" stop-color="#DCDFE2"/><stop offset="1" stop-color="#CACED2"/></linearGradient>
+      <linearGradient id="${id}p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EFF1F3"/><stop offset=".6" stop-color="#D9DCDF"/><stop offset="1" stop-color="#C4C8CC"/></linearGradient>
+      <linearGradient id="${id}c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A3A7AC"/><stop offset="1" stop-color="#BDC1C6"/></linearGradient>
+      <linearGradient id="${id}o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".24"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+      <linearGradient id="${id}e" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF" stop-opacity="0"/><stop offset=".46" stop-color="#FFF" stop-opacity=".2"/><stop offset=".62" stop-color="#FFF" stop-opacity="0"/></linearGradient>
+      <pattern id="${id}b" width="13" height="3" patternUnits="userSpaceOnUse"><path d="M0 .5H13" stroke="#FFF" stroke-opacity=".4" stroke-width=".6"/><path d="M2 1.9H9" stroke="#000" stroke-opacity=".07" stroke-width=".6"/></pattern>
+      ${loupe ? `<clipPath id="${id}k"><circle cx="${cx}" cy="${cy}" r="${Rl}"/></clipPath><radialGradient id="${id}v"><stop offset=".7" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></radialGradient>`
+    : `<clipPath id="${id}k"><rect width="${W}" height="${H}" rx="8"/></clipPath>`}</defs>`;
+    /* Règle : face avant brossée, ombre portée sous le chant, chanfrein du chant inférieur */
+    let s = rect(0, yH, W, yB - yH, C.b);
+    s += rect(0, yH, W, y0 - yH, `url(#${id}r)`) + brosse(0, yH, W, y0 - yH);
+    s += rect(0, y0, W, 0.9 * k, `url(#${id}o)`);
+    s += rect(0, Y(-0.18), W, 0.18 * k, '#9DA1A5') + `<line ${at({ x1: 0, y1: Y(-0.18), x2: W, y2: Y(-0.18), stroke: '#FFFFFF', 'stroke-opacity': 0.55, 'stroke-width': 0.8 })}/>`;
+    /* Bec fixe sous la règle (coulisseau fermé : faces des becs en contact) */
+    const xf1 = X(VR.corps[0]), xf0 = Math.max(0, X(VR.corps[0] - VR.bec));
+    if (xf1 > xf0) s += rect(xf0, y0, xf1 - xf0, yB - y0, `url(#${id}c)`) + brosse(xf0, y0, xf1 - xf0, yB - y0);
+    /* Échelle principale : traits au millimètre, chiffres aux centimètres */
+    for (let i = Math.max(0, Math.ceil(de)); i <= Math.floor(a); i++) {
+      s += trait(X(i), Y(-VR.m[i % 10 === 0 ? 2 : i % 5 === 0 ? 1 : 0]), y0);
+      if (i % 10 === 0) s += chiffre(X(i), Y(VR.mY), String(i / 10), VR.mCh);
+    }
+    /* Coulisseau et plaquette du vernier */
+    const xc0 = X(v + VR.corps[0]), xc1 = X(v + Lv + VR.corps[1]);
+    s += rect(xc0, y0, xc1 - xc0, yB - y0, `url(#${id}c)`) + brosse(xc0, y0, xc1 - xc0, yB - y0);
+    const xp0 = X(v + VR.plaque[0]), xp1 = X(v + Lv + VR.plaque[1]), hp = VR.plaque[2] * k;
+    s += rect(xp0, y0, xp1 - xp0, hp, `url(#${id}p)`, { rx: 0.25 * k, stroke: '#8E9296', 'stroke-width': 0.8 }) + brosse(xp0, y0, xp1 - xp0, hp);
+    s += `<line ${at({ x1: xp0 + 1, y1: y0 + 0.7, x2: xp1 - 1, y2: y0 + 0.7, stroke: '#FFFFFF', 'stroke-opacity': 0.85, 'stroke-width': 1 })}/>`;
+    for (let j = 0; j <= n; j++) {
+      const x = v + j * pas;
+      if (x < de - 1 || x > a + 1) continue;
+      const ch = j % pasCh === 0;
+      s += trait(X(x), y0, Y(VR.v[ch ? 1 : 0]));
+      if (ch) s += chiffre(X(x), Y(VR.vY), String(j * 10 / n), n === 20 ? 1.1 : VR.vCh);
+    }
+    s += chiffre(X(v + Lv + 2), Y(VR.vY), o.res, 1, '#3C3D40', 'start');
+    s += rect(0, yH, W, yB - yH, `url(#${id}e)`);
+    let out = `<g clip-path="url(#${id}k)">${s}</g>`;
+    /* Traits alignés : le trait j0 du vernier (et le dernier trait quand le zéro est aligné) */
+    const alignes = o.montrer ? (j0 === 0 ? [0, n] : [j0]) : [];
+    const pointe = (x, y, ang, t) => head(x, y, ang, t + 3.5, '#FFFFFF') + head(x, y + (ang > 0 ? -1.4 : 1.4), ang, t, OR);
+    if (loupe) {
+      out += `<circle ${at({ cx, cy, r: Rl, fill: `url(#${id}v)` })}/>`;
+      const r1 = Rl - 12, a1 = 1.18 * Math.PI, a2 = 1.42 * Math.PI;
+      out += `<path ${at({ d: `M${cx + r1 * Math.cos(a1)},${cy + r1 * Math.sin(a1)} A${r1},${r1} 0 0 1 ${cx + r1 * Math.cos(a2)},${cy + r1 * Math.sin(a2)}`, fill: 'none', stroke: '#FFFFFF', 'stroke-opacity': 0.35, 'stroke-width': 4, 'stroke-linecap': 'round' })}/>`;
+      out += Ci(cx, cy, Rl + 3.5, { f: 'none', s: '#2B2B2B', sw: 7 }) + Ci(cx, cy, Rl + 0.4, { f: 'none', s: '#7A7A7A', sw: 0.8 });
+      out += Ci(cx, cy, Rl + 7.3, { f: 'none', s: OR, sw: 1.4 });           /* rappel du cercle doré de la vue d'ensemble */
+      for (const j of alignes) {
+        const x = X(v + j * pas), dx = x - cx;
+        if (Math.abs(dx) > 0.8 * Rl) continue;
+        const dy = Math.sqrt(Rl * Rl - dx * dx);
+        out += `<g data-aligne="${j}:${Math.round(v + j * pas)}">${pointe(x, cy - dy + 15, Math.PI / 2, 13)}${pointe(x, cy + dy - 15, -Math.PI / 2, 13)}</g>`;
+      }
+    } else {
+      out += rect(0.5, 0.5, W - 1, H - 1, 'none', { rx: 8, stroke: C.s, 'stroke-width': 1 });
+      const rr = F / 2 * k;
+      out += Ci(X(o.c), y0, rr, { f: 'none', s: '#FFFFFF', sw: 3.5 }) + Ci(X(o.c), y0, rr, { f: 'none', s: OR, sw: 1.6 });
+      for (const j of alignes) {
+        const x = X(v + j * pas);
+        if (x < 0 || x > W) continue;
+        out += `<g data-aligne="${j}:${Math.round(v + j * pas)}">${pointe(x, 13, Math.PI / 2, 10)}${pointe(x, H - 13, -Math.PI / 2, 10)}</g>`;
+      }
+    }
+    return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${o.label || 'Vernier sur l’instrument'}" xmlns="http://www.w3.org/2000/svg" font-family="${FONT_GRAV}">${defs}${out}</svg>`;
+  }
+
   /* ==================================================================
      Démontage animé (vues éclatées)
      Modèle : pièces dessinées en position montée, réparties en couches (0 = arrière).
@@ -3805,7 +3925,7 @@ const ILLUS = (() => {
     'mmt': mmt, 'scanner-3d': scanner, 'xrf': xrf, 'cibles': cibles, 'abbe': abbe,
   };
   return {
-    get: id => (DRAW[id] ? DRAW[id]() : ''), ids: Object.keys(DRAW), vernier: vernierSVG,
+    get: id => (DRAW[id] ? DRAW[id]() : ''), ids: Object.keys(DRAW), vernier: vernierSVG, vernierReel,
     /* Démontage animé : modèle (ordre et repères), SVG à l'avancement s, mise à jour d'un SVG affiché */
     modele: id => { const M = modele(id); return M ? { ordre: M.ordre.slice(), reps: [...new Set(M.pieces.map(p => p.rep))] } : null; },
     demontage: demontageSVG, poser,
@@ -5527,6 +5647,9 @@ const ERREURS = (() => {
           <div class="v-loupe"><span class="surtitre">Loupe</span><div id="v-loupe"></div></div>
           <label class="v-curseur" for="v-loupe-pos">${fmt(SI.loupe)}</label>
           <input class="v-range" type="range" id="v-loupe-pos" min="0" step="0.01">
+          <div class="v-reel"><span class="surtitre">${fmt(SI.reel.titre)}</span>
+            <div class="v-reel__fig"><div class="v-reel__vue" id="v-reel"></div><div class="v-reel__loupe" id="v-reel-loupe"></div>
+              <ul class="liste v-reel__legende" id="v-reel-txt"></ul></div></div>
           <div id="v-zone"></div>
         </section>
       </div>
@@ -5614,6 +5737,16 @@ const ERREURS = (() => {
     const x0 = (c - wl / 2 - de) * kv, x1 = (c + wl / 2 - de) * kv;
     if (x0 < vue.scrollLeft || x1 > vue.scrollLeft + vue.clientWidth) vue.scrollLeft = Math.max(0, x0 - (vue.clientWidth - (x1 - x0)) / 2);
     lp.innerHTML = ILLUS.vernier({ n, L: Lv, u, de: c - wl / 2, a: c + wl / 2, largeur: lp.clientWidth, montrer, label: `Loupe. ${lib}` });
+    /* Sur l'instrument : vue réaliste et loupe ronde, centrées comme la loupe du schéma */
+    const SR = V.simulateur.reel, rv = app.querySelector('#v-reel'), rl = app.querySelector('#v-reel-loupe');
+    const j0 = u % n, m0 = Math.floor(u / n) + j0, cm = Math.max(10, b);
+    rv.innerHTML = ILLUS.vernierReel({ n, L: Lv, u, res: t.resolution, c, largeur: rv.clientWidth, montrer, vue: 'ensemble', label: `${t.nom} : vue sur l’instrument` });
+    rl.innerHTML = ILLUS.vernierReel({ n, L: Lv, u, res: t.resolution, c, largeur: rl.clientWidth, montrer, vue: 'loupe', label: `Loupe sur l’instrument. ${lib}` });
+    app.querySelector('#v-reel-txt').innerHTML = [SR.cercle,
+      montrer ? (j0 ? SR.aligne.replace('{j}', j0) : SR.zero).replace('{m}', m0) : SR.chercher,
+      SR.voisins.replace('{r}', t.resolution),
+      SR.chiffres.replace('{c}', cm / 10).replace('{mm}', cm),
+    ].map(x => `<li>${fmt(x)}</li>`).join('');
     const pos = app.querySelector('#v-loupe-pos');
     pos.max = String(Lv); pos.value = String(S.p);
     pos.setAttribute('aria-valuetext', `${nombre(S.p, 2)} mm après le zéro du vernier`);
@@ -5775,6 +5908,16 @@ const ERREURS = (() => {
     }
     /* Exemple du chapitre 8 : 1/50, 30,24 mm, 12e trait aligné avec le trait 42 mm */
     if (calcVernier(VT['50'], 1512) !== '30 mm + 12 × 0,02 mm = 30,24 mm' || Math.abs((30.24 + 12 * 0.98) - 42) > 1e-9) err.push('vernier : exemple 30,24 mm faux');
+    /* Vue sur l'instrument : triangles dorés en face du trait aligné, absents avant validation */
+    for (const t of D.verniers.types) for (const u of [0, 3, t.n * 30 + (12 % t.n), t.n * 150]) {
+      const j0 = u % t.n, m0 = Math.floor(u / t.n) + j0, c = u / t.n + j0 * t.longueur / t.n;
+      const o = { n: t.n, L: t.longueur, u, res: t.resolution, c, largeur: 700, montrer: true };
+      const att = [`${j0}:${m0}`, ...(j0 ? [] : [`${t.n}:${m0 + t.longueur}`])];
+      const vus = [...ILLUS.vernierReel({ ...o, vue: 'ensemble' }).matchAll(/data-aligne="([^"]+)"/g)].map(x => x[1]);
+      if (vus.join() !== att.join()) err.push(`vernier ${t.id}, vue réaliste : ${vus.join()} au lieu de ${att.join()} (u = ${u})`);
+      if (!ILLUS.vernierReel({ ...o, vue: 'loupe', largeur: 380 }).includes(`data-aligne="${att[0]}"`)) err.push(`vernier ${t.id}, loupe réaliste : trait aligné absent (u = ${u})`);
+      if (/data-aligne/.test(ILLUS.vernierReel({ ...o, montrer: false, vue: 'ensemble' }) + ILLUS.vernierReel({ ...o, montrer: false, vue: 'loupe' }))) err.push(`vernier ${t.id}, vue réaliste : réponse visible avant validation`);
+    }
     /* Contrôle de la règle de choix */
     const pied = PAR_ID['pied-a-coulisse'], micro = PAR_ID['micrometre'];
     if (verdict(micro, 0.04).txt !== 'Adapté' || verdict(pied, 0.04).txt !== 'Inadapté' || verdict(pied, 0.1).txt !== 'Selon le modèle' || verdict(pied, 0.2).txt !== 'Adapté') err.push('règle U ≤ IT/3 : verdicts inattendus');
