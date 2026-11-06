@@ -4,7 +4,7 @@
 <title>Quiz MT_322</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Quiz du cours Qualité industrielle (MT_322, hepia) : fins de chapitre 1 à 10 et questions de révision (QCM, questions ouvertes, schémas à compléter), avec correction et citations du cours.">
+<meta name="description" content="Quiz du cours Qualité industrielle (MT_322, hepia) : fins de chapitre 1 à 10, questions de révision (QCM, questions ouvertes, schémas à compléter) et matrice des outils de la qualité, avec correction et citations du cours.">
 <script>
 /* ==========================================================================
    QUIZ MT_322 – QUESTIONS, RÉPONSES ET CITATIONS DU COURS
@@ -29,6 +29,11 @@
            ?partie=tout (tous les chapitres) – ?partie=revision (choix de la série de révision)
            ?partie=revision-qcm, revision-ouvertes, revision-schemas (l’ancien lien revision-tout ouvre le choix de la série)
            ?partie=3 : page du chapitre 3, quatre options au même niveau (QCM, questions ouvertes, schémas, tout enchaîner).
+           ?partie=matrice-impact : outil « matrice d’impact » (cours p. 74) : 3 critères, matrice de sévérité, tableau à noter.
+           ?partie=matrice : matrice des outils du chapitre 9 (MATRICE et pictogrammes TOOL_ICONS, avant le code).
+           Vue tableau : axes à ajouter ou retirer, filtres, sélection d’outils à comparer, outils en lignes ou en colonnes,
+           mode révision, impression. Vue par logique : outils rangés en colonnes selon le PDCA, l’objectif, le contexte,
+           la famille, les données ou le mode de travail, croisés ou non avec une 2e logique en lignes ; fiche de l’outil au clic.
            ?partie=3-ouvertes, 3-schemas, 3-tout : accès direct. Questions ouvertes et schémas = questions de REVISION,
            réparties automatiquement selon « chapitre ». Un chapitre sans question de révision garde la page du quiz.
    Schémas à compléter : ordinateur ou tablette uniquement. Sur smartphone, la série ne démarre pas
@@ -2335,6 +2340,301 @@ body.dragging{user-select:none;-webkit-user-select:none}
   .side.revealed .fb,.result{animation:rise .3s ease-out}
   @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 }
+
+/* matrice des outils du chapitre 9 */
+.grid-ico{display:block;width:1em;height:1em}
+.numeral.mx-num .grid-ico{width:.86em;height:.86em}
+.list .d .grid-ico{width:2.3rem;height:2.3rem}
+.chain li.mat{flex:1.9 1 0}
+.chain .mat .grid-ico{display:inline-block;width:1em;height:1em;vertical-align:-.15em;margin-right:.3rem}
+.mx-ctl{display:grid;gap:.7rem;margin:0 0 1.2rem}
+.mx-box{border:1.5px solid var(--line);border-radius:.9rem;background:var(--mist);padding:.75rem .85rem .8rem}
+.mx-box h2{margin:0;font-size:.95rem;font-weight:800}
+.mx-help{margin:.15rem 0 .6rem;font-size:.8rem;color:var(--grey)}
+.mx-chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.mx-chips+.mx-chips{margin-top:.45rem}
+.mx-row{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .9rem;margin-top:.6rem}
+button.mx-tg{font-size:.78rem;padding:.38rem .8rem;border-width:1.5px}
+button.mx-tg::before{content:"+";font-weight:800;margin-right:.1rem}
+button.mx-tg[aria-pressed="true"]::before{content:"✓"}
+button.mx-tg.mx-rd::before{content:none}
+button.mx-tg:disabled{opacity:.45;cursor:default;background:var(--paper);color:var(--accent)}
+.mx-row .link{font-size:.8rem}
+.mx-out{margin-inline:calc((100% - min(86rem, 100vw - 3rem)) / 2)}
+.mx-count{margin:0 0 .5rem;font-size:.85rem;color:var(--grey)}
+.mx-count b{color:var(--ink)}
+.mx-empty{padding:1rem;border:1.5px dashed var(--line);border-radius:.8rem;color:var(--grey)}
+.mx-scroll{overflow-x:auto;border:1.5px solid var(--line);border-radius:.8rem;background:var(--paper)}
+.mx-scroll:focus-visible{outline-offset:2px}
+table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:.8rem;line-height:1.38}
+.mx th,.mx td{padding:.55rem .65rem;border-bottom:1px solid var(--line);vertical-align:top;text-align:left;background:var(--paper)}
+.mx tbody tr:last-child>*{border-bottom:0}
+.mx thead th{background:var(--panel);color:var(--on-panel);font-size:.74rem;font-weight:700;vertical-align:bottom;white-space:nowrap}
+.mx th[title]{cursor:help}
+.mx .mx-tool{position:sticky;left:0;z-index:1;min-width:12.5rem;max-width:15rem;box-shadow:inset -1px 0 0 var(--line)}
+.mx thead .mx-tool{z-index:2;background:var(--panel)}
+.mx td{min-width:10.5rem}
+.mx td.ax-but,.mx td.ax-retenir{min-width:14rem}
+.mx td.ax-pdca,.mx td.ax-famille{min-width:0;white-space:nowrap}
+.mx-cols td{min-width:12rem}
+.mx-cols thead th.mx-oh{white-space:normal;min-width:12rem}
+.mx-cols .mx-axh{font-size:.76rem;font-weight:800;color:var(--accent)}
+.mx tr.mx-grp th{background:var(--mist);color:var(--accent);font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.42rem .65rem}
+.mx tr.mx-grp th span{position:sticky;left:.65rem}
+.mx tr.mx-grp th small{font-weight:600;letter-spacing:0;text-transform:none;color:var(--grey)}
+.mx tr.is-sel>*,.mx .is-sel{background:var(--accent-tint)}
+.mx thead th.mx-oh.is-sel{background:var(--accent);color:var(--on-accent)}
+.mx-th{display:flex;gap:.5rem;align-items:flex-start}
+.mx-cb{flex:none;width:1.05rem;height:1.05rem;margin:.12rem 0 0;accent-color:var(--accent);cursor:pointer}
+.mx-name{cursor:pointer;display:block;min-width:0}
+.mx-name b{display:block;font-weight:800;font-size:.86rem;line-height:1.25;white-space:normal}
+.mx-name small{display:block;margin-top:.1rem;font-size:.68rem;font-weight:600;color:var(--grey)}
+a.mx-go{display:inline-block;margin-top:.25rem;font-size:.7rem;font-weight:700;color:var(--accent);text-decoration:underline}
+.mx thead a.mx-go{color:var(--on-panel)}
+.mx thead .mx-name small{color:var(--on-panel-soft)}
+.mx thead .is-sel .mx-name small{color:var(--on-accent)}
+.mx-two{display:grid;gap:.25rem;justify-items:start}
+.mx-sub{color:var(--grey);font-size:.76rem}
+.mx-none{color:var(--grey)}
+.mx-chip{display:inline-block;font-size:.7rem;font-weight:700;line-height:1.3;padding:.1rem .5rem;border-radius:999px;border:1.5px solid var(--line);color:var(--ink);white-space:nowrap}
+.mx-chip.d-chiffrees{border-color:var(--fig-blue);color:var(--fig-blue)}
+.mx-chip.d-qualitatives{border-color:var(--orange);color:var(--orange)}
+.mx-chip.d-les-deux{border-color:var(--grey);color:var(--grey)}
+.mx-chip.w.src-c{border-color:var(--ink)}
+.mx-chip.w.src-i{border-style:dashed;color:var(--grey)}
+.mx-chip.fam-classique{border-color:var(--ink)}
+.mx-chip.fam-msp{border-color:var(--fig-blue);color:var(--fig-blue)}
+.mx-chip.fam-methode{border-color:var(--red);color:var(--red)}
+.mx-pdca{display:inline-flex;gap:.22rem}
+.ph{--c:var(--ink);display:inline-grid;place-items:center;width:1.5rem;height:1.5rem;border-radius:.35rem;border:1.5px solid var(--line);font-weight:800;font-size:.76rem;line-height:1;color:var(--line);vertical-align:middle}
+.ph-D{--c:var(--red)} .ph-C{--c:var(--fig-blue)} .ph-A{--c:var(--grey)}
+.ph.on.src-c{background:var(--c);border-color:var(--c);color:var(--paper)}
+.ph.on.src-i{border-color:var(--c);border-style:dashed;color:var(--c);background:var(--paper)}
+button.mx-reveal{font-size:.72rem;font-weight:700;padding:.22rem .7rem;border:1.5px dashed var(--accent);background:var(--accent-tint);color:var(--accent)}
+button.mx-reveal:hover{border-style:solid}
+.mx-legend{margin:.7rem 0 1.4rem;font-size:.78rem;color:var(--grey);display:grid;gap:.3rem}
+.mx-legend p{margin:0}
+.mx-legend b{color:var(--ink)}
+.mx-legend .ph{width:1.25rem;height:1.25rem;font-size:.66rem}
+.mx-cards{display:grid;gap:.65rem}
+.mx-sec{margin:.7rem 0 0;font-size:.74rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.mx-card{border:1.5px solid var(--line);border-radius:.8rem;padding:.75rem .85rem;background:var(--paper)}
+.mx-card.is-sel{border-color:var(--accent);background:var(--accent-tint)}
+.mx-ch{margin-bottom:.55rem}
+.mx-card dl{margin:0;display:grid;gap:.6rem}
+.mx-card dt{font-size:.68rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--grey)}
+.mx-card dd{margin:.15rem 0 0;font-size:.88rem}
+@media print{
+  body.mx-mode header,body.mx-mode footer,body.mx-mode .mx-ctl,body.mx-mode .tools{display:none!important}
+  body.mx-mode .mx-out{margin-inline:0}
+  body.mx-mode .mx-scroll{overflow:visible;border:0}
+  body.mx-mode table.mx{font-size:8pt}
+  body.mx-mode .mx-name b{font-size:8.5pt}
+  body.mx-mode .mx-sub,body.mx-mode .mx-name small,body.mx-mode .mx-chip,body.mx-mode .mx thead th{font-size:7pt}
+  body.mx-mode .mx th,body.mx-mode .mx td{min-width:0;padding:.3rem .4rem}
+  body.mx-mode .mx .mx-tool{position:static;min-width:0}
+  body.mx-mode .mx thead th,body.mx-mode .ph.on.src-c{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body.mx-mode .mx-cb{display:none}
+}
+
+/* outil matrice d'impact */
+:root{--z-ok:#3BAA4A;--z-watch:#F2D232;--z-reduce:#F5A36A;--z-bad:#DA291C}
+.z-ok{background:var(--z-ok);color:#10240F}
+.z-watch{background:var(--z-watch);color:#2B2300}
+.z-reduce{background:var(--z-reduce);color:#3A1A00}
+.z-bad{background:var(--z-bad);color:#FFFFFF}
+h2.imp-h{font-size:1.25rem;font-weight:800;margin:1.8rem 0 .6rem}
+.imp-lead{margin:0 0 .8rem;color:var(--grey);font-size:.9rem}
+.imp-crit{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem;margin:0;padding:0;list-style:none}
+.imp-crit li{border:1.5px solid var(--line);border-radius:.8rem;padding:.7rem .8rem;background:var(--paper)}
+.imp-crit .n{display:inline-grid;place-items:center;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--accent);color:var(--on-accent);font-weight:800;font-size:.8rem;margin-bottom:.35rem}
+.imp-crit b{display:block;font-size:.92rem;line-height:1.25}
+.imp-crit li>span:last-child{display:block;font-size:.8rem;color:var(--grey);margin-top:.25rem}
+.sev-wrap{display:grid;grid-template-columns:auto minmax(0,1fr);gap:1rem 1.6rem;align-items:start}
+.sev-box{display:grid;grid-template-columns:1.3rem auto;grid-template-rows:auto 1.3rem;align-items:center}
+.sev-ay{grid-row:1;grid-column:1;writing-mode:vertical-rl;transform:rotate(180deg);font-size:.72rem;font-weight:700;color:var(--grey);text-align:center}
+.sev-ax{grid-row:2;grid-column:2;font-size:.72rem;font-weight:700;color:var(--grey);text-align:center;padding-left:1.2rem}
+.sev{grid-row:1;grid-column:2;display:grid;grid-template-columns:1.2rem repeat(4,3.3rem);grid-template-rows:repeat(4,3.3rem) 1.2rem;gap:3px}
+.sev>.sev-x{text-align:center;font-size:.74rem;font-weight:700;color:var(--grey)}
+.sev-y{display:grid;place-items:center;font-size:.74rem;font-weight:700;color:var(--grey)}
+button.sev-c{border:0;border-radius:.35rem;padding:0;font-size:1.05rem;font-weight:800;cursor:pointer}
+button.sev-c:hover{filter:brightness(1.07)}
+button.sev-c.on{box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--ink)}
+.sev-c.tool{position:relative;display:block;border-radius:.35rem}
+.sev-v{position:absolute;top:.15rem;left:.3rem;font-size:.68rem;font-weight:800;opacity:.75}
+.sev-bs{position:absolute;inset:1.05rem .2rem .2rem;display:flex;flex-wrap:wrap;gap:2px;align-content:flex-start;justify-content:center}
+.sev-b{display:inline-grid;place-items:center;flex:none;width:1.3rem;height:1.3rem;border-radius:50%;background:var(--ink);color:var(--paper);font-size:.66rem;font-weight:800}
+.sev-side{display:grid;gap:.7rem;align-content:start}
+.sev-f{margin:0;font-weight:800}
+.sev-leg{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.3rem .9rem;font-size:.8rem}
+.sev-leg li{display:inline-flex;align-items:center;gap:.35rem}
+.sev-leg b{font-weight:700}
+.sev-k{width:.95rem;height:.95rem;border-radius:.2rem;flex:none}
+.sev-info{border:1.5px dashed var(--line);border-radius:.7rem;padding:.6rem .75rem;font-size:.88rem;min-height:4.4rem}
+.sev-info p{margin:.15rem 0}
+.sev-info[class*="z-line-"]{border-style:solid}
+.z-line-ok{border-color:var(--z-ok)!important}.z-line-watch{border-color:var(--z-watch)!important}
+.z-line-reduce{border-color:var(--z-reduce)!important}.z-line-bad{border-color:var(--z-bad)!important}
+.sev-notes{margin:0;padding-left:1.1rem;font-size:.84rem;display:grid;gap:.3rem}
+.crit{display:inline-grid;place-items:center;min-width:2.1rem;height:1.6rem;padding:0 .3rem;border-radius:.4rem;font-weight:800;font-size:.85rem}
+.imp-steps{margin:0 0 1rem;padding-left:1.3rem;font-size:.92rem;display:grid;gap:.2rem}
+.imp-foot{display:grid;grid-template-columns:auto minmax(0,1fr);gap:1rem 1.6rem;align-items:start;margin-top:1.1rem}
+.imp-foot .imp-sum{margin-top:0}
+.imp-map{border:1.5px solid var(--line);border-radius:.8rem;padding:.7rem .8rem;background:var(--paper);display:grid;gap:.5rem;justify-items:start}
+.imp-map-t{margin:0;font-size:.82rem;font-weight:800}
+table.imp-t{border-collapse:separate;border-spacing:0;width:100%;font-size:.82rem}
+.imp-t th,.imp-t td{padding:.45rem .5rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;background:var(--paper)}
+.imp-t tbody tr:last-child>*{border-bottom:0}
+.imp-t thead th{background:var(--panel);color:var(--on-panel);font-size:.72rem;font-weight:700;vertical-align:bottom;line-height:1.25}
+.imp-t thead th[title]{cursor:help}
+.imp-t thead small{display:block;font-weight:600;color:var(--on-panel-soft)}
+.imp-no{width:2rem}
+.imp-in{font:inherit;font-size:.84rem;width:100%;min-width:13.5rem;padding:.35rem .5rem;border:1.5px solid var(--line);border-radius:.45rem;background:var(--paper);color:var(--ink)}
+.imp-in:focus{outline:none;border-color:var(--accent)}
+.imp-sel{min-width:6.5rem;max-width:8rem}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:.5rem;overflow:hidden;background:var(--paper)}
+.seg button{border:0;border-radius:0;padding:.3rem 0;width:1.9rem;font-size:.8rem;font-weight:700;background:var(--paper);color:var(--grey)}
+.seg button+button{border-left:1.5px solid var(--line)}
+.seg button:hover{background:var(--accent-tint);color:var(--accent)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.imp-c{white-space:nowrap}
+.imp-c small{display:block;font-size:.68rem;color:var(--grey);margin-top:.15rem}
+.dec{font-weight:700}
+.imp-d{min-width:9.5rem}
+.dec.msp{color:var(--red)}
+.dec.cover{color:var(--fig-blue)}
+button.imp-del{font-size:.76rem}
+button.imp-x{width:1.8rem;height:1.8rem;padding:0;border:1.5px solid var(--line);border-radius:50%;background:var(--paper);color:var(--grey);font-size:1.05rem;line-height:1}
+button.imp-x:hover{border-color:var(--red);color:var(--red)}
+.imp-sum{margin:.6rem 0 0;font-size:.88rem}
+.imp-cards{display:grid;gap:.65rem}
+.imp-ch{display:flex;gap:.5rem;align-items:center;margin-bottom:.6rem}
+.imp-ch .imp-in,.imp-cards .imp-in{min-width:0}
+.imp-cards dl{margin:0 0 .4rem;display:grid;gap:.55rem}
+.imp-cards dt{font-size:.68rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--grey)}
+.imp-cards dd{margin:.2rem 0 0}
+.imp-cards .imp-c{display:flex;align-items:center;gap:.5rem;white-space:normal}
+@media (max-width:760px){.imp-foot{grid-template-columns:1fr}}
+@media (max-width:560px){
+  .imp-crit{grid-template-columns:1fr}
+  .sev-wrap{grid-template-columns:1fr}
+  .sev{grid-template-columns:1.2rem repeat(4,3rem);grid-template-rows:repeat(4,3rem) 1.2rem}
+  .imp-sel{max-width:none}
+}
+@media print{
+  body.imp-mode header,body.imp-mode footer,body.imp-mode .tools,body.imp-mode .mx-row,body.imp-mode .imp-del,body.imp-mode .imp-x{display:none!important}
+  body.imp-mode .mx-out{margin-inline:0}
+  body.imp-mode .imp-foot{grid-template-columns:1fr}
+  body.imp-mode .sev-info{display:none}
+  body.imp-mode .mx-scroll{overflow:visible}
+  body.imp-mode .z-ok,body.imp-mode .z-watch,body.imp-mode .z-reduce,body.imp-mode .z-bad,body.imp-mode .seg button[aria-pressed="true"],body.imp-mode .imp-t thead th,body.imp-mode .sev-b{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+/* pictogrammes et vue par logique */
+.tool-ico{display:block;width:1.6rem;height:1.6rem;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none;overflow:visible}
+.tool-ico .f{fill:currentColor;stroke:none}
+.tool-ico .o2{opacity:.72}.tool-ico .o3{opacity:.48}.tool-ico .o4{opacity:.3}.tool-ico .o5{opacity:.16}
+.tool-ico .t{stroke-width:1;opacity:.45}
+.tool-ico .d{stroke-dasharray:2.2 2;stroke-width:1.2}
+.tool-ico .s{fill:currentColor;fill-opacity:.2}
+.tool-ico .r{stroke:var(--red)}
+.tool-ico .rf{fill:var(--red);stroke:none}
+.tool-ico .w{fill:var(--paper)}
+.tool-ico .m{stroke-width:1.25}
+.mx-ico{display:inline-flex;flex:none}
+.mx-ico.fam-classique{color:var(--ink)}
+.mx-ico.fam-msp{color:var(--fig-blue)}
+.mx-ico.fam-methode{color:var(--red)}
+.mx-th .mx-ico .tool-ico{width:1.75rem;height:1.75rem;margin-top:.05rem}
+.mx-ico.big .tool-ico{width:3.2rem;height:3.2rem}
+.mx-seg{display:flex;flex-wrap:wrap;gap:.4rem;margin:.35rem 0 .2rem}
+.mx-vue .mx-help{margin:.35rem 0 0}
+.mx-chips-c{display:flex;flex-wrap:wrap;gap:.25rem}
+.mx-chip.ob.src-i,.mx-chip.cx{border-style:dashed}
+.mx-chip.ob.src-i{color:var(--grey)}
+.mx td.ax-objectif,.mx td.ax-contexte{min-width:12rem}
+/* vue par logique */
+.bd-scroll{padding:.6rem}
+.bd-grid{display:grid;gap:4px}
+.bd-g{font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);border-bottom:2px solid var(--accent);padding:.15rem .4rem .25rem;text-align:center}
+.bd-g.none{border-color:transparent}
+.bd-h{position:relative;background:var(--panel);color:var(--on-panel);border-radius:.55rem .55rem 0 0;padding:.5rem .6rem .45rem;display:grid;gap:.12rem;align-content:start}
+.bd-h b{font-size:.8rem;line-height:1.2;padding-right:1.7rem}
+.bd-h small{font-size:.66rem;line-height:1.25;opacity:.75}
+.bd-k{position:absolute;top:.42rem;right:.45rem;min-width:1.35rem;height:1.35rem;padding:0 .25rem;border-radius:999px;background:var(--paper);color:var(--ink);font-size:.7rem;font-weight:800;display:grid;place-items:center}
+.bd-h.lh-P,.bd-rh.lh-P{background:var(--ink);color:var(--paper)}
+.bd-h.lh-D,.bd-rh.lh-D{background:var(--red);color:#fff}
+.bd-h.lh-C,.bd-rh.lh-C{background:var(--fig-blue);color:#fff}
+.bd-h.lh-A,.bd-rh.lh-A{background:var(--grey);color:#fff}
+.bd-rh{background:var(--panel);color:var(--on-panel);border-radius:.55rem 0 0 .55rem;padding:.5rem .6rem;display:grid;gap:.12rem;align-content:center}
+.bd-rh b{font-size:.78rem;line-height:1.2}
+.bd-rh small{font-size:.64rem;opacity:.75;line-height:1.25}
+.bd-corner{display:grid;align-items:end;padding:.3rem .4rem;font-size:.66rem;color:var(--grey)}
+.bd-cell{background:var(--mist);padding:.4rem;display:flex;flex-direction:column;gap:.35rem;min-height:3.4rem}
+.bd-grid:not(.two) .bd-cell{border-radius:0 0 .55rem .55rem;min-height:9rem}
+.bd-cell.empty{align-items:center;justify-content:center}
+.bd-empty{color:var(--line);font-weight:800}
+button.bd-card{display:flex;align-items:center;justify-content:flex-start;gap:.5rem;width:100%;text-align:left;padding:.42rem .5rem;border-radius:.55rem;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font-size:.78rem;font-weight:400;line-height:1.2;cursor:pointer;transition:transform .12s,box-shadow .12s,border-color .12s}
+button.bd-card:hover,button.bd-card.hl{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-tint);transform:translateY(-1px)}
+button.bd-card.src-i{border-style:dashed}
+.bd-card .tool-ico{width:1.6rem;height:1.6rem}
+.bd-n{min-width:0}
+.bd-n b{display:block;font-weight:700}
+.bd-n small{display:block;font-size:.64rem;color:var(--grey);font-weight:600}
+.bd-grid.two button.bd-card{padding:.3rem .4rem;font-size:.72rem;gap:.4rem}
+.bd-grid.two .bd-card .tool-ico{width:1.3rem;height:1.3rem}
+.bd-grid.two .bd-n small{display:none}
+.bd-grid.two .bd-n b,.bd-grid.two .bd-h b{hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word}
+.bd-stack{display:grid;gap:.7rem}
+.bd-sec .bd-cell{border-radius:0 0 .55rem .55rem;display:grid;grid-template-columns:1fr 1fr;min-height:0}
+.bd-key{display:inline-block;padding:.02rem .45rem;border:1.5px solid var(--ink);border-radius:.35rem;font-weight:700;color:var(--ink);font-size:.72rem}
+.bd-key.i{border-style:dashed}
+dialog.mx-dlg{width:min(48rem,calc(100vw - 2rem));max-height:calc(100vh - 2rem);border:0;border-radius:1rem;padding:1.1rem 1.3rem 1.3rem;background:var(--paper);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog.mx-dlg::backdrop{background:rgba(20,20,20,.5)}
+.mx-dlg-h{display:flex;align-items:center;gap:.9rem;margin-bottom:.9rem}
+.mx-dlg-h>div{flex:1;min-width:0}
+.mx-dlg-h h2{margin:0;font-size:1.3rem;font-weight:800;line-height:1.2}
+.mx-dlg-h p{margin:.15rem 0 0;font-size:.8rem;color:var(--grey)}
+button.mx-dlg-x{font-size:.8rem;padding:.35rem .85rem}
+.mx-dlg-dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:.7rem 1.2rem}
+.mx-dlg-dl>div{border-top:1px solid var(--line);padding-top:.45rem}
+.mx-dlg-dl dt{font-size:.66rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--grey)}
+.mx-dlg-dl dd{margin:.25rem 0 0;font-size:.86rem}
+.mx-dlg-go{margin:1rem 0 0}
+@media (max-width:560px){.mx-dlg-dl{grid-template-columns:1fr}.mx-dlg-h{flex-wrap:wrap}}
+
+/* matrice : bandeau de réglages à gauche */
+.mx-layout{margin-inline:calc((100% - min(96rem, 100vw - 3rem)) / 2);display:grid;grid-template-columns:14.5rem minmax(0,1fr);gap:1.1rem;align-items:start}
+.mx-layout.folded{grid-template-columns:2.4rem minmax(0,1fr)}
+.mx-side{position:sticky;top:.8rem;max-height:calc(100vh - 1.6rem);overflow-y:auto;overscroll-behavior:contain;display:grid;gap:.55rem;align-content:start;padding:0 .3rem .3rem 0;scrollbar-width:thin}
+.mx-side-h{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.1rem .1rem 0}
+.mx-side-h b{font-size:.95rem;font-weight:800}
+button.mx-fold{font-size:.72rem}
+.mx-side .mx-ctl{margin:0;gap:.55rem}
+.mx-side .mx-box{padding:.6rem .65rem .7rem;border-radius:.75rem}
+.mx-side .mx-box h2{font-size:.82rem}
+.mx-side .mx-help{font-size:.7rem;margin:.15rem 0 .5rem}
+.mx-side .mx-vue .mx-help{margin:.4rem 0 0}
+.mx-side button.mx-tg{font-size:.7rem;padding:.3rem .62rem}
+.mx-side .mx-chips{gap:.3rem}
+.mx-side .mx-chips+.mx-chips{margin-top:.35rem}
+.mx-side .mx-row{gap:.35rem .7rem;margin-top:.5rem}
+.mx-side .mx-row .link{font-size:.72rem}
+.mx-side .mx-page .tools{flex-direction:column;align-items:stretch;gap:.4rem;margin:.5rem 0 0}
+.mx-side .mx-page .tools button{font-size:.74rem;padding:.4rem .7rem;justify-content:center}
+.mx-side.closed{overflow:visible}
+button.mx-rail{writing-mode:vertical-rl;transform:rotate(180deg);width:2.4rem;min-height:9rem;padding:.8rem 0;border-radius:.75rem;font-size:.76rem;font-weight:800;letter-spacing:.04em;background:var(--mist);color:var(--accent);border:1.5px solid var(--line)}
+button.mx-rail:hover{border-color:var(--accent)}
+.mx-main{min-width:0}
+.mx-main .mx-count{margin-top:.1rem}
+@media (max-width:899px){
+  .mx-layout,.mx-layout.folded{grid-template-columns:1fr;margin-inline:calc((100% - min(96rem, 100vw - 2rem)) / 2)}
+  .mx-side{position:static;max-height:none;overflow:visible;padding:0}
+  .mx-side .mx-page .tools{flex-direction:row;flex-wrap:wrap}
+  button.mx-rail{writing-mode:horizontal-tb;transform:none;width:100%;min-height:0;padding:.6rem 1rem}
+  .mx-side.closed{margin-bottom:.2rem}
+}
+@media print{body.mx-mode .mx-side{display:none!important}body.mx-mode .mx-layout{display:block;margin-inline:0}}
 </style>
 </head>
 <body>
@@ -2391,6 +2691,30 @@ body.dragging{user-select:none;-webkit-user-select:none}
 
 <script>
 "use strict";
+/* ---------- matrice des outils du chapitre 9 (cours p. 69–91) ---------- */
+const MATRICE = {"familles":[{"id":"classique","nom":"7 outils classiques","court":"7 outils classiques","ref":"cours p. 69"},{"id":"msp","nom":"Compléments de la MSP","court":"MSP","ref":"maîtrise statistique des procédés, cours p. 74–75"},{"id":"methode","nom":"Autres méthodes","court":"Autres méthodes","ref":"cours p. 79"}],"axes":[{"id":"famille","nom":"Famille","aide":"7 outils classiques (cours p. 69), compléments de la maîtrise statistique des procédés (MSP, p. 74–75), autres méthodes (p. 79)."},{"id":"but","nom":"But","aide":"À quoi sert l’outil, d’après le cours."},{"id":"objectif","nom":"Objectif","aide":"À quoi sert l’outil. Étapes du cours p. 67 (identifier, trouver les causes, choisir une solution, évaluer, établir les règles), plus « Hiérarchiser » et « Maîtriser le processus »."},{"id":"pdca","nom":"Phase du PDCA","aide":"P : Plan (préparer). D : Do (faire). C : Check (vérifier). A : Act (réagir). Cours p. 66–67."},{"id":"contexte","nom":"Contexte","aide":"Où et quand on utilise l’outil. Classement proposé, hors support."},{"id":"donnees","nom":"Données traitées","aide":"Chiffrées : mesures, comptages. Qualitatives : idées, faits, étapes."},{"id":"travail","nom":"Mode de travail","aide":"Seul, en groupe, ou les deux."},{"id":"resultat","nom":"Résultat obtenu","aide":"Ce que l’outil produit."},{"id":"retenir","nom":"À retenir","aide":"Règle, formule ou chiffre clé."},{"id":"exemple","nom":"Exemple","aide":"Exemple du cours, ou de la présentation."},{"id":"filrouge","nom":"Fil rouge","aide":"Exercices de la présentation : rayures sur les boîtes de montre, semaine 44."}],"objectifs":[{"id":"identifier","nom":"Identifier le problème","groupe":"Résoudre un problème","ref":"cours p. 67"},{"id":"hierarchiser","nom":"Hiérarchiser","groupe":"Résoudre un problème","ref":"cours p. 76 et 82"},{"id":"causes","nom":"Trouver les causes","groupe":"Résoudre un problème","ref":"cours p. 67"},{"id":"solution","nom":"Choisir une solution","groupe":"Résoudre un problème","ref":"cours p. 67"},{"id":"evaluer","nom":"Évaluer les résultats","groupe":"Résoudre un problème","ref":"cours p. 67"},{"id":"maitriser","nom":"Maîtriser le processus","groupe":"Maîtriser et standardiser","ref":"cours p. 73–75"},{"id":"regles","nom":"Établir les règles de travail","groupe":"Maîtriser et standardiser","ref":"cours p. 67"}],"contextes":[{"id":"atelier","nom":"Atelier, au poste","aide":"Production au quotidien, par l’opérateur."},{"id":"methodes","nom":"Méthodes, industrialisation","aide":"Préparer et qualifier un procédé ou une machine."},{"id":"groupe","nom":"Groupe d’amélioration","aide":"Réunion de résolution de problème."},{"id":"bureau","nom":"Bureau qualité","aide":"Analyse des données, rapports."},{"id":"services","nom":"Achats, SAV, maintenance","aide":"Organisation, fournisseurs, après-vente."}],"outils":[{"id":"recueil","nom":"Feuille de recueil de données","court":"Feuille de recueil","famille":"classique","sec":"9.1","pages":"70","but":"Recueillir des données représentatives des faits.","pdca":[["P","c"]],"donnees":["Chiffrées","Faits relevés : comptages, mesures."],"travail":["Seul","i","Au poste, par la personne qui relève les faits."],"resultat":"Un relevé sur un formulaire préparé.","retenir":"Formulaire préparé à l’avance, sur papier ou à l’écran.","exemple":"Fiche de consultation d’aide à l’arrêt du tabac (p. 70).","filrouge":"60 défauts sur 400 boîtes, dont 36 rayures.","usages":[["identifier","P","c","c"]],"contexte":["atelier"]},{"id":"graphes","nom":"Graphes, dont le radar","court":"Graphes (radar)","famille":"classique","sec":"9.2","pages":"71","but":"Représenter des données. Le radar compare plusieurs solutions.","pdca":[["D","i"],["C","i"]],"donnees":["Chiffrées","Séries de valeurs. Radar : 4 à 20 caractéristiques."],"travail":["Seul","i","À partir des données recueillies."],"resultat":"Un graphe : barres, lignes, secteurs, radar.","retenir":"Radar : 4 à 20 données ; la valeur croît du centre vers l’extérieur.","exemple":"Radar : 2 solutions, 6 caractéristiques (p. 71).","filrouge":"","usages":[["solution","D","c","i"],["evaluer","C","i","i"]],"contexte":["bureau","services"]},{"id":"histo","nom":"Histogramme","court":"Histogramme","famille":"classique","sec":"9.3","pages":"72","but":"Représenter la dispersion des mesures et en chercher la cause.","pdca":[["C","i"]],"donnees":["Chiffrées","Une grande série de mesures d’une caractéristique."],"travail":["Seul","i","À partir d’une série de mesures."],"resultat":"Un graphe en barres de la dispersion.","retenir":"Montre la forme de la dispersion. Valeurs entières : diagramme à bâtons.","exemple":"Taille des footballeurs (p. 72).","filrouge":"","usages":[["evaluer","C","i","i"]],"contexte":["bureau","methodes"]},{"id":"carte","nom":"Carte de contrôle","court":"Carte de contrôle","famille":"classique","sec":"9.4","pages":"73","but":"Suivre le processus dans le temps et le maîtriser.","pdca":[["D","c"],["C","c"]],"donnees":["Chiffrées","Mesures d’échantillons prélevés à intervalles réguliers."],"travail":["Seul","i","Au poste, à chaque prélèvement."],"resultat":"Un graphe dans le temps, avec limites de contrôle.","retenir":"Limite de contrôle dépassée : intervention immédiate sur le processus.","exemple":"Carte de la moyenne et de l’étendue (p. 73).","filrouge":"","usages":[["maitriser","D","c","c"],["evaluer","C","c","c"]],"contexte":["atelier"]},{"id":"pareto","nom":"Diagramme de Pareto","court":"Pareto","famille":"classique","sec":"9.6","pages":"76","but":"Classer les problèmes par importance, traiter d’abord l’essentiel.","pdca":[["P","c"],["C","c"]],"donnees":["Chiffrées","Nombre d’effets par cause : des comptages."],"travail":["Seul","i","À partir d’un relevé."],"resultat":"Barres décroissantes et courbe des % cumulés.","retenir":"20 % des causes produisent 80 % des effets.","exemple":"Non-conformités logistiques : retard transporteur en tête (p. 76).","filrouge":"Rayures et marques de polissage : 80 % des défauts.","usages":[["hierarchiser","P","c","c"],["evaluer","C","c","c"]],"contexte":["bureau","groupe"]},{"id":"ishikawa","nom":"Diagramme d’Ishikawa (5M)","court":"Ishikawa (5M)","famille":"classique","sec":"9.7","pages":"77","but":"Représenter toutes les causes possibles d’un problème, par familles.","pdca":[["P","c"]],"donnees":["Qualitatives","Causes possibles d’un effet."],"travail":["En groupe","i","Souvent après un brainstorming."],"resultat":"Un diagramme en arêtes de poisson.","retenir":"5M : Méthode, Milieu, Matériel, Main-d’œuvre, Matière.","exemple":"Effet à droite, 5 arêtes de causes (p. 77).","filrouge":"8 causes des rayures classées en 5M.","usages":[["causes","P","c","c"]],"contexte":["groupe"]},{"id":"corr","nom":"Diagramme de corrélation","court":"Corrélation","famille":"classique","sec":"9.8","pages":"78","but":"Vérifier la relation entre 2 variables mesurables x et y.","pdca":[["P","c"]],"donnees":["Chiffrées","n couples (x ; y), sur tout le domaine étudié."],"travail":["Seul","i","À partir de couples de mesures."],"resultat":"Un nuage de points (x ; y).","retenir":"Assez de couples sur tout le domaine. Un lien, pas forcément une cause.","exemple":"Température de l’atelier et diamètre mesuré (présentation).","filrouge":"","usages":[["causes","P","c","c"]],"contexte":["bureau"]},{"id":"impact","nom":"Matrice d’impact","court":"Matrice d’impact","famille":"msp","sec":"9.4","pages":"74","but":"Choisir les caractéristiques à suivre par carte de contrôle.","pdca":[["P","i"]],"donnees":["Les deux","Caractéristiques notées selon leur impact sur les clients."],"travail":["Seul ou en groupe","i","Dans un tableur."],"resultat":"La liste des caractéristiques à suivre.","retenir":"3 critères : importance client, historique de non-qualité, corrélation.","exemple":"Matrice de sévérité : fréquence × gravité (p. 74).","filrouge":"","usages":[["maitriser","P","c","i"]],"contexte":["methodes"]},{"id":"capa","nom":"Capabilités (Cp, Cpk)","court":"Capabilités","famille":"msp","sec":"9.5","pages":"75","but":"Vérifier que la machine ou le processus tient les tolérances.","pdca":[["C","i"]],"donnees":["Chiffrées","Tolérances Ts et Ti, moyenne, écart type σ."],"travail":["Seul","i","À partir des mesures d’un échantillon."],"resultat":"Deux indices : Cp et Cpk.","retenir":"Cp = (Ts − Ti) ÷ 6σ. Cpk = différence critique ÷ 3σ. Machine ≥ 1,66 ; fabrication ≥ 1,33.","exemple":"Axe Ø 2,00 ± 0,03 mm : Cp = 2,0, Cpk = 0,8 (exercice).","filrouge":"","usages":[["maitriser","C","c","i"]],"contexte":["methodes"]},{"id":"brain","nom":"Brainstorming","court":"Brainstorming","famille":"methode","sec":"9.9","pages":"80–81","but":"Produire un maximum d’idées en un minimum de temps.","pdca":[["P","c"]],"donnees":["Qualitatives","Idées : causes ou solutions."],"travail":["En groupe","c","8 à 15 personnes et un animateur."],"resultat":"Une liste d’idées, puis la meilleure solution.","retenir":"3 phases : recherche, regroupement, conclusion. Aucune critique pendant la recherche.","exemple":"Causes des accidents sur la route (p. 81).","filrouge":"Causes possibles des rayures.","usages":[["identifier","P","c","c"],["causes","P","c","c"]],"contexte":["groupe"]},{"id":"vote","nom":"Vote pondéré","court":"Vote pondéré","famille":"methode","sec":"9.10","pages":"82–83","but":"Choisir à plusieurs, selon des critères et leur importance.","pdca":[["P","i"],["D","i"]],"donnees":["Les deux","Options qualitatives, votes et poids chiffrés."],"travail":["En groupe","c","Chaque membre du groupe vote."],"resultat":"Un total de points par option.","retenir":"Vote simple ou multicritère : votes × poids du critère.","exemple":"Chauffage : fenêtres et portes isolantes retenues (p. 82–83).","filrouge":"Film de protection retenu : 43 points.","usages":[["hierarchiser","P","c","i"],["solution","D","c","i"]],"contexte":["groupe"]},{"id":"qqoqccp","nom":"QQOQCCP","court":"QQOQCCP","famille":"methode","sec":"9.11","pages":"84–85","but":"Identifier le problème dans son ensemble, avec 7 questions.","pdca":[["P","c"],["C","c"],["A","c"]],"donnees":["Les deux","Faits et observations. Combien ? chiffre le problème."],"travail":["Seul ou en groupe","i","À partir d’enquêtes sur le terrain."],"resultat":"Une grille de 7 réponses.","retenir":"Qui ? Quoi ? Où ? Quand ? Comment ? Combien ? Pourquoi ?","exemple":"Panne du climatiseur du local de contrôle (p. 85).","filrouge":"36 boîtes rayées sur le fond, semaine 44.","usages":[["identifier","P","c","c"],["evaluer","C","c","c"],["regles","A","c","c"]],"contexte":["groupe","services"]},{"id":"pourquoi","nom":"5 pourquoi","court":"5 pourquoi","famille":"methode","sec":"9.12","pages":"86","but":"Remonter à la cause principale d’une défaillance.","pdca":[["P","i"]],"donnees":["Qualitatives","Faits : une réponse à chaque « Pourquoi ? »."],"travail":["Seul ou en groupe","i","À la suite du QQOQCCP."],"resultat":"Une chaîne de 5 réponses, jusqu’à la cause racine.","retenir":"Complète le QQOQCCP. Méthode née chez Toyota.","exemple":"Voiture qui refuse de démarrer (p. 86).","filrouge":"Cause racine : achat des bacs sans cahier des charges.","usages":[["causes","P","c","i"]],"contexte":["groupe"]},{"id":"logi","nom":"Logigramme","court":"Logigramme","famille":"methode","sec":"9.13","pages":"87–91","but":"Visualiser dans l’ordre les actions et les décisions d’un procédé.","pdca":[["A","c"]],"donnees":["Qualitatives","Étapes, actions et décisions d’un procédé."],"travail":["En groupe","c","Pour une compréhension commune du procédé."],"resultat":"Un schéma de symboles reliés par des flèches.","retenir":"Ellipse, rectangle, losange, cercle. Flux macro, détaillé, matriciel.","exemple":"Prise en charge d’une montre en SAV (p. 89).","filrouge":"Contrôle d’entrée des lots livrés.","usages":[["regles","A","c","c"]],"contexte":["methodes","services"]}]};
+/* Pictogrammes des outils du chapitre 9 : 24 × 24, trait = currentColor */
+const TOOL_ICONS = {
+  recueil: '<rect x="4.5" y="4" width="15" height="17.5" rx="2"/><rect x="8.5" y="2.2" width="7" height="3.6" rx="1.2" class="f"/><path d="M8.5 10v6.5M11 10v6.5M13.5 10v6.5M7.2 15.6l8.6-5" class="m"/>',
+  graphes: '<path d="M12 3l7.8 4.5v9L12 21l-7.8-4.5v-9z" class="t"/><path d="M12 3v18M4.2 7.5l15.6 9M19.8 7.5l-15.6 9" class="t"/><path d="M12 6.5l5.6 3.2-1.4 5.7L12 18.2l-5-3.1 1.3-5.8z" class="s"/>',
+  histo: '<path d="M2.5 21h19"/><rect x="3.6" y="17" width="3" height="4" class="f"/><rect x="7.2" y="11" width="3" height="10" class="f"/><rect x="10.8" y="5.5" width="3" height="15.5" class="f"/><rect x="14.4" y="10" width="3" height="11" class="f"/><rect x="18" y="16" width="3" height="5" class="f"/>',
+  carte: '<path d="M2 5h20M2 19h20" class="d"/><path d="M2 12h20" class="t"/><path d="M2.5 13l3-4.5 3 6 3-5 3 4.5 3-7 3.5 4.5"/><circle cx="5.5" cy="8.5" r="1.1" class="f"/><circle cx="11.5" cy="9.5" r="1.1" class="f"/><circle cx="17.5" cy="7" r="1.1" class="f"/>',
+  impact: '<rect x="3" y="3" width="5.4" height="5.4" rx="1" class="f o3"/><rect x="9.3" y="3" width="5.4" height="5.4" rx="1" class="f o2"/><rect x="15.6" y="3" width="5.4" height="5.4" rx="1" class="f"/><rect x="3" y="9.3" width="5.4" height="5.4" rx="1" class="f o4"/><rect x="9.3" y="9.3" width="5.4" height="5.4" rx="1" class="f o3"/><rect x="15.6" y="9.3" width="5.4" height="5.4" rx="1" class="f o2"/><rect x="3" y="15.6" width="5.4" height="5.4" rx="1" class="f o5"/><rect x="9.3" y="15.6" width="5.4" height="5.4" rx="1" class="f o4"/><rect x="15.6" y="15.6" width="5.4" height="5.4" rx="1" class="f o3"/>',
+  capa: '<path d="M3.5 3v18M20.5 3v18" class="d"/><path d="M2 20.5h20"/><path d="M5 20.3c2.6-.2 3.8-2.4 4.8-6.4.8-3.4 1.2-6.4 2.2-6.4s1.4 3 2.2 6.4c1 4 2.2 6.2 4.8 6.4" class="s"/>',
+  pareto: '<path d="M2.5 21h19"/><rect x="3.5" y="8" width="3.6" height="13" class="f"/><rect x="8.1" y="13" width="3.6" height="8" class="f"/><rect x="12.7" y="16" width="3.6" height="5" class="f"/><rect x="17.3" y="18" width="3.6" height="3" class="f"/><path d="M5.3 8l4.6-3.4 4.6-1.6 4.6-.8" class="r"/><circle cx="5.3" cy="8" r="1" class="rf"/><circle cx="9.9" cy="4.6" r="1" class="rf"/><circle cx="14.5" cy="3" r="1" class="rf"/><circle cx="19.1" cy="2.2" r="1" class="rf"/>',
+  ishikawa: '<path d="M2 12h14"/><path d="M16 8.6h3.6a2.4 2.4 0 0 1 2.4 2.4v2a2.4 2.4 0 0 1-2.4 2.4H16z" class="f"/><path d="M3.8 5l3.6 7M9.4 5l3.6 7M3.8 19l3.6-7M9.4 19l3.6-7"/><path d="M4.8 7h2.4M10.4 7h2.4M4.8 17h2.4M10.4 17h2.4" class="m"/>',
+  corr: '<path d="M3 2.5V21h18.5"/><path d="M5.5 19L20 5" class="d"/><circle cx="7" cy="16.5" r="1.3" class="f"/><circle cx="9" cy="14.8" r="1.3" class="f"/><circle cx="10.2" cy="16.6" r="1.3" class="f"/><circle cx="12.4" cy="11.4" r="1.3" class="f"/><circle cx="14.2" cy="12.6" r="1.3" class="f"/><circle cx="15.6" cy="8.6" r="1.3" class="f"/><circle cx="18.2" cy="7.4" r="1.3" class="f"/>',
+  brain: '<path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 21.5h4"/><path d="M12 9.2l-1.3 2.3h2.6L12 13.8" class="t"/>',
+  vote: '<path d="M3.5 13.5h17V21h-17z"/><path d="M7.5 13.5h9" class="t"/><rect x="8" y="2.5" width="8" height="10" rx="1"/><path d="M10 7.5l1.5 1.5 2.8-3.2"/>',
+  qqoqccp: '<path d="M5 3.5h14a2.5 2.5 0 0 1 2.5 2.5v8.5a2.5 2.5 0 0 1-2.5 2.5h-8.5L5.5 21v-4H5a2.5 2.5 0 0 1-2.5-2.5V6A2.5 2.5 0 0 1 5 3.5z"/><path d="M9.6 8.4a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.5v.5"/><circle cx="12" cy="14.6" r=".9" class="f"/>',
+  pourquoi: '<path d="M5 3.5l4 4.5 4 4.5 4 4.5 2.6 3" /><circle cx="5" cy="3.5" r="1.7" class="w"/><circle cx="9" cy="8" r="1.7" class="w"/><circle cx="13" cy="12.5" r="1.7" class="w"/><circle cx="17" cy="17" r="1.7" class="w"/><circle cx="20" cy="20.5" r="2.4" class="f"/>',
+  logi: '<ellipse cx="12" cy="3.6" rx="4.2" ry="2.1"/><rect x="7.8" y="8" width="8.4" height="4.4" rx=".6"/><path d="M12 14.4l4.3 3.1-4.3 3.1-4.3-3.1z"/><path d="M12 5.7V8M12 12.4v2M16.3 17.5h4.2"/><path d="M19.2 16.2l1.4 1.3-1.4 1.3"/>',
+};
+function toolIcon(id, cls){
+  return '<svg class="tool-ico' + (cls ? " " + cls : "") + '" viewBox="0 0 24 24" aria-hidden="true">' + TOOL_ICONS[id] + "</svg>";
+}
+
+
 const L = "ABCD";
 const NB = String.fromCharCode(160); // espace insécable
 const COMB = new RegExp("[" + String.fromCharCode(0x300) + "-" + String.fromCharCode(0x36f) + "]", "g");
@@ -2532,6 +2856,7 @@ function chapOf(k){ return typeof k === "number" ? k : isChapSeries(k) ? SERIES[
 /* page du chapitre : QCM, questions ouvertes, schémas et « Tout enchaîner » au même niveau */
 function isChapMenu(k){ return typeof k === "number" && CHAP_SERIES[k].length > 0; }
 function partOf(k){
+  if (k === MAT_KEY || k === IMP_KEY) return MAT_PID;
   if (typeof k === "number") return PIDS.find(pid => PARTIES[pid].chaps.includes(k)) || PIDS[0];
   if (isSeries(k)) return SERIES[k].pid;
   return PIDS.find(pid => PARTIES[pid].all === k || PARTIES[pid].rev === k) || PIDS[0];
@@ -2542,6 +2867,7 @@ function parseKey(p){
   if (p === "bonus") p = PARTIES[PIDS[0]].rev;                       // ancien lien « Bonus »
   const m = /^bonus-(\d+)$/.exec(p || ""); if (m) p = "revision-" + m[1];
   const t = /^(revision(?:-\d+)?)-tout$/.exec(p || ""); if (t) p = t[1];   // ancienne « série complète » : choix de la série
+  if (p === MAT_KEY || p === IMP_KEY) return p;
   return p && (isAll(p) || isMenu(p) || isSeries(p)) ? p : null;
 }
 function rev(k){ return REVISION[partOf(k)]; }
@@ -2647,7 +2973,7 @@ function renderChain(){
   const target = S.view === "correction" ? "correction" : "intro";
   const items = P.chaps.map(ch => {
     const a = navLink(QUIZ[ch].nom, target, ch);
-    if (ch === chapOf(S.key)) a.setAttribute("aria-current", "page");
+    if (ch === chapOf(S.key) || (S.key === IMP_KEY && ch === MAT_CH)) a.setAttribute("aria-current", "page");
     return el("li", {}, a, el("small", {text: "Chapitre " + ch}));
   });
   if (P.rev){
@@ -2656,6 +2982,12 @@ function renderChain(){
     a.append(star(), el("span", {class: "lg", text: R.nom}), el("span", {class: "sm", text: R.court}));
     if (isRev(S.key) && partOf(S.key) === P.id) a.setAttribute("aria-current", "page");
     items.push(el("li", {class: "accent-rev rev"}, a, el("small", {text: "QCM · ouvertes · schémas"})));
+  }
+  if (P.id === MAT_PID){
+    const a = navLink("", "intro", MAT_KEY);
+    a.append(el("span", {html: ICON_GRID, style: "display:contents"}), el("span", {class: "lg", text: "Matrice des outils"}), el("span", {class: "sm", text: "Matrice"}));
+    if (S.key === MAT_KEY) a.setAttribute("aria-current", "page");
+    items.push(el("li", {class: "mat"}, a, el("small", {text: "Chapitre " + MAT_CH + " · comparer"})));
   }
   chain.replaceChildren(...items);
 }
@@ -2720,6 +3052,7 @@ function renderHome(){
       el("span", {class: "go"}, el("b", {text: R.tout.length + " questions"}), R.series.length + " séries"));
     items.push(el("li", {class: "bonus accent-rev"}, a));
   }
+  if (P.id === MAT_PID) items.push(mxItem());
   const reset = Object.keys(store.best).length || Object.keys(store.progress).length
     ? el("div", {class: "foot-actions"}, button("Effacer mes résultats sur cet appareil", "link", () => { store = {best: {}, progress: {}}; save(); render(); say("Résultats effacés."); }))
     : null;
@@ -2770,8 +3103,533 @@ function renderChapter(){
   const rows = [launchItem(ch, "QCM", REV_TYPES[0].desc),
     ...CHAP_SERIES[ch].map(s => launchItem(s.key, s.titre, s.desc, s.note)),
     launchItem(CHAP_TOUT[ch].key, CHAP_TOUT[ch].titre, CHAP_TOUT[ch].desc, CHAP_TOUT[ch].note)];
+  if (ch === MAT_CH) rows.push(mxItem("Comparez les " + MATRICE.outils.length + " outils du chapitre selon " + MATRICE.axes.length + " axes."), impItem());
   put(hero(ch, c.nom), tools(ch), el("ul", {class: "list series chap-menu"}, ...rows), el("div", {class: "hints"}, ...hints()));
 }
+
+/* ---------- matrice des outils du chapitre 9 ----------
+   Lignes : outils (MATRICE.outils). Colonnes : axes de comparaison (MATRICE.axes), à ajouter ou retirer.
+   Filtres : famille, phase du PDCA, sélection d'outils. Vue : outils en lignes ou en colonnes ; cartes sur smartphone.
+   Mode révision : cases masquées, affichées une à une. Réglages conservés sur l'appareil (MAT_STORE). */
+const MAT_KEY = "matrice", MAT_PID = 2, MAT_CH = 9;
+const MAT_STORE = "mt322-matrice-v1";
+const MAT_DEFAULT = ["but", "pdca", "donnees"];
+const MAT_PHASES = [["P", "Plan", "préparer"], ["D", "Do", "faire"], ["C", "Check", "vérifier"], ["A", "Act", "réagir"]];
+const MX_NARROW = matchMedia("(max-width: 560px)");
+const ICON_GRID = '<svg class="grid-ico" viewBox="0 0 24 24" aria-hidden="true"><g fill="currentColor"><rect x="2" y="2" width="6" height="6" rx="1.2"/><rect x="9" y="2" width="6" height="6" rx="1.2"/><rect x="16" y="2" width="6" height="6" rx="1.2"/><rect x="2" y="9" width="6" height="6" rx="1.2"/><rect x="9" y="9" width="6" height="6" rx="1.2" opacity=".45"/><rect x="16" y="9" width="6" height="6" rx="1.2"/><rect x="2" y="16" width="6" height="6" rx="1.2"/><rect x="9" y="16" width="6" height="6" rx="1.2"/><rect x="16" y="16" width="6" height="6" rx="1.2" opacity=".45"/></g></svg>';
+const MX = (() => {
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(MAT_STORE)); } catch (e) {}
+  const arr = (a, ok) => Array.isArray(a) ? a.filter(ok) : null;
+  const ax = arr(s && s.axes, id => MATRICE.axes.some(a => a.id === id));
+  return {axes: ax || MAT_DEFAULT.slice(),
+    fam: arr(s && s.fam, id => MATRICE.familles.some(f => f.id === id)) || [],
+    ph: arr(s && s.ph, L => MAT_PHASES.some(p => p[0] === L)) || [],
+    sel: arr(s && s.sel, id => MATRICE.outils.some(o => o.id === id)) || [],
+    only: !!(s && s.only), cols: !!(s && s.cols), hide: !!(s && s.hide), shown: new Set(),
+    view: s && s.view === "board" ? "board" : "table", lens: s && typeof s.lens === "string" ? s.lens : "pdca", lens2: s && typeof s.lens2 === "string" ? s.lens2 : "", fold: !!(s && s.fold)};
+})();
+if (MX.sel.length < 2) MX.only = false;
+function mxSave(){ try { localStorage.setItem(MAT_STORE, JSON.stringify({axes: MX.axes, fam: MX.fam, ph: MX.ph, sel: MX.sel, only: MX.only, cols: MX.cols, hide: MX.hide, view: MX.view, lens: MX.lens, lens2: MX.lens2, fold: MX.fold})); } catch (e) {} }
+function mxFlip(arr, v, on){ const i = arr.indexOf(v); if (on === undefined) on = i < 0; if (on && i < 0) arr.push(v); if (!on && i >= 0) arr.splice(i, 1); }
+function mxTxt(s){ return typo(s).replace(/p\. (\d)/g, "p." + NB + "$1"); }
+function mxSlug(s){ return norm(s).trim().replace(/ /g, "-"); }
+function mxObj(o){   // objectifs de l'outil, d'après ses usages : [id, source]
+  const r = [];
+  o.usages.forEach(u => { const x = r.find(y => y[0] === u[0]); if (!x) r.push([u[0], u[2]]); else if (u[2] === "c") x[1] = "c"; });
+  return MATRICE.objectifs.map(x => r.find(y => y[0] === x.id)).filter(Boolean);
+}
+function mxFam(o){ return MATRICE.familles.find(f => f.id === o.famille); }
+function mxAxes(){ return MATRICE.axes.filter(a => MX.axes.includes(a.id)); }
+function mxTools(all){   // all : sans le filtre « Comparer la sélection » (vue par logique)
+  return MATRICE.outils.filter(o => (!MX.fam.length || MX.fam.includes(o.famille))
+    && (!MX.ph.length || o.pdca.some(p => MX.ph.includes(p[0])))
+    && (all || !MX.only || MX.sel.includes(o.id)));
+}
+function mxIsSel(o){ return MX.sel.includes(o.id); }
+function mxHl(o){ return !MX.only && mxIsSel(o); }   // surlignage de la sélection, sauf en mode comparaison
+function mxSrc(s){ return s === "c" ? "indiqué par le cours" : "classement indicatif"; }
+function mxPdcaLabel(o){
+  return "Phases" + NB + ": " + o.pdca.map(p => { const P = MAT_PHASES.find(x => x[0] === p[0]); return P[1] + " (" + mxSrc(p[1]) + ")"; }).join(", ");
+}
+function mxCell(o, a){
+  if (a.id === "famille") return el("span", {class: "mx-chip fam-" + o.famille, text: mxFam(o).nom});
+  if (a.id === "pdca"){
+    return el("span", {class: "mx-pdca", role: "img", "aria-label": mxPdcaLabel(o)}, ...MAT_PHASES.map(([L, en, fr]) => {
+      const p = o.pdca.find(x => x[0] === L);
+      return el("span", {class: "ph ph-" + L + (p ? " on src-" + p[1] : ""), title: p ? en + " (" + fr + ") · " + (p[1] === "c" ? "tableau du cours p." + NB + "67" : "classement indicatif") : null, text: L});
+    }));
+  }
+  if (a.id === "donnees") return el("span", {class: "mx-two"}, el("span", {class: "mx-chip d-" + mxSlug(o.donnees[0]), text: o.donnees[0]}), el("span", {class: "mx-sub", text: typo(o.donnees[1])}));
+  if (a.id === "travail") return el("span", {class: "mx-two"}, el("span", {class: "mx-chip w src-" + o.travail[1], title: mxSrc(o.travail[1]), text: (o.travail[1] === "c" ? "●" : "○") + NB + o.travail[0]}), el("span", {class: "mx-sub", text: typo(o.travail[2])}));
+  if (a.id === "objectif") return el("span", {class: "mx-chips-c"}, ...mxObj(o).map(([id, s]) => el("span", {class: "mx-chip ob src-" + s, title: s === "c" ? "indiqué par le cours" : "classement proposé", text: MATRICE.objectifs.find(x => x.id === id).nom})));
+  if (a.id === "contexte") return el("span", {class: "mx-chips-c"}, ...o.contexte.map(id => el("span", {class: "mx-chip cx", title: "classement proposé", text: MATRICE.contextes.find(x => x.id === id).nom})));
+  const t = o[a.id];
+  return t ? el("span", {text: mxTxt(t)}) : el("span", {class: "mx-none", text: "—"});
+}
+function mxContent(o, a){
+  const k = o.id + "|" + a.id;
+  if (!MX.hide || MX.shown.has(k)) return mxCell(o, a);
+  const b = button("Afficher", "mx-reveal", () => { MX.shown.add(k); b.replaceWith(mxCell(o, a)); }, {"aria-label": "Afficher" + NB + ": " + o.court + ", " + a.nom.toLowerCase()});
+  return b;
+}
+function mxHead(o){
+  const id = "mx-" + o.id;
+  const cb = el("input", {type: "checkbox", id, class: "mx-cb", "data-f": "cb-" + o.id});
+  cb.checked = mxIsSel(o);
+  cb.addEventListener("change", () => {
+    mxFlip(MX.sel, o.id, cb.checked);
+    if (MX.sel.length < 2) MX.only = false;
+    mxSave(); renderMatrix(true);
+    say(MX.sel.length + (MX.sel.length > 1 ? " outils sélectionnés." : " outil sélectionné."));
+  });
+  const lab = el("label", {for: id, class: "mx-name"}, el("b", {text: typo(o.nom)}), el("small", {text: o.sec + " · cours" + NB + "p." + NB + o.pages}));
+  const go = o.id === "impact" ? navLink("Ouvrir l’outil", "intro", IMP_KEY, "mx-go") : null;
+  return el("span", {class: "mx-th"}, cb, mxIco(o), el("span", {}, lab, go));
+}
+function mxTable(list, axes){
+  const t = el("table", {class: "mx" + (MX.cols ? " mx-cols" : "")}, el("caption", {class: "vh", text: "Matrice de comparaison des outils du chapitre 9"}));
+  if (MX.cols){
+    t.append(el("thead", {}, el("tr", {}, el("th", {class: "mx-tool", scope: "col", text: "Axe"}),
+      ...list.map(o => el("th", {scope: "col", class: "mx-oh" + (mxHl(o) ? " is-sel" : "")}, mxHead(o))))));
+    t.append(el("tbody", {}, ...axes.map(a => el("tr", {},
+      el("th", {scope: "row", class: "mx-tool mx-axh", title: a.aide, text: a.nom}),
+      ...list.map(o => el("td", {class: "ax-" + a.id + (mxHl(o) ? " is-sel" : "")}, mxContent(o, a)))))));
+    return t;
+  }
+  const grp = !MX.axes.includes("famille");
+  const rows = [];
+  let last = null;
+  list.forEach(o => {
+    if (grp && o.famille !== last){
+      const f = mxFam(o);
+      rows.push(el("tr", {class: "mx-grp"}, el("th", {colspan: String(axes.length + 1), scope: "colgroup"}, el("span", {text: f.nom}), el("small", {text: " · " + f.ref}))));
+      last = o.famille;
+    }
+    rows.push(el("tr", {class: mxHl(o) ? "is-sel" : null}, el("th", {scope: "row", class: "mx-tool"}, mxHead(o)),
+      ...axes.map(a => el("td", {class: "ax-" + a.id}, mxContent(o, a)))));
+  });
+  t.append(el("thead", {}, el("tr", {}, el("th", {class: "mx-tool", scope: "col", text: "Outil"}), ...axes.map(a => el("th", {scope: "col", class: "ax-" + a.id, title: a.aide, text: a.nom})))),
+    el("tbody", {}, ...rows));
+  return t;
+}
+function mxCards(list, axes){
+  const out = [];
+  let last = null;
+  list.forEach(o => {
+    if (!MX.axes.includes("famille") && o.famille !== last){ out.push(el("h3", {class: "mx-sec", text: mxFam(o).nom})); last = o.famille; }
+    out.push(el("article", {class: "mx-card" + (mxHl(o) ? " is-sel" : "")}, el("div", {class: "mx-ch"}, mxHead(o)),
+      axes.length ? el("dl", {}, ...axes.map(a => el("div", {}, el("dt", {text: a.nom}), el("dd", {}, mxContent(o, a))))) : null));
+  });
+  return el("div", {class: "mx-cards"}, ...out);
+}
+function mxToggle(text, on, f, attrs){ return button(text, "outline mx-tg", f, Object.assign({"aria-pressed": String(on)}, attrs || {})); }
+function mxRadio(text, on, f, attrs){ return button(text, "outline mx-tg mx-rd", f, Object.assign({"aria-pressed": String(on)}, attrs || {})); }
+function mxRedraw(msg){ mxSave(); renderMatrix(true); if (msg) say(msg); }
+function mxControls(){
+  const board = MX.view === "board";
+  const vue = el("div", {class: "mx-box mx-vue"}, el("h2", {text: "Affichage"}),
+    el("div", {class: "mx-seg", role: "group", "aria-label": "Affichage de la matrice"},
+      mxRadio("Tableau", !board, () => { MX.view = "table"; mxRedraw("Vue tableau."); }, {"data-f": "v-table"}),
+      mxRadio("Par logique", board, () => { MX.view = "board"; mxRedraw("Vue par logique."); }, {"data-f": "v-board"})),
+    el("p", {class: "mx-help", text: board
+      ? "Choisissez la logique des colonnes. Croisez-la avec une 2e logique en lignes. Cliquez sur un outil pour ouvrir sa fiche."
+      : "Le tableau compare les outils axe par axe. La vue par logique range les outils selon le PDCA, l’objectif ou le contexte."}));
+  const fams = MATRICE.familles.map(f => mxToggle(f.nom, MX.fam.includes(f.id), () => { mxFlip(MX.fam, f.id); mxRedraw(); }, {"data-f": "fam-" + f.id}));
+  const phs = MAT_PHASES.map(([L, en, fr]) => mxToggle(L + NB + "·" + NB + en, MX.ph.includes(L), () => { mxFlip(MX.ph, L); mxRedraw(); }, {title: en + " (" + fr + ")", "data-f": "ph-" + L}));
+  const filt = el("div", {class: "mx-box"}, el("h2", {text: "Outils affichés"}),
+    el("p", {class: "mx-help", text: board ? "Filtrez par famille ou par phase du PDCA." : "Filtrez par famille ou par phase du PDCA. Cochez au moins 2 outils. Cliquez ensuite sur « Comparer la sélection »."}),
+    el("div", {class: "mx-chips"}, ...fams), el("div", {class: "mx-chips"}, ...phs));
+  if (board){
+    const l1 = MX_LENSES.map(L => mxRadio(L.nom, mxLens(MX.lens).id === L.id, () => { MX.lens = L.id; if (MX.lens2 === L.id) MX.lens2 = ""; mxRedraw("Colonnes" + NB + ": " + L.nom + "."); }, {title: L.aide, "data-f": "l1-" + L.id}));
+    const boxes = [vue, el("div", {class: "mx-box"}, el("h2", {text: "Logique d’analyse"}),
+      el("p", {class: "mx-help", text: "Colonnes" + NB + ":"}), el("div", {class: "mx-chips"}, ...l1))];
+    if (!MX_NARROW.matches){
+      const l2 = [mxRadio("Aucune", !mxLens2(), () => { MX.lens2 = ""; mxRedraw("Sans lignes."); }, {"data-f": "l2-"})].concat(
+        MX_LENSES.filter(L => L.id !== mxLens(MX.lens).id).map(L => mxRadio(L.nom, MX.lens2 === L.id, () => { MX.lens2 = L.id; mxRedraw("Lignes" + NB + ": " + L.nom + "."); }, {title: L.aide, "data-f": "l2-" + L.id})));
+      boxes[1].append(el("p", {class: "mx-help", text: "Lignes, pour croiser 2 logiques" + NB + ":"}), el("div", {class: "mx-chips"}, ...l2));
+    }
+    return el("section", {class: "mx-ctl", "aria-label": "Réglages de la matrice"}, ...boxes, filt);
+  }
+  const axes = MATRICE.axes.map(a => mxToggle(a.nom, MX.axes.includes(a.id), () => {
+    mxFlip(MX.axes, a.id); mxRedraw((MX.axes.includes(a.id) ? "Axe ajouté" : "Axe retiré") + NB + ": " + a.nom + ".");
+  }, {title: a.aide, "data-f": "ax-" + a.id}));
+  const n = MX.sel.length;
+  const cmp = mxToggle("Comparer la sélection (" + n + ")", MX.only, () => { MX.only = !MX.only; mxRedraw(MX.only ? n + " outils comparés." : "Tous les outils affichés."); }, {"data-f": "only"});
+  if (n < 2 && !MX.only){ cmp.disabled = true; cmp.title = "Cochez au moins 2 outils."; }
+  const view = [cmp];
+  if (n) view.push(button("Effacer la sélection", "link", () => { MX.sel = []; MX.only = false; mxRedraw("Sélection effacée."); }, {"data-f": "clear"}));
+  if (!MX_NARROW.matches) view.push(mxToggle("Outils en colonnes", MX.cols, () => { MX.cols = !MX.cols; mxRedraw(); }, {"data-f": "cols"}));
+  view.push(mxToggle("Mode révision", MX.hide, () => { MX.hide = !MX.hide; MX.shown.clear(); mxRedraw(MX.hide ? "Cases masquées." : "Cases affichées."); }, {"data-f": "hide"}));
+  if (MX.hide) view.push(button("Tout afficher", "link", () => {
+    mxTools().forEach(o => mxAxes().forEach(a => MX.shown.add(o.id + "|" + a.id))); renderMatrix(true);
+  }, {"data-f": "all"}));
+  filt.append(el("div", {class: "mx-row"}, ...view));
+  return el("section", {class: "mx-ctl", "aria-label": "Réglages de la matrice"}, vue,
+    el("div", {class: "mx-box"}, el("h2", {text: "Axes de comparaison"}),
+      el("p", {class: "mx-help", text: "Ajoutez ou retirez des axes. Chaque axe ajoute une colonne."}),
+      el("div", {class: "mx-chips"}, ...axes),
+      el("div", {class: "mx-row"},
+        button("Tous les axes", "link", () => { MX.axes = MATRICE.axes.map(a => a.id); mxRedraw("Tous les axes affichés."); }, {"data-f": "ax-all"}),
+        button("Axes de départ", "link", () => { MX.axes = MAT_DEFAULT.slice(); mxRedraw("Axes de départ affichés."); }, {"data-f": "ax-def"}))),
+    filt);
+}
+function mxLegend(){
+  return el("div", {class: "mx-legend"},
+    el("p", {}, el("b", {text: "PDCA"}), typo(" : P Plan (préparer) · D Do (faire) · C Check (vérifier) · A Act (réagir). Cours p. 66–67.")),
+    el("p", {}, el("span", {class: "ph ph-C on src-c", "aria-hidden": "true", text: "C"}), typo(" ou ● : indiqué par le cours. "),
+      el("span", {class: "ph ph-C on src-i", "aria-hidden": "true", text: "C"}), typo(" ou ○ : classement indicatif, hors support.")),
+    el("p", {}, el("b", {text: "Objectif"}), typo(" : étapes du cours p. 67, plus « Hiérarchiser » (p. 76 et 82) et « Maîtriser le processus » (p. 73–75). Pointillé : classement proposé. "),
+      el("b", {text: "Contexte"}), typo(" : classement proposé, hors support.")),
+    el("p", {}, el("b", {text: "Fil rouge"}), typo(" : exercices de la présentation, rayures sur les boîtes de montre (semaine 44). — : outil absent du fil rouge.")));
+}
+
+/* ---------- vue « Par logique » ----------
+   Les outils (carte = pictogramme + nom) sont rangés en colonnes selon une logique : PDCA, objectif, contexte,
+   famille, données, mode de travail. Une 2e logique, en lignes, croise les deux (ordinateur et tablette).
+   Un outil présent dans plusieurs cases apparaît dans chacune ; le survol le repère partout. Clic = fiche de l'outil. */
+const MX_LENSES = [
+  {id: "pdca", nom: "PDCA", src: true, aide: "Phase du PDCA. Cours p. 66–67.",
+    note: "PDCA : plein, tableau du cours p. 67 ; pointillé, classement indicatif.",
+    cols: MAT_PHASES.map(([L, en, fr]) => ({id: L, nom: L + NB + "·" + NB + en, sous: fr, cls: "lh-" + L})), place: o => o.pdca, usage: u => [u[1], u[3]]},
+  {id: "objectif", nom: "Objectif", src: true, aide: "À quoi sert l’outil. Étapes du cours p. 67.",
+    note: "Objectif : étapes du cours p. 67, plus « Hiérarchiser » (p. 76 et 82) et « Maîtriser le processus » (p. 73–75) ; plein, indiqué par le cours ; pointillé, classement proposé.",
+    cols: MATRICE.objectifs.map(x => ({id: x.id, nom: x.nom, sous: x.ref, groupe: x.groupe})), place: o => mxObj(o), usage: u => [u[0], u[2]]},
+  {id: "contexte", nom: "Contexte", src: false, aide: "Où et quand on utilise l’outil. Classement proposé, hors support.",
+    note: "Contexte : classement proposé, hors support.",
+    cols: MATRICE.contextes.map(x => ({id: x.id, nom: x.nom, sous: x.aide})), place: o => o.contexte.map(id => [id, "c"])},
+  {id: "famille", nom: "Famille", src: false, aide: "7 outils classiques, compléments de la MSP, autres méthodes.",
+    cols: MATRICE.familles.map(f => ({id: f.id, nom: f.nom, sous: f.ref})), place: o => [[o.famille, "c"]]},
+  {id: "donnees", nom: "Données", src: false, aide: "Données traitées par l’outil.",
+    cols: [["Chiffrées", "mesures, comptages"], ["Qualitatives", "idées, faits, étapes"], ["Les deux", ""]].map(([v, s]) => ({id: v, nom: v, sous: s})), place: o => [[o.donnees[0], "c"]]},
+  {id: "travail", nom: "Mode de travail", src: true, aide: "Seul, en groupe, ou les deux.",
+    note: "Mode de travail : plein, groupe indiqué par le cours ; pointillé, classement indicatif.",
+    cols: ["Seul", "Seul ou en groupe", "En groupe"].map(v => ({id: v, nom: v})), place: o => [[o.travail[0], o.travail[1]]]},
+];
+function mxLens(id){ return MX_LENSES.find(L => L.id === id) || MX_LENSES[0]; }
+function mxLens2(){ const L = MX_LENSES.find(x => x.id === MX.lens2); return L && L.id !== mxLens(MX.lens).id && !MX_NARROW.matches ? L : null; }
+function mxIco(o, cls){ return el("span", {class: "mx-ico fam-" + o.famille + (cls ? " " + cls : ""), "aria-hidden": "true", html: toolIcon(o.id)}); }
+function mxHover(id, on){ app.querySelectorAll('.bd-card[data-tool="' + id + '"]').forEach(n => n.classList.toggle("hl", on)); }
+function mxBoardCard(o, src){
+  const b = button("", "bd-card" + (src === "i" ? " src-i" : ""), ev => mxFiche(o, ev.currentTarget),
+    {"data-tool": o.id, "aria-label": o.nom + (src === "i" ? ", classement indicatif" : "") + ". Ouvrir la fiche."});
+  b.append(mxIco(o), el("span", {class: "bd-n"}, el("b", {text: typo(o.court)}), el("small", {text: o.sec})));
+  b.addEventListener("mouseenter", () => mxHover(o.id, true));
+  b.addEventListener("mouseleave", () => mxHover(o.id, false));
+  b.addEventListener("focus", () => mxHover(o.id, true));
+  b.addEventListener("blur", () => mxHover(o.id, false));
+  return b;
+}
+function mxPairs(o, L1, L2){   // [clé colonne, clé ligne, source]
+  const f = (L, p) => L && L.src && p[1] === "i";
+  const raw = L2 && L1.usage && L2.usage
+    ? o.usages.map(u => { const a = L1.usage(u), b = L2.usage(u); return [a[0], b[0], f(L1, a) || f(L2, b) ? "i" : "c"]; })
+    : L1.place(o).flatMap(a => (L2 ? L2.place(o) : [["", "c"]]).map(b => [a[0], b[0], f(L1, a) || f(L2, b) ? "i" : "c"]));
+  const out = [];
+  raw.forEach(p => { const x = out.find(y => y[0] === p[0] && y[1] === p[1]); if (!x) out.push(p); else if (p[2] === "c") x[2] = "c"; });
+  return out;
+}
+function mxBoard(list){
+  const L1 = mxLens(MX.lens), L2 = mxLens2();
+  const at = (o, L, c) => L.place(o).find(p => p[0] === c.id);
+  const pairs = new Map(list.map(o => [o.id, mxPairs(o, L1, L2)]));
+  const cards = (c1, c2) => list.map(o => {
+    const p = pairs.get(o.id).find(x => x[0] === c1.id && x[1] === (c2 ? c2.id : ""));
+    return p ? mxBoardCard(o, p[2]) : null;
+  }).filter(Boolean);
+  const nb = c => list.filter(o => at(o, L1, c)).length;
+  const head = c => el("div", {class: "bd-h " + (c.cls || ""), role: "columnheader"}, el("b", {text: typo(c.nom)}), c.sous ? el("small", {text: typo(c.sous)}) : null, el("span", {class: "bd-k", text: String(nb(c))}));
+  if (MX_NARROW.matches){
+    return el("div", {class: "bd-stack"}, ...L1.cols.map(c => {
+      const cs = cards(c);
+      return el("section", {class: "bd-sec"}, head(c), cs.length ? el("div", {class: "bd-cell"}, ...cs) : el("p", {class: "bd-empty", text: "—"}));
+    }));
+  }
+  const n = L1.cols.length;
+  const grid = el("div", {class: "bd-grid" + (L2 ? " two" : ""), role: "table", "aria-label": "Outils rangés par " + L1.nom.toLowerCase() + (L2 ? " et par " + L2.nom.toLowerCase() : ""),
+    style: "grid-template-columns:" + (L2 ? "minmax(5.4rem,7.5rem) repeat(" + n + ",minmax(5.8rem,1fr))" : "repeat(" + n + ",minmax(min-content,1fr))")});
+  const groups = [];
+  L1.cols.forEach(c => { const g = groups[groups.length - 1]; if (c.groupe && g && g.nom === c.groupe) g.n++; else groups.push({nom: c.groupe || "", n: 1}); });
+  if (groups.some(g => g.nom)){
+    if (L2) grid.append(el("span", {class: "bd-corner"}));
+    groups.forEach(g => grid.append(el("div", {class: "bd-g" + (g.nom ? "" : " none"), style: "grid-column:span " + g.n, text: g.nom})));
+  }
+  if (L2) grid.append(el("div", {class: "bd-corner", role: "columnheader"}, el("small", {text: L2.nom + " ↓ · " + L1.nom + " →"})));
+  L1.cols.forEach(c => grid.append(head(c)));
+  (L2 ? L2.cols : [null]).forEach(r => {
+    if (r) grid.append(el("div", {class: "bd-rh " + (r.cls || ""), role: "rowheader"}, el("b", {text: typo(r.nom)}), r.sous ? el("small", {text: typo(r.sous)}) : null));
+    L1.cols.forEach(c => { const cs = cards(c, r); grid.append(el("div", {class: "bd-cell" + (cs.length ? "" : " empty"), role: "cell"}, ...(cs.length ? cs : [el("span", {class: "bd-empty", text: "—"})]))); });
+  });
+  return el("div", {class: "mx-scroll bd-scroll"}, grid);
+}
+function mxBoardLegend(){
+  const L1 = mxLens(MX.lens), L2 = mxLens2();
+  const notes = [L1, L2].filter(L => L && L.note).map(L => L.note);
+  return el("div", {class: "mx-legend"},
+    el("p", {}, el("span", {class: "bd-key"}, "Trait plein"), " ", el("span", {class: "bd-key i"}, "Pointillé"), typo(" " + (notes.join(" ") || "Classement descriptif."))),
+    el("p", {}, el("b", {text: "Couleur du pictogramme"}), typo(" : noir, 7 outils classiques ; bleu, compléments de la MSP ; rouge, autres méthodes. Un outil peut figurer dans plusieurs colonnes : survolez-le pour le repérer.")));
+}
+function mxFiche(o, opener){
+  let d = document.getElementById("mxDialog");
+  if (!d){
+    d = el("dialog", {id: "mxDialog", class: "mx-dlg", "aria-labelledby": "mxDlgT"});
+    document.body.append(d);
+    d.addEventListener("click", ev => { if (ev.target === d) d.close(); });
+    d.addEventListener("close", () => { if (d._opener && d._opener.isConnected) d._opener.focus(); });
+  }
+  d._opener = opener;
+  let go = null;
+  if (o.id === "impact"){ go = navLink("Ouvrir l’outil « Matrice d’impact »", "intro", IMP_KEY, "btn"); go.addEventListener("click", () => d.close()); }
+  d.replaceChildren(...[
+    el("div", {class: "mx-dlg-h"}, mxIco(o, "big"),
+      el("div", {}, el("h2", {id: "mxDlgT", text: typo(o.nom)}), el("p", {text: o.sec + " · cours" + NB + "p." + NB + o.pages + " · " + mxFam(o).nom})),
+      button("Fermer", "outline mx-dlg-x", () => d.close())),
+    el("dl", {class: "mx-dlg-dl"}, ...MATRICE.axes.filter(a => a.id !== "famille").map(a => el("div", {class: "ax-" + a.id}, el("dt", {text: a.nom}), el("dd", {}, mxCell(o, a))))),
+    go ? el("p", {class: "mx-dlg-go"}, go) : null].filter(Boolean));
+  d.showModal();
+}
+function renderMatrix(keep){
+  const fk = keep && document.activeElement ? document.activeElement.getAttribute("data-f") : null;
+  document.title = "Matrice des outils · chapitre " + MAT_CH;
+  const board = MX.view === "board";
+  const list = mxTools(board), axes = mxAxes();
+  const head = el("section", {class: "hero"}, el("span", {class: "numeral mx-num", "aria-hidden": "true", html: ICON_GRID}),
+    el("div", {}, el("h1", {text: "Matrice des outils"}),
+      el("p", {text: "Chapitre " + MAT_CH + " · " + QUIZ[MAT_CH].sujet + " · " + MATRICE.outils.length + " outils · " + MATRICE.axes.length + " axes · cours" + NB + "p." + NB + QUIZ[MAT_CH].pages})));
+  const tl = el("div", {class: "mx-box mx-page"}, el("h2", {text: "Partager"}),
+    el("div", {class: "tools"}, button(ICON_QR + "<span>Afficher le QR code</span>", "outline", () => openQr(MAT_KEY), {"data-f": "qr"}),
+      button("Imprimer la matrice", "outline", () => window.print(), {"data-f": "print"})));
+  const L2 = mxLens2();
+  const count = el("p", {class: "mx-count", "aria-live": "polite"}, el("b", {text: list.length + (list.length > 1 ? " outils" : " outil")}),
+    board ? " · colonnes" + NB + ": " + mxLens(MX.lens).nom + (L2 ? " · lignes" + NB + ": " + L2.nom + (MX.fold || MX_SIDE_STACK.matches ? "" : " · Réduisez les réglages pour élargir la vue.") : "")
+      : " · " + axes.length + (axes.length > 1 ? " axes affichés" : " axe affiché") + (MX.hide ? " · mode révision" : ""));
+  let body;
+  if (!list.length) body = el("p", {class: "mx-empty", text: "Aucun outil pour ces filtres. Retirez un filtre."});
+  else if (board) body = mxBoard(list);
+  else if (MX_NARROW.matches) body = mxCards(list, axes);
+  else body = el("div", {class: "mx-scroll", tabindex: "0", role: "region", "aria-label": "Matrice des outils, défilement horizontal"}, mxTable(list, axes));
+  const old = app.querySelector(".mx-side"), st = old ? old.scrollTop : 0;
+  const fold = MX.fold;
+  const side = fold
+    ? el("aside", {class: "mx-side closed", "aria-label": "Réglages de la matrice"},
+        button("<span>" + (MX_SIDE_STACK.matches ? "Afficher les réglages" : "Réglages") + "</span>", "mx-rail", () => { MX.fold = false; mxRedraw("Réglages affichés."); }, {"aria-expanded": "false", "data-f": "fold", title: "Afficher les réglages"}))
+    : el("aside", {class: "mx-side", "aria-label": "Réglages de la matrice"},
+        el("div", {class: "mx-side-h"}, el("b", {text: "Réglages"}),
+          button("Réduire", "link mx-fold", () => { MX.fold = true; mxRedraw("Réglages réduits."); }, {"aria-expanded": "true", "data-f": "fold", title: "Réduire le bandeau pour agrandir la matrice"})),
+        mxControls(), tl);
+  put(head, el("div", {class: "mx-layout" + (fold ? " folded" : "")}, side,
+    el("div", {class: "mx-main"}, count, body, board ? mxBoardLegend() : mxLegend())));
+  const ns = app.querySelector(".mx-side"); if (ns) ns.scrollTop = st;
+  if (fk){ const n = app.querySelector('[data-f="' + fk + '"]'); if (n && !n.disabled) n.focus(); }
+}
+const MX_SIDE_STACK = matchMedia("(max-width: 899px)");
+MX_SIDE_STACK.addEventListener("change", () => { if (S.view === "intro" && S.key === MAT_KEY) renderMatrix(); });
+MX_NARROW.addEventListener("change", () => { if (S.view === "intro" && S.key === MAT_KEY) renderMatrix(); });
+function impItem(){
+  const a = navLink("", "intro", IMP_KEY);
+  a.append(el("span", {class: "d", html: ICON_HEAT, "aria-hidden": "true"}),
+    el("span", {}, el("span", {class: "t", text: "Matrice d’impact"}), el("span", {class: "s", text: "Outil interactif : choisissez les caractéristiques à suivre en MSP."})),
+    el("span", {class: "go"}, el("b", {text: "Outil"}), "cours p." + NB + "74"));
+  return el("li", {class: "mat"}, a);
+}
+function mxItem(desc){
+  const a = navLink("", "intro", MAT_KEY);
+  a.append(el("span", {class: "d", html: ICON_GRID, "aria-hidden": "true"}),
+    el("span", {}, el("span", {class: "t", text: "Matrice des outils"}),
+      el("span", {class: "s", text: desc || "Chapitre " + MAT_CH + " · comparer " + MATRICE.outils.length + " outils selon " + MATRICE.axes.length + " axes"})),
+    el("span", {class: "go"}, el("b", {text: MATRICE.outils.length + " outils"}), MATRICE.axes.length + " axes"));
+  return el("li", {class: "mat"}, a);
+}
+
+/* ---------- outil « matrice d'impact » (cours p. 74) ----------
+   1. Les 3 critères de sélection des caractéristiques à suivre en MSP (texte du cours).
+   2. La matrice de sévérité du cours : criticité C = fréquence F × gravité G, 4 zones ; clic sur une case.
+   3. Outil : chaque caractéristique reçoit G (importance pour le client) et F (historique de non-qualité) ;
+      C = F × G donne la zone et la décision ; « Même outil que » applique le critère 3 (corrélation).
+      Correspondance, échelles et règle de décision : proposées pour l'exercice (hors support).
+   Lignes conservées sur l'appareil (IMP_STORE) ; « Copier pour Excel » copie le tableau (tabulations). */
+const IMP_KEY = "matrice-impact", IMP_STORE = "mt322-impact-v1";
+const IMP_ZONES = [
+  {id: "ok", max: 2, nom: "Acceptable", plage: "1–2", dec: "Hors MSP", aide: "Contrôle courant, sans carte de contrôle."},
+  {id: "watch", max: 4, nom: "À surveiller", plage: "3–4", dec: "Surveiller", aide: "Suivi simple ; réévaluer avec l’historique."},
+  {id: "reduce", max: 9, nom: "À réduire", plage: "6–9", dec: "Suivre en MSP", aide: "Carte de contrôle."},
+  {id: "bad", max: 16, nom: "Inacceptable", plage: "12–16", dec: "Suivre en MSP, en priorité", aide: "Carte de contrôle, en priorité."}];
+const IMP_G = ["Aucun effet pour le client", "Gêne mineure", "Défaut visible ou fonction dégradée", "Fonction perdue, réclamation certaine"];
+const IMP_F = ["Jamais de problème", "Problème rare", "Problème fréquent", "Problème très fréquent"];
+const IMP_EX = [
+  {n: "Diamètre d’emboîtage du mouvement", g: 4, f: 3},
+  {n: "Diamètre de la gorge du joint de fond", g: 4, f: 2},
+  {n: "Aspect poli : rayures", g: 3, f: 4},
+  {n: "Entre-cornes", g: 3, f: 2},
+  {n: "Diamètre du logement de glace", g: 3, f: 1, lien: 0},
+  {n: "Hauteur de la boîte", g: 2, f: 2},
+  {n: "Gravure du fond", g: 1, f: 1}];
+const ICON_HEAT = '<svg class="grid-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="4.4" height="4.4" rx=".8" fill="#E8B100"/><rect x="7.2" y="2" width="4.4" height="4.4" rx=".8" fill="#F5A36A"/><rect x="12.4" y="2" width="4.4" height="4.4" rx=".8" fill="#DA291C"/><rect x="17.6" y="2" width="4.4" height="4.4" rx=".8" fill="#DA291C"/><rect x="2" y="7.2" width="4.4" height="4.4" rx=".8" fill="#E8B100"/><rect x="7.2" y="7.2" width="4.4" height="4.4" rx=".8" fill="#F5A36A"/><rect x="12.4" y="7.2" width="4.4" height="4.4" rx=".8" fill="#F5A36A"/><rect x="17.6" y="7.2" width="4.4" height="4.4" rx=".8" fill="#DA291C"/><rect x="2" y="12.4" width="4.4" height="4.4" rx=".8" fill="#3BAA4A"/><rect x="7.2" y="12.4" width="4.4" height="4.4" rx=".8" fill="#E8B100"/><rect x="12.4" y="12.4" width="4.4" height="4.4" rx=".8" fill="#F5A36A"/><rect x="17.6" y="12.4" width="4.4" height="4.4" rx=".8" fill="#F5A36A"/><rect x="2" y="17.6" width="4.4" height="4.4" rx=".8" fill="#3BAA4A"/><rect x="7.2" y="17.6" width="4.4" height="4.4" rx=".8" fill="#3BAA4A"/><rect x="12.4" y="17.6" width="4.4" height="4.4" rx=".8" fill="#E8B100"/><rect x="17.6" y="17.6" width="4.4" height="4.4" rx=".8" fill="#E8B100"/></svg>';
+function impExample(){ return IMP_EX.map((r, i) => ({id: "e" + (i + 1), n: r.n, g: r.g, f: r.f, lien: r.lien != null ? "e" + (r.lien + 1) : ""})); }
+let IMP = (() => {
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(IMP_STORE)); } catch (e) {}
+  const ok = r => r && typeof r.id === "string" && typeof r.n === "string" && [1, 2, 3, 4].includes(r.g) && [1, 2, 3, 4].includes(r.f);
+  return Array.isArray(s) && s.length && s.every(ok) ? s : impExample();
+})();
+let IMP_SEL = null;   // case choisie sur la matrice de sévérité : {f, g}
+let IMP_N = 0;
+function impSave(){ try { localStorage.setItem(IMP_STORE, JSON.stringify(IMP)); } catch (e) {} }
+function impZone(c){ return IMP_ZONES.find(z => c <= z.max); }
+function impName(r){ const t = r.n.trim(); return t || "Caractéristique " + (IMP.indexOf(r) + 1); }
+function impDecide(r){
+  const c = r.f * r.g, z = impZone(c);
+  const l = r.lien ? IMP.find(x => x.id === r.lien && x !== r) : null;
+  if (l){ const lc = l.f * l.g; if (lc >= 6 && c <= lc) return {c, z, dec: "Couverte par la carte n° " + (IMP.indexOf(l) + 1), cls: "cover"}; }
+  return {c, z, dec: z.dec, cls: c >= 6 ? "msp" : ""};
+}
+function impRedraw(fk, msg){ impSave(); renderImpact(fk); if (msg) say(msg); }
+function impSeg(r, k, labels, nom){
+  return el("span", {class: "seg", role: "group", "aria-label": nom + NB + ": " + impName(r)}, ...[1, 2, 3, 4].map(v => {
+    const b = button(String(v), "", () => { r[k] = v; impRedraw(k + "-" + r.id + "-" + v); }, {"aria-pressed": String(r[k] === v), title: v + NB + ": " + labels[v - 1], "data-f": k + "-" + r.id + "-" + v});
+    return b;
+  }));
+}
+function impInput(r){
+  const i = el("input", {type: "text", class: "imp-in", value: r.n, placeholder: "Nom de la caractéristique", "aria-label": "Caractéristique " + (IMP.indexOf(r) + 1), "data-f": "n-" + r.id, maxlength: "80"});
+  i.addEventListener("input", () => { r.n = i.value; impSave(); });
+  i.addEventListener("change", () => setTimeout(() => renderImpact(document.activeElement && document.activeElement.getAttribute("data-f")), 0));   // focus conservé après Tab
+  return i;
+}
+function impLink(r){
+  const s = el("select", {class: "imp-in imp-sel", "aria-label": "Même outil que : " + impName(r), "data-f": "l-" + r.id},
+    el("option", {value: "", text: "—"}), ...IMP.filter(x => x !== r).map(x => el("option", {value: x.id, text: (IMP.indexOf(x) + 1) + " · " + impName(x)})));
+  s.value = IMP.some(x => x.id === r.lien && x !== r) ? r.lien : "";
+  s.addEventListener("change", () => { r.lien = s.value; impRedraw("l-" + r.id); });
+  return s;
+}
+function impCrit(c, z){ return el("span", {class: "crit z-" + z.id, title: z.nom, text: String(c)}); }
+function impDel(r, compact){
+  return button(compact ? "×" : "Retirer", compact ? "imp-x" : "link imp-del", () => {
+    IMP = IMP.filter(x => x !== r); IMP.forEach(x => { if (x.lien === r.id) x.lien = ""; });
+    impRedraw("add", "Caractéristique retirée.");
+  }, {"aria-label": "Retirer : " + impName(r)});
+}
+function impTable(){
+  const rows = IMP.map((r, i) => {
+    const d = impDecide(r);
+    return el("tr", {}, el("td", {class: "imp-no"}, el("span", {class: "sev-b", text: String(i + 1)})),
+      el("td", {}, impInput(r)), el("td", {}, impSeg(r, "g", IMP_G, "Importance pour le client")), el("td", {}, impSeg(r, "f", IMP_F, "Historique de non-qualité")),
+      el("td", {}, impLink(r)), el("td", {class: "imp-c"}, impCrit(d.c, d.z), el("small", {text: d.z.nom})),
+      el("td", {class: "imp-d"}, el("span", {class: "dec " + d.cls, text: typo(d.dec)})), el("td", {}, impDel(r, true)));
+  });
+  return el("div", {class: "mx-scroll"}, el("table", {class: "imp-t"}, el("caption", {class: "vh", text: "Matrice d’impact : notes, criticité et décision par caractéristique"}),
+    el("thead", {}, el("tr", {}, el("th", {scope: "col", text: "N°"}), el("th", {scope: "col", text: "Caractéristique"}),
+      el("th", {scope: "col", title: IMP_G.map((t, k) => (k + 1) + NB + ": " + t).join(" · ")}, "Importance client", el("small", {text: "gravité G"})),
+      el("th", {scope: "col", title: IMP_F.map((t, k) => (k + 1) + NB + ": " + t).join(" · ")}, "Historique de non-qualité", el("small", {text: "fréquence F"})),
+      el("th", {scope: "col"}, "Même outil que", el("small", {text: "corrélation"})),
+      el("th", {scope: "col"}, "Criticité", el("small", {text: "C = F × G"})), el("th", {scope: "col", text: "Décision"}), el("th", {scope: "col"}, el("span", {class: "vh", text: "Retirer"})))),
+    el("tbody", {}, ...rows)));
+}
+function impCards(){
+  return el("div", {class: "imp-cards"}, ...IMP.map((r, i) => {
+    const d = impDecide(r);
+    return el("article", {class: "mx-card"},
+      el("div", {class: "imp-ch"}, el("span", {class: "sev-b", text: String(i + 1)}), impInput(r)),
+      el("dl", {}, el("div", {}, el("dt", {text: "Importance client (gravité G)"}), el("dd", {}, impSeg(r, "g", IMP_G, "Importance pour le client"))),
+        el("div", {}, el("dt", {text: "Historique de non-qualité (fréquence F)"}), el("dd", {}, impSeg(r, "f", IMP_F, "Historique de non-qualité"))),
+        el("div", {}, el("dt", {text: "Même outil que"}), el("dd", {}, impLink(r))),
+        el("div", {}, el("dt", {text: "Criticité et décision"}), el("dd", {class: "imp-c"}, impCrit(d.c, d.z), el("span", {class: "dec " + d.cls, text: typo(d.dec)})))),
+      impDel(r));
+  }));
+}
+/* matrice de sévérité : mode "demo" (cases cliquables) ou "outil" (pastilles des caractéristiques) */
+function impGrid(mode){
+  const cells = [];
+  for (let f = 4; f >= 1; f--){
+    cells.push(el("span", {class: "sev-y", text: String(f), "aria-hidden": "true"}));
+    for (let g = 1; g <= 4; g++){
+      const c = f * g, z = impZone(c);
+      if (mode === "demo"){
+        const on = IMP_SEL && IMP_SEL.f === f && IMP_SEL.g === g;
+        cells.push(button(String(c), "sev-c z-" + z.id + (on ? " on" : ""), () => { IMP_SEL = {f, g}; renderImpact("sev-" + f + g); },
+          {"aria-pressed": String(!!on), "aria-label": "Fréquence " + f + ", gravité " + g + NB + ": criticité " + c + ", " + z.nom.toLowerCase(), "data-f": "sev-" + f + g}));
+      } else {
+        const here = IMP.map((r, i) => [r, i]).filter(([r]) => r.f === f && r.g === g);
+        cells.push(el("span", {class: "sev-c z-" + z.id + " tool", title: here.map(([r, i]) => (i + 1) + ". " + impName(r)).join("\n") || null},
+          el("span", {class: "sev-v", text: String(c)}), el("span", {class: "sev-bs"}, ...here.map(([r, i]) => el("span", {class: "sev-b", text: String(i + 1)})))));
+      }
+    }
+  }
+  cells.push(el("span", {}), ...[1, 2, 3, 4].map(g => el("span", {class: "sev-x", text: String(g), "aria-hidden": "true"})));
+  return el("div", {class: "sev-box"},
+    el("span", {class: "sev-ay", text: mode === "demo" ? "Fréquence" : "Fréquence F (historique)"}),
+    el("div", {class: "sev", role: mode === "demo" ? "group" : "img", "aria-label": mode === "demo" ? "Matrice de sévérité : 16 cases" : "Position des caractéristiques sur la matrice de sévérité"}, ...cells),
+    el("span", {class: "sev-ax", text: mode === "demo" ? "Gravité" : "Gravité G (importance client)"}));
+}
+function impZonesLegend(){
+  return el("ul", {class: "sev-leg"}, ...IMP_ZONES.slice().reverse().map(z => el("li", {}, el("span", {class: "sev-k z-" + z.id, "aria-hidden": "true"}), el("b", {text: z.nom}), " " + z.plage)));
+}
+function impTsv(){
+  const head = ["N°", "Caractéristique", "Importance client (G)", "Historique de non-qualité (F)", "Même outil que", "Criticité (C = F × G)", "Zone", "Décision"];
+  const rows = IMP.map((r, i) => { const d = impDecide(r), l = IMP.find(x => x.id === r.lien && x !== r); return [i + 1, impName(r), r.g, r.f, l ? impName(l) : "", d.c, d.z.nom, d.dec]; });
+  return [head, ...rows].map(a => a.join("\t")).join("\n");
+}
+function renderImpact(fk){
+  document.title = "Matrice d’impact · chapitre " + MAT_CH;
+  const head = el("section", {class: "hero"}, el("span", {class: "numeral mx-num", "aria-hidden": "true", html: ICON_HEAT}),
+    el("div", {}, el("h1", {text: "Matrice d’impact"}),
+      el("p", {text: "Chapitre " + MAT_CH + " · choisir les caractéristiques à suivre en MSP · cours" + NB + "p." + NB + "74"})));
+  const tl = el("div", {class: "tools"}, button(ICON_QR + "<span>Afficher le QR code</span>", "outline", () => openQr(IMP_KEY)),
+    button("Imprimer la page", "outline", () => window.print()), navLink("Matrice des outils", "intro", MAT_KEY, "btn outline"));
+  const intro = el("div", {class: "brief"},
+    el("p", {text: "Une production compte beaucoup de caractéristiques. Les suivre toutes par carte de contrôle est impossible."}),
+    el("p", {text: "La matrice d’impact retient les caractéristiques qui ont un impact fort sur la satisfaction des clients. MSP : maîtrise statistique des procédés."}));
+  const crit = el("ol", {class: "imp-crit"},
+    el("li", {}, el("span", {class: "n", text: "1"}), el("b", {text: "Importance pour le client"}), el("span", {text: "Client final, ou client d’un processus aval."})),
+    el("li", {}, el("span", {class: "n", text: "2"}), el("b", {text: "Historique de non-qualité"}), el("span", {text: "Une caractéristique sans problème de qualité reste hors carte de contrôle."})),
+    el("li", {}, el("span", {class: "n", text: "3"}), el("b", {text: "Corrélation entre caractéristiques"}), el("span", {text: "Exemple : plusieurs cotes réalisées par le même outil."})));
+  const cite1 = el("figure", {class: "cite"}, el("figcaption", {text: "Source : " + SUPPORT + ", p." + NB + "74"}),
+    el("blockquote", {text: typo("« La matrice d’impact est un outil permettant de choisir les caractéristiques les plus importantes à suivre sous MSP. L’objectif de cet outil et de rechercher les caractéristiques qui ont un impact fort sur la satisfaction des clients. Il est facilement réalisable à partir d’un tableur Excel. »")}));
+  let info;
+  if (IMP_SEL){
+    const c = IMP_SEL.f * IMP_SEL.g, z = impZone(c);
+    info = el("div", {class: "sev-info z-line-" + z.id, "aria-live": "polite"},
+      el("p", {class: "sev-calc"}, "Fréquence " + IMP_SEL.f + " × gravité " + IMP_SEL.g + " = ", el("b", {text: "criticité " + c})),
+      el("p", {}, el("span", {class: "crit z-" + z.id, text: String(c)}), " ", el("b", {text: z.nom}), typo(" : " + z.aide)));
+  } else info = el("div", {class: "sev-info", "aria-live": "polite"}, el("p", {text: "Cliquez sur une case pour lire sa criticité."}));
+  const demo = el("div", {class: "sev-wrap"}, impGrid("demo"),
+    el("div", {class: "sev-side"}, el("p", {class: "sev-f", text: "Criticité = fréquence × gravité"}), impZonesLegend(), info,
+      el("ul", {class: "sev-notes"},
+        el("li", {}, el("b", {text: "Prévention"}), typo(" : réduit la probabilité d’apparition de l’événement redouté. La criticité descend sur la matrice.")),
+        el("li", {}, el("b", {text: "Protection"}), typo(" : réduit la gravité des conséquences. La criticité se déplace vers la gauche.")))));
+  const n = IMP.filter(r => impDecide(r).cls === "msp");
+  const sum = el("p", {class: "imp-sum", "aria-live": "polite"}, el("b", {text: "À suivre en MSP" + NB + ": " + n.length + " sur " + IMP.length}),
+    n.length ? typo(" · " + n.map(impName).join(" · ")) : "");
+  const actions = el("div", {class: "mx-row"},
+    button("Ajouter une caractéristique", "outline", () => {
+      const id = "r" + Date.now().toString(36) + (IMP_N++); IMP.push({id, n: "", g: 1, f: 1, lien: ""}); impRedraw("n-" + id, "Caractéristique ajoutée.");
+    }, {"data-f": "add"}),
+    button("Reprendre l’exemple", "link", () => { IMP = impExample(); impRedraw("reset", "Exemple rétabli."); }, {"data-f": "reset"}));
+  const copy = button("Copier pour Excel", "link", ev => copyText(impTsv(), ev.currentTarget, "Tableau copié"), {"data-f": "copy"});
+  actions.append(copy);
+  const tool = el("div", {class: "imp-tool"}, MX_NARROW.matches ? impCards() : impTable(), actions);
+  const map = el("div", {class: "imp-map"}, el("p", {class: "imp-map-t", text: "Position des caractéristiques"}), impGrid("outil"), impZonesLegend());
+  put(head, tl, intro,
+    el("h2", {class: "imp-h", text: "1. Les 3 critères de sélection"}), crit, cite1,
+    el("h2", {class: "imp-h", text: "2. La matrice de sévérité"}),
+    el("p", {class: "imp-lead", text: "Figure du cours, p." + NB + "74. Chaque case donne la criticité : fréquence × gravité, de 1 à 16."}), demo,
+    el("h2", {class: "imp-h", text: "3. Construisez une matrice d’impact"}),
+    el("p", {class: "imp-lead", text: "Exemple : boîte de montre usinée puis polie. Modifiez les notes. Ajoutez vos caractéristiques."}),
+    el("ol", {class: "imp-steps"},
+      el("li", {text: "Notez l’importance de chaque caractéristique pour le client, de 1 à 4."}),
+      el("li", {text: "Notez son historique de non-qualité, de 1 à 4."}),
+      el("li", {text: typo("Si 2 caractéristiques sont réalisées par le même outil, reliez-les dans la colonne « Même outil que ».")}),
+      el("li", {text: "Lisez la criticité et la décision."})),
+    el("div", {class: "mx-out"}, tool, el("div", {class: "imp-foot"}, map, el("div", {}, sum,
+      el("div", {class: "mx-legend"},
+        el("p", {}, el("b", {text: "Échelle de l’importance client"}), typo(" : " + IMP_G.map((t, k) => (k + 1) + " " + t.toLowerCase()).join(" · ") + ".")),
+        el("p", {}, el("b", {text: "Échelle de l’historique"}), typo(" : " + IMP_F.map((t, k) => (k + 1) + " " + t.toLowerCase()).join(" · ") + ".")),
+        el("p", {}, el("b", {text: "Décision"}), typo(" : criticité 6 à 16, suivre en MSP ; 3 ou 4, surveiller ; 1 ou 2, hors MSP. Une caractéristique reliée à une caractéristique suivie en MSP est couverte par la même carte. Condition : sa criticité est égale ou plus faible.")),
+        el("p", {}, el("b", {text: "Hors support"}), typo(" : correspondance importance client = gravité, historique = fréquence. Les échelles et la règle de décision sont aussi proposées pour l’exercice.")))))));
+  if (fk){ const nd = app.querySelector('[data-f="' + fk + '"]'); if (nd) nd.focus(); }
+}
+MX_NARROW.addEventListener("change", () => { if (S.view === "intro" && S.key === IMP_KEY) renderImpact(); });
 
 /* ---------- introduction d'un quiz ---------- */
 function startQuiz(key, opts){
@@ -2789,6 +3647,8 @@ function resumeQuiz(key){
 }
 function persist(){ if (!S.retry){ store.progress[S.key] = {order: S.order, answers: S.answers.slice(), start: S.start, n: pool(S.key).length}; save(); } }
 function renderIntro(){
+  if (S.key === MAT_KEY){ renderMatrix(); return; }
+  if (S.key === IMP_KEY){ renderImpact(); return; }
   if (isMenu(S.key)){ renderMenu(); return; }
   if (isChapMenu(S.key)){ renderChapter(); return; }
   const key = S.key, list = pool(key), n = list.length;
@@ -3709,6 +4569,8 @@ addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setT
 /* ---------- rendu ---------- */
 function render(){
   document.body.classList.toggle("quiz-mode", S.view === "question");
+  document.body.classList.toggle("mx-mode", S.view === "intro" && S.key === MAT_KEY);
+  document.body.classList.toggle("imp-mode", S.view === "intro" && S.key === IMP_KEY);
   app.classList.toggle("accent-rev", S.view !== "home" && isRev(S.key));
   renderParts();
   renderChain();
@@ -3750,12 +4612,12 @@ function copyText(text, btn, okLabel){
 /* ---------- fenêtre QR code ---------- */
 function openQr(key){
   const url = quizUrl(key);
-  const name = key == null ? "Quiz de fin de chapitre"
+  const name = key === MAT_KEY ? "Matrice des outils · chapitre " + MAT_CH : key === IMP_KEY ? "Matrice d’impact · chapitre " + MAT_CH : key == null ? "Quiz de fin de chapitre"
     : "Quiz · " + (isAll(key) ? partLabel(partOf(key)) + " · tous les chapitres" : isMenu(key) ? rev(key).nom : isSeries(key) ? fullTitle(key) : "chapitre " + key + " · " + QUIZ[key].nom);
   document.getElementById("qrTitle").textContent = name;
   const sch = isSeries(key) && SERIES[key].type === "schemas";
   dlg.classList.toggle("qr-long", sch);
-  document.getElementById("qrText").replaceChildren(...(sch ? SCHEMA_QR : [QR_TEXT]).map(t => el("span", {class: "ln", text: t})));
+  document.getElementById("qrText").replaceChildren(...(sch ? SCHEMA_QR : [key === MAT_KEY || key === IMP_KEY ? "Scannez le code avec votre smartphone pour ouvrir la matrice." : QR_TEXT]).map(t => el("span", {class: "ln", text: t})));
   document.getElementById("qrUrl").textContent = url;
   dlg.classList.toggle("accent-rev", isRev(key));
   const box = document.getElementById("qrCode");
@@ -3998,11 +4860,11 @@ initDoc();
 function route(){
   let p = null, corrige = false;
   try { const u = new URLSearchParams(location.search); p = u.get("partie"); corrige = u.has("corrige"); } catch (e) {}
-  if (!p){ const m = location.hash.match(/(?:tout|bonus|revision)(?:-[a-z0-9]+)*|\d+(?:-[a-z]+)?/); if (m) p = m[0]; }
+  if (!p){ const m = location.hash.match(/matrice-impact|matrice|(?:tout|bonus|revision)(?:-[a-z0-9]+)*|\d+(?:-[a-z]+)?/); if (m) p = m[0]; }
   const key = parseKey(p);
   if (key == null){ S.view = "home"; render(); return; }
   S.key = key; S.part = partOf(key);
-  S.view = corrige && !isAll(key) ? "correction" : "intro";
+  S.view = corrige && !isAll(key) && key !== MAT_KEY && key !== IMP_KEY ? "correction" : "intro";
   render();
 }
 route();
