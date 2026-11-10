@@ -38,8 +38,9 @@
            réparties automatiquement selon « chapitre ». Un chapitre sans question de révision garde la page du quiz.
    Schémas à compléter : ordinateur ou tablette uniquement. Sur smartphone, la série ne démarre pas
             et la correction donne la liste des réponses à la place du schéma.
-   Présentation théorique : déposer le fichier PDF dans le même dossier que cette page, sous le nom PRESENTATION.
-            Tant que le fichier manque, le bouton affiche un message au clic (vérification en ligne seulement).
+   Présentations théoriques : déposer chaque PDF dans le même dossier que cette page, sous le nom indiqué dans PRESENTATIONS
+            (presentation1.pdf, presentation2.pdf) : un bouton par fichier en haut de page.
+            Tant qu’un fichier manque, son bouton affiche un message au clic (vérification en ligne seulement).
             Le PDF s’affiche dans une fenêtre de la page : lecteur PDF du navigateur sur ordinateur ;
             PDF.js (chargé au premier clic depuis jsDelivr) sur smartphone et iPad. Échec : lien pour ouvrir le PDF dans un onglet.
             Page ouverte en local (file://) : le PDF s’ouvre dans un onglet.
@@ -48,7 +49,11 @@
    ========================================================================== */
 const ADRESSE_SITE = "https://nicolas-derobert.github.io/appli-qualite/MT_322"; // adresse publique utilisée pour les QR codes
 const SUPPORT = "Qualité_Industrielle_hepia_cours 2026-2027"; // cours cité dans les corrections
-const PRESENTATION = "presentation1.pdf"; // présentation théorique (PDF), dans le même dossier que cette page ; "" masque le bouton
+/* présentations théoriques (PDF), dans le même dossier que cette page : un bouton par fichier ; liste vide = aucun bouton */
+const PRESENTATIONS = [
+  {fichier: "presentation1.pdf", titre: "Présentation 1"},
+  {fichier: "presentation2.pdf", titre: "Présentation 2", chapitres: "chapitres 6 à 10"},
+];
 
 /* ---------- Parties du cours : un onglet par partie ---------- */
 const PARTIES = {
@@ -1863,7 +1868,8 @@ footer p{margin:.2rem 0}
 .doc-btn .dt-s{font-size:.66rem;font-weight:800;color:var(--on-accent);background:var(--accent);border-radius:.3rem;padding:.08rem .3rem}
 .doc-btn:hover .dt-s{color:var(--accent);background:var(--on-accent)}
 .doc-msg{margin:.4rem 0 0;font-size:.8rem;font-weight:600;color:var(--accent);text-align:right}
-.quiz-mode .course a.doc-btn,.quiz-mode .doc-msg{display:none}
+.doc-btns{display:inline-flex;flex-wrap:wrap;gap:.45rem}
+.quiz-mode .course .doc-btns,.quiz-mode .doc-msg{display:none}
 /* visionneuse PDF intégrée */
 html.pdf-open{overflow:hidden}
 dialog.pdf{border:0;padding:0;margin:0;width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;background:var(--pdf-bg);color:var(--ink);overflow:hidden}
@@ -1909,7 +1915,8 @@ dialog.pdf.native .pdf-pages{display:block;width:100%;height:100%;margin:0}
   .pdf-pages{gap:8px}
 }
 @media (max-width:480px){
-  .course a.doc-btn{order:-1;width:100%;justify-content:center;padding:.5rem .8rem;font-size:.85rem}
+  .course .doc-btns{order:-1;width:100%;flex-wrap:nowrap}
+  .course a.doc-btn{flex:1;justify-content:center;padding:.5rem .6rem;font-size:.82rem}
   .doc-msg{text-align:center}
 }
 
@@ -2640,7 +2647,7 @@ button.mx-rail:hover{border-color:var(--accent)}
 <body>
 <header>
   <div class="wrap">
-    <div class="course"><span class="c-name"><b>Qualité industrielle</b> · MT_322 · hepia</span><a class="doc-btn" id="docBtn" href="presentation1.pdf" target="_blank" rel="noopener" aria-label="Afficher la présentation théorique (PDF)" aria-haspopup="dialog"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M6 2.5h8.5L19 7v14.5H6zM14 2.5V7.5h5M9 12h7M9 15.5h7M9 19h4"/></svg>Présentation théorique<span class="dt-s" aria-hidden="true">PDF</span></a><a href="https://nicolas-derobert.github.io/appli-qualite/" target="_blank" rel="noopener">QualiTools</a></div>
+    <div class="course"><span class="c-name"><b>Qualité industrielle</b> · MT_322 · hepia</span><span class="doc-btns" id="docBtns"></span><a href="https://nicolas-derobert.github.io/appli-qualite/" target="_blank" rel="noopener">QualiTools</a></div>
     <p class="doc-msg" id="docMsg" hidden>Présentation théorique : fichier en préparation.</p>
     <nav class="parts-nav" aria-label="Parties du cours"><ul class="parts" id="parts"></ul></nav>
     <div class="part-panel">
@@ -4644,18 +4651,21 @@ const PDF_PAGE_KEY = "mt322-pdf-page";                        // dernière page 
 const PDF_ZOOMS = [0.5, 0.67, 0.8, 1, 1.25, 1.5, 2, 2.5, 3];
 const IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 const NATIVE_PDF = navigator.pdfViewerEnabled === true && !IOS;   // iOS : le lecteur intégré n'affiche que la première page
-const docBtn = document.getElementById("docBtn"), docMsg = document.getElementById("docMsg");
+const docBtns = document.getElementById("docBtns"), docMsg = document.getElementById("docMsg");
 const pdfDlg = document.getElementById("pdfDialog"), pdfBody = document.getElementById("pdfBody"), pdfPages = document.getElementById("pdfPages");
 const pdfStatus = document.getElementById("pdfStatus"), pdfLab = document.getElementById("pdfPage"), pdfZoomBtn = document.getElementById("pdfZoom");
 const pdfPrevBtn = document.getElementById("pdfPrev"), pdfNextBtn = document.getElementById("pdfNext");
 const pdfOutBtn = document.getElementById("pdfOut"), pdfInBtn = document.getElementById("pdfIn");
 const PV = {doc: null, boxes: [], ratios: [], zoom: 1, cur: 1, busy: false, queue: [], pumping: false, drawn: false, failed: false, timer: 0, tick: 0};
-let docMissing = false, docTimer = 0;
+let DOC = PRESENTATIONS.length ? PRESENTATIONS[0] : null;   // présentation affichée dans la visionneuse
+const docMissing = new Set();                                 // fichiers absents (vérification en ligne)
+let docTimer = 0;
+function pdfKey(){ return DOC === PRESENTATIONS[0] ? PDF_PAGE_KEY : PDF_PAGE_KEY + ":" + DOC.fichier; }   // dernière page vue, par fichier
 
 function loadScript(src){
   return new Promise((ok, ko) => { const t = el("script", {src}); t.onload = ok; t.onerror = ko; document.head.append(t); });
 }
-function tabLink(){ return el("a", {class: "btn outline", href: PRESENTATION, target: "_blank", rel: "noopener", text: "Ouvrir le PDF dans un onglet"}); }
+function tabLink(){ return el("a", {class: "btn outline", href: DOC.fichier, target: "_blank", rel: "noopener", text: "Ouvrir le PDF dans un onglet"}); }
 function pdfNotice(text, link){
   pdfPages.replaceChildren();
   pdfStatus.replaceChildren(el("p", {text}), link ? tabLink() : null);
@@ -4678,11 +4688,23 @@ function pdfHide(){
   if (typeof pdfDlg.close === "function" && pdfDlg.open) pdfDlg.close();
   else { pdfDlg.removeAttribute("open"); document.documentElement.classList.remove("pdf-open"); }
 }
+/* changement de présentation : la visionneuse repart de zéro */
+function pdfSwitch(P){
+  if (DOC === P && (PV.doc || pdfPages.querySelector("iframe"))) return;
+  if (PV.doc){ try { PV.doc.destroy(); } catch (e) {} }
+  pdfPages.querySelectorAll("canvas").forEach(c => { c.width = c.height = 0; });
+  Object.assign(PV, {doc: null, boxes: [], ratios: [], cur: 1, queue: [], drawn: false, failed: false});
+  pdfPages.replaceChildren(); pdfStatus.replaceChildren(); pdfStatus.hidden = true;
+  DOC = P;
+  document.getElementById("pdfTitle").textContent = P.titre + (P.chapitres ? " · " + P.chapitres : "");
+  document.getElementById("pdfDl").setAttribute("href", P.fichier);
+  docMsg.textContent = P.titre + NB + ": fichier en préparation.";
+}
 async function openPdf(){
   pdfShow();
   if (NATIVE_PDF){
     pdfDlg.classList.add("native");
-    if (!pdfPages.querySelector("iframe")) pdfPages.replaceChildren(el("iframe", {class: "pdf-frame", src: PRESENTATION, title: "Présentation théorique"}));
+    if (!pdfPages.querySelector("iframe")) pdfPages.replaceChildren(el("iframe", {class: "pdf-frame", src: DOC.fichier, title: DOC.titre}));
     return;
   }
   if (PV.doc && PV.boxes.length){ const p = PV.cur; pdfLayout(); pdfGo(p, true); pdfBody.focus({preventScroll: true}); return; }
@@ -4694,7 +4716,7 @@ async function openPdf(){
   try {
     if (!window.pdfjsLib) await loadScript(PDFJS + "legacy/build/pdf.min.js");
     pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "legacy/build/pdf.worker.min.js";
-    const task = pdfjsLib.getDocument({url: PRESENTATION, standardFontDataUrl: PDFJS + "standard_fonts/", cMapUrl: PDFJS + "cmaps/", cMapPacked: true,
+    const task = pdfjsLib.getDocument({url: DOC.fichier, standardFontDataUrl: PDFJS + "standard_fonts/", cMapUrl: PDFJS + "cmaps/", cMapPacked: true,
       isEvalSupported: false, isOffscreenCanvasSupported: false});
     task.onProgress = d => { if (d && d.total) wait.textContent = "Chargement de la présentation… " + Math.min(99, Math.round(d.loaded / d.total * 100)) + NB + "%"; };
     PV.doc = await task.promise;
@@ -4713,7 +4735,7 @@ async function pdfBuild(){
   pdfPages.replaceChildren(...PV.boxes);
   pdfStatus.hidden = true;
   let p = 1;
-  try { p = Number(localStorage.getItem(PDF_PAGE_KEY)) || 1; } catch (e) {}
+  try { p = Number(localStorage.getItem(pdfKey())) || 1; } catch (e) {}
   pdfLayout();
   pdfGo(p, true);
   pdfBody.focus({preventScroll: true});
@@ -4793,7 +4815,7 @@ function pdfLabel(){
   pdfNextBtn.disabled = PV.cur >= n;
   if (document.activeElement && document.activeElement.disabled) pdfBody.focus({preventScroll: true});   // bouton désactivé : le clavier reste actif
 }
-function pdfSave(){ try { localStorage.setItem(PDF_PAGE_KEY, String(PV.cur)); } catch (e) {} }
+function pdfSave(){ try { localStorage.setItem(pdfKey(), String(PV.cur)); } catch (e) {} }
 function pdfGo(n, instant){
   if (!PV.boxes.length) return;
   n = Math.min(Math.max(Math.round(n) || 1, 1), PV.boxes.length);
@@ -4836,23 +4858,31 @@ addEventListener("resize", () => {
   clearTimeout(PV.timer);
   PV.timer = setTimeout(() => { const p = PV.cur; pdfLayout(); pdfGo(p, true); }, 150);
 });
+const DOC_ICO = '<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M6 2.5h8.5L19 7v14.5H6zM14 2.5V7.5h5M9 12h7M9 15.5h7M9 19h4"/></svg>';
 function initDoc(){
-  if (typeof PRESENTATION !== "string" || !PRESENTATION){ docBtn.hidden = true; return; }
-  docBtn.setAttribute("href", PRESENTATION);
-  document.getElementById("pdfDl").setAttribute("href", PRESENTATION);
-  /* en ligne : si le fichier n'est pas encore déposé, le bouton affiche un message au lieu d'ouvrir une page d'erreur */
-  if (/^https?:$/.test(location.protocol)) fetch(PRESENTATION, {method: "HEAD", cache: "no-store"}).then(r => { docMissing = r.status === 404; }).catch(() => {});
-  docBtn.addEventListener("click", ev => {
-    if (docMissing){
+  if (!Array.isArray(PRESENTATIONS) || !PRESENTATIONS.length){ docBtns.hidden = true; return; }
+  PRESENTATIONS.forEach(P => {
+    const a = el("a", {class: "doc-btn", href: P.fichier, target: "_blank", rel: "noopener", "aria-haspopup": "dialog",
+      "aria-label": "Afficher la " + P.titre.toLowerCase() + (P.chapitres ? ", " + P.chapitres : "") + " (PDF)", title: P.chapitres ? P.titre + " · " + P.chapitres : null,
+      html: DOC_ICO + "<span>" + P.titre + '</span><span class="dt-s" aria-hidden="true">PDF</span>'});
+    docBtns.append(a);
+    /* en ligne : si le fichier n'est pas encore déposé, le bouton affiche un message au lieu d'ouvrir une page d'erreur */
+    if (/^https?:$/.test(location.protocol)) fetch(P.fichier, {method: "HEAD", cache: "no-store"}).then(r => { if (r.status === 404) docMissing.add(P.fichier); }).catch(() => {});
+    a.addEventListener("click", ev => {
+      if (docMissing.has(P.fichier)){
+        ev.preventDefault();
+        docMsg.textContent = P.titre + NB + ": fichier en préparation.";
+        docMsg.hidden = false; say(docMsg.textContent);
+        clearTimeout(docTimer); docTimer = setTimeout(() => { docMsg.hidden = true; }, 4000);
+        return;
+      }
+      if (location.protocol === "file:" || ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.button) return;   // ouverture classique dans un onglet
       ev.preventDefault();
-      docMsg.hidden = false; say(docMsg.textContent);
-      clearTimeout(docTimer); docTimer = setTimeout(() => { docMsg.hidden = true; }, 4000);
-      return;
-    }
-    if (location.protocol === "file:" || ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.button) return;   // ouverture classique dans un onglet
-    ev.preventDefault();
-    openPdf();
+      pdfSwitch(P);
+      openPdf();
+    });
   });
+  pdfSwitch(DOC);
 }
 initDoc();
 
