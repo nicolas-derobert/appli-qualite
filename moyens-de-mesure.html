@@ -65,6 +65,9 @@ svg { display: block; max-width: 100%; height: auto; }
 .top__in { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; flex-wrap: wrap; }
 .logo { font-family: var(--ehg-font-titre); font-size: 1.3rem; letter-spacing: .01em; color: var(--ehg-noir); white-space: nowrap; }
 .logo .g { color: var(--ehg-or); }
+.top__droite { display: flex; align-items: center; gap: 18px; }
+.top__qr { padding: .5rem .8rem; }
+.top__qr svg { width: 18px; height: 18px; flex: none; }
 .top__meta { font-family: var(--ehg-font-titre); font-size: var(--ehg-fs-xs); letter-spacing: .14em; text-transform: uppercase; color: var(--ehg-acier); font-weight: 500; }
 
 /* ---------- Héros ---------- */
@@ -381,6 +384,19 @@ details.organes ul { list-style: none; margin-top: 6px; display: flex; flex-dire
 .v-saisie label { font-family: var(--ehg-font-titre); font-size: var(--ehg-fs-sm); font-weight: 500; }
 .verniers .retour { margin: 14px 0 0; }
 .v-score { font-size: var(--ehg-fs-sm); color: var(--ehg-graphite); margin-top: 10px; font-variant-numeric: tabular-nums; }
+/* ---------- Fenêtre modale : code QR de l'application ---------- */
+.modale { border: 0; padding: 0; border-radius: var(--ehg-radius-lg); width: min(92vw, 33rem); max-height: 94vh; overflow: auto; background: var(--ehg-blanc); color: var(--ehg-noir); box-shadow: 0 12px 44px rgba(20,20,20,.3); }
+.modale::backdrop { background: rgba(20,20,20,.55); }
+.modale--simple[open] { position: fixed; inset: 0; margin: auto; height: fit-content; z-index: 50; box-shadow: 0 0 0 100vmax rgba(20,20,20,.55); }
+.modale__boite { padding: 20px 24px 22px; }
+.modale__tete { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.modale__tete h2 { font-size: var(--ehg-fs-lg); margin-top: 4px; }
+.modale__aide { margin: 10px 0 12px; color: var(--ehg-graphite); }
+.modale__qr svg { display: block; width: min(100%, 60vh); height: auto; margin-inline: auto; }
+.modale__lien { margin-top: 8px; text-align: center; font-family: var(--ehg-font-titre); font-size: var(--ehg-fs-sm); overflow-wrap: anywhere; }
+.modale__actions { margin-top: 14px; display: flex; justify-content: center; }
+.modale__ia { display: none; }
+
 /* ---------- Vue 3D (principe d'Abbe) ---------- */
 .v3d__cas { margin-bottom: 10px; }
 .fig-plus.v3d__fig { cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; overflow: hidden; margin-bottom: 8px; padding: 6px; }
@@ -457,6 +473,8 @@ body.hors-ligne .imprimer { display: inline-flex; }
   .tabs__row { gap: 20px; }
   .hero { padding-top: 28px; }
   .top__meta { display: none; }
+  .top__qr span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .top__qr { padding: .6rem; }
   .question { font-size: var(--ehg-fs-md); }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
@@ -465,7 +483,18 @@ body.hors-ligne .imprimer { display: inline-flex; }
 @media print {
   @page { size: A4; margin: 14mm 14mm; }
   body { font-size: 10pt; }
-  .tabs, .hero, .fiche-nav, .barre-outils, .imprimer, .actions { display: none !important; }
+  .tabs, .hero, .fiche-nav, .barre-outils, .imprimer, .actions, .top__qr { display: none !important; }
+  /* Fenêtre du code QR ouverte : seule la fenêtre s'imprime (affiche pour la salle de classe) */
+  .qr-ouvert body > :not(dialog) { display: none !important; }
+  .qr-ouvert .modale { box-shadow: none; inset: 0 0 auto 0; margin: 0 auto; width: 100%; max-width: none; max-height: none; overflow: visible; border-radius: 0; }
+  .qr-ouvert .modale::backdrop { background: none; }
+  .qr-ouvert .modale__boite { padding: 6mm 0 0; }
+  .qr-ouvert .modale [data-qr-fermer], .qr-ouvert .modale__actions { display: none !important; }
+  .qr-ouvert .modale__tete h2 { font-size: 26pt; }
+  .qr-ouvert .modale__aide { font-size: 13pt; margin: 4mm 0 8mm; }
+  .qr-ouvert .modale__qr svg { width: 150mm; }
+  .qr-ouvert .modale__lien { font-size: 13pt; margin-top: 6mm; }
+  .qr-ouvert .modale__ia { display: block; margin-top: 12mm; text-align: center; font-size: 8pt; color: var(--ehg-acier); }
   main { padding: 0; }
   .fiche { grid-template-columns: minmax(0, 1fr); gap: 14px; }
   .fiche__fig { position: static; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 16px; align-items: start; }
@@ -498,7 +527,8 @@ body.hors-ligne .imprimer { display: inline-flex; }
 <body>
 <header class="top"><div class="wrap top__in">
   <div class="logo">École d’Horlo<span class="g">g</span>erie Genève</div>
-  <div class="top__meta">PO+TH · Qualité et métrologie</div>
+  <div class="top__droite"><div class="top__meta">PO+TH · Qualité et métrologie</div>
+    <button type="button" class="btn btn--sec top__qr" data-qr aria-haspopup="dialog"><svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="6" height="6"/><rect x="12" y="2" width="6" height="6"/><rect x="2" y="12" width="6" height="6"/><path d="M12 12h2.5v2.5H12zM15.5 15.5H18V18h-2.5zM18 12v1.5M12 18v-1.5" /></svg><span>Code QR</span></button></div>
 </div></header>
 <section class="hero"><div class="wrap">
   <span class="surtitre">Séquence 5 · Moyens de mesure</span>
@@ -516,10 +546,19 @@ body.hors-ligne .imprimer { display: inline-flex; }
 </div></div></nav>
 <main id="app" class="wrap"><noscript><p>Activez JavaScript pour afficher les fiches.</p></noscript></main>
 <footer class="pied"><div class="wrap pied__in">
-  <div><p>École d’Horlogerie de Genève — CFPT · PO+TH Qualité et métrologie · v1.9 · novembre 2026</p>
+  <div><p>École d’Horlogerie de Genève — CFPT · PO+TH Qualité et métrologie · v1.10 · novembre 2026</p>
   <p class="ia">Document élaboré avec l’assistance d’outils d’intelligence artificielle.</p></div>
   <span class="millesime" aria-hidden="true">1824</span>
 </div></footer>
+<dialog class="modale" id="qr" aria-labelledby="qr-titre"><div class="modale__boite">
+  <div class="modale__tete"><div><span class="surtitre">Moyens de mesure et de contrôle</span><h2 id="qr-titre">Code QR de l’application</h2></div>
+    <button type="button" class="btn btn--sec" data-qr-fermer>Fermer</button></div>
+  <p class="modale__aide">Scannez le code avec l’appareil photo de votre téléphone.</p>
+  <div class="modale__qr" id="qr-code"></div>
+  <p class="modale__lien"><a id="qr-lien" target="_blank" rel="noopener"></a></p>
+  <div class="modale__actions"><button type="button" class="btn btn--sec" data-qr-imprimer>Imprimer</button></div>
+  <p class="modale__ia">École d’Horlogerie de Genève — CFPT · PO+TH Qualité et métrologie. Document élaboré avec l’assistance d’outils d’intelligence artificielle.</p>
+</div></dialog>
 <script>window.EHG_HORS_LIGNE = true;</script>
 <script>
 /* =====================================================================
@@ -529,7 +568,7 @@ body.hors-ligne .imprimer { display: inline-flex; }
    support CP, normes et documents fabricants cités dans « sources ».
    ===================================================================== */
 const DONNEES = {
-  version: 'v1.9 · novembre 2026',
+  version: 'v1.10 · novembre 2026',
   quizParSerie: 12,
 
   familles: [
@@ -2429,6 +2468,54 @@ const DONNEES = {
       ],
     },
   },
+};
+
+/* =====================================================================
+   qr.js : code QR de l'adresse publique de l'application.
+   Fichier généré par tools/gen_qr.py (bibliothèque segno), relu par OpenCV et ZXing.
+   Version 5, 37 × 37 modules, correction d'erreurs de niveau M.
+   ===================================================================== */
+const QR = {
+  url: 'https://nicolas-derobert.github.io/appli-qualite/moyens-de-mesure',
+  lignes: [
+    '1111111010011100000110110010101111111',
+    '1000001010001100110101111100101000001',
+    '1011101011011001100101110111001011101',
+    '1011101000111100111011011100101011101',
+    '1011101011101101101101001110001011101',
+    '1000001000110110100010111010001000001',
+    '1111111010101010101010101010101111111',
+    '0000000001101011111110100101000000000',
+    '1001111110011010000001101011110010111',
+    '1101010100100000111000001011010111010',
+    '0011001000001111100110111001000101001',
+    '0000100101000000110110011000010111111',
+    '1101101101101001000010010001001101001',
+    '1000010110110001101001010011100011000',
+    '1000001010101001001100001111000011111',
+    '1011110011110110000101111000111101111',
+    '1001101110001010011101111101001000111',
+    '0010100111101010010001111001010100000',
+    '0110011110000000111101110101010010101',
+    '1100000100010011100110100100111001001',
+    '1110001111011000110100000010111110000',
+    '1011010100111101110110010001000010100',
+    '0011011100010011100011010001001101001',
+    '0010010000000000101100010010001111101',
+    '1001011011010110010111111000101100001',
+    '1001010101110010001100110101000011000',
+    '1100101100100101001001001001001011111',
+    '1010000111011110101100111011110101111',
+    '1000001111101111000110111101111111111',
+    '0000000011010001010111100000100010100',
+    '1111111010110001111100011010101010001',
+    '1000001011000000100101011101100010011',
+    '1011101010011110101111000011111110001',
+    '1011101010111000000011110101011001101',
+    '1011101000001110011001010100110010001',
+    '1000001001111001011000110011000010111',
+    '1111111011010100100100011000110101001',
+  ],
 };
 
 /* =====================================================================
@@ -6316,16 +6403,59 @@ const VUE3D = (() => {
     /* Contrôle de la règle de choix */
     const pied = PAR_ID['pied-a-coulisse'], micro = PAR_ID['micrometre'];
     if (verdict(micro, 0.04).txt !== 'Adapté' || verdict(pied, 0.04).txt !== 'Inadapté' || verdict(pied, 0.1).txt !== 'Selon le modèle' || verdict(pied, 0.2).txt !== 'Adapté') err.push('règle U ≤ IT/3 : verdicts inattendus');
+    /* Code QR : matrice carrée, trois motifs de repérage, motifs de synchronisation, tracé complet */
+    {
+      const L = QR.lignes, n = L.length, REP = ['1111111', '1000001', '1011101', '1011101', '1011101', '1000001', '1111111'];
+      const coin = (x, y) => REP.every((r, k) => L[y + k] && L[y + k].substr(x, 7) === r);
+      if (n < 21 || (n - 17) % 4 || L.some(l => l.length !== n || /[^01]/.test(l))) err.push('code QR : matrice mal formée');
+      else {
+        if (!coin(0, 0) || !coin(n - 7, 0) || !coin(0, n - 7)) err.push('code QR : motif de repérage absent');
+        for (let k = 8; k < n - 8; k++) if (L[6][k] !== String((k + 1) % 2) || L[k][6] !== String((k + 1) % 2)) { err.push('code QR : motif de synchronisation faux'); break; }
+        const traces = [...qrSVG().matchAll(/h(\d+)v1/g)].reduce((t, x) => t + +x[1], 0), noirs = L.join('').split('1').length - 1;
+        if (traces !== noirs) err.push(`code QR : ${traces} modules tracés pour ${noirs}`);
+      }
+      if (!/^https:\/\/\S+$/.test(QR.url)) err.push('code QR : adresse mal formée');
+    }
     window.__autoTests = { ok: err.length === 0, erreurs: err };
     if (err.length) console.error('Auto-tests :', err); else console.info(`Auto-tests : ${FICHES.length} fiches, ${D.quiz.length} questions, aucune erreur.`);
+  }
+
+  /* ---------- Code QR de l'application : fenêtre modale ---------- */
+  function qrSVG() {
+    const L = QR.lignes, n = L.length, m = 4;                         /* m : marge blanche de 4 modules autour du code */
+    let d = '';
+    L.forEach((l, y) => {
+      for (let x = 0; x < n; x++) {
+        if (l[x] !== '1') continue;
+        let x1 = x; while (x1 < n && l[x1] === '1') x1++;
+        d += `M${x + m},${y + m}h${x1 - x}v1h${x - x1}z`; x = x1;
+      }
+    });
+    return `<svg viewBox="0 0 ${n + 2 * m} ${n + 2 * m}" role="img" aria-label="Code QR : ${esc(QR.url)}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
+  }
+  function brancherQR() {
+    const dlg = document.getElementById('qr'), bouton = document.querySelector('[data-qr]'), racine = document.documentElement;
+    if (!dlg || !bouton) return;
+    const lien = dlg.querySelector('#qr-lien'), natif = typeof dlg.showModal === 'function';
+    dlg.querySelector('#qr-code').innerHTML = qrSVG();
+    lien.href = QR.url; lien.textContent = QR.url.replace(/^https?:\/\//, '');
+    if (!natif) dlg.classList.add('modale--simple');
+    const fermer = () => { if (natif) { if (dlg.open) dlg.close(); } else dlg.removeAttribute('open'); racine.classList.remove('qr-ouvert'); bouton.focus(); };
+    bouton.addEventListener('click', () => { if (natif) dlg.showModal(); else dlg.setAttribute('open', ''); racine.classList.add('qr-ouvert'); });
+    dlg.addEventListener('close', () => racine.classList.remove('qr-ouvert'));               /* touche Échap */
+    dlg.addEventListener('click', ev => { if (ev.target === dlg) fermer(); });                /* clic hors de la fenêtre */
+    dlg.querySelector('[data-qr-fermer]').addEventListener('click', fermer);
+    dlg.querySelector('[data-qr-imprimer]').addEventListener('click', () => window.print());
+    if (!natif) document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && dlg.hasAttribute('open')) fermer(); });
   }
 
   if (window.EHG_HORS_LIGNE) document.body.classList.add('hors-ligne');
   { const nb = document.getElementById('nb-fiches'); if (nb) nb.textContent = String(FICHES.length); }
   autoTests();
+  brancherQR();
   rendre();
 })();
 
 </script>
 </body>
-</html>
+</html>s
