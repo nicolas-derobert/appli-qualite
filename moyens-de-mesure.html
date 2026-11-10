@@ -381,6 +381,15 @@ details.organes ul { list-style: none; margin-top: 6px; display: flex; flex-dire
 .v-saisie label { font-family: var(--ehg-font-titre); font-size: var(--ehg-fs-sm); font-weight: 500; }
 .verniers .retour { margin: 14px 0 0; }
 .v-score { font-size: var(--ehg-fs-sm); color: var(--ehg-graphite); margin-top: 10px; font-variant-numeric: tabular-nums; }
+/* ---------- Vue 3D (principe d'Abbe) ---------- */
+.v3d__cas { margin-bottom: 10px; }
+.fig-plus.v3d__fig { cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; overflow: hidden; margin-bottom: 8px; padding: 6px; }
+.fig-plus.v3d__fig--saisie { cursor: grabbing; }
+.fig-plus.v3d__fig svg { display: block; width: 100%; height: auto; min-width: 0; pointer-events: none; }
+.v3d .retour { margin: 0 0 4px; padding: 10px 14px; }
+.v3d__ctrl { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: flex-end; margin-bottom: 6px; }
+.v3d__rot { flex: 1 1 220px; margin-top: 8px; }
+.v3d__impr { display: none; }
 .v-reel { margin-top: 18px; padding-top: 14px; border-top: var(--ehg-filet); }
 .v-reel > .surtitre { color: var(--ehg-or-fonce); }
 .v-reel__fig { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); grid-template-rows: auto 1fr; grid-template-areas: "vue loupe" "legende loupe"; gap: 14px 24px; margin-top: 10px; }
@@ -475,6 +484,12 @@ body.hors-ligne .imprimer { display: inline-flex; }
   .demontage__ctrl, .demontage__curseur, .demontage__etat { display: none !important; }
   .tableau--reperes tr.actif { background: none; }
   .fig-plus svg { min-width: 0; }
+  .v3d__cas, .v3d__ctrl, .v3d__aide { display: none !important; }
+  .v3d--pret .v3d__fig, .v3d--pret .v3d__etat { display: none; }
+  .v3d--pret .v3d__impr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 6px; }
+  .v3d__impr figure { margin: 0; border: var(--ehg-filet); border-radius: var(--ehg-radius-lg); padding: 6px 8px; break-inside: avoid; }
+  .v3d__impr svg { width: 100%; height: auto; }
+  .v3d__impr figcaption { font-size: 8.5pt; }
   a { text-decoration: none; }
 }
 
@@ -501,7 +516,7 @@ body.hors-ligne .imprimer { display: inline-flex; }
 </div></div></nav>
 <main id="app" class="wrap"><noscript><p>Activez JavaScript pour afficher les fiches.</p></noscript></main>
 <footer class="pied"><div class="wrap pied__in">
-  <div><p>École d’Horlogerie de Genève — CFPT · PO+TH Qualité et métrologie · v1.8 · novembre 2026</p>
+  <div><p>École d’Horlogerie de Genève — CFPT · PO+TH Qualité et métrologie · v1.9 · novembre 2026</p>
   <p class="ia">Document élaboré avec l’assistance d’outils d’intelligence artificielle.</p></div>
   <span class="millesime" aria-hidden="true">1824</span>
 </div></footer>
@@ -514,7 +529,7 @@ body.hors-ligne .imprimer { display: inline-flex; }
    support CP, normes et documents fabricants cités dans « sources ».
    ===================================================================== */
 const DONNEES = {
-  version: 'v1.8 · novembre 2026',
+  version: 'v1.9 · novembre 2026',
   quizParSerie: 12,
 
   familles: [
@@ -921,8 +936,26 @@ const DONNEES = {
         exemple: 'Exemple Mitutoyo : inclinaison de 0,01 mm sur 50 mm, becs de 40 mm. En bout de becs : f = 40 × 0,01 / 50 = 0,008 mm.',
         tableau: { titre: 'Même inclinaison, 0,01 mm sur 50 mm : erreur selon la position de la pièce', entetes: ['Position de la pièce', 'h', 'f'],
           lignes: [['Au fond des becs', '5 mm', '0,001 mm'], ['Au milieu des becs', '20 mm', '0,004 mm'], ['En bout de becs', '40 mm', '0,008 mm']] },
+        /* Vue 3D : trois erreurs et le bon geste. e : h (mm), th (inclinaison dessinée, °), force et fort (flèche), jeu (coins rouges) */
+        vue3d: {
+          titre: 'Vue 3D : trois erreurs et le bon geste',
+          aide: 'Choisissez une situation. Glissez le schéma pour le tourner.',
+          legende: 'Pointillé : position du bec lue sur l’échelle. Face dorée : position réelle du bec mobile. Trait rouge : erreur f.',
+          rotation: 'Tourner la vue',
+          depart: 'Vue de départ',
+          cas: [
+            { id: 'bout', nom: 'Pièce en bout de becs', ok: false, e: { h: 37, th: 3, force: 0.5, fort: 0, jeu: 0 },
+              texte: 'Pièce en bout de becs : h est maximal. Exemple : h\u00a0=\u00a040\u00a0mm, f\u00a0=\u00a00,008\u00a0mm.' },
+            { id: 'serrage', nom: 'Serrage trop fort', ok: false, e: { h: 20, th: 5.5, force: 1, fort: 1, jeu: 0 },
+              texte: 'Serrage trop fort : le coulisseau s’incline davantage. L’erreur f augmente.' },
+            { id: 'jeu', nom: 'Coulisseau qui a du jeu', ok: false, e: { h: 20, th: 5.5, force: 0.3, fort: 0, jeu: 1 },
+              texte: 'Mesure avec un guidage usé ou déformé : le coulisseau a plus de jeu et s’incline davantage. L’erreur f augmente.' },
+            { id: 'fond', nom: 'Pièce près de la règle', ok: true, e: { h: 5, th: 3, force: 0.3, fort: 0, jeu: 0 },
+              texte: 'Pièce au plus près de la règle, pincement léger : h\u00a0=\u00a05\u00a0mm. Même inclinaison : f\u00a0=\u00a00,001\u00a0mm.' },
+          ],
+        },
         consignes: ['Placez la pièce au plus près de la règle : h diminue, f aussi.', 'Pincez la pièce légèrement : une force trop forte incline le coulisseau.'],
-        note: 'Jeu et inclinaison très exagérés sur le schéma. Principe d’Abbe : chapitre 8 (§ 8.6, fig. 8-6-12) et Mitutoyo (E11003, p. 8 et 9). Erreur d’inclinaison du bec mobile, formule et exemple : Mitutoyo (E11003, p. 20 et 21). Valeurs du tableau calculées avec la même formule.',
+        note: 'Jeu et inclinaison très exagérés sur les schémas. Vue 3D simplifiée, règle raccourcie. Principe d’Abbe : chapitre 8 (§ 8.6, fig. 8-6-12) et Mitutoyo (E11003, p. 8 et 9). Erreur d’inclinaison du bec mobile, formule et exemple : Mitutoyo (E11003, p. 20 et 21). Valeurs du tableau calculées avec la même formule. Force de mesure et jeu du guidage : Mitutoyo (E11003, p. 8, 9, 20 et 21). Pièce au fond des becs, force constante : Mitutoyo (E12024, p. 11).',
       },
       pieces: ['Bec fixe (zéro)', 'Bec mobile', 'Becs pour les mesures intérieures', 'Coulisseau', 'Vis de blocage', 'Règle graduée (perche)', 'Vernier', 'Tige de profondeur'],
       etapes: [
@@ -4877,6 +4910,267 @@ const ERREURS = (() => {
 })();
 
 /* =====================================================================
+   vue3d.js : vues 3D dessinées en SVG, sans bibliothèque.
+   Moteur : faces planes convexes, arbre BSP (ordre de peinture exact, y compris pour
+   des pièces qui se touchent), perspective, ombrage plat, arêtes vives et contours.
+   Scène : pied à coulisse à vernier, coulisseau incliné dans son jeu, pièce entre les becs
+   (principe d'Abbe ; erreur d'inclinaison du bec mobile : Mitutoyo E11003, p. 20 et 21).
+   Repère : x le long de la règle, y vers le haut, z vers l'observateur. Cotes en mm.
+   Origine : face de mesure du bec fixe, chant supérieur de la règle, dos de la règle.
+   ===================================================================== */
+const VUE3D = (() => {
+  const { C, at, svg, PAC, OR, OR_PALE } = ILLUS.outils;
+  const EPS = 1e-7;
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const unit = a => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+
+  /* ---------- Faces ----------
+     p : sommets en sens direct, vus de l'extérieur. e[i] : arête du sommet i au suivant :
+     true = tracée, false = jamais (raccord entre deux morceaux), { n } = contour (tracée
+     quand la face voisine, de normale n, est vue de dos). st : { c : [r, v, b], t : trait }. */
+  function face(p, e, st) {
+    const n = [0, 0, 0];
+    for (let i = 0; i < p.length; i++) {
+      const a = p[i], b = p[(i + 1) % p.length];
+      n[0] += (a[1] - b[1]) * (a[2] + b[2]); n[1] += (a[2] - b[2]) * (a[0] + b[0]); n[2] += (a[0] - b[0]) * (a[1] + b[1]);
+    }
+    const u = unit(n);
+    return { p, e, n: u, d: p.reduce((s, q) => s + dot(u, q), 0) / p.length, st };
+  }
+  /* Prisme droit, de z0 (dos) à z1 (face). Profil : [x, y, arête, lisse, style du flanc].
+     arête = 0 : frontière interne entre deux morceaux d'une même pièce (pas de flanc, pas de trait) ;
+     lisse = 1 : génératrice non tracée, sauf en contour (surface courbe ou flancs alignés). */
+  function prisme(profil, z0, z1, st) {
+    let V = profil.map(q => ({ x: q[0], y: q[1], l: !!q[3] })), A = profil.map(q => ({ a: q[2] !== 0, st: q[4] || st }));
+    const n = V.length;
+    let aire = 0;
+    for (let i = 0; i < n; i++) { const j = (i + 1) % n; aire += V[i].x * V[j].y - V[j].x * V[i].y; }
+    if (aire < 0) { const A0 = A; V = V.slice().reverse(); A = V.map((_, k) => A0[(2 * n - 2 - k) % n]); }
+    const nrm = V.map((v, i) => { const w = V[(i + 1) % n], dx = w.x - v.x, dy = w.y - v.y, l = Math.hypot(dx, dy) || 1; return [dy / l, -dx / l, 0]; });
+    const gen = (i, voisin) => (!V[i].l ? true : A[voisin].a ? { n: nrm[voisin] } : false);
+    const F = [face(V.map(v => [v.x, v.y, z1]), A.map(a => a.a), st),
+      face(V.map((_, k) => [V[n - 1 - k].x, V[n - 1 - k].y, z0]), V.map((_, k) => A[(2 * n - 2 - k) % n].a), st)];
+    for (let i = 0; i < n; i++) {
+      if (!A[i].a) continue;
+      const j = (i + 1) % n, v = V[i], w = V[j];
+      F.push(face([[v.x, v.y, z1], [v.x, v.y, z0], [w.x, w.y, z0], [w.x, w.y, z1]], [gen(i, (i + n - 1) % n), true, gen(j, j), true], A[i].st));
+    }
+    return F;
+  }
+  const boite = (x0, y0, x1, y1, z0, z1, st) => prisme([[x0, y0], [x1, y0], [x1, y1], [x0, y1]], z0, z1, st);
+  const disque = (cx, cy, r, n, z0, z1, st) => prisme(Array.from({ length: n }, (_, i) => [cx + r * Math.cos(2 * Math.PI * i / n), cy + r * Math.sin(2 * Math.PI * i / n), 1, 1]), z0, z1, st);
+  /* Déplacement rigide M = { p : point, v : vecteur } */
+  const deplacer = (F, M) => F.map(f => face(f.p.map(M.p), f.e.map(e => (e && e.n ? { n: M.v(e.n) } : e)), f.st));
+  const rotZ = (a, cx, cy) => {
+    const c = Math.cos(a), s = Math.sin(a);
+    return { p: q => [cx + (q[0] - cx) * c - (q[1] - cy) * s, cy + (q[0] - cx) * s + (q[1] - cy) * c, q[2]], v: q => [q[0] * c - q[1] * s, q[0] * s + q[1] * c, q[2]] };
+  };
+  /* Prisme d'axe vertical : (u, v, w) du prisme → (cx + u, y + w, cz − v) */
+  const debout = (cx, cz) => ({ p: q => [cx + q[0], q[2], cz - q[1]], v: q => [q[0], q[2], -q[1]] });
+
+  /* ---------- Arbre BSP ---------- */
+  function scinder(f, s) {
+    const A = [[], []], B = [[], []], m = f.p.length;
+    for (let i = 0; i < m; i++) {
+      const j = (i + 1) % m, a = f.p[i], b = f.p[j], sa = s[i], sb = s[j], fl = f.e[i];
+      if (sa > EPS) { A[0].push(a); A[1].push(fl); }
+      else if (sa < -EPS) { B[0].push(a); B[1].push(fl); }
+      else { A[0].push(a); A[1].push(sb > EPS ? fl : false); B[0].push(a); B[1].push(sb < -EPS ? fl : false); }
+      if ((sa > EPS && sb < -EPS) || (sa < -EPS && sb > EPS)) {
+        const t = sa / (sa - sb), q = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+        if (sa > 0) { A[0].push(q); A[1].push(false); B[0].push(q); B[1].push(fl); }
+        else { B[0].push(q); B[1].push(false); A[0].push(q); A[1].push(fl); }
+      }
+    }
+    const morceau = X => (X[0].length >= 3 ? { p: X[0], e: X[1], n: f.n, d: f.d, st: f.st } : null);
+    return [morceau(A), morceau(B)];
+  }
+  function arbre(F) {
+    if (!F.length) return null;
+    const { n, d } = F[0], co = [F[0]], av = [], ar = [];
+    for (let i = 1; i < F.length; i++) {
+      const f = F[i]; let pos = 0, neg = 0;
+      const s = f.p.map(q => { const t = dot(n, q) - d; if (t > EPS) pos++; else if (t < -EPS) neg++; return t; });
+      if (!pos && !neg) co.push(f);
+      else if (!neg) av.push(f);
+      else if (!pos) ar.push(f);
+      else { const [a, b] = scinder(f, s); if (a) av.push(a); if (b) ar.push(b); }
+    }
+    return { n, d, co, av: arbre(av), ar: arbre(ar) };
+  }
+  function ordre(nd, pos, out) {
+    if (!nd) return;
+    const devant = dot(nd.n, pos) - nd.d > 0;
+    ordre(devant ? nd.ar : nd.av, pos, out);
+    for (const f of nd.co) out.push(f);
+    ordre(devant ? nd.av : nd.ar, pos, out);
+  }
+  const compter = nd => (nd ? nd.co.length + compter(nd.av) + compter(nd.ar) : 0);
+
+  /* ---------- Caméra : orbite autour de la cible, perspective, lumière liée à la vue ---------- */
+  function camera(lacet, site, o) {
+    const a = lacet * Math.PI / 180, b = Math.max(-80, Math.min(80, site)) * Math.PI / 180, D = o.dist, c = o.cible;
+    const pos = [c[0] + D * Math.sin(a) * Math.cos(b), c[1] + D * Math.sin(b), c[2] + D * Math.cos(a) * Math.cos(b)];
+    const av = unit(sub(c, pos)), dr = unit(cross(av, [0, 1, 0])), ht = cross(dr, av), F = o.echelle * D;
+    const lu = unit([-0.35 * dr[0] + 0.8 * ht[0] - 0.5 * av[0], -0.35 * dr[1] + 0.8 * ht[1] - 0.5 * av[1], -0.35 * dr[2] + 0.8 * ht[2] - 0.5 * av[2]]);
+    return {
+      pos, av, dr, ht,
+      proj: q => { const v = sub(q, pos), z = dot(v, av); return [o.cx + F * dot(v, dr) / z, o.cy - F * dot(v, ht) / z]; },
+      lum: n => 0.83 + 0.21 * Math.max(0, dot(n, lu)),
+    };
+  }
+  const pt = q => `${q[0].toFixed(1)},${q[1].toFixed(1)}`;
+  const teinte = (c, k) => `rgb(${c.map(v => Math.max(0, Math.min(255, Math.round(v * k)))).join(',')})`;
+  function peindre(bsp, cam) {
+    const liste = []; ordre(bsp, cam.pos, liste);
+    let s = '';
+    for (const f of liste) {
+      if (dot(f.n, sub(cam.pos, f.p[0])) <= 0) continue;                 /* face vue de dos */
+      const q = f.p.map(cam.proj), col = teinte(f.st.c, cam.lum(f.n));
+      s += `<path d="M${q.map(pt).join('L')}Z" fill="${col}" stroke="${col}" stroke-width=".8" stroke-linejoin="round"/>`;
+      let d = '';
+      for (let i = 0; i < q.length; i++) {
+        const e = f.e[i];
+        if (e === true || (e && dot(e.n, sub(cam.pos, f.p[i])) <= 0)) d += `M${pt(q[i])}L${pt(q[(i + 1) % q.length])}`;
+      }
+      if (d) s += `<path d="${d}" fill="none" stroke="${f.st.t || C.g}" stroke-width="${f.st.tw || 0.9}" stroke-linecap="round"/>`;
+    }
+    return s;
+  }
+
+  /* ------------------------------------------------------------------
+     Scène : pied à coulisse et pièce. État e : { h, th, force, fort, jeu }.
+     h : distance entre l'échelle et le point de contact (mm) ; th : inclinaison du coulisseau (°),
+     très exagérée ; le jeu dessiné est celui qui permet cette inclinaison (appuis en diagonale,
+     comme le schéma 2D pacJeu). La pièce garde sa cote D : le coulisseau recule de f = h × tan(th).
+     ------------------------------------------------------------------ */
+  const G = { T: 3.4, zb: -2.4, Lb: 106, D: 20, ep: 3, tl: 1 };
+  const ACIER = { c: [246, 246, 246] }, COUL = { c: [233, 234, 236] }, GRIS = { c: [212, 213, 215] };
+  const FIXE = { c: [70, 70, 70] }, MOBILE = { c: [188, 152, 14], t: '#6B5500' }, PIECE = { c: [244, 234, 200], t: '#7D6400' };
+  const bezier = (P, t) => { const u = 1 - t; return [0, 1].map(k => u * u * u * P[0][k] + 3 * u * u * t * P[1][k] + 3 * u * t * t * P[2][k] + t * t * t * P[3][k]); };
+  function scene(e) {
+    const { W, a, wj, hj, hh, hb, Lj, Ls } = PAC, { T, zb, Lb, D, ep, tl } = G;
+    const th = e.th * Math.PI / 180, sn = Math.sin(th), cs = Math.cos(th), tn = Math.tan(th);
+    const f = e.h * tn, r = D - f;                                            /* erreur au contact ; position lue */
+    const ct = (hb + (W - 0.6) * sn) / cs - hb, cb = Ls * tn;                /* jeux : sous le lardon, sur le chant inférieur */
+    const yp = -hh - hj, yd = yp + 0.91 * hj, fi = -W + a, fm = r - W + a, yc = hb + Lj - 9.2, du = -(ct + tl);
+    /* Profils en coordonnées du schéma 2D (y vers le bas) : P retourne y */
+    const P = (pts, dy = 0) => pts.map(q => [q[0], -(q[1] + dy), q[2], q[3], q[4]]);
+    const dos = t => bezier([[fi, yp], [fi + 0.3 * wj, yp + 0.2 * hj], [fi + 0.9 * wj, yp + 0.55 * hj], [fi + wj, yd]], t);
+    const dosM = t => bezier([[r - W, yd], [fm - 0.9 * wj, yp + 0.55 * hj], [fm - 0.3 * wj, yp + 0.2 * hj], [fm, yp]], t);
+    const F = [];
+    /* Partie fixe : règle, bec fixe (face de mesure sombre), tête et bec d'intérieur (demi-épaisseur, côté dos) */
+    F.push(...prisme(P([[-W, 0], [Lb, 0], [Lb, hb], [0, hb, 0], [-W, hb, 1, 1]]), 0, T, ACIER));
+    F.push(...prisme(P([[-W, hb, 0, 1], [0, hb, 1, 0, FIXE], [0, yc, 0, 1], [-2.3, yc], [-W, hb + 10.8]]), 0, T, ACIER));
+    F.push(...prisme(P([[0, yc, 1, 1, FIXE], [0, hb + Lj], [-1.9, hb + Lj - 3.8], [-2.3, yc, 0]]), 0, T, ACIER));
+    F.push(...prisme(P([[-W, -hh], [fi, -hh, 0], [fi + wj, -hh, 1, 1], [fi + wj, 0, 0], [-W, 0, 1, 1]]), 0, T / 2, ACIER));
+    F.push(...prisme(P([[fi, -hh], [fi, yp], [...dos(0.25), 1, 1], [...dos(0.5), 1, 1], [...dos(0.75), 1, 1], [fi + wj, yd, 1, 1], [fi + wj, -hh, 0, 1]]), 0, T / 2, ACIER));
+    /* Coulisseau, dans son repère (avant inclinaison) : partie haute relevée du jeu, partie basse abaissée */
+    const S = [];
+    S.push(...boite(r, hh - du, r + Ls, -hb - 10.8 - cb, zb, 0, COUL));                                   /* dos du coulisseau */
+    S.push(...prisme(P([[r - W, -hh, 1, 1], [r + Ls, -hh], [r + Ls, 0], [r - W, 0]], du), 0, T, COUL));
+    S.push(...prisme(P([[r - W, -hh, 1, 1], [r - W, yd, 1, 1], [...dosM(0.25), 1, 1], [...dosM(0.5), 1, 1], [...dosM(0.75), 1, 1], [fm, yp], [fm, -hh, 0]], du), T / 2, T, COUL));
+    S.push(...boite(r - W + 0.6, ct + tl, r + Ls - 0.6, ct, 0, T, GRIS));                                   /* lardon */
+    S.push(...prisme(P([[r, hb, 1, 0, MOBILE], [r, yc, 0, 1], [r + 2.3, yc], [r + W, hb + 10.8, 0], [r + W, hb, 1, 1]], cb), 0, T, COUL));
+    S.push(...prisme(P([[r, yc, 1, 1, MOBILE], [r, hb + Lj], [r + 1.9, hb + Lj - 3.8], [r + 2.3, yc, 0]], cb), 0, T, COUL));
+    S.push(...prisme(P([[r + W, hb, 1, 1], [r + Ls, hb], [r + Ls, hb + 10.8], [r + W, hb + 10.8, 0]], cb), 0, T, COUL));
+    S.push(...disque(r + 46, -(hb + 10.8 + cb), 5.5, 22, 0.5, T - 0.5, GRIS));                              /* molette */
+    S.push(...deplacer(disque(0, 0, 1.15, 8, hh - du, hh - du + 1.6, GRIS), debout(r + 30, T / 2)));         /* vis de blocage */
+    S.push(...deplacer(disque(0, 0, 3.1, 16, hh - du + 1.6, hh - du + 5.8, GRIS), debout(r + 30, T / 2)));
+    const M = rotZ(th, r, -hb);
+    F.push(...deplacer(S, M));
+    /* Pièce : disque posé à plat, tangent aux deux becs */
+    F.push(...deplacer(disque(0, 0, D / 2, 36, -(hb + e.h + ep), -(hb + e.h), PIECE), debout(D / 2, T / 2)));
+    return { F, M, r, f, ct, cb, du, th };
+  }
+
+  /* ---------- Habillage : graduations, cotes h et f, face lue, force, jeu ---------- */
+  const ligne = (a, b, o = {}) => `<line ${at({ x1: a[0], y1: a[1], x2: b[0], y2: b[1], stroke: o.s || C.g, 'stroke-width': o.sw || 1, 'stroke-dasharray': o.dash, 'stroke-linecap': o.cap || 'round' })}/>`;
+  const pointe = (q, de, t, col) => {
+    const an = Math.atan2(q[1] - de[1], q[0] - de[0]), k = an2 => `${(q[0] - t * Math.cos(an2)).toFixed(1)},${(q[1] - t * Math.sin(an2)).toFixed(1)}`;
+    return `<path d="M${pt(q)}L${k(an + 0.42)}L${k(an - 0.42)}Z" fill="${col}"/>`;
+  };
+  function habiller(sc, cam, e, o) {
+    const { hb, Ls } = PAC, { T, Lb, D } = G, { M, r, cb, ct } = sc, ke = o.fs || 1;
+    const pr = cam.proj, devant = cam.pos[2] > T + 1, deDos = cam.pos[2] < -6;
+    /* Étiquette avec liseré blanc ; k.bord : gardée entière dans le cadre (largeur estimée) */
+    const txt = (q, t, k = {}) => `<text ${at({ x: k.bord ? Math.max(k.bord, Math.min(o.W - k.bord, q[0] + (k.dx || 0))) : q[0] + (k.dx || 0), y: q[1] + (k.dy || 0), 'font-size': (k.fs || 13) * ke, fill: k.f || C.n, 'text-anchor': k.a || 'middle',
+      'font-weight': k.fw || 500, 'font-style': k.it ? 'italic' : undefined, stroke: '#FFFFFF', 'stroke-width': 3.4, 'stroke-linejoin': 'round', 'paint-order': 'stroke' })}>${t}</text>`;
+    let s = '';
+    if (devant) {
+      /* Graduations : échelle principale sur la règle, vernier sur le coulisseau */
+      let d = '', dv = '', ch = '';
+      const colle = (q3, ux, uy, t, fs) => {
+        const p0 = pr(q3), px = pr(add(q3, ux)), py = pr(add(q3, uy));
+        return `<text transform="matrix(${[px[0] - p0[0], px[1] - p0[1], py[0] - p0[0], py[1] - p0[1], p0[0], p0[1]].map(v => v.toFixed(3)).join(' ')})" font-size="${fs}" text-anchor="middle" fill="${C.g}">${t}</text>`;
+      };
+      for (let i = 0; i <= Lb - 3; i++) {
+        d += `M${pt(pr([i, -hb, T]))}L${pt(pr([i, -hb + (i % 10 === 0 ? 4.6 : i % 5 === 0 ? 3.1 : 1.9), T]))}`;
+        if (i % 10 === 0) ch += colle([i, -hb + 5.6, T], [1, 0, 0], [0, -1, 0], i / 10, 3.3);
+      }
+      const ux = M.v([1, 0, 0]), uy = M.v([0, -1, 0]);
+      for (let j = 0; j <= 50; j++) {
+        const x = r + j * 0.98;
+        dv += `M${pt(pr(M.p([x, -hb - cb, T])))}L${pt(pr(M.p([x, -hb - cb - (j % 5 === 0 ? 3.5 : 1.9), T])))}`;
+        if (j % 5 === 0) ch += colle(M.p([x, -hb - cb - 6.9, T]), ux, uy, j / 5, 2.9);
+      }
+      s += `<path d="${d}${dv}" fill="none" stroke="${C.g}" stroke-width=".6"/>${ch}`;
+    }
+    /* Jeu du coulisseau : coins entre le coulisseau incliné et les chants de la règle */
+    if (e.jeu > 0.02 && devant) {
+      const A = M.p([r - PAC.W + 0.6, ct, T]), B = M.p([r + Ls - 0.6, ct, T]), Cb = M.p([r, -hb - cb, T]), Dd = M.p([r + Ls, -hb - cb, T]);
+      const poly = pts => `M${pts.map(q => pt(pr(q))).join('L')}Z`;
+      s += `<path d="${poly([A, B, [B[0], 0, T], [A[0], 0, T]])}${poly([Cb, Dd, [Dd[0], -hb, T], [Cb[0], -hb, T]])}" fill="${C.r}" fill-opacity="${(0.5 * e.jeu).toFixed(2)}" stroke="${C.r}" stroke-opacity="${e.jeu.toFixed(2)}" stroke-width=".9"/>`;
+      const bq = M.p([r + Ls - 9, ct, T]), q = pr([bq[0], bq[1] / 2, T]);
+      s += `<g opacity="${e.jeu.toFixed(2)}">${ligne(q, [q[0] + 20, q[1] - 44], { s: C.r, sw: 1 })}${txt([q[0] + 21, q[1] - 49], 'Jeu', { f: C.r })}</g>`;
+    }
+    if (deDos) return s;
+    /* Face lue par l'échelle : verticale du point de lecture (pointillé) */
+    const yk = -hb - e.h, L0 = pr([r, -hb, T]), L1 = pr([r, Math.min(yk - 7, -hb - 16), T]);
+    s += ligne(L0, L1, { s: C.n, sw: 1.2, dash: '5 3.5', cap: 'butt' });
+    /* Cote h : de l'échelle au point de contact */
+    const xh = -25, h0 = pr([xh, -hb, T]), h1 = pr([xh, yk, T]);
+    s += ligne(pr([-PAC.W - 1.5, -hb, T]), pr([xh - 3, -hb, T]), { s: C.a, sw: 0.8 }) + ligne(pr([-1, yk, T]), pr([xh - 3, yk, T]), { s: C.a, sw: 0.8 });
+    s += ligne(h0, h1, { s: C.n, sw: 1.1 }) + pointe(h0, h1, 8, C.n) + pointe(h1, h0, 8, C.n);
+    s += txt([(h0[0] + h1[0]) / 2, (h0[1] + h1[1]) / 2], 'h', { dx: -11, dy: 5, fs: 16, it: 1 });
+    /* Erreur f : entre la face lue et le point de contact */
+    const f0 = pr([r, yk, T]), f1 = pr([D, yk, T]);
+    s += ligne(f0, f1, { s: C.r, sw: 3, cap: 'butt' });
+    s += ligne([f1[0] + 3, f1[1] + 4], [f1[0] + 18, f1[1] + 22], { s: C.r, sw: 1 }) + txt([f1[0] + 24, f1[1] + 35], 'f', { f: C.r, fs: 16, it: 1 });
+    /* Force de mesure : appliquée à la molette */
+    const mc = M.p([r + 46, -(hb + 10.8 + cb) - 3.4, T / 2]), g0 = pr(add(mc, [8 + 22 * (0.45 + 0.55 * e.force), 0, 0])), g1 = pr(add(mc, [7, 0, 0]));
+    const colF = e.fort > 0.5 ? C.r : C.n, ep = 2 + 4.5 * e.force;
+    const tp = 7 + 2.6 * ep, lg = Math.hypot(g0[0] - g1[0], g0[1] - g1[1]) || 1, kq = 0.85 * tp / lg;
+    s += ligne(g0, [g1[0] + (g0[0] - g1[0]) * kq, g1[1] + (g0[1] - g1[1]) * kq], { s: colF, sw: ep, cap: 'butt' }) + pointe(g1, g0, tp, colF);
+    const nomF = e.fort > 0.5 ? 'Force trop forte' : 'Force';
+    s += txt([(g0[0] + g1[0]) / 2, (g0[1] + g1[1]) / 2], nomF, { dx: 8, dy: -8 - ep / 2, f: colF, bord: 4 + 0.29 * 13 * ke * nomF.length });
+    return s;
+  }
+  /* Pastille « Faux » ou « Juste » (comme les schémas d'erreurs) */
+  function pastille(ok, k) {
+    const col = ok ? C.ok : C.r;
+    const signe = ok ? '<path d="M4.6,8.3 L7,10.6 L11.3,5.7" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>'
+      : '<path d="M5.4,5.4 L10.6,10.6 M10.6,5.4 L5.4,10.6" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>';
+    return `<g transform="translate(10 10) scale(${k})"><circle cx="8" cy="8" r="6.6" fill="${col}"/>${signe}<text x="19" y="12" font-size="10.5" font-weight="500" fill="${col}">${ok ? 'Juste' : 'Faux'}</text></g>`;
+  }
+
+  /* Vue complète. o : { e, lacet, site, W, H, label, ok, fs, zoom } ; memo : arbre réutilisé tant que l'état ne change pas */
+  let memo = { cle: '', sc: null, bsp: null };
+  function abbe(o) {
+    o = { ...o, W: o.W || 680, H: o.H || 430 };
+    const e = o.e, W = o.W, H = o.H, cle = [e.h, e.th].map(v => v.toFixed(4)).join('|');
+    if (memo.cle !== cle) { const sc = scene(e); memo = { cle, sc, bsp: arbre(sc.F) }; }
+    const cam = camera(o.lacet, o.site, { dist: 620, cible: [o.cx ?? 38, -19, G.T / 2], echelle: (o.zoom || 1) * W / 150, cx: W / 2, cy: H / 2 });
+    return svg(W, H, o.label || 'Pied à coulisse en 3D', `<rect width="${W}" height="${H}" fill="#fff"/>` + peindre(memo.bsp, cam) + habiller(memo.sc, cam, e, o)
+      + (o.ok === undefined ? '' : pastille(o.ok, (o.fs || 1) * 1.45)));
+  }
+  return { abbe, scene, arbre, compter, G };
+})();
+
+/* =====================================================================
    app.js : navigation, rendu des vues, outil de choix, quiz, auto-tests
    Dépend de DONNEES (data.js) et ILLUS (illus.js).
    ===================================================================== */
@@ -4952,6 +5246,7 @@ const ERREURS = (() => {
     }
     masquerInfobulle();
     if (demontageCourant) { demontageCourant.arreter(); demontageCourant = null; }
+    if (vue3dCourante) { vue3dCourante.arreter(); vue3dCourante = null; }
     if (vue === 'bases') vueBases();
     else if (vue === 'verniers') vueVerniers();
     else if (vue === 'comparer') vueComparer();
@@ -5154,6 +5449,17 @@ const ERREURS = (() => {
       <p class="fig-plus__titre">${fmt(A.tableau.titre)}</p>
       <div class="tableau-wrap"><table class="tableau tableau--compact"><thead><tr>${A.tableau.entetes.map(e => `<th scope="col">${esc(e)}</th>`).join('')}</tr></thead>
         <tbody>${A.tableau.lignes.map(l => `<tr><th scope="row">${fmt(l[0])}</th>${l.slice(1).map(c => `<td>${typo(esc(c))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+      ${A.vue3d ? `<p class="fig-plus__titre">${fmt(A.vue3d.titre)}</p>
+      <div class="v3d">
+        <div class="filtres v3d__cas" role="group" aria-label="Situation">${A.vue3d.cas.map((c, k) => `<button type="button" class="puce" data-cas="${k}" aria-pressed="${k === 0}">${esc(c.nom)}</button>`).join('')}</div>
+        <figure class="fig-plus v3d__fig"></figure>
+        <div class="v3d__etat" aria-live="polite"></div>
+        <div class="v3d__ctrl"><label class="v-curseur v3d__rot">${esc(A.vue3d.rotation)}<input class="v-range" type="range" min="-60" max="60" step="1" value="-28"></label>
+          <button type="button" class="btn btn--sec" data-v3d="depart">${esc(A.vue3d.depart)}</button></div>
+        <p class="tab-fiche__note v3d__aide">${fmt(A.vue3d.aide)}</p>
+        <p class="tab-fiche__note">${fmt(A.vue3d.legende)}</p>
+        <div class="v3d__impr"></div>
+      </div>` : ''}
       <div class="encadre encadre--or" style="margin-top:10px"><span class="encadre__icone">!</span><div>${A.consignes.map(t => `<p>${premierVerbeGras(t)}</p>`).join('')}</div></div>
       <p class="tab-fiche__note">${fmt(A.note)}</p>`;
     const securite = f.securite && f.securite.length
@@ -5208,6 +5514,71 @@ const ERREURS = (() => {
     const imp = app.querySelector('#imprimer');
     if (imp) imp.addEventListener('click', () => window.print());
     if (modeleDm) brancherDemontage(app.querySelector('.demontage'), f, modeleDm);
+    if (A && A.vue3d) brancherVue3d(app.querySelector('.v3d'), A.vue3d);
+  }
+
+  /* ---------- Vue 3D du principe d'Abbe : situations, rotation, impression ---------- */
+  let vue3dCourante = null;
+  function brancherVue3d(racine, V) {
+    const fig = racine.querySelector('.v3d__fig'), zone = racine.querySelector('.v3d__etat'), rot = racine.querySelector('input[type=range]'), impr = racine.querySelector('.v3d__impr');
+    const DEPART = { lacet: -28, site: 14 }, LIM = { lacet: [-60, 60], site: [-10, 45] };
+    const S = { cas: 0, e: { ...V.cas[0].e }, lacet: DEPART.lacet, site: DEPART.site };
+    const borne = (v, [a, b]) => Math.max(a, Math.min(b, v));
+    const verdict = c => `<strong>${c.ok ? 'Juste.' : 'Faux.'}</strong> ${fmt(c.texte)}`;
+    let raf = 0, anim = 0, glisse = null;
+    const dessiner = () => {
+      raf = 0;
+      const c = V.cas[S.cas], W = Math.max(300, Math.min(720, Math.round(fig.clientWidth - 22))), large = W >= 520;
+      fig.innerHTML = VUE3D.abbe({ e: S.e, lacet: S.lacet, site: S.site, W, H: Math.round(W * (large ? 0.63 : 0.9)), zoom: large ? 1 : 1.2, cx: large ? 38 : 30,
+        ok: c.ok, label: `Vue 3D du pied à coulisse. ${c.ok ? 'Juste' : 'Faux'} : ${c.nom}.` });
+    };
+    const demander = () => { if (!raf) raf = requestAnimationFrame(dessiner); };
+    const choisir = (k, direct) => {
+      const c = V.cas[k], de = { ...S.e }, t0 = performance.now(), duree = direct || MOUVEMENT_REDUIT ? 0 : 700;
+      S.cas = k;
+      racine.querySelectorAll('[data-cas]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.cas === k)));
+      zone.innerHTML = `<div class="retour retour--${c.ok ? 'juste' : 'faux'}"><p>${verdict(c)}</p></div>`;
+      cancelAnimationFrame(anim);
+      const pas = t => {
+        const u = duree ? Math.min(1, Math.max(0, (t - t0) / duree)) : 1, v = u < 0.5 ? 2 * u * u : 1 - 2 * (1 - u) * (1 - u);
+        for (const cle of Object.keys(c.e)) S.e[cle] = de[cle] + (c.e[cle] - de[cle]) * v;
+        dessiner();
+        if (u < 1) anim = requestAnimationFrame(pas);
+      };
+      pas(t0);
+    };
+    racine.querySelectorAll('[data-cas]').forEach(b => b.addEventListener('click', () => choisir(+b.dataset.cas)));
+    rot.addEventListener('input', () => { S.lacet = +rot.value; demander(); });
+    racine.querySelector('[data-v3d="depart"]').addEventListener('click', () => { S.lacet = DEPART.lacet; S.site = DEPART.site; rot.value = String(S.lacet); demander(); });
+    /* Glisser pour tourner : la pièce suit le pointeur. Au doigt, le glissement vertical fait défiler la page. */
+    fig.addEventListener('pointerdown', ev => {
+      if (ev.button) return;
+      glisse = { x: ev.clientX, y: ev.clientY, lacet: S.lacet, site: S.site };
+      if (fig.setPointerCapture) fig.setPointerCapture(ev.pointerId);
+      fig.classList.add('v3d__fig--saisie');
+    });
+    fig.addEventListener('pointermove', ev => {
+      if (!glisse) return;
+      S.lacet = borne(glisse.lacet - (ev.clientX - glisse.x) * 0.35, LIM.lacet);
+      S.site = borne(glisse.site + (ev.clientY - glisse.y) * 0.3, LIM.site);
+      rot.value = String(Math.round(S.lacet));
+      demander();
+    });
+    const lacher = () => { glisse = null; fig.classList.remove('v3d__fig--saisie'); };
+    fig.addEventListener('pointerup', lacher);
+    fig.addEventListener('pointercancel', lacher);
+    vue3dCourante = {
+      racine, dessiner,
+      arreter: () => { cancelAnimationFrame(raf); cancelAnimationFrame(anim); },
+      /* Impression : les quatre situations côte à côte, vue de départ */
+      imprimer: () => {
+        if (!impr.childElementCount) impr.innerHTML = V.cas.map(c => `<figure>${VUE3D.abbe({ e: c.e, lacet: DEPART.lacet, site: DEPART.site, W: 680, H: 430, ok: c.ok, fs: 1.45,
+          label: `Vue 3D du pied à coulisse. ${c.ok ? 'Juste' : 'Faux'} : ${c.nom}.` })}<figcaption>${verdict(c)}</figcaption></figure>`).join('');
+        racine.classList.add('v3d--pret');
+      },
+    };
+    window.__vue3d = { choisir, etat: () => ({ ...S, e: { ...S.e } }), tourner: (l, si) => { S.lacet = l; S.site = si; dessiner(); } };
+    choisir(0, true);
   }
 
   /* ---------- Démontage animé : commandes, légende, tableau ---------- */
@@ -5280,7 +5651,12 @@ const ERREURS = (() => {
   }
   /* Impression : schéma entièrement démonté (événements d'impression et média « print ») */
   let enImpression = false;
-  const impression = oui => { if (oui === enImpression) return; enImpression = oui; if (demontageCourant) demontageCourant.imprimer(oui); };
+  const impression = oui => {
+    if (oui === enImpression) return;
+    enImpression = oui;
+    if (demontageCourant) demontageCourant.imprimer(oui);
+    if (oui && vue3dCourante) vue3dCourante.imprimer();
+  };
   window.addEventListener('beforeprint', () => impression(true));
   window.addEventListener('afterprint', () => impression(false));
   if (window.matchMedia) { const mq = window.matchMedia('print'); if (mq.addEventListener) mq.addEventListener('change', e => impression(e.matches)); }
@@ -5756,7 +6132,10 @@ const ERREURS = (() => {
   let attenteRedim = 0;
   window.addEventListener('resize', () => {
     cancelAnimationFrame(attenteRedim);
-    attenteRedim = requestAnimationFrame(() => { if (vueCourante().vue === 'verniers') dessinerVerniers(); });
+    attenteRedim = requestAnimationFrame(() => {
+      if (vueCourante().vue === 'verniers') dessinerVerniers();
+      if (vue3dCourante && document.contains(vue3dCourante.racine)) vue3dCourante.dessiner();
+    });
   });
   /* Valeur attendue de l'exercice en cours (tests automatiques) */
   window.__vernier = () => (etat.vernier.ex ? valVernier(VT[etat.vernier.ex.type], etat.vernier.ex.u) : null);
@@ -5859,6 +6238,22 @@ const ERREURS = (() => {
       }
       if (f.abbe && !ILLUS.ids.includes(`${f.id}-abbe`)) err.push(`${f.id} : schéma du principe d’Abbe manquant`);
       if (f.abbe && f.abbe.tableau.lignes.some(l => l.length !== f.abbe.tableau.entetes.length)) err.push(`${f.id} : tableau Abbe mal formé`);
+      if (f.abbe && f.abbe.vue3d) {
+        /* Vue 3D : coulisseau en appui sur ses deux coins, bec au contact de la pièce, textes égaux au tableau (f = h × 0,01 / 50) */
+        const V3 = f.abbe.vue3d, TA = f.abbe.tableau.lignes, { hb, Ls, W: Wp } = ILLUS.outils.PAC, net = t => t.replace(/\s/g, ' ');
+        const val = t => parseFloat(t.replace(',', '.'));
+        for (const l of TA) if (Math.abs(val(l[1]) * 0.01 / 50 - val(l[2])) > 1e-9) err.push(`${f.id} : tableau Abbe, ligne « ${l[0]} » fausse`);
+        for (const c of V3.cas) {
+          const sc = VUE3D.scene(c.e), s3 = VUE3D.abbe({ e: c.e, lacet: -28, site: 14, ok: c.ok });
+          if (Math.abs(sc.r + c.e.h * Math.tan(c.e.th * Math.PI / 180) - VUE3D.G.D) > 1e-9) err.push(`${f.id} : vue 3D « ${c.id} », bec mobile hors contact`);
+          if (Math.abs(sc.M.p([sc.r + Ls, -hb - sc.cb, 0])[1] + hb) > 1e-9 || Math.abs(sc.M.p([sc.r - Wp + 0.6, sc.ct, 0])[1]) > 1e-9) err.push(`${f.id} : vue 3D « ${c.id} », appuis du coulisseau faux`);
+          if (/NaN|undefined/.test(s3) || (s3.match(/<path/g) || []).length < 120 || !s3.includes(c.ok ? 'Juste' : 'Faux')) err.push(`${f.id} : vue 3D « ${c.id} » incomplète`);
+        }
+        const cas = id => V3.cas.find(c => c.id === id);
+        if (!net(cas('bout').texte).includes(`h = ${TA[TA.length - 1][1]}, f = ${TA[TA.length - 1][2]}`) || !net(cas('fond').texte).includes(`f = ${TA[0][2]}`) || !net(cas('fond').texte).includes(`h = ${TA[0][1]}`))
+          err.push(`${f.id} : vue 3D, valeurs différentes du tableau`);
+        if (V3.cas.filter(c => c.ok).length !== 1) err.push(`${f.id} : vue 3D, une seule situation juste attendue`);
+      }
       const Mdm = ILLUS.modele(f.id);
       if (Mdm) {
         if (!f.eclate) err.push(`${f.id} : démontage sans tableau`);
